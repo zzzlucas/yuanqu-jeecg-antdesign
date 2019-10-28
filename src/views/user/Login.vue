@@ -27,24 +27,24 @@
             </a-input>
           </a-form-item>
 
-          <a-row :gutter="0">
-            <a-col :span="14">
-              <a-form-item>
-                <a-input
-                  v-decorator="['inputCode',validatorRules.inputCode]"
-                  size="large"
-                  type="text"
-                  @change="inputCodeChange"
-                  placeholder="请输入验证码">
-                  <a-icon slot="prefix" v-if=" inputCodeContent==verifiedCode " type="smile" :style="{ color: 'rgba(0,0,0,.25)' }"/>
-                  <a-icon slot="prefix" v-else type="frown" :style="{ color: 'rgba(0,0,0,.25)' }"/>
-                </a-input>
-              </a-form-item>
-            </a-col>
-            <a-col  :span="10">
-              <j-graphic-code @success="generateCode" style="float: right"></j-graphic-code>
-            </a-col>
-          </a-row>
+<!--          <a-row :gutter="0">-->
+<!--            <a-col :span="14">-->
+<!--              <a-form-item>-->
+<!--                <a-input-->
+<!--                  v-decorator="['inputCode',validatorRules.inputCode]"-->
+<!--                  size="large"-->
+<!--                  type="text"-->
+<!--                  @change="inputCodeChange"-->
+<!--                  placeholder="请输入验证码">-->
+<!--                  <a-icon slot="prefix" v-if=" inputCodeContent==verifiedCode " type="smile" :style="{ color: 'rgba(0,0,0,.25)' }"/>-->
+<!--                  <a-icon slot="prefix" v-else type="frown" :style="{ color: 'rgba(0,0,0,.25)' }"/>-->
+<!--                </a-input>-->
+<!--              </a-form-item>-->
+<!--            </a-col>-->
+<!--            <a-col  :span="10">-->
+<!--              <j-graphic-code @success="generateCode" style="float: right"></j-graphic-code>-->
+<!--            </a-col>-->
+<!--          </a-row>-->
 
 
         </a-tab-pane>
