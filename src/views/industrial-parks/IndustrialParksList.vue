@@ -2,9 +2,10 @@
   <a-card :bordered="false">
     <div class="industrial-parks-list">
       <a-row>
-        <a-col class="button-col">
+        <a-col class="header-col">
           <a-button type="primary">登记</a-button>
           <a-button>批量删除</a-button>
+          <a-input-search class="search-input" placeholder="园区名称" enterButton @search="search"></a-input-search>
         </a-col>
         <a-col class="alert-col">
           <a-alert type="info">
@@ -61,7 +62,6 @@
             this.selectCount = select.length
           },
           change: (keys) => {
-            console.log(keys)
             this.tableSelect.keys = keys
           }
         },
@@ -71,6 +71,9 @@
     methods: {
       cleanTableCheck() {
         this.tableSelect.keys > 0 && (this.tableSelect.keys = [])
+      },
+      search(query) {
+        console.log('搜索内容:', query)
       }
     }
   }
@@ -80,9 +83,16 @@
   @import "~ant-design-vue/es/style/themes/default";
 
   .industrial-parks-list {
-    .button-col {
+    .header-col {
       .ant-btn + .ant-btn {
         margin-left: 10px;
+      }
+
+      .search-input {
+        position: relative;
+        top: 1px;
+        width: 300px;
+        margin-left: 30px;
       }
     }
 
