@@ -4,18 +4,24 @@
       <a-row>
         <a-col class="button-col">
           <a-button type="primary">登记</a-button>
-          <a-button>删除</a-button>
+          <a-button>批量删除</a-button>
         </a-col>
         <a-col class="alert-col">
           <a-alert type="info">
             <span slot="message">
-              已选择 0 项
-              <a class="clean-btn">清空</a>
+              已选择 {{ selectCount }} 项
+              <a class="clean-btn" @click="cleanTableCheck">清空</a>
             </span>
           </a-alert>
         </a-col>
         <a-col class="table-col">
-          <a-table :data-source="tableData" bordered>
+          <a-table bordered :data-source="tableData"
+                   :rowSelection="{
+                      onSelect: tableSelect.select,
+                      onSelectAll: tableSelect.selectAll,
+                      onChange: tableSelect.change,
+                      selectedRowKeys: tableSelect.keys
+                   }">
             <a-table-column title="园区代码" data-index="id" key="id"></a-table-column>
             <a-table-column title="园区名称" data-index="name" key="name"></a-table-column>
             <a-table-column title="联系电话" data-index="phone" key="phone"></a-table-column>
@@ -45,13 +51,34 @@
             phone: '13800001111',
             address: '嘉兴市秀洲区三环路西南角'
           }
-        ]
+        ],
+        tableSelect: {
+          keys: [],
+          select: (row, bool, select) => {
+            this.selectCount = select.length
+          },
+          selectAll: (bool, select) => {
+            this.selectCount = select.length
+          },
+          change: (keys) => {
+            console.log(keys)
+            this.tableSelect.keys = keys
+          }
+        },
+        selectCount: 0
+      }
+    },
+    methods: {
+      cleanTableCheck() {
+        this.tableSelect.keys > 0 && (this.tableSelect.keys = [])
       }
     }
   }
 </script>
 
 <style lang="less">
+  @import "~ant-design-vue/es/style/themes/default";
+
   .industrial-parks-list {
     .button-col {
       .ant-btn + .ant-btn {
@@ -61,6 +88,11 @@
 
     .alert-col {
       margin-top: 20px;
+
+      .clean-btn {
+        color: @link-color;
+        margin-left: 25px;
+      }
     }
 
     .table-col {
