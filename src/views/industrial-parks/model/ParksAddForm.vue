@@ -7,7 +7,7 @@
 
 <script>
   export default {
-    name: 'ParksListForm',
+    name: 'ParksAddForm',
     props: {
       show: {
         type: Boolean,

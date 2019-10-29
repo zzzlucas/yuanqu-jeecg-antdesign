@@ -2,11 +2,13 @@
   <a-card :bordered="false">
     <div class="industrial-parks-list">
       <a-row>
+        <!--头部块-->
         <a-col class="header-col">
           <a-button type="primary" @click="rightShow = true">登记</a-button>
           <a-button>批量删除</a-button>
           <a-input-search class="search-input" placeholder="园区名称" enterButton @search="search"></a-input-search>
         </a-col>
+        <!--Alert 块-->
         <a-col class="alert-col">
           <a-alert type="info">
             <span slot="message">
@@ -15,6 +17,7 @@
             </span>
           </a-alert>
         </a-col>
+        <!--数据表格-->
         <a-col class="table-col">
           <a-table bordered :data-source="tableData"
                    :rowSelection="{
@@ -31,15 +34,17 @@
         </a-col>
       </a-row>
     </div>
-    <parks-list-form v-model="rightShow"></parks-list-form>
+    <!--抽屉组件: model/ParksAddForm.vue-->
+    <parks-add-form v-model="rightShow"></parks-add-form>
   </a-card>
 </template>
 
 <script>
-  import ParksListForm from '@views/industrial-parks/model/ParksListForm'
+  import ParksAddForm from '@views/industrial-parks/model/ParksAddForm'
+
   export default {
     name: 'IndustrialParksList',
-    components: { ParksListForm },
+    components: { ParksAddForm },
     data() {
       return {
         tableData: [
