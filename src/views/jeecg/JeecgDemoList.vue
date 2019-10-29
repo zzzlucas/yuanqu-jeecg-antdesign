@@ -62,7 +62,13 @@
       <a-button type="primary" icon="plus" @click="jump">创建单据</a-button>
       <a-button type="primary" icon="plus" @click="onetomany">一对多</a-button>
       <a-button type="primary" icon="download" @click="handleExportXls('demo')">导出</a-button>
-      <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" @change="handleImportExcel">
+      <a-upload
+        name="file"
+        :showUploadList="false"
+        :multiple="false"
+        :headers="tokenHeader"
+        :action="importExcelUrl"
+        @change="handleImportExcel">
         <a-button type="primary" icon="import">导入</a-button>
       </a-upload>
       <a-dropdown v-if="selectedRowKeys.length > 0">
@@ -93,7 +99,7 @@
                 <a-row>
                   <template v-for="(item,index) in defColumns">
                     <template v-if="item.key!='rowIndex'&& item.dataIndex!='action'">
-                        <a-col :span="12"><a-checkbox :value="item.dataIndex">{{ item.title }}</a-checkbox></a-col>
+                      <a-col :span="12"><a-checkbox :value="item.dataIndex">{{ item.title }}</a-checkbox></a-col>
                     </template>
                   </template>
                 </a-row>
@@ -129,7 +135,7 @@
             </a-checkbox-group>
           </a-card>
         </div>
-        <a-icon slot="filterIcon" type='setting' :style="{ fontSize:'16px',color:  '#108ee9' }" />
+        <a-icon slot="filterIcon" type="setting" :style="{ fontSize:'16px',color: '#108ee9' }" />
 
         <span slot="action" slot-scope="text, record">
           <a @click="handleEdit(record)">编辑</a>

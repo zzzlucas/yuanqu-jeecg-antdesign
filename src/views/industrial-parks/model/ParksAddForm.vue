@@ -1,6 +1,11 @@
 <template>
-  <a-drawer title="登记园区" wrapClassName="industrial-parks-list-form" width="400"
-            :closable="false" :visible="show" @close="closeDrawer">
+  <a-drawer
+    title="登记园区"
+    wrapClassName="industrial-parks-list-form"
+    width="400"
+    :closable="false"
+    :visible="show"
+    @close="closeDrawer">
 
   </a-drawer>
 </template>

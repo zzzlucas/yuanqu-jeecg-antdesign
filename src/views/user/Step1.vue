@@ -1,7 +1,7 @@
 <template>
   <div class="main">
 
-    <a-form  style="max-width: 500px; margin: 40px auto 0;" :form="form">
+    <a-form style="max-width: 500px; margin: 40px auto 0;" :form="form">
       <a-form-item>
         <a-input
           v-decorator="['username',validatorRules.username]"
@@ -21,8 +21,11 @@
               type="text"
               @change="inputCodeChange"
               placeholder="请输入验证码">
-              <a-icon slot="prefix" v-if=" inputCodeContent==verifiedCode " type="smile"
-                      :style="{ color: 'rgba(0,0,0,.25)' }"/>
+              <a-icon
+                slot="prefix"
+                v-if=" inputCodeContent==verifiedCode "
+                type="smile"
+                :style="{ color: 'rgba(0,0,0,.25)' }"/>
               <a-icon slot="prefix" v-else type="frown" :style="{ color: 'rgba(0,0,0,.25)' }"/>
             </a-input>
           </a-form-item>

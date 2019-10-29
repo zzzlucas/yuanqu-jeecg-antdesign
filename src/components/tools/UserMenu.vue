@@ -24,9 +24,9 @@
             <span>账户设置</span>
           </router-link>
         </a-menu-item>
-        <a-menu-item key="3"  @click="systemSetting">
-           <a-icon type="tool"/>
-           <span>系统设置</span>
+        <a-menu-item key="3" @click="systemSetting">
+          <a-icon type="tool"/>
+          <span>系统设置</span>
         </a-menu-item>
         <a-menu-item key="4" @click="updatePassword">
           <a-icon type="setting"/>
@@ -36,7 +36,7 @@
           <a-icon type="cluster"/>
           <span>切换部门</span>
         </a-menu-item>
-       <!-- <a-menu-item key="2" disabled>
+        <!-- <a-menu-item key="2" disabled>
           <a-icon type="setting"/>
           <span>测试</span>
         </a-menu-item>

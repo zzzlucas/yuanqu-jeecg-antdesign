@@ -13,7 +13,7 @@
             <!--  <j-dict-select-tag title="性别" dictCode="sex" disabled/>-->
             </a-form-item>
           </a-col>
-          <a-col :span="12">选中值：{{ formData.sex}}</a-col>
+          <a-col :span="12">选中值：{{ formData.sex }}</a-col>
         </a-row>
 
         <!--  字典表下拉 -->
@@ -23,7 +23,7 @@
               <j-dict-select-tag v-model="formData.user" placeholder="请选择用户" dictCode="sys_user,realname,id"/>
             </a-form-item>
           </a-col>
-          <a-col :span="12">选中值：{{ formData.user}}</a-col>
+          <a-col :span="12">选中值：{{ formData.user }}</a-col>
         </a-row>
 
         <!--  带条件字典表下拉 -->
@@ -33,7 +33,7 @@
               <j-dict-select-tag v-model="formData.user2" placeholder="请选择用户" dictCode="sys_user,realname,id,username!='admin' order by create_time"/>
             </a-form-item>
           </a-col>
-          <a-col :span="12">选中值：{{ formData.user2}}</a-col>
+          <a-col :span="12">选中值：{{ formData.user2 }}</a-col>
         </a-row>
 
         <!--  部门选择控件 -->
@@ -217,7 +217,7 @@
         <a-row :gutter="24">
           <a-col :span="12">
             <a-form-item label="cron表达式">
-              <j-cron ref="innerVueCron" v-decorator="['cronExpression', {'initialValue':'0/1 * * * * ?'}]"  @change="setCorn"></j-cron>
+              <j-cron ref="innerVueCron" v-decorator="['cronExpression', {'initialValue':'0/1 * * * * ?'}]" @change="setCorn"></j-cron>
               <!--              <j-cron ref="innerVueCron" v-model="cron" @change="setCorn"></j-cron>-->
             </a-form-item>
           </a-col>

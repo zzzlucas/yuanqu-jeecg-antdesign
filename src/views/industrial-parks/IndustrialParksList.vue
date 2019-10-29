@@ -21,15 +21,17 @@
         </a-col>
         <!--数据表格-->
         <a-col class="table-col">
-          <a-table bordered :data-source="tableData"
-                   :pagination="{ total: count }"
-                   :rowSelection="{
-                      onSelect: tableSelect.select,
-                      onSelectAll: tableSelect.selectAll,
-                      onChange: tableSelect.change,
-                      selectedRowKeys: tableSelect.keys
-                   }"
-                   @change="tableChange">
+          <a-table
+            bordered
+            :data-source="tableData"
+            :pagination="{ total: count }"
+            :rowSelection="{
+              onSelect: tableSelect.select,
+              onSelectAll: tableSelect.selectAll,
+              onChange: tableSelect.change,
+              selectedRowKeys: tableSelect.keys
+            }"
+            @change="tableChange">
             <a-table-column title="园区代码" data-index="park_id"></a-table-column>
             <a-table-column title="园区名称" data-index="park_name"></a-table-column>
             <a-table-column title="总建筑面积" data-index="total_buliding_area"></a-table-column>

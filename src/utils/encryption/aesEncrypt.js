@@ -40,7 +40,7 @@ var CryptoJS = CryptoJS || (function (Math, undefined) {
 	     * Local polyfil of Object.create
 	     */
   var create = Object.create || (function () {
-    function F() {};
+    function F() {}
 
     return function (obj) {
       var subtype;
@@ -2815,7 +2815,7 @@ var CryptoJS = CryptoJS || (function (Math, undefined) {
         var lane = state[0];
         var roundConstant = ROUND_CONSTANTS[round];
         lane.high ^= roundConstant.high;
-        lane.low  ^= roundConstant.low;;
+        lane.low  ^= roundConstant.low;
       }
     },
 

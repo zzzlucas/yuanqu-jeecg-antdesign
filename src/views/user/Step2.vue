@@ -1,61 +1,61 @@
 <template>
   <div>
-    <a-form :form="form"  style="max-width: 500px; margin: 40px auto 0;">
-    <a-form-item
-    label="账号名"
-    :labelCol="{span: 5}"
-    :wrapperCol="{span: 19}"
-    >
-      <a-input
-        type="text"
-        autocomplete="false"
-        :style="{width:'310px'}"
-        :value="accountName"
-        disabled>
-      </a-input>
-    </a-form-item>
-    <a-form-item
-    label="手机"
-    :labelCol="{span: 5}"
-    :wrapperCol="{span: 19}"
-    >
-      <a-input
-        type="text"
-        autocomplete="false"
-        :style="{width:'310px'}"
-        placeholder="请输入手机号"
-        :value="phone"
-        disabled>
-        <a-icon slot="prefix" type="phone" :style="{ color: 'rgba(0,0,0,.25)'}" />
-      </a-input>
-    </a-form-item>
+    <a-form :form="form" style="max-width: 500px; margin: 40px auto 0;">
+      <a-form-item
+        label="账号名"
+        :labelCol="{span: 5}"
+        :wrapperCol="{span: 19}"
+      >
+        <a-input
+          type="text"
+          autocomplete="false"
+          :style="{width:'310px'}"
+          :value="accountName"
+          disabled>
+        </a-input>
+      </a-form-item>
+      <a-form-item
+        label="手机"
+        :labelCol="{span: 5}"
+        :wrapperCol="{span: 19}"
+      >
+        <a-input
+          type="text"
+          autocomplete="false"
+          :style="{width:'310px'}"
+          placeholder="请输入手机号"
+          :value="phone"
+          disabled>
+          <a-icon slot="prefix" type="phone" :style="{ color: 'rgba(0,0,0,.25)'}" />
+        </a-input>
+      </a-form-item>
       <a-form-item
         label="验证码"
         :labelCol="{span: 5}"
         :wrapperCol="{span: 19}"
         v-if="show">
-          <a-row :gutter="16" style="margin-left: 35px">
-            <a-col class="gutter-row" :span="10">
-                <a-input
-                  v-decorator="['captcha',validatorRules.captcha]"
-                  type="text"
-                  placeholder="手机短信验证码" >
-                </a-input>
-            </a-col>
-            <a-col class="gutter-row" :span="8" >
-              <a-button
-                tabindex="-1"
-                size="default"
-                :disabled="state.smsSendBtn"
-                @click.stop.prevent="getCaptcha"
-                v-text="!state.smsSendBtn && '获取验证码' || (state.time+' s')"></a-button>
-            </a-col>
-          </a-row>
+        <a-row :gutter="16" style="margin-left: 35px">
+          <a-col class="gutter-row" :span="10">
+            <a-input
+              v-decorator="['captcha',validatorRules.captcha]"
+              type="text"
+              placeholder="手机短信验证码" >
+            </a-input>
+          </a-col>
+          <a-col class="gutter-row" :span="8" >
+            <a-button
+              tabindex="-1"
+              size="default"
+              :disabled="state.smsSendBtn"
+              @click.stop.prevent="getCaptcha"
+              v-text="!state.smsSendBtn && '获取验证码' || (state.time+' s')"></a-button>
+          </a-col>
+        </a-row>
       </a-form-item>
       <a-form-item :wrapperCol="{span: 19, offset: 5}">
-      <a-button style="margin-left: 8px" @click="prevStep">上一步</a-button>
-       <a-button type="primary" @click="nextStep" style="margin-left: 20px">下一步</a-button>
-    </a-form-item>
+        <a-button style="margin-left: 8px" @click="prevStep">上一步</a-button>
+        <a-button type="primary" @click="nextStep" style="margin-left: 20px">下一步</a-button>
+      </a-form-item>
 
     </a-form>
   </div>

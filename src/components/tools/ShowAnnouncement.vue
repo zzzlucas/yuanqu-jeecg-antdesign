@@ -3,7 +3,7 @@
     class="announcementCustomModal"
     :width="modelStyle.width"
     :visible="visible"
-    :bodyStyle ="bodyStyle"
+    :bodyStyle="bodyStyle"
     @cancel="handleCancel"
     destroyOnClose
     :footer="null">

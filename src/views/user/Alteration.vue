@@ -7,7 +7,7 @@
       <a-step title="完成" />
     </a-steps>
     <div class="content">
-      <step1 v-if="currentTab === 0" @nextStep="nextStep"  />
+      <step1 v-if="currentTab === 0" @nextStep="nextStep" />
       <step2 v-if="currentTab === 1" @nextStep="nextStep" @prevStep="prevStep" :userList="userList"/>
       <step3 v-if="currentTab === 2" @nextStep="nextStep" @prevStep="prevStep" :userList="userList"/>
       <step4 v-if="currentTab === 3" @prevStep="prevStep" @finish="finish" :userList="userList"/>

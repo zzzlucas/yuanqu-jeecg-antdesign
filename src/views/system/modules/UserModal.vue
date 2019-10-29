@@ -45,7 +45,7 @@
             mode="multiple"
             style="width: 100%"
             placeholder="请选择用户角色"
-            optionFilterProp = "children"
+            optionFilterProp="children"
             v-model="selectedRole">
             <a-select-option v-for="(role,roleindex) in roleList" :key="roleindex.toString()" :value="role.id">
               {{ role.roleName }}
@@ -105,7 +105,7 @@
         </a-form-item>
 
         <a-form-item label="工作流引擎" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <j-dict-select-tag  v-decorator="['activitiSync', {}]" placeholder="请选择是否同步工作流引擎" :type="'radio'" :triggerChange="true" dictCode="activiti_sync"/>
+          <j-dict-select-tag v-decorator="['activitiSync', {}]" placeholder="请选择是否同步工作流引擎" :type="'radio'" :triggerChange="true" dictCode="activiti_sync"/>
         </a-form-item>
 
       </a-form>

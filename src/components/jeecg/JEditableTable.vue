@@ -72,9 +72,9 @@
               <!-- tr 只加载可见的和预加载的总共十条数据 -->
               <div
                 v-if="
-                rowIndex >= parseInt(`${(scrollTop-rowHeight) / rowHeight}`) &&
-                  (parseInt(`${scrollTop / rowHeight}`) + 9) > rowIndex
-              "
+                  rowIndex >= parseInt(`${(scrollTop-rowHeight) / rowHeight}`) &&
+                    (parseInt(`${scrollTop / rowHeight}`) + 9) > rowIndex
+                "
                 :id="`${caseId}tbody-tr-${rowIndex}`"
                 :data-idx="rowIndex"
                 class="tr"
@@ -155,29 +155,29 @@
                         :visible="(tooltips[id] || {}).visible || false"
                         :autoAdjustOverflow="true">
 
-                      <span
-                        @mouseover="()=>{handleMouseoverCommono(row,col)}"
-                        @mouseout="()=>{handleMouseoutCommono(row,col)}">
+                        <span
+                          @mouseover="()=>{handleMouseoverCommono(row,col)}"
+                          @mouseout="()=>{handleMouseoutCommono(row,col)}">
 
-                        <a-select
-                          :id="id"
-                          :key="i"
-                          v-bind="buildProps(row,col)"
-                          style="width: 100%;"
-                          :value="selectValues[id]"
-                          :options="col.options"
-                          :getPopupContainer="getParentContainer"
-                          :placeholder="replaceProps(col, col.placeholder)"
-                          @change="(v)=>handleChangeSelectCommon(v,id,row,col)"
-                          @search="(v)=>handleSearchSelect(v,id,row,col)"
-                          @blur="(v)=>handleBlurSearch(v,id,row,col)"
-                        >
+                          <a-select
+                            :id="id"
+                            :key="i"
+                            v-bind="buildProps(row,col)"
+                            style="width: 100%;"
+                            :value="selectValues[id]"
+                            :options="col.options"
+                            :getPopupContainer="getParentContainer"
+                            :placeholder="replaceProps(col, col.placeholder)"
+                            @change="(v)=>handleChangeSelectCommon(v,id,row,col)"
+                            @search="(v)=>handleSearchSelect(v,id,row,col)"
+                            @blur="(v)=>handleBlurSearch(v,id,row,col)"
+                          >
 
                           <!--<template v-for="(opt,optKey) in col.options">-->
                           <!--<a-select-option :value="opt.value" :key="optKey">{{ opt.title }}</a-select-option>-->
                           <!--</template>-->
-                        </a-select>
-                      </span>
+                          </a-select>
+                        </span>
                       </a-tooltip>
                     </template>
                     <!-- date -->
@@ -190,24 +190,24 @@
                         :visible="(tooltips[id] || {}).visible || false"
                         :autoAdjustOverflow="true">
 
-                      <span
-                        @mouseover="()=>{handleMouseoverCommono(row,col)}"
-                        @mouseout="()=>{handleMouseoutCommono(row,col)}">
+                        <span
+                          @mouseover="()=>{handleMouseoverCommono(row,col)}"
+                          @mouseout="()=>{handleMouseoutCommono(row,col)}">
 
-                        <j-date
-                          :id="id"
-                          :key="i"
-                          v-bind="buildProps(row,col)"
-                          style="width: 100%;"
-                          :value="jdateValues[id]"
-                          :getCalendarContainer="getParentContainer"
-                          :placeholder="replaceProps(col, col.placeholder)"
-                          :trigger-change="true"
-                          :showTime="col.type === formTypes.datetime"
-                          :dateFormat="col.type === formTypes.date? 'YYYY-MM-DD':'YYYY-MM-DD HH:mm:ss'"
-                          @change="(v)=>handleChangeJDateCommon(v,id,row,col,col.type === formTypes.datetime)"/>
+                          <j-date
+                            :id="id"
+                            :key="i"
+                            v-bind="buildProps(row,col)"
+                            style="width: 100%;"
+                            :value="jdateValues[id]"
+                            :getCalendarContainer="getParentContainer"
+                            :placeholder="replaceProps(col, col.placeholder)"
+                            :trigger-change="true"
+                            :showTime="col.type === formTypes.datetime"
+                            :dateFormat="col.type === formTypes.date? 'YYYY-MM-DD':'YYYY-MM-DD HH:mm:ss'"
+                            @change="(v)=>handleChangeJDateCommon(v,id,row,col,col.type === formTypes.datetime)"/>
 
-                      </span>
+                        </span>
                       </a-tooltip>
                     </template>
 

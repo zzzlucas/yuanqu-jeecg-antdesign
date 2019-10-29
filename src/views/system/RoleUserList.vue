@@ -13,11 +13,11 @@
                 </a-form-item>
               </a-col>
               <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
-            <a-col :md="12" :sm="24">
-               <a-button type="primary" @click="searchQuery" icon="search" style="margin-left: 21px">查询</a-button>
-              <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
-            </a-col>
-          </span>
+                <a-col :md="12" :sm="24">
+                  <a-button type="primary" @click="searchQuery" icon="search" style="margin-left: 21px">查询</a-button>
+                  <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
+                </a-col>
+              </span>
             </a-row>
           </a-form>
         </div>
@@ -25,7 +25,13 @@
         <div class="table-operator" style="margin: -8px 0 10px 2px">
           <a-button @click="handleAdd" type="primary" icon="plus">角色录入</a-button>
           <a-button @click="handleEdit(model1)" type="primary" icon="plus">角色编辑</a-button>
-          <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" @change="handleImportExcel">
+          <a-upload
+            name="file"
+            :showUploadList="false"
+            :multiple="false"
+            :headers="tokenHeader"
+            :action="importExcelUrl"
+            @change="handleImportExcel">
             <a-button type="primary" icon="import">导入</a-button>
           </a-upload>
           <a-button type="primary" icon="download" @click="handleExportXls">导出</a-button>
@@ -50,22 +56,22 @@
             :loading="loading"
             :rowSelection="{selectedRowKeys: selectedRowKeys1, onChange: onSelectChange1, type:'radio'}"
             @change="handleTableChange">
-          <span slot="action" slot-scope="text, record">
-          <a @click="handleOpen(record)">用户</a>
-          <a-divider type="vertical"/>
-          <a-dropdown>
-            <a class="ant-dropdown-link">
-              更多 <a-icon type="down"/>
-            </a>
-            <a-menu slot="overlay">
-              <a-menu-item>
-                <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete1(record.id)">
-                  <a>删除</a>
-                </a-popconfirm>
-              </a-menu-item>
-            </a-menu>
-          </a-dropdown>
-        </span>
+            <span slot="action" slot-scope="text, record">
+              <a @click="handleOpen(record)">用户</a>
+              <a-divider type="vertical"/>
+              <a-dropdown>
+                <a class="ant-dropdown-link">
+                  更多 <a-icon type="down"/>
+                </a>
+                <a-menu slot="overlay">
+                  <a-menu-item>
+                    <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete1(record.id)">
+                      <a>删除</a>
+                    </a-popconfirm>
+                  </a-menu-item>
+                </a-menu>
+              </a-dropdown>
+            </span>
           </a-table>
         </div>
       </a-card>
@@ -83,12 +89,12 @@
                 </a-form-item>
               </a-col>
               <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
-            <a-col :md="9" :sm="24">
-             <a-button type="primary" @click="searchQuery2" icon="search" style="margin-left: 21px">查询</a-button>
-              <a-button type="primary" @click="searchReset2" icon="reload" style="margin-left: 8px">重置</a-button>
+                <a-col :md="9" :sm="24">
+                  <a-button type="primary" @click="searchQuery2" icon="search" style="margin-left: 21px">查询</a-button>
+                  <a-button type="primary" @click="searchReset2" icon="reload" style="margin-left: 8px">重置</a-button>
 
-            </a-col>
-          </span>
+                </a-col>
+              </span>
             </a-row>
           </a-form>
         </div>
@@ -114,7 +120,7 @@
         <div>
           <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;">
             <i class="anticon anticon-info-circle ant-alert-icon"></i> 已选择 <a style="font-weight: 600">{{
-            selectedRowKeys2.length }}</a>项
+              selectedRowKeys2.length }}</a>项
             <a style="margin-left: 24px" @click="onClearSelected2">清空</a>
           </div>
           <a-table
@@ -129,22 +135,22 @@
             :loading="loading2"
             :rowSelection="{selectedRowKeys: selectedRowKeys2, onChange: onSelectChange2}"
             @change="handleTableChange2">
-           <span slot="action" slot-scope="text, record">
-           <a @click="handleEdit2(record)">编辑</a>
-          <a-divider type="vertical"/>
-          <a-dropdown>
-            <a class="ant-dropdown-link">
-              更多 <a-icon type="down"/>
-            </a>
-            <a-menu slot="overlay">
-              <a-menu-item>
-                <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete2(record.id)">
-                  <a>删除</a>
-                </a-popconfirm>
-              </a-menu-item>
-            </a-menu>
-          </a-dropdown>
-        </span>
+            <span slot="action" slot-scope="text, record">
+              <a @click="handleEdit2(record)">编辑</a>
+              <a-divider type="vertical"/>
+              <a-dropdown>
+                <a class="ant-dropdown-link">
+                  更多 <a-icon type="down"/>
+                </a>
+                <a-menu slot="overlay">
+                  <a-menu-item>
+                    <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete2(record.id)">
+                      <a>删除</a>
+                    </a-popconfirm>
+                  </a-menu-item>
+                </a-menu>
+              </a-dropdown>
+            </span>
           </a-table>
         </div>
         <!-- 表单区域 -->

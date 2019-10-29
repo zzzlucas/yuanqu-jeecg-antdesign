@@ -123,9 +123,9 @@
           <template v-if="hasBpmStatus">
             <template v-if="record.bpm_status == '1'||record.bpm_status == ''|| record.bpm_status == null">
               <template v-if="buttonSwitch.update">
-              <a @click="handleEdit(record)">编辑</a>
-              <a-divider type="vertical"/>
-            </template>
+                <a @click="handleEdit(record)">编辑</a>
+                <a-divider type="vertical"/>
+              </template>
             </template>
           </template>
           <template v-else>
@@ -150,7 +150,7 @@
                     <a>删除</a>
                   </a-popconfirm>
                 </a-menu-item>
-               </template>
+              </template>
               <template v-if="cgButtonLinkList && cgButtonLinkList.length>0" v-for="(btnItem,btnIndex) in cgButtonLinkList">
                 <a-menu-item :key=" 'cgbtnLink'+btnIndex ">
                   <a href="javascript:void(0);" @click="cgButtonLinkHandler(record,btnItem.buttonCode,btnItem.optType)">
