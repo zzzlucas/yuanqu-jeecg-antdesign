@@ -20,16 +20,19 @@
         <!--数据表格-->
         <a-col class="table-col">
           <a-table bordered :data-source="tableData"
+                   :pagination="{ total: count }"
                    :rowSelection="{
                       onSelect: tableSelect.select,
                       onSelectAll: tableSelect.selectAll,
                       onChange: tableSelect.change,
                       selectedRowKeys: tableSelect.keys
-                   }">
-            <a-table-column title="园区代码" data-index="id" key="id"></a-table-column>
-            <a-table-column title="园区名称" data-index="name" key="name"></a-table-column>
-            <a-table-column title="联系电话" data-index="phone" key="phone"></a-table-column>
-            <a-table-column title="地址" data-index="address" key="address"></a-table-column>
+                   }"
+                   @change="tableChange">
+            <a-table-column title="园区代码" data-index="PARK_ID"></a-table-column>
+            <a-table-column title="园区名称" data-index="PARK_NAME"></a-table-column>
+            <a-table-column title="总建筑面积" data-index="TOTAL_BULIDING_AREA"></a-table-column>
+            <a-table-column title="联系电话" data-index="TELEPHONE"></a-table-column>
+            <a-table-column title="地址" data-index="ADDRESS"></a-table-column>
           </a-table>
         </a-col>
       </a-row>
@@ -41,26 +44,16 @@
 
 <script>
   import ParksAddForm from '@views/industrial-parks/model/ParksAddForm'
+  import Config from '@/defaultSettings'
+  import { getAction } from '@/api/manage'
 
   export default {
     name: 'IndustrialParksList',
     components: { ParksAddForm },
     data() {
       return {
-        tableData: [
-          {
-            id: 1,
-            name: '南湖科技城区',
-            phone: '13800001111',
-            address: '嘉兴市南湖区亚美路与由拳路交叉口'
-          },
-          {
-            id: 2,
-            name: '秀洲智慧产业园',
-            phone: '13800001111',
-            address: '嘉兴市秀洲区三环路西南角'
-          }
-        ],
+        count: 0,
+        tableData: [],
         tableSelect: {
           keys: [],
           select: (row, bool, select) => {
@@ -77,12 +70,27 @@
         rightShow: false
       }
     },
+    created() {
+      this.getTableData(1, 10)
+    },
     methods: {
+      getTableData(page, limit) {
+        getAction(Config.mock + '/jeecg-boot/park.base/basePark/list', { page, limit }).then(res => {
+          if (res.code === 200) {
+            this.count = res.result.count
+            this.tableData = res.result.list
+          }
+        })
+      },
       cleanTableCheck() {
         this.tableSelect.keys > 0 && (this.tableSelect.keys = [])
       },
       search(query) {
         console.log('搜索内容:', query)
+      },
+      tableChange(pager) {
+        const { current, pageSize } = pager
+        this.getTableData(current, pageSize)
       }
     }
   }

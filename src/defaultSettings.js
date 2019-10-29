@@ -28,5 +28,6 @@ export default {
     namespace: 'pro__', // key prefix
     name: 'ls', // name variable Vue.[ls] or this.[$ls],
     storage: 'local', // storage name session, local, memory
-  }
+  },
+  mock: 'http://mock.bd.vlice.cn/mock/5db8085de5cb7f366a3f77bb/parks'
 }
