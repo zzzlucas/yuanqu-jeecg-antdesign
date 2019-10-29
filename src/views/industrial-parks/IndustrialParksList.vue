@@ -93,7 +93,7 @@
 
   .industrial-parks-list {
     .header-col {
-      .ant-btn + .ant-btn {
+      & > .ant-btn + .ant-btn {
         margin-left: 10px;
       }
 
