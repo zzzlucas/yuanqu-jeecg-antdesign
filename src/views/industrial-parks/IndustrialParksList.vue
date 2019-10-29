@@ -28,11 +28,11 @@
                       selectedRowKeys: tableSelect.keys
                    }"
                    @change="tableChange">
-            <a-table-column title="园区代码" data-index="PARK_ID"></a-table-column>
-            <a-table-column title="园区名称" data-index="PARK_NAME"></a-table-column>
-            <a-table-column title="总建筑面积" data-index="TOTAL_BULIDING_AREA"></a-table-column>
-            <a-table-column title="联系电话" data-index="TELEPHONE"></a-table-column>
-            <a-table-column title="地址" data-index="ADDRESS"></a-table-column>
+            <a-table-column title="园区代码" data-index="park_id"></a-table-column>
+            <a-table-column title="园区名称" data-index="park_name"></a-table-column>
+            <a-table-column title="总建筑面积" data-index="total_buliding_area"></a-table-column>
+            <a-table-column title="联系电话" data-index="telephone"></a-table-column>
+            <a-table-column title="地址" data-index="address"></a-table-column>
           </a-table>
         </a-col>
       </a-row>
@@ -45,7 +45,7 @@
 <script>
   import ParksAddForm from '@views/industrial-parks/model/ParksAddForm'
   import Config from '@/defaultSettings'
-  import { getAction } from '@/api/manage'
+  import { deleteAction, getAction } from '@/api/manage'
 
   export default {
     name: 'IndustrialParksList',
@@ -58,13 +58,16 @@
           keys: [],
           select: (row, bool, select) => {
             this.selectCount = select.length
+            this.tableSelect.data = select
           },
           selectAll: (bool, select) => {
             this.selectCount = select.length
+            this.tableSelect.data = select
           },
           change: (keys) => {
             this.tableSelect.keys = keys
-          }
+          },
+          data: []
         },
         selectCount: 0,
         rightShow: false
@@ -94,6 +97,24 @@
       tableChange(pager) {
         const { current, pageSize } = pager
         this.getTableData(current, pageSize)
+      },
+      batchDelete() {
+        const data = this.tableSelect.data
+        const ids = []
+
+        for (const item of data) {
+          ids.push(item.park_id)
+        }
+
+        deleteAction(Config.mock + '/jeecg-boot/park.base/basePark/deleteBatch', { ids }).then(res => {
+          if (res.code === 200) {
+            this.$message.success(res.message)
+            this.tableSelect.keys = []
+            this.getTableData(1, 10)
+          } else {
+            this.$message.error(res.message)
+          }
+        })
       }
     }
   }
