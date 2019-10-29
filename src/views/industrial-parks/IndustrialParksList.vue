@@ -3,7 +3,7 @@
     <div class="industrial-parks-list">
       <a-row>
         <a-col class="header-col">
-          <a-button type="primary">登记</a-button>
+          <a-button type="primary" @click="rightShow = true">登记</a-button>
           <a-button>批量删除</a-button>
           <a-input-search class="search-input" placeholder="园区名称" enterButton @search="search"></a-input-search>
         </a-col>
@@ -31,12 +31,15 @@
         </a-col>
       </a-row>
     </div>
+    <parks-list-form v-model="rightShow"></parks-list-form>
   </a-card>
 </template>
 
 <script>
+  import ParksListForm from '@views/industrial-parks/model/ParksListForm'
   export default {
     name: 'IndustrialParksList',
+    components: { ParksListForm },
     data() {
       return {
         tableData: [
@@ -65,7 +68,8 @@
             this.tableSelect.keys = keys
           }
         },
-        selectCount: 0
+        selectCount: 0,
+        rightShow: false
       }
     },
     methods: {
