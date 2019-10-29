@@ -83,7 +83,10 @@
         })
       },
       cleanTableCheck() {
-        this.tableSelect.keys > 0 && (this.tableSelect.keys = [])
+        if (this.tableSelect.keys.length > 0) {
+          this.tableSelect.keys = []
+          this.selectCount = 0
+        }
       },
       search(query) {
         console.log('搜索内容:', query)
