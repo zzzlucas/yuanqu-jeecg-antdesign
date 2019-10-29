@@ -5,7 +5,9 @@
         <!--头部块-->
         <a-col class="header-col">
           <a-button type="primary" @click="rightShow = true">登记</a-button>
-          <a-button>批量删除</a-button>
+          <a-button @click="batchDelete">批量删除</a-button>
+          <a-button v-has="'admin:see'">回收站</a-button>
+          <a-button v-has="'admin:see'">批量恢复</a-button>
           <a-input-search class="search-input" placeholder="园区名称" enterButton @search="search"></a-input-search>
         </a-col>
         <!--Alert 块-->
