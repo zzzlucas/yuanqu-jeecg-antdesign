@@ -1,157 +1,194 @@
 <template>
   <a-card :bordered="false">
-    <div class="industrial-parks-list">
-      <a-row>
-        <!--头部块-->
-        <a-col class="header-col">
-          <a-button type="primary" @click="rightShow = true">登记</a-button>
-          <a-button @click="batchDelete">批量删除</a-button>
-          <a-button v-has="'admin:see'">回收站</a-button>
-          <a-button v-has="'admin:see'">批量恢复</a-button>
-          <a-input-search class="search-input" placeholder="园区名称" enterButton @search="search"></a-input-search>
-        </a-col>
-        <!--Alert 块-->
-        <a-col class="alert-col">
-          <a-alert type="info">
-            <span slot="message">
-              已选择 {{ selectCount }} 项
-              <a class="clean-btn" @click="cleanTableCheck">清空</a>
+
+    <!-- 查询区域 -->
+    <div class="table-page-search-wrapper">
+      <a-form layout="inline" @keyup.enter.native="searchQuery">
+        <a-row :gutter="24">
+
+          <a-col :md="6" :sm="8">
+            <a-form-item label="园区ID">
+              <a-input placeholder="请输入园区ID" v-model="queryParam.parkId"></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :md="6" :sm="8">
+            <a-form-item label="所属部门Id">
+              <a-input placeholder="请输入所属部门Id" v-model="queryParam.deptIdS"></a-input>
+            </a-form-item>
+          </a-col>
+          <template v-if="toggleSearchStatus">
+            <a-col :md="6" :sm="8">
+              <a-form-item label="所属部门机构编码">
+                <a-input placeholder="请输入所属部门机构编码" v-model="queryParam.deptOrgCodeS"></a-input>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="8">
+              <a-form-item label="园区名称">
+                <a-input placeholder="请输入园区名称" v-model="queryParam.parkName"></a-input>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="8">
+              <a-form-item label="总建筑面积">
+                <a-input placeholder="请输入总建筑面积" v-model="queryParam.totalBulidingArea"></a-input>
+              </a-form-item>
+            </a-col>
+          </template>
+          <a-col :md="6" :sm="8" >
+            <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
+              <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
+              <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
+              <a @click="handleToggleSearch" style="margin-left: 8px">
+                {{ toggleSearchStatus ? '收起' : '展开' }}
+                <a-icon :type="toggleSearchStatus ? 'up' : 'down'"/>
+              </a>
             </span>
-          </a-alert>
-        </a-col>
-        <!--数据表格-->
-        <a-col class="table-col">
-          <a-table
-            bordered
-            :data-source="tableData"
-            :pagination="{ total: count }"
-            :rowSelection="{
-              onSelect: tableSelect.select,
-              onSelectAll: tableSelect.selectAll,
-              onChange: tableSelect.change,
-              selectedRowKeys: tableSelect.keys
-            }"
-            @change="tableChange">
-            <a-table-column title="园区代码" data-index="park_id"></a-table-column>
-            <a-table-column title="园区名称" data-index="park_name"></a-table-column>
-            <a-table-column title="总建筑面积" data-index="total_buliding_area"></a-table-column>
-            <a-table-column title="联系电话" data-index="telephone"></a-table-column>
-            <a-table-column title="地址" data-index="address"></a-table-column>
-          </a-table>
-        </a-col>
-      </a-row>
+          </a-col>
+
+        </a-row>
+      </a-form>
     </div>
-    <!--抽屉组件: model/ParksAddForm.vue-->
+
+    <!-- 操作按钮区域 -->
+    <div class="table-operator">
+      <a-button @click="rightShow = true" type="primary" icon="plus">新增</a-button>
+      <a-button type="primary" icon="download" @click="handleExportXls('园区信息')">导出</a-button>
+      <a-upload
+        name="file"
+        :showUploadList="false"
+        :multiple="false"
+        :headers="tokenHeader"
+        :action="importExcelUrl"
+        @change="handleImportExcel">
+        <a-button type="primary" icon="import">导入</a-button>
+      </a-upload>
+      <a-dropdown v-if="selectedRowKeys.length > 0">
+        <a-menu slot="overlay">
+          <a-menu-item key="1" @click="batchDel"><a-icon type="delete"/>删除</a-menu-item>
+        </a-menu>
+        <a-button style="margin-left: 8px"> 批量操作 <a-icon type="down" /></a-button>
+      </a-dropdown>
+    </div>
+
+    <!-- table区域-begin -->
+    <div>
+      <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;">
+        <i class="anticon anticon-info-circle ant-alert-icon"></i> 已选择 <a style="font-weight: 600">{{ selectedRowKeys.length }}</a>项
+        <a style="margin-left: 24px" @click="onClearSelected">清空</a>
+      </div>
+
+      <a-table
+        ref="table"
+        size="middle"
+        bordered
+        rowKey="id"
+        :columns="columns"
+        :dataSource="dataSource"
+        :pagination="ipagination"
+        :loading="loading"
+        :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
+        @change="handleTableChange">
+
+        <span slot="action" slot-scope="text, record">
+          <a @click="handleEdit(record)">编辑</a>
+
+          <a-divider type="vertical" />
+          <a-dropdown>
+            <a class="ant-dropdown-link">更多 <a-icon type="down" /></a>
+            <a-menu slot="overlay">
+              <a-menu-item>
+                <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
+                  <a>删除</a>
+                </a-popconfirm>
+              </a-menu-item>
+            </a-menu>
+          </a-dropdown>
+        </span>
+
+      </a-table>
+    </div>
+    <!-- table区域-end -->
+
+    <!-- 表单区域 -->
     <parks-add-form v-model="rightShow"></parks-add-form>
   </a-card>
 </template>
 
 <script>
-  import ParksAddForm from '@views/industrial-parks/model/ParksAddForm'
+  import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import Config from '@/defaultSettings'
-  import { deleteAction, getAction } from '@/api/manage'
+  import ParksAddForm from '@views/industrial-parks/model/ParksAddForm'
 
   export default {
-    name: 'IndustrialParksList',
+    name: "IndustrialParksList",
     components: { ParksAddForm },
-    data() {
+    mixins:[JeecgListMixin],
+    data () {
       return {
-        count: 0,
-        tableData: [],
-        tableSelect: {
-          keys: [],
-          select: (row, bool, select) => {
-            this.selectCount = select.length
-            this.tableSelect.data = select
+        description: '园区信息管理页面',
+        // 表头
+        columns: [
+          {
+            title: '#',
+            dataIndex: '',
+            key:'rowIndex',
+            width:60,
+            align:"center",
+            customRender:function (t,r,index) {
+              return parseInt(index)+1;
+            }
           },
-          selectAll: (bool, select) => {
-            this.selectCount = select.length
-            this.tableSelect.data = select
+          {
+            title: '园区ID',
+            align:"center",
+            dataIndex: 'parkId'
           },
-          change: (keys) => {
-            this.tableSelect.keys = keys
+          {
+            title: '园区名称',
+            align:"center",
+            dataIndex: 'parkName'
           },
-          data: []
+          {
+            title: '总建筑面积',
+            align:"center",
+            dataIndex: 'totalBulidingArea'
+          },
+          {
+            title: '地址',
+            align:"center",
+            dataIndex: 'address'
+          },
+          {
+            title: '联系电话',
+            align:"center",
+            dataIndex: 'telephone'
+          },
+          {
+            title: '操作',
+            dataIndex: 'action',
+            align:"center",
+            scopedSlots: { customRender: 'action' },
+          }
+        ],
+        url: {
+          list: Config.mock + "/park.base/basePark/list",
+          delete: "/park.base/basePark/delete",
+          deleteBatch: Config.mock + "/park.base/basePark/deleteBatch",
+          exportXlsUrl: "park.base/basePark/exportXls",
+          importExcelUrl: "park.base/basePark/importExcel",
         },
-        selectCount: 0,
         rightShow: false
       }
     },
-    created() {
-      this.getTableData(1, 10)
+    computed: {
+      importExcelUrl: function(){
+        return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`;
+      }
     },
     methods: {
-      getTableData(page, limit) {
-        getAction(Config.mock + '/jeecg-boot/park.base/basePark/list', { page, limit }).then(res => {
-          if (res.code === 200) {
-            this.count = res.result.count
-            this.tableData = res.result.list
-          }
-        })
-      },
-      cleanTableCheck() {
-        if (this.tableSelect.keys.length > 0) {
-          this.tableSelect.keys = []
-          this.selectCount = 0
-        }
-      },
-      search(query) {
-        console.log('搜索内容:', query)
-      },
-      tableChange(pager) {
-        const { current, pageSize } = pager
-        this.getTableData(current, pageSize)
-      },
-      batchDelete() {
-        const data = this.tableSelect.data
-        const ids = []
 
-        for (const item of data) {
-          ids.push(item.park_id)
-        }
-
-        deleteAction(Config.mock + '/jeecg-boot/park.base/basePark/deleteBatch', { ids }).then(res => {
-          if (res.code === 200) {
-            this.$message.success(res.message)
-            this.tableSelect.keys = []
-            this.getTableData(1, 10)
-          } else {
-            this.$message.error(res.message)
-          }
-        })
-      }
     }
   }
 </script>
-
 <style lang="less">
-  @import "~ant-design-vue/es/style/themes/default";
-
-  .industrial-parks-list {
-    .header-col {
-      & > .ant-btn + .ant-btn {
-        margin-left: 10px;
-      }
-
-      .search-input {
-        position: relative;
-        top: 1px;
-        width: 300px;
-        margin-left: 30px;
-      }
-    }
-
-    .alert-col {
-      margin-top: 20px;
-
-      .clean-btn {
-        color: @link-color;
-        margin-left: 25px;
-      }
-    }
-
-    .table-col {
-      margin-top: 15px;
-    }
-  }
+  @import "../../assets/less/common.less";
 </style>
