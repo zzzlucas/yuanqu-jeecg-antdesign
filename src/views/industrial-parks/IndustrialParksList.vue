@@ -116,7 +116,7 @@
 <script>
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import Config from '@/defaultSettings'
-  import ParksAddForm from '@views/industrial-parks/model/ParksAddForm'
+  import ParksAddForm from '@views/industrial-parks/components/ParksAddForm'
 
   export default {
     name: "IndustrialParksList",
