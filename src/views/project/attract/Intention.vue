@@ -1,0 +1,303 @@
+<template>
+  <!-- 项目登记 -->
+  <a-card :bordered="false">
+    <!-- 查询区域 -->
+    <div class="table-page-search-wrapper">
+      <a-form layout="inline">
+        <a-row :gutter="24">
+          <a-col :span="6">
+            <a-form-item label="关键字">
+              <a-input placeholder="输入项目名称" v-model="queryParam.titile"></a-input>
+            </a-form-item>
+          </a-col>
+
+          <a-col :span="8">
+            <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
+              <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
+              <a-button
+                type="primary"
+                @click="searchReset"
+                icon="reload"
+                style="margin-left: 8px"
+              >重置</a-button>
+            </span>
+          </a-col>
+          <!-- 右侧新建项目 -->
+          <a-col :span="8" style="float: right">
+            <span style="float: right;overflow: hidden;" class="table-page-search-submitButtons">
+              <a-button type="primary" @click="goAddLand()">新建项目（拿地）</a-button>
+              <a-button type="primary" @click="goAddLease()" style="margin-left: 8px">新建项目（租赁）</a-button>
+            </span>
+          </a-col>
+        </a-row>
+      </a-form>
+    </div>
+
+    <a-table
+      ref="table"
+      size="default"
+      bordered
+      rowKey="id"
+      :columns="columns"
+      :dataSource="dataSource"
+      :pagination="ipagination"
+      :loading="loading"
+      @change="handleTableChange"
+    >
+      <!-- :customRow="customRow" -->
+      <span slot="action" slot-scope="text, record">
+        <a-dropdown>
+          <a class="ant-dropdown-link" @click="rightShow = true">
+            跟踪登记
+            <a-icon type="down" />
+          </a>
+          <a-menu slot="overlay">
+            <a-menu-item>
+              <a @click="showTwo(record)">跟踪记录</a>
+            </a-menu-item>
+            <a-menu-item>
+              <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
+                <a>转为重点跟进</a>
+              </a-popconfirm>
+            </a-menu-item>
+            <a-menu-item>
+              <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
+                <a>转为拟落地</a>
+              </a-popconfirm>
+            </a-menu-item>
+            <a-menu-item>
+              <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
+                <a>转为落地</a>
+              </a-popconfirm>
+            </a-menu-item>
+            <a-menu-item>
+              <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
+                <a>转为留存</a>
+              </a-popconfirm>
+            </a-menu-item>
+            <a-menu-item>
+              <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
+                <a>删除</a>
+              </a-popconfirm>
+            </a-menu-item>
+          </a-menu>
+        </a-dropdown>
+        <a-divider type="vertical" />
+        <!-- 写一个三元表达式判断对应表单类型？
+        -->
+        <a @click="goAddLease(record)">项目维护</a>
+
+        <a-divider type="vertical" />
+        <a @click="showOne(record)">项目分配</a>
+      </span>
+    </a-table>
+
+    <!-- 表单区域 -->
+    <mgr-project-trace-drawer v-model="rightShow"></mgr-project-trace-drawer>
+    <show-one ref="ShowOne"></show-one>
+    <show-two @showOneToTwo="showOne" ref="ShowTwo"></show-two>
+    <!-- <register-form v-model="rightShow"></register-form> -->
+  </a-card>
+</template>
+<script>
+//不知道是否必要
+import { filterObj } from '@/utils/util'
+//必要
+import { getAction, putAction } from '@/api/manage'
+import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+
+// import Config from '@/defaultSettings'
+
+// import RegisterForm from './modules/RegisterForm'
+import MgrProjectTraceDrawer from './modules/mgrProjectTraceDrawer'
+import ShowOne from './modules/ShowOneD'
+import ShowTwo from './modules/ShowTwoM'
+
+export default {
+  name: 'UserAnnouncementList',
+  mixins: [JeecgListMixin],
+  components: {
+    ShowOne,
+    ShowTwo,
+    // RegisterForm,
+    MgrProjectTraceDrawer
+  },
+  data() {
+    return {
+      description: '项目登记页面（原系统通告表管理页面）',
+      queryParam: {},
+      columns: [
+        {
+          title: '项目名称',
+          align: 'center',
+          dataIndex: 'projectName' //数据绑定项目
+        },
+        {
+          title: '项目类别',
+          align: 'center',
+          dataIndex: 'projectType'
+          // customRender: function(text) {
+          //   if (text == '1') {
+          //     return '租赁'
+          //   } else if (text == '2') {
+          //     return '拿地'
+          //   } else {
+          //     return text
+          //   }
+          // }
+        },
+        {
+          title: '行业类别',
+          align: 'center',
+          dataIndex: 'industrySectorValue'
+          // customRender: function(text) {
+          //   if (text == '1') {
+          //     //返回此页的数据目前是admin 字符串
+          //     return '移动互联网'
+          //   } else if (text == '2') {
+          //     return '移动互联网'
+          //   } else {
+          //     return '移动互联网'
+          //   }
+          // }
+        },
+        {
+          title: '总投资（万元）',
+          align: 'center',
+          dataIndex: 'sendTime'
+        },
+        {
+          title: '项目联系人',
+          align: 'center',
+          dataIndex: 'agentPerson'
+        },
+        {
+          title: '联系电话',
+          align: 'center',
+          dataIndex: 'agentTel'
+        },
+        {
+          title: '项目状态',
+          align: 'center',
+          dataIndex: 'status'
+          // customRender: function(text) {
+          //   if (text == '1') {
+          //     //返回此页的数据目前是 undefined？
+          //     return '已申报'
+          //   } else if (text == '2') {
+          //     return '未申报'
+          //   } else {
+          //     return '未申报'
+          //   }
+          // }
+        },
+        {
+          title: '拿地面积（m²）',
+          align: 'center',
+          dataIndex: 'gainArea'
+        },
+        {
+          title: '最近跟踪纪要',
+          align: 'center',
+          dataIndex: ''
+        },
+        {
+          title: '操作',
+          dataIndex: 'action',
+          align: 'center',
+          scopedSlots: { customRender: 'action' }
+        }
+      ],
+      // customRow: record => {
+      //   return {
+      //     on: {
+      //       click: e => {
+      //         this.$router.push({ path: '/project/attract/detail' })
+      //       }
+      //     }
+      //   }
+      // },
+      url: {
+        // list: '/sys/sysAnnouncementSend/getMyAnnouncementSend',
+        list: '/park.project/mgrProjectInfo/list',
+        editCementSend: 'sys/sysAnnouncementSend/editByAnntIdAndUserId',
+        readAllMsg: 'sys/sysAnnouncementSend/readAll'
+      },
+      loading: false,
+      rightShow: false
+    }
+  },
+  mounted() {
+    console.log('接下来显示数据 zzz')
+    console.log(this.columns)
+    console.log(this.columns.gainArea)
+  },
+  methods: {
+    //路由跳转
+    goAddLand() {
+      this.$router.push({ path: '/project/attract/addprojectland' })
+    },
+    goAddLease() {
+      this.$router.push({ path: '/project/attract/addprojectlease' })
+    },
+    handleDetail: function(record) {
+      this.$refs.sysAnnouncementModal.detail(record)
+      this.$refs.sysAnnouncementModal.title = '查看'
+    },
+    showOne(record) {
+      // console.log("1101.1445 showone");
+      putAction(this.url.editCementSend, { anntId: record.anntId }).then(res => {
+        if (res.success) {
+          this.loadData()
+        }
+      })
+      this.$refs.ShowOne.detail(record)
+    },
+    showTwo(record) {
+      // putAction(this.url.editCementSend, { anntId: record.anntId }).then(res => {
+      //   if (res.success) {
+      //     this.loadData()
+      //   }
+      // })
+      this.$refs.ShowTwo.detail(record)
+    },
+    readAll() {
+      var that = this
+      that.$confirm({
+        title: '确认操作',
+        content: '是否全部标注已读?',
+        onOk: function() {
+          putAction(that.url.readAllMsg).then(res => {
+            if (res.success) {
+              that.$message.success(res.message)
+              that.loadData()
+            }
+          })
+        }
+      })
+    }
+  }
+}
+</script>
+<style scoped>
+.ant-card-body .table-operator {
+  margin-bottom: 18px;
+}
+.anty-row-operator button {
+  margin: 0 5px;
+}
+.ant-btn-danger {
+  background-color: #ffffff;
+}
+z .ant-modal-cust-warp {
+  height: 100%;
+}
+.ant-modal-cust-warp .ant-modal-body {
+  height: calc(100% - 110px) !important;
+  overflow-y: auto;
+}
+.ant-modal-cust-warp .ant-modal-content {
+  height: 90% !important;
+  overflow-y: hidden;
+}
+</style>

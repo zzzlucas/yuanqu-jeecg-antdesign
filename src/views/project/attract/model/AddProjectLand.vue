@@ -1,9 +1,9 @@
 <template>
   <div>
     <page-layout :title="title">
-      <!-- <a-card class="top" :bordered="false">首页 / 技改项目/项目维护</a-card> -->
       <a-divider type="vertical" />
       <a-form @submit="handleSubmit" :form="form">
+
         <!-- 11111111111111 -->
         <a-card :bordered="false" style="width:1200px;margin:auto" title="企业信息">
           <!-- 行1 -->
@@ -11,12 +11,8 @@
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="项目单位" required>
                 <a-input
-                  required
                   placeholder
-                  v-decorator="[
-              'repository.name',
-              {rules: [{ required: true, message: '请输入单位名称', whitespace: true}]}
-            ]"
+                  v-decorator="['addProjectLandForm.danwei',{rules: [{ required: true, message: '请输入单位名称', whitespace: true}]}]"
                 />
               </a-form-item>
             </a-col>
@@ -25,7 +21,7 @@
                 <a-input
                   placeholder
                   v-decorator="[
-              'repository.name',
+              'addProjectLandForm.name',
               {rules: [{ required: true, message: '请输入组织机构代码', whitespace: true}]}
             ]"
                 />
@@ -39,7 +35,7 @@
                 <a-input
                   placeholder
                   v-decorator="[
-              'repository.name',
+              'addProjectLandForm.name',
               {rules: [{ required: true, message: '请输入单位地址', whitespace: true}]}
             ]"
                 />
@@ -69,7 +65,7 @@
                 <a-input
                   placeholder
                   v-decorator="[
-              'repository.name',
+              'addProjectLandForm.name',
               {rules: [{ required: true, message: '请输入数额', whitespace: true}]}
             ]"
                 />
@@ -83,7 +79,7 @@
                 <a-input
                   placeholder
                   v-decorator="[
-              'repository.name',
+              'addProjectLandForm.name',
               {rules: [{ required: true, message: '请输入数额', whitespace: true}]}
             ]"
                 />
@@ -94,7 +90,7 @@
                 <a-input
                   placeholder
                   v-decorator="[
-              'repository.name',
+              'addProjectLandForm.name',
               {rules: [{ required: true, message: '请输入数额', whitespace: true}]}
             ]"
                 />
@@ -108,7 +104,7 @@
                 <a-input
                   placeholder
                   v-decorator="[
-              'repository.name',
+              'addProjectLandForm.name',
               {rules: [{ required: true, message: '请输入法人姓名', whitespace: true}]}
             ]"
                 />
@@ -119,7 +115,7 @@
                 <a-input
                   placeholder
                   v-decorator="[
-              'repository.name',
+              'addProjectLandForm.name',
               {rules: [{ required: true, message: '请输入法人电话', whitespace: true}]}
             ]"
                 />
@@ -133,7 +129,7 @@
                 <a-input
                   placeholder
                   v-decorator="[
-              'repository.name',
+              'addProjectLandForm.name',
               {rules: [{ required: true, message: '请输入经办人姓名', whitespace: true}]}
             ]"
                 />
@@ -144,7 +140,7 @@
                 <a-input
                   placeholder
                   v-decorator="[
-              'repository.name',
+              'addProjectLandForm.name',
               {rules: [{ required: true, message: '请输入经办人电话', whitespace: true}]}
             ]"
                 />
@@ -158,7 +154,7 @@
                 <a-input
                   placeholder
                   v-decorator="[
-              'repository.name',
+              'addProjectLandForm.name',
               {rules: [{ required: true, message: '请输入电子信箱', whitespace: true}]}
             ]"
                 />
@@ -173,7 +169,7 @@
                   :rows="4"
                   placeholder
                   v-decorator="[
-              'repository.name'
+              'addProjectLandForm.name'
             ]"
                 />
               </a-form-item>
@@ -187,7 +183,7 @@
                   :rows="4"
                   placeholder
                   v-decorator="[
-              'repository.name'
+              'addProjectLandForm.name'
             ]"
                 />
               </a-form-item>
@@ -200,7 +196,7 @@
                 <a-input
                   placeholder
                   v-decorator="[
-              'repository.name',
+              'addProjectLandForm.name',
               {rules: [{ required: true, message: '请输入数额', whitespace: true}]}
             ]"
                 />
@@ -211,7 +207,7 @@
                 <a-input
                   placeholder
                   v-decorator="[
-              'repository.name',
+              'addProjectLandForm.name',
               {rules: [{ required: true, message: '请输入数额', whitespace: true}]}
             ]"
                 />
@@ -232,7 +228,7 @@
                   required
                   placeholder
                   v-decorator="[
-              'repository.name',
+              'addProjectLandForm.name',
               {rules: [{ required: true, message: '请输入项目名称', whitespace: true}]}
             ]"
                 />
@@ -246,7 +242,7 @@
                   required
                   placeholder
                   v-decorator="[
-              'repository.name',
+              'addProjectLandForm.name',
               {rules: [{ required: true, message: '请输入拟建设地址', whitespace: true}]}
             ]"
                 />
@@ -274,7 +270,7 @@
                 <a-input
                   placeholder
                   v-decorator="[
-              'repository.name',
+              'addProjectLandForm.name',
               {rules: [{ required: true, message: '请输入原料', whitespace: true}]}
             ]"
                 />
@@ -285,7 +281,7 @@
                 <a-input
                   placeholder
                   v-decorator="[
-              'repository.name',
+              'addProjectLandForm.name',
               {rules: [{ required: true, message: '请输入数量', whitespace: true}]}
             ]"
                 />
@@ -298,7 +294,7 @@
                 <a-input
                   placeholder
                   v-decorator="[
-              'repository.name',
+              'addProjectLandForm.name',
               {rules: [{ required: true, message: '请输入产品', whitespace: true}]}
             ]"
                 />
@@ -309,7 +305,7 @@
                 <a-input
                   placeholder
                   v-decorator="[
-              'repository.name',
+              'addProjectLandForm.name',
               {rules: [{ required: true, message: '请输入数量', whitespace: true}]}
             ]"
                 />
@@ -360,7 +356,7 @@
                   required
                   placeholder
                   v-decorator="[
-              'repository.name',
+              'addProjectLandForm.name',
               {rules: [{ required: true, message: '请输入数额', whitespace: true}]}
             ]"
                 />
@@ -372,7 +368,7 @@
                   required
                   placeholder
                   v-decorator="[
-              'repository.name',
+              'addProjectLandForm.name',
               {rules: [{ required: true, message: '请输入数额', whitespace: true}]}
             ]"
                 />
@@ -386,7 +382,7 @@
                   required
                   placeholder
                   v-decorator="[
-              'repository.name',
+              'addProjectLandForm.name',
               {rules: [{ required: true, message: '请输入数额', whitespace: true}]}
             ]"
                 />
@@ -409,7 +405,7 @@
                   required
                   placeholder
                   v-decorator="[
-              'repository.name',
+              'addProjectLandForm.name',
               {rules: [{ required: true, message: '请输入数额', whitespace: true}]}
             ]"
                 />
@@ -424,7 +420,7 @@
                   required
                   placeholder
                   v-decorator="[
-              'repository.name'
+              'addProjectLandForm.name'
             ]"
                 />
               </a-form-item>
@@ -435,7 +431,7 @@
                   required
                   placeholder
                   v-decorator="[
-              'repository.name'
+              'addProjectLandForm.name'
             ]"
                 />
               </a-form-item>
@@ -449,7 +445,7 @@
                   required
                   placeholder
                   v-decorator="[
-              'repository.name'
+              'addProjectLandForm.name'
             ]"
                 />
               </a-form-item>
@@ -460,7 +456,7 @@
                   required
                   placeholder
                   v-decorator="[
-              'repository.name'
+              'addProjectLandForm.name'
             ]"
                 />
               </a-form-item>
@@ -473,7 +469,7 @@
                   required
                   placeholder
                   v-decorator="[
-              'repository.name'
+              'addProjectLandForm.name'
             ]"
                 />
               </a-form-item>
@@ -484,7 +480,7 @@
                   required
                   placeholder
                   v-decorator="[
-              'repository.name'
+              'addProjectLandForm.name'
             ]"
                 />
               </a-form-item>
@@ -497,7 +493,7 @@
                   required
                   placeholder
                   v-decorator="[
-              'repository.name'
+              'addProjectLandForm.name'
             ]"
                 />
               </a-form-item>
@@ -508,7 +504,7 @@
                   required
                   placeholder
                   v-decorator="[
-              'repository.name'
+              'addProjectLandForm.name'
             ]"
                 />
               </a-form-item>
@@ -521,7 +517,7 @@
                   required
                   placeholder
                   v-decorator="[
-              'repository.name'
+              'addProjectLandForm.name'
             ]"
                 />
               </a-form-item>
@@ -532,7 +528,7 @@
                   required
                   placeholder
                   v-decorator="[
-              'repository.name'
+              'addProjectLandForm.name'
             ]"
                 />
               </a-form-item>
@@ -545,7 +541,7 @@
                   required
                   placeholder
                   v-decorator="[
-              'repository.name'
+              'addProjectLandForm.name'
             ]"
                 />
               </a-form-item>
@@ -556,7 +552,7 @@
                   required
                   placeholder
                   v-decorator="[
-              'repository.name'
+              'addProjectLandForm.name'
             ]"
                 />
               </a-form-item>
@@ -569,7 +565,7 @@
                   required
                   placeholder
                   v-decorator="[
-              'repository.name'
+              'addProjectLandForm.name'
             ]"
                 />
               </a-form-item>
@@ -580,7 +576,7 @@
                   required
                   placeholder
                   v-decorator="[
-              'repository.name'
+              'addProjectLandForm.name'
             ]"
                 />
               </a-form-item>
@@ -593,7 +589,7 @@
                   required
                   placeholder
                   v-decorator="[
-              'repository.name'
+              'addProjectLandForm.name'
             ]"
                 />
               </a-form-item>
@@ -620,16 +616,28 @@
 import PageLayout from '@/components/page/PageLayout'
 import JEditor from '@/components/jeecg/JEditor'
 export default {
+  name: 'addProjectLandForm',
   components: { PageLayout, JEditor },
   data() {
     return {
-      title: '首页 / 技改项目/项目维护'
+      title: '首页 / 技改项目 / 项目维护',
       //   form: {}
+      form: this.$form.createForm(this, { name: 'addProjectLandForm' }),
+      formItem: {
+        label: { span: 6 },
+        value: { span: 18 }
+      }
     }
   },
   created() {},
   methods: {
-    handleSubmit() {}
+    handleSubmit() {
+      this.form.validateFieldsAndScroll(this.onSubmit.bind(this)) //MM
+    },
+    onSubmit(err) {
+      if (err === null) {
+      }
+    }
   }
 }
 </script>

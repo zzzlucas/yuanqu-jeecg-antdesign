@@ -52,7 +52,7 @@
 
     <!-- 操作按钮区域 -->
     <div class="table-operator">
-      <a-button @click="rightShow = true" type="primary" icon="plus">新增</a-button>
+      <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
       <a-button type="primary" icon="download" @click="handleExportXls('园区信息')">导出</a-button>
       <a-upload
         name="file"
@@ -99,7 +99,6 @@
       >
         <span slot="action" slot-scope="text, record">
           <a @click="handleEdit(record)">编辑</a>
-
           <a-divider type="vertical" />
           <a-dropdown>
             <a class="ant-dropdown-link">
@@ -120,19 +119,20 @@
     <!-- table区域-end -->
 
     <!-- 表单区域 -->
-    <parks-add-form v-model="rightShow"></parks-add-form>
+    <basePark-modal ref="modalForm" @ok="modalFormOk"></basePark-modal>
   </a-card>
 </template>
 
 <script>
+import BaseParkModal from './modules/BaseParkModal'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-import Config from '@/defaultSettings'
-import ParksAddForm from '@views/industrial-parks/components/ParksAddForm'
 
 export default {
-  name: 'IndustrialParksList',
-  components: { ParksAddForm },
+  name: 'BaseParkList',
   mixins: [JeecgListMixin],
+  components: {
+    BaseParkModal
+  },
   data() {
     return {
       description: '园区信息管理页面',
@@ -154,6 +154,16 @@ export default {
           dataIndex: 'parkId'
         },
         {
+          title: '所属部门Id',
+          align: 'center',
+          dataIndex: 'deptIdS'
+        },
+        {
+          title: '所属部门机构编码',
+          align: 'center',
+          dataIndex: 'deptOrgCodeS'
+        },
+        {
           title: '园区名称',
           align: 'center',
           dataIndex: 'parkName'
@@ -164,14 +174,84 @@ export default {
           dataIndex: 'totalBulidingArea'
         },
         {
+          title: '工位总数',
+          align: 'center',
+          dataIndex: 'totalWorkstation'
+        },
+        {
+          title: '工位收费单价',
+          align: 'center',
+          dataIndex: 'feeScale'
+        },
+        {
+          title: '工位收费单位',
+          align: 'center',
+          dataIndex: 'feeScaleUnit'
+        },
+        {
+          title: '独立空间总数',
+          align: 'center',
+          dataIndex: 'totalRoom'
+        },
+        {
+          title: '独立空间收费单价',
+          align: 'center',
+          dataIndex: 'feeScaleRoom'
+        },
+        {
+          title: '独立空间收费单位',
+          align: 'center',
+          dataIndex: 'feeScaleRoomUnit'
+        },
+        {
           title: '地址',
           align: 'center',
           dataIndex: 'address'
         },
         {
+          title: '经纬度',
+          align: 'center',
+          dataIndex: 'longLat'
+        },
+        {
+          title: '经度',
+          align: 'center',
+          dataIndex: 'lng'
+        },
+        {
+          title: '纬度',
+          align: 'center',
+          dataIndex: 'lat'
+        },
+        {
+          title: '得房率',
+          align: 'center',
+          dataIndex: 'roomRate'
+        },
+        {
           title: '联系电话',
           align: 'center',
           dataIndex: 'telephone'
+        },
+        {
+          title: '具备设备',
+          align: 'center',
+          dataIndex: 'deviceGroupId'
+        },
+        {
+          title: '园区简介',
+          align: 'center',
+          dataIndex: 'content'
+        },
+        {
+          title: '优惠政策',
+          align: 'center',
+          dataIndex: 'policy'
+        },
+        {
+          title: '园区图片',
+          align: 'center',
+          dataIndex: 'imageList'
         },
         {
           title: '操作',
@@ -181,13 +261,12 @@ export default {
         }
       ],
       url: {
-        list: Config.mock + '/park.base/basePark/list',
+        list: '/park.base/basePark/list',
         delete: '/park.base/basePark/delete',
-        deleteBatch: Config.mock + '/park.base/basePark/deleteBatch',
+        deleteBatch: '/park.base/basePark/deleteBatch',
         exportXlsUrl: 'park.base/basePark/exportXls',
         importExcelUrl: 'park.base/basePark/importExcel'
-      },
-      rightShow: false
+      }
     }
   },
   computed: {
@@ -195,11 +274,9 @@ export default {
       return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`
     }
   },
-  methods: {
-    handleImportExcel() {}
-  }
+  methods: {}
 }
 </script>
-<style lang="less">
-@import '../../assets/less/common.less';
+<style scoped>
+@import '~@assets/less/common.less';
 </style>

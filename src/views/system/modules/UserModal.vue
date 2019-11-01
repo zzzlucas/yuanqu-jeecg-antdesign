@@ -16,7 +16,6 @@
           <a-button @click="toggleScreen" icon="appstore" style="height:20px;width:20px;border:0px"></a-button>
         </span>
       </div>
-
     </template>
 
     <a-spin :spinning="confirmLoading">

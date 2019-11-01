@@ -29,5 +29,8 @@ export default {
     name: 'ls', // name variable Vue.[ls] or this.[$ls],
     storage: 'local', // storage name session, local, memory
   },
-  mock: 'http://mock.bd.vlice.cn/mock/5db8085de5cb7f366a3f77bb/parks'
+  // mock: 'http://mock.bd.vlice.cn/mock/5db8085de5cb7f366a3f77bb/parks'
+  mock: 'https://mock.bd.vlice.cn/mock/5db85d92e5cb7f366a3f78ed/park/jeecg-boot',
+  jee: 'http://192.168.89.31:8080',
+  local: 'localhost:8080'
 }

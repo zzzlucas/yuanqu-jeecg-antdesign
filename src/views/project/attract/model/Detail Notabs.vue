@@ -1,7 +1,8 @@
 <template>
   <page-layout :title="title">
     <!-- 应该在page-layout组件vue里写abadge -->
-    <div style="width:1200px;margin:auto;">
+    <!-- <div style="width:1200px;margin:auto;"> -->
+     
       <a-card :bordered="false" title="企业基本信息">
         <detail-list>
           <detail-list-item term="投资额">2000（万元）</detail-list-item>
@@ -89,6 +90,8 @@ export default {
   data() {
     return {
       dataSource: [],
+      ipagination: [],
+      loading:false,
       columns: [
         {
           title: '跟踪日期',

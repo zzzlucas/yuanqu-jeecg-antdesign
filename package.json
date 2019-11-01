@@ -75,6 +75,8 @@
     "rules": {
       "generator-star-spacing": "off",
       "no-mixed-operators": 0,
+      "vue/html-indent": 0,
+      "no-unused-vars": 0,
       "vue/max-attributes-per-line": [
         2,
         {
