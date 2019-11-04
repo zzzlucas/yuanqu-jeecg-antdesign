@@ -132,13 +132,13 @@ export default {
   },
   methods: {
     goAdd(record) {
-      this.$router.push({ path: '/project/tech/addpro', query: { id: record } })
+      this.$router.push({ path: '/project/tech/addproject', query: { id: record } })
     },
     searchQuery() {
       console.log(this.queryParam.titile)
     },
     searchReset() {
-      //还应包括表格重置
+      //还应包括表格重置   
       this.queryParam.titile = ''
     },
     // handleDetail: function(record) {

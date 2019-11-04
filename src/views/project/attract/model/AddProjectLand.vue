@@ -3,7 +3,6 @@
     <page-layout :title="title">
       <a-divider type="vertical" />
       <a-form @submit="handleSubmit" :form="form">
-
         <!-- 11111111111111 -->
         <a-card :bordered="false" style="width:1200px;margin:auto" title="企业信息">
           <!-- 行1 -->
@@ -12,7 +11,7 @@
               <a-form-item label="项目单位" required>
                 <a-input
                   placeholder
-                  v-decorator="['addProjectLandForm.danwei',{rules: [{ required: true, message: '请输入单位名称', whitespace: true}]}]"
+                  v-decorator="['fillUnit',{rules: [{ required: true, message: '请输入单位名称', whitespace: true}]}]"
                 />
               </a-form-item>
             </a-col>
@@ -20,10 +19,7 @@
               <a-form-item label="组织机构代码" required>
                 <a-input
                   placeholder
-                  v-decorator="[
-              'addProjectLandForm.name',
-              {rules: [{ required: true, message: '请输入组织机构代码', whitespace: true}]}
-            ]"
+                  v-decorator="['creditCode',{rules: [{ required: true, message: '请输入组织机构代码', whitespace: true}]}]"
                 />
               </a-form-item>
             </a-col>
@@ -34,24 +30,23 @@
               <a-form-item label="单位地址" required>
                 <a-input
                   placeholder
-                  v-decorator="[
-              'addProjectLandForm.name',
-              {rules: [{ required: true, message: '请输入单位地址', whitespace: true}]}
-            ]"
+                  v-decorator="['unitAddress',{rules: [{ required: true, message: '请输入单位地址', whitespace: true}]}]"
                 />
               </a-form-item>
             </a-col>
+            <!-- 成立年份！！！！！！！！！！！！！没有v-decorator -->
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="成立年份" required>
-                <a-date-picker style="width:100%" />
+                <a-date-picker v-model="setUpYear" style="width:100%" />
               </a-form-item>
             </a-col>
           </a-row>
           <!-- 行3 -->
           <a-row class="form-row" :gutter="16">
+            <!-- 企业登记注册类型!!!!!!!!!!! 没有v-decorator-->
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="企业登记注册类型" required>
-                <a-select defaultValue="1" style="width:100%">
+                <a-select defaultValue="1" style="width:100%" v-model="companyRegisterType">
                   <a-select-option value="1">股份合作企业</a-select-option>
                   <a-select-option value="2">联营企业</a-select-option>
                   <a-select-option value="3">有限责任公司</a-select-option>
@@ -64,10 +59,7 @@
               <a-form-item label="注册资金（万元）" required>
                 <a-input
                   placeholder
-                  v-decorator="[
-              'addProjectLandForm.name',
-              {rules: [{ required: true, message: '请输入数额', whitespace: true}]}
-            ]"
+                  v-decorator="['registerMoney',{rules: [{ required: true, message: '请输入数额', whitespace: true}]}]"
                 />
               </a-form-item>
             </a-col>
@@ -78,10 +70,7 @@
               <a-form-item label="企业总资产（万元）" required>
                 <a-input
                   placeholder
-                  v-decorator="[
-              'addProjectLandForm.name',
-              {rules: [{ required: true, message: '请输入数额', whitespace: true}]}
-            ]"
+                  v-decorator="['totalAsset',{rules: [{ required: true, message: '请输入数额', whitespace: true}]}]"
                 />
               </a-form-item>
             </a-col>
@@ -89,10 +78,7 @@
               <a-form-item label="固定资产净值（万元）" required>
                 <a-input
                   placeholder
-                  v-decorator="[
-              'addProjectLandForm.name',
-              {rules: [{ required: true, message: '请输入数额', whitespace: true}]}
-            ]"
+                  v-decorator="['fixedAsset',{rules: [{ required: true, message: '请输入数额', whitespace: true}]}]"
                 />
               </a-form-item>
             </a-col>
@@ -103,10 +89,7 @@
               <a-form-item label="法定代表人">
                 <a-input
                   placeholder
-                  v-decorator="[
-              'addProjectLandForm.name',
-              {rules: [{ required: true, message: '请输入法人姓名', whitespace: true}]}
-            ]"
+                  v-decorator="['legalPerson',{rules: [{ required: true, message: '请输入法人姓名', whitespace: true}]}]"
                 />
               </a-form-item>
             </a-col>
@@ -114,16 +97,14 @@
               <a-form-item label="联系电话（法人">
                 <a-input
                   placeholder
-                  v-decorator="[
-              'addProjectLandForm.name',
-              {rules: [{ required: true, message: '请输入法人电话', whitespace: true}]}
-            ]"
+                  v-decorator="['legalTel',{rules: [{ required: true, message: '请输入法人电话', whitespace: true}]}]"
                 />
               </a-form-item>
             </a-col>
           </a-row>
           <!-- 行6 -->
-          <a-row class="form-row" :gutter="16">
+          <!-- 无内鬼 -->
+          <!-- <a-row class="form-row" :gutter="16">
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="经办人" required>
                 <a-input
@@ -146,17 +127,14 @@
                 />
               </a-form-item>
             </a-col>
-          </a-row>
+          </a-row>-->
           <!-- 行7 -->
           <a-row class="form-row" :gutter="16">
             <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="电子信箱">
                 <a-input
                   placeholder
-                  v-decorator="[
-              'addProjectLandForm.name',
-              {rules: [{ required: true, message: '请输入电子信箱', whitespace: true}]}
-            ]"
+                  v-decorator="['email',{rules: [{ required: true, message: '请输入电子信箱', whitespace: true}]}]"
                 />
               </a-form-item>
             </a-col>
@@ -165,13 +143,7 @@
           <a-row class="form-row" :gutter="16">
             <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="公司概况">
-                <a-textarea
-                  :rows="4"
-                  placeholder
-                  v-decorator="[
-              'addProjectLandForm.name'
-            ]"
-                />
+                <a-textarea :rows="4" placeholder v-decorator="['companyDescription']" />
               </a-form-item>
             </a-col>
           </a-row>
@@ -179,18 +151,12 @@
           <a-row class="form-row" :gutter="16">
             <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="团队成员情况">
-                <a-textarea
-                  :rows="4"
-                  placeholder
-                  v-decorator="[
-              'addProjectLandForm.name'
-            ]"
-                />
+                <a-textarea :rows="4" placeholder v-decorator="['teamMemberDescription']" />
               </a-form-item>
             </a-col>
           </a-row>
           <!-- 行10 -->
-          <a-row class="form-row" :gutter="16">
+          <!-- <a-row class="form-row" :gutter="16">
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="年产值（万元）">
                 <a-input
@@ -213,11 +179,13 @@
                 />
               </a-form-item>
             </a-col>
-          </a-row>
+          </a-row>-->
+
           <!-- <a-form-item v-if="showSubmit">
             <a-button htmlType="submit">Submit</a-button>
           </a-form-item>-->
         </a-card>
+
         <!-- 22222222 -->
         <a-card :bordered="false" style="width:1200px;margin:auto;margin-top:20px" title="项目信息">
           <!-- 行1 -->
@@ -603,11 +571,10 @@
             </a-col>
           </a-row>
         </a-card>
-
-        <!-- 4444444 -->
+        <a-form-item>
+          <a-button type="primary" html-type="submit">Test Submit</a-button>
+        </a-form-item>
       </a-form>
-
-      <!-- <a-button slot="tabBarExtraContent" @click="add">立项登记</a-button> -->
     </page-layout>
   </div>
 </template>
@@ -615,6 +582,10 @@
 <script>
 import PageLayout from '@/components/page/PageLayout'
 import JEditor from '@/components/jeecg/JEditor'
+
+import { httpAction } from '@/api/manage'
+import pick from 'lodash.pick'
+import moment from 'moment'
 export default {
   name: 'addProjectLandForm',
   components: { PageLayout, JEditor },
@@ -626,17 +597,99 @@ export default {
       formItem: {
         label: { span: 6 },
         value: { span: 18 }
+      },
+      url: {
+        // list: '/park.project/mgrProjectInfo/addProject',
+        add: '/park.project/mgrProjectInfo/addProject'
       }
     }
   },
   created() {},
+  // methods: {
+  //   handleSubmit() {
+  //     this.form.validateFieldsAndScroll(this.onSubmit.bind(this)) //MM
+  //   },
+  //   onSubmit(err) {
+  //     if (err === null) {
+  //     }
+  //   }
+  // },
   methods: {
-    handleSubmit() {
-      this.form.validateFieldsAndScroll(this.onSubmit.bind(this)) //MM
+    add() {
+      this.edit({})
     },
-    onSubmit(err) {
-      if (err === null) {
-      }
+    edit(record) {
+      this.form.resetFields()
+      this.model = Object.assign({}, record)
+      this.visible = true
+      this.$nextTick(() => {
+        this.form.setFieldsValue(
+          pick(
+            this.model,
+            'projectId',
+            'fillUnit',
+            'creditCode',
+            'unitAddress',
+            'setUpYear',
+            'companyRegisterType',
+            'registerMoney',
+            'totalAsset',
+            'fixedAsset',
+            'legalPerson',
+            'legalTel',
+            'email',
+            'companyDescription',
+            'teamMemberDescription',
+            'parkId',
+            'version',
+            'createUserName',
+            'updateUserName'
+          )
+        )
+        //时间格式化
+      })
+    },
+    close() {
+      this.$emit('close')
+      this.visible = false
+    },
+    handleOk() {
+      const that = this
+      // 触发表单验证
+      this.form.validateFields((err, values) => {
+        if (!err) {
+          that.confirmLoading = true
+          let httpurl = ''
+          let method = ''
+          if (!this.model.id) {
+            httpurl += this.url.add
+            method = 'post'
+          } else {
+            httpurl += this.url.edit
+            method = 'put'
+          }
+          let formData = Object.assign(this.model, values)
+          //时间格式化
+
+          console.log(formData)
+          httpAction(httpurl, formData, method)
+            .then(res => {
+              if (res.success) {
+                that.$message.success(res.message)
+                that.$emit('ok')
+              } else {
+                that.$message.warning(res.message)
+              }
+            })
+            .finally(() => {
+              that.confirmLoading = false
+              that.close()
+            })
+        }
+      })
+    },
+    handleCancel() {
+      this.close()
     }
   }
 }

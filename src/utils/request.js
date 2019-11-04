@@ -7,9 +7,10 @@ import { ACCESS_TOKEN } from "@/store/mutation-types"
 
 // 创建 axios 实例
 const service = axios.create({
-  baseURL: 'http://192.168.89.31:8080/jeecg-boot', // api base_url
-  // baseURL: 'localhost:8080/jeecg-boot', // api base_url
-  // baseURL: '/jeecg-boot', // api base_url
+  // baseURL: 'http://192.168.89.31:8080/jeecg-boot', // api base_url   蒋正宇
+  // baseURL: 'http://192.168.1.111:8080/jeecg-boot', // api base_url   真本地
+  baseURL: 'http://localhost:8080/jeecg-boot', // api base_url    真本地
+  // baseURL: '/jeecg-boot', // api base_url    可能是假的？？？？
   timeout: 6000 // 请求超时时间
 })
 

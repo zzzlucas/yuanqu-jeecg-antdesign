@@ -7,7 +7,14 @@
     @close="close"
     :visible="visible"
   >-->
-  <a-drawer wrapClassName="mgr-project-trace-drawer" title="跟踪记录" width="50%" :visible="show" @close="close" destroyOnClose>
+  <a-drawer
+    wrapClassName="mgr-project-trace-drawer"
+    title="跟踪记录"
+    width="50%"
+    :visible="visible"
+    @close="close"
+    destroyOnClose
+  >
     <div>
       <a-card class="daily-article" :bordered="false">
         <a-spin :spinning="confirmLoading">
@@ -23,55 +30,75 @@
                 </a-form-item>
               </a-col>
             </a-row>
-              <a-col span="12">
-                  <a-form-item :labelCol="labelCol.default" :wrapperCol="wrapperCol.default" label="跟踪日期">
-                    <a-date-picker
-                      style="width:100%"
-                      v-decorator="[ 'trackDate', {rules: [{required: true, message: '请输入跟踪日期'}]}]"
-                    />
-      
-                  </a-form-item>
-                  <a-form-item :labelCol="labelCol.default" :wrapperCol="wrapperCol.default" label="跟踪方式">
-                    <a-select defaultValue="1" style="width:100%">
-                      <a-select-option value="1">来访</a-select-option>
-                      <a-select-option value="2">联营企业</a-select-option>
-                      <a-select-option value="3">有限责任公司</a-select-option>
-                      <a-select-option value="4">股份有限公司</a-select-option>
-                      <a-select-option value="5">私营企业</a-select-option>
-                    </a-select>
-                  </a-form-item>
-              </a-col>
-              <a-col span="12">
-                  <a-form-item :labelCol="labelCol.default" :wrapperCol="wrapperCol.default" label="跟踪人" required>
-                    <!-- <a-input
+            <a-col span="12">
+              <a-form-item
+                :labelCol="labelCol.default"
+                :wrapperCol="wrapperCol.default"
+                label="跟踪日期"
+              >
+                <a-date-picker
+                  style="width:100%"
+                  v-decorator="[ 'trackDate', {rules: [{required: true, message: '请输入跟踪日期'}]}]"
+                />
+              </a-form-item>
+              <a-form-item
+                :labelCol="labelCol.default"
+                :wrapperCol="wrapperCol.default"
+                label="跟踪方式"
+              >
+                <a-select defaultValue="1" style="width:100%">
+                  <a-select-option value="1">来访</a-select-option>
+                  <a-select-option value="2">联营企业</a-select-option>
+                  <a-select-option value="3">有限责任公司</a-select-option>
+                  <a-select-option value="4">股份有限公司</a-select-option>
+                  <a-select-option value="5">私营企业</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col span="12">
+              <a-form-item
+                :labelCol="labelCol.default"
+                :wrapperCol="wrapperCol.default"
+                label="跟踪人"
+                required
+              >
+                <!-- <a-input
                     placeholder="请输入跟踪人"
                     v-decorator="['tracker', {rules: [{required: true, message: '请输入跟踪人'}]}]"
-                    />-->
-                    <!-- v-model写着就没有默认 -->
-                    <a-select defaultValue="1" style="width:100%">
-                      <a-select-option value="1">1</a-select-option>
-                      <a-select-option value="2">联营企业</a-select-option>
-                      <a-select-option value="3">有限责任公司</a-select-option>
-                      <a-select-option value="4">股份有限公司</a-select-option>
-                      <a-select-option value="5">私营企业</a-select-option>
-                    </a-select>
-                  </a-form-item>
-                  <a-form-item :labelCol="labelCol.default" :wrapperCol="wrapperCol.default" label="项目状态">
-                    <a-select defaultValue="1" style="width:100%">
-                      <a-select-option value="1">呵呵</a-select-option>
-                      <a-select-option value="2">联营企业</a-select-option>
-                      <a-select-option value="3">有限责任公司</a-select-option>
-                      <a-select-option value="4">股份有限公司</a-select-option>
-                      <a-select-option value="5">私营企业</a-select-option>
-                    </a-select>
-                  </a-form-item>
-              </a-col>
+                />-->
+                <!-- v-model写着就没有默认 -->
+                <a-select defaultValue="1" style="width:100%">
+                  <a-select-option value="1">1</a-select-option>
+                  <a-select-option value="2">联营企业</a-select-option>
+                  <a-select-option value="3">有限责任公司</a-select-option>
+                  <a-select-option value="4">股份有限公司</a-select-option>
+                  <a-select-option value="5">私营企业</a-select-option>
+                </a-select>
+              </a-form-item>
+              <a-form-item
+                :labelCol="labelCol.default"
+                :wrapperCol="wrapperCol.default"
+                label="项目状态"
+              >
+                <a-select defaultValue="1" style="width:100%">
+                  <a-select-option value="1">呵呵</a-select-option>
+                  <a-select-option value="2">联营企业</a-select-option>
+                  <a-select-option value="3">有限责任公司</a-select-option>
+                  <a-select-option value="4">股份有限公司</a-select-option>
+                  <a-select-option value="5">私营企业</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
             <a-row>
               <a-col>
                 <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="过程纪要">
                   <a-textarea :rows="4" placeholder="请输入过程纪要" v-decorator="['content', {}]"></a-textarea>
                 </a-form-item>
-                <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="意向房源组ID">
+                <a-form-item
+                  :labelCol="labelCol.long"
+                  :wrapperCol="wrapperCol.long"
+                  label="意向房源组ID"
+                >
                   <a-input placeholder="请输入意向房源组ID" v-decorator="['resourceGroupId', {}]" />
                 </a-form-item>
                 <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="备注">
@@ -114,13 +141,14 @@ export default {
     show: {
       type: Boolean,
       default: false
-    },
+    }
     // headers:
   },
   model: {
     prop: 'show',
     event: 'close'
   },
+  visible: false,
   //11111111111111111111112
   data() {
     return {
@@ -157,9 +185,16 @@ export default {
   },
   created() {},
   methods: {
-    handleImportExcel(){},
-    importExcelUrl(){},
-    tokenHeader(){},
+    detail(record) {
+      this.visible = true
+      this.record = record
+    },
+    handleCancel() {
+      this.visible = false
+    },
+    handleImportExcel() {},
+    importExcelUrl() {},
+    tokenHeader() {},
     add() {
       this.edit({})
     },
@@ -251,12 +286,12 @@ export default {
     .ant-form-item-label {
       width: @width;
     }
-    
+
     .ant-form-item-control-wrapper {
-      width: calc(~"100% - @{width}")
+      width: calc(~'100% - @{width}');
     }
-    .ant-col-12{
-      z-index:10
+    .ant-col-12 {
+      z-index: 10;
     }
   }
 }

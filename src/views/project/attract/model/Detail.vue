@@ -72,8 +72,9 @@
 <script>
 import PageLayout from '@/components/page/PageLayout'
 // import STable from '@/components/table/'
-import DetailList from '@/components/tools/DetailList'
+
 import ABadge from 'ant-design-vue/es/badge/Badge'
+import DetailList from '@/components/tools/DetailList'
 const DetailListItem = DetailList.Item
 
 export default {

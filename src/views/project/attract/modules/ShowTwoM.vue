@@ -43,7 +43,7 @@
         </a-row>
         <a-row>
           <a-button
-            @click="rightShow = true"
+            @click="twoShowOne(record)"
             type="primary"
             icon="plus"
             style="float:left;margin-left:0"
@@ -64,28 +64,16 @@
           <span slot="action" slot-scope="text, record">
             <a @click="twoShowOne(record)">编辑</a>
             <a-divider type="vertical" />
-            <a @click="goAddLease(record)">查看</a>
+            <a @click="showCard(record)">查看</a>
             <a-divider type="vertical" />
             <a @click="deleteeee(record)">删除</a>
           </span>
         </a-table>
-        <!-- <a-form-item label="项目名称">
-          <a-input
-            placeholder="请输入项目名称"
-            v-decorator="['ppppp',  {rules: [{required: true, message: '请输入项目名称'}]}]"
-          />
-        </a-form-item>
-        <a-form-item label="跟踪人" required>
-          <a-select style="width:100%"  defaultValue="1">
-            <a-select-option value="1">小张</a-select-option>
-            <a-select-option value="2">小李</a-select-option>
-          </a-select>
-        </a-form-item>-->
+
       </a-form>
 
-      <!-- <a-button type="primary" @click="handleOk">确定</a-button>
-      <a-button @click="handleCancel">取消</a-button>-->
     </a-card>
+    <show-card ref="ShowCard"></show-card>
   </a-modal>
 </template>
 
@@ -95,11 +83,12 @@ import { filterObj } from '@/utils/util'
 import { getAction, putAction } from '@/api/manage'
 
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+import ShowCard from './ShowTwoMCard'
 
 export default {
   mixins: [JeecgListMixin],
   name: 'SysAnnouncementModal',
-  components: {},
+  components: { ShowCard },
   data() {
     return {
       form: this.$form.createForm(this),
@@ -163,9 +152,12 @@ export default {
   },
   created() {},
   methods: {
+    showCard(record) {
+      this.$refs.ShowCard.detail(record)
+    },
     twoShowOne(record) {
       // console.log('showone')
-      this.$emit('showOneToTwo',record)
+      this.$emit('showOneToZero', record)
     },
     handleOk() {},
     detail(record) {

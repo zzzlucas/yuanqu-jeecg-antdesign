@@ -47,7 +47,7 @@
       <!-- :customRow="customRow" -->
       <span slot="action" slot-scope="text, record">
         <a-dropdown>
-          <a class="ant-dropdown-link" @click="rightShow = true">
+          <a class="ant-dropdown-link" @click="showZero(record)">
             跟踪登记
             <a-icon type="down" />
           </a>
@@ -66,9 +66,7 @@
               </a-popconfirm>
             </a-menu-item>
             <a-menu-item>
-              <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
-                <a>转为落地</a>
-              </a-popconfirm>
+              <a @click="goLuoDi()">转为落地</a>
             </a-menu-item>
             <a-menu-item>
               <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
@@ -93,9 +91,13 @@
     </a-table>
 
     <!-- 表单区域 -->
-    <mgr-project-trace-drawer v-model="rightShow"></mgr-project-trace-drawer>
+
+    <!-- <mgr-project-trace-drawer v-model="rightShow"></mgr-project-trace-drawer> -->
+
+    <show-zero ref="ShowZero"></show-zero>
+    <show-two @showOneToZero="showZero" ref="ShowTwo"></show-two>
     <show-one ref="ShowOne"></show-one>
-    <show-two @showOneToTwo="showOne" ref="ShowTwo"></show-two>
+
     <!-- <register-form v-model="rightShow"></register-form> -->
   </a-card>
 </template>
@@ -107,11 +109,12 @@ import { getAction, putAction } from '@/api/manage'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 
 // import Config from '@/defaultSettings'
-
 // import RegisterForm from './modules/RegisterForm'
-import MgrProjectTraceDrawer from './modules/mgrProjectTraceDrawer'
+
+// import MgrProjectTraceDrawer from './modules/mgrProjectTraceDrawer'
 import ShowOne from './modules/ShowOneD'
 import ShowTwo from './modules/ShowTwoM'
+import ShowZero from './modules/ShowZeroD'
 
 export default {
   name: 'UserAnnouncementList',
@@ -119,8 +122,9 @@ export default {
   components: {
     ShowOne,
     ShowTwo,
+    ShowZero
     // RegisterForm,
-    MgrProjectTraceDrawer
+    // MgrProjectTraceDrawer
   },
   data() {
     return {
@@ -223,8 +227,8 @@ export default {
         editCementSend: 'sys/sysAnnouncementSend/editByAnntIdAndUserId',
         readAllMsg: 'sys/sysAnnouncementSend/readAll'
       },
-      loading: false,
-      rightShow: false
+      loading: false
+      // rightShow: false
     }
   },
   mounted() {
@@ -239,6 +243,9 @@ export default {
     },
     goAddLease() {
       this.$router.push({ path: '/project/attract/addprojectlease' })
+    },
+    goLuoDi() {
+      this.$router.push({ path: '/project/attract/ldxm' })
     },
     handleDetail: function(record) {
       this.$refs.sysAnnouncementModal.detail(record)
@@ -260,6 +267,15 @@ export default {
       //   }
       // })
       this.$refs.ShowTwo.detail(record)
+    },
+    showZero(record) {
+      // console.log("1101.1445 showzero");
+      // putAction(this.url.editCementSend, { anntId: record.anntId }).then(res => {
+      //   if (res.success) {
+      //     this.loadData()
+      //   }
+      // })
+      this.$refs.ShowZero.detail(record)
     },
     readAll() {
       var that = this

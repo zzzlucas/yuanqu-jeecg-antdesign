@@ -261,7 +261,7 @@ export default {
         }
       ],
       url: {
-        list: '/park.base/basePark/list',
+        list: '/park.park/basePark/list',
         delete: '/park.base/basePark/delete',
         deleteBatch: '/park.base/basePark/deleteBatch',
         exportXlsUrl: 'park.base/basePark/exportXls',
