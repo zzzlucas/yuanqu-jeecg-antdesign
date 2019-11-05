@@ -271,6 +271,7 @@
       edit (record) {
         this.resetScreenSize(); // 调用此方法,根据屏幕宽度自适应调整抽屉的宽度
         let that = this;
+        
         that.initialRoleList();
         that.checkedDepartNameString = "";
         that.form.resetFields();
