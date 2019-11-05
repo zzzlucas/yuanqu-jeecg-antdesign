@@ -5,40 +5,17 @@
     <div class="table-page-search-wrapper">
       <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
-
           <a-col :md="6" :sm="8">
-            <a-form-item label="园区ID">
-              <a-input placeholder="请输入园区ID" v-model="queryParam.parkId"></a-input>
+            <a-form-item label="园区名称/ID">
+              <a-input placeholder="请输入园区名称/ID" v-model="queryParam.keyword"></a-input>
             </a-form-item>
           </a-col>
-          <a-col :md="6" :sm="8">
-            <a-form-item label="园区名称">
-              <a-input placeholder="请输入园区名称" v-model="queryParam.parkName"></a-input>
-            </a-form-item>
-          </a-col>
-          <template v-if="toggleSearchStatus">
-            <a-col :md="6" :sm="8">
-              <a-form-item label="总建筑面积">
-                <a-input placeholder="请输入总建筑面积" v-model="queryParam.totalBulidingArea"></a-input>
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="8">
-              <a-form-item label="联系电话">
-                <a-input placeholder="请输入联系电话" v-model="queryParam.telephone"></a-input>
-              </a-form-item>
-            </a-col>
-          </template>
           <a-col :md="6" :sm="8" >
             <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
               <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
-              <a @click="handleToggleSearch" style="margin-left: 8px">
-                {{ toggleSearchStatus ? '收起' : '展开' }}
-                <a-icon :type="toggleSearchStatus ? 'up' : 'down'"/>
-              </a>
             </span>
           </a-col>
-
         </a-row>
       </a-form>
     </div>
