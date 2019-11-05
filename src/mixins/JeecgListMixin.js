@@ -136,13 +136,16 @@ export const JeecgListMixin = {
         this.$message.error("请设置url.deleteBatch属性!")
         return
       }
-      if (this.selectedRowKeys.length <= 0) {
+      if(!this.deleteKey){
+        this.$message.error("请设置deleteKey，删除的主键!")
+        return
+      }
+      if (this.selectionRows.length <= 0) {
         this.$message.warning('请选择一条记录！');
-        return;
       } else {
         var ids = "";
-        for (var a = 0; a < this.selectedRowKeys.length; a++) {
-          ids += this.selectedRowKeys[a] + ",";
+        for (var a = 0; a < this.selectionRows.length; a++) {
+          ids += this.selectionRows[a][this.deleteKey] + ",";
         }
         var that = this;
         this.$confirm({
@@ -162,13 +165,17 @@ export const JeecgListMixin = {
         });
       }
     },
-    handleDelete: function (id) {
+    handleDelete: function (data) {
       if(!this.url.delete){
         this.$message.error("请设置url.delete属性!")
         return
       }
+      if(!this.deleteKey){
+        this.$message.error("请设置deleteKey，删除的主键!")
+        return
+      }
       var that = this;
-      deleteAction(that.url.delete, {id: id}).then((res) => {
+      deleteAction(that.url.delete, {id: data[this.deleteKey]}).then((res) => {
         if (res.success) {
           that.$message.success(res.message);
           that.loadData();

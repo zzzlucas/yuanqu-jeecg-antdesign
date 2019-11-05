@@ -91,7 +91,7 @@
             <a class="ant-dropdown-link">更多 <a-icon type="down" /></a>
             <a-menu slot="overlay">
               <a-menu-item>
-                <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
+                <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
                   <a>删除</a>
                 </a-popconfirm>
               </a-menu-item>
@@ -165,12 +165,13 @@
           }
         ],
         url: {
-          list: Config.mock + "/park.base/basePark/list",
-          delete: "/park.base/basePark/delete",
-          deleteBatch: Config.mock + "/park.base/basePark/deleteBatch",
-          exportXlsUrl: "park.base/basePark/exportXls",
-          importExcelUrl: "park.base/basePark/importExcel",
+          list: "/park.park/basePark/list",
+          delete: "/park.park/basePark/delete",
+          deleteBatch: "/park.park/basePark/deleteBatch",
+          exportXlsUrl: "park.park/basePark/exportXls",
+          importExcelUrl: "park.park/basePark/importExcel",
         },
+        deleteKey: 'parkId',
         rightShow: false
       }
     },
