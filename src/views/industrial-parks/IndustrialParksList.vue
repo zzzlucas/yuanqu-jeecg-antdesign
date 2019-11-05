@@ -12,24 +12,19 @@
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
-            <a-form-item label="所属部门Id">
-              <a-input placeholder="请输入所属部门Id" v-model="queryParam.deptIdS"></a-input>
+            <a-form-item label="园区名称">
+              <a-input placeholder="请输入园区名称" v-model="queryParam.parkName"></a-input>
             </a-form-item>
           </a-col>
           <template v-if="toggleSearchStatus">
             <a-col :md="6" :sm="8">
-              <a-form-item label="所属部门机构编码">
-                <a-input placeholder="请输入所属部门机构编码" v-model="queryParam.deptOrgCodeS"></a-input>
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="8">
-              <a-form-item label="园区名称">
-                <a-input placeholder="请输入园区名称" v-model="queryParam.parkName"></a-input>
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="8">
               <a-form-item label="总建筑面积">
                 <a-input placeholder="请输入总建筑面积" v-model="queryParam.totalBulidingArea"></a-input>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="8">
+              <a-form-item label="联系电话">
+                <a-input placeholder="请输入联系电话" v-model="queryParam.telephone"></a-input>
               </a-form-item>
             </a-col>
           </template>
