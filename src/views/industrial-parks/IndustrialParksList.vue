@@ -81,7 +81,7 @@
     <!-- table区域-end -->
 
     <!-- 表单区域 -->
-    <parks-add-form v-model="rightShow"></parks-add-form>
+    <parks-add-form v-model="rightShow" @submit="onSubmit"></parks-add-form>
   </a-card>
 </template>
 
@@ -89,6 +89,7 @@
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import Config from '@/defaultSettings'
   import ParksAddForm from '@views/industrial-parks/components/ParksAddForm'
+  import { postAction } from '@/api/manage'
 
   export default {
     name: "IndustrialParksList",
@@ -143,6 +144,7 @@
         ],
         url: {
           list: "/park.park/basePark/list",
+          add: "/park.park/basePark/add",
           delete: "/park.park/basePark/delete",
           deleteBatch: "/park.park/basePark/deleteBatch",
           exportXlsUrl: "park.park/basePark/exportXls",
@@ -158,7 +160,17 @@
       }
     },
     methods: {
-
+      onSubmit(data){
+        postAction(this.url.add, {BasePark: data}).then(res => {
+          if(res.code === 200){
+            this.$message.success(res.message)
+            this.rightShow = false
+            this.loadData();
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+      }
     }
   }
 </script>

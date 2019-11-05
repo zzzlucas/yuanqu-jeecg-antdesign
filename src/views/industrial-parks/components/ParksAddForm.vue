@@ -122,7 +122,7 @@
       },
       onSubmit(err, form) {
         if (err === null) {
-          console.log(form)
+          this.$emit('submit', form)
         }
       }
     }
