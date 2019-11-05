@@ -127,7 +127,6 @@ export default {
     }
   },
   created() {
-    //生效了？？？ url.list ?
     this.loadData()
   },
   methods: {
@@ -138,7 +137,7 @@ export default {
       console.log(this.queryParam.titile)
     },
     searchReset() {
-      //还应包括表格重置   
+      //还应包括表格重置   this.form.resetFields();
       this.queryParam.titile = ''
     },
     // handleDetail: function(record) {
