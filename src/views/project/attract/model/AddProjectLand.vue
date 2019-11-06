@@ -50,7 +50,7 @@
           <a-row class="form-row" :gutter="16">
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="企业登记注册类型" required>
-                <a-select style="width:100%" v-decorator="['companyRegisterType']">
+                <a-select style="width:100%" v-decorator="['companyRegisterType',{rules: [{ required: true, message: '请输入企业登记注册类型', whitespace: true}]}]">
                   <a-select-option value="1">股份合作企业</a-select-option>
                   <a-select-option value="2">联营企业</a-select-option>
                   <a-select-option value="3">有限责任公司</a-select-option>
@@ -459,7 +459,7 @@
           </a-row>
           <a-row class="form-row" :gutter="16">
             <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-              <a-form-item label="projectId">
+              <a-form-item label="projectId test">
                 <a-input
                   placeholder
                   v-decorator="['projectId', {rules: [{ required: true, message: '请输入projectId', whitespace: true}]}]"
@@ -469,7 +469,7 @@
           </a-row>
           <a-row class="form-row" :gutter="16">
             <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-              <a-form-item label="parkId">
+              <a-form-item label="parkId test">
                 <a-input
                   placeholder
                   v-decorator="['parkId', {rules: [{ required: true, message: '请输入parkId', whitespace: true}]}]"

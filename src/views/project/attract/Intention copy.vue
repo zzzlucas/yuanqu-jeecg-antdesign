@@ -119,8 +119,6 @@ import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import ShowOne from './modules/ShowOneD'
 import ShowTwo from './modules/ShowTwoM'
 import ShowZero from './modules/ShowZeroD'
-//数据字典使用步骤0
-import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
 
 export default {
   name: 'UserAnnouncementList',
@@ -128,41 +126,48 @@ export default {
   components: {
     ShowOne,
     ShowTwo,
-    ShowZero,
-    filterDictText
+    ShowZero
     // RegisterForm,
     // MgrProjectTraceDrawer
   },
   data() {
     return {
-      description: '招商项目列表页',
+      description: '项目登记页面（原系统通告表管理页面）',
       queryParam: {},
-      // 数据字典使用步骤1
-      projectTypeDictOptions: '',
-      industrySectorValueDictOptions: '',
-      statusDictOptions: '',
       columns: [
         {
           title: '项目名称',
           align: 'center',
           dataIndex: 'projectName' //数据绑定项目
         },
-        //用数据字典过滤，便于维护人员操作       数据字典使用步骤2
         {
           title: '项目类别',
           align: 'center',
-          dataIndex: 'projectType',
-          customRender: text => {
-            return filterDictText(this.projectTypeDictOptions,text);
-          }
+          dataIndex: 'projectType'
+          // customRender: function(text) {
+          //   if (text == '1') {
+          //     return '租赁'
+          //   } else if (text == '2') {
+          //     return '拿地'
+          //   } else {
+          //     return text
+          //   }
+          // }
         },
         {
           title: '行业类别',
           align: 'center',
-          dataIndex: 'industrySectorValue',
-          customRender: text => {
-            return filterDictText(this.industrySectorValueDictOptions,text);
-          }
+          dataIndex: 'industrySectorValue'
+          // customRender: function(text) {
+          //   if (text == '1') {
+          //     //返回此页的数据目前是admin 字符串
+          //     return '移动互联网'
+          //   } else if (text == '2') {
+          //     return '移动互联网'
+          //   } else {
+          //     return '移动互联网'
+          //   }
+          // }
         },
         {
           title: '总投资（万元）',
@@ -182,10 +187,17 @@ export default {
         {
           title: '项目状态',
           align: 'center',
-          dataIndex: 'status',
-          customRender: text => {
-            return filterDictText(this.statusDictOptions,text);
-          }
+          dataIndex: 'status'
+          // customRender: function(text) {
+          //   if (text == '1') {
+          //     //返回此页的数据目前是 undefined？
+          //     return '已申报'
+          //   } else if (text == '2') {
+          //     return '未申报'
+          //   } else {
+          //     return '未申报'
+          //   }
+          // }
         },
         {
           title: '拿地面积（m²）',
@@ -225,34 +237,13 @@ export default {
     }
   },
   mounted() {
-    // console.log('接下来显示数据 zzz')
-    // console.log(this.columns)
-    // console.log(this.columns.gainArea)
-  },
-  created() {
-    //数据字典使用步骤3
-    this.initDictConfig()
+    console.log('接下来显示数据 zzz')
+    console.log(this.columns)
+    console.log(this.columns.gainArea)
   },
   methods: {
     //路由跳转
-    // 数据字典使用步骤4
-    initDictConfig() {
-      initDictOptions('projectType').then(res => {
-        if (res.success) {
-          this.projectTypeDictOptions = res.result
-        }
-      })
-      initDictOptions('industrySectorValue').then(res => {
-        if (res.success) {
-          this.industrySectorValueDictOptions = res.result
-        }
-      })
-      initDictOptions('project_status').then(res => {
-        if (res.success) {
-          this.statusDictOptions = res.result
-        }
-      })
-    },
+
     goAddLand() {
       this.$router.push({ path: '/project/attract/addprojectland' })
     },

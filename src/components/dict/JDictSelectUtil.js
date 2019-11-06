@@ -30,7 +30,8 @@ export async function initDictOptions(dictCode) {
 export function filterDictText(dictOptions, text) {
   let re = "";
   dictOptions.forEach(function (option) {
-    if (text === option.value) {
+    if (text == option.value) {
+      //此处===改为==
       re = option.text;
     }
   });
