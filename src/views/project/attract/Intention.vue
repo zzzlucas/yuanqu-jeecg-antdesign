@@ -43,17 +43,18 @@
       :pagination="ipagination"
       :loading="loading"
       @change="handleTableChange"
+       :customRow="customRow"
     >
-      <!-- :customRow="customRow" -->
+     
       <span slot="action" slot-scope="text, record">
         <a-dropdown>
-          <a class="ant-dropdown-link" @click="showZero(record)">
+          <a class="ant-dropdown-link" @click.stop="showZero(record)">
             跟踪登记
             <a-icon type="down" />
           </a>
           <a-menu slot="overlay">
             <a-menu-item>
-              <a @click="showTwo(record)">跟踪记录</a>
+              <a @click.stop="showTwo(record)">跟踪记录</a>
             </a-menu-item>
             <a-menu-item>
               <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
@@ -83,10 +84,10 @@
         <a-divider type="vertical" />
         <!-- 写一个三元表达式判断对应表单类型？
         -->
-        <a @click="goAddLease(record)">项目维护</a>
+        <a @click.stop="goAddLease(record)">项目维护</a>
 
         <a-divider type="vertical" />
-        <a @click="showOne(record)">项目分配</a>
+        <a @click.stop="showOne(record)">项目分配</a>
       </span>
     </a-table>
 
@@ -103,6 +104,10 @@
 </template>
 <script>
 //不知道是否必要
+function stopDefault( e ) {  
+    e.stopPropagation()
+}
+
 import { filterObj } from '@/utils/util'
 //必要
 import { getAction, putAction } from '@/api/manage'
@@ -212,15 +217,15 @@ export default {
           scopedSlots: { customRender: 'action' }
         }
       ],
-      // customRow: record => {
-      //   return {
-      //     on: {
-      //       click: e => {
-      //         this.$router.push({ path: '/project/attract/detail' })
-      //       }
-      //     }
-      //   }
-      // },
+      customRow: record => {
+        return {
+          on: {
+            click: e => {
+              this.$router.push({ path: '/project/attract/detail' })
+            }
+          }
+        }
+      },
       url: {
         // list: '/sys/sysAnnouncementSend/getMyAnnouncementSend',
         list: '/park.project/mgrProjectInfo/list',
@@ -238,6 +243,7 @@ export default {
   },
   methods: {
     //路由跳转
+    
     goAddLand() {
       this.$router.push({ path: '/project/attract/addprojectland' })
     },

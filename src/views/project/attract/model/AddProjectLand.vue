@@ -40,7 +40,7 @@
                   style="width:100%"
                   v-decorator="['setUpYear', {initialValue:!model.setUpYear?null:moment(model.setUpYear,dateFormat)}]"
                 />-->
-                <!-- <a-date-picker style="width:100%" v-decorator="['setUpYear']"/> -->
+                <a-date-picker style="width:100%" v-decorator="['setUpYear']" format="YYYY-MM-DD" />
               </a-form-item>
             </a-col>
           </a-row>
@@ -48,7 +48,7 @@
           <a-row class="form-row" :gutter="16">
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="企业登记注册类型" required>
-                <a-select defaultValue="1" style="width:100%" v-decorator="['companyRegisterType']">
+                <a-select style="width:100%" v-decorator="['companyRegisterType']">
                   <a-select-option value="1">股份合作企业</a-select-option>
                   <a-select-option value="2">联营企业</a-select-option>
                   <a-select-option value="3">有限责任公司</a-select-option>
@@ -98,9 +98,9 @@
               </a-form-item>
             </a-col>
           </a-row>
-          <!-- 行6 -->  
-          <!-- 无内鬼  ？？why-->
-          <a-row class="form-row" :gutter="16">
+          <!-- 行6 -->
+
+          <!-- <a-row class="form-row" :gutter="16">
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="经办人">
                 <a-input
@@ -115,7 +115,7 @@
                 />
               </a-form-item>
             </a-col>
-          </a-row>
+          </a-row>-->
           <!-- 行7 -->
           <a-row class="form-row" :gutter="16">
             <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
@@ -499,15 +499,16 @@ export default {
       },
       confirmLoading: false, //独立页面，其实不需要该项
       model: {},
-      setUpYear: '',
+      // setUpYear: '',
       dateFormat: 'YYYY-MM-DD',
       // record: { id: 1191619700384071680 }
       testData: ''
       // value:""
     }
   },
-  mounted() {
+  updated() {
     // this.edit(this.record.id)
+    console.log(this.form.setUpYear)
   },
   methods: {
     moment,
@@ -612,10 +613,13 @@ export default {
     //   this.visible = false
     // },
     handleSubmit() {
-      // console.log('1111')
+      console.log(this.form.getFieldValue('setUpYear'))
       const that = this
       // 触发表单验证
       this.form.validateFields((err, values) => {
+        values.setUpYear = 1
+        console.log(values.setUpYear)
+
         if (!err) {
           that.confirmLoading = true
           let httpurl = ''
