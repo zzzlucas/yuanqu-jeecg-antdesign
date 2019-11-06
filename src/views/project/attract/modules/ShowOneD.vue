@@ -1,5 +1,5 @@
 <template>
-<!-- 项目分配表单 -->
+  <!-- 项目分配表单 -->
   <!-- <a-drawer
     class="announcementCustomModal"
     :width="modelStyle.width"
@@ -21,10 +21,11 @@
           />
         </a-form-item>
         <a-form-item label="跟踪人" required>
-          <a-select style="width:100%"  defaultValue="1">
-            <a-select-option value="1">小张</a-select-option>
-            <a-select-option value="2">小李</a-select-option>
-          </a-select>
+          <!-- 数据字典 -->
+          <a-input
+            placeholder="请输入跟踪人"
+            v-decorator="['ppppp',  {rules: [{required: true, message: '请输入跟踪人'}]}]"
+          />
         </a-form-item>
       </a-form>
 
@@ -62,12 +63,17 @@ export default {
         width: '60%',
         style: { top: '20px' },
         fullScreen: false
+      },
+      url: {
+        list: '/park.project/mgrProjectInfo/list',
+        editCementSend: 'sys/sysAnnouncementSend/editByAnntIdAndUserId',
+        readAllMsg: 'sys/sysAnnouncementSend/readAll'
       }
     }
   },
   created() {},
   methods: {
-    handleOk(){},
+    handleOk() {},
     detail(record) {
       this.visible = true
       this.record = record

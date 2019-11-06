@@ -50,7 +50,10 @@
           <a-row class="form-row" :gutter="16">
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="企业登记注册类型" required>
-                <a-select style="width:100%" v-decorator="['companyRegisterType',{rules: [{ required: true, message: '请输入企业登记注册类型', whitespace: true}]}]">
+                <a-select
+                  style="width:100%"
+                  v-decorator="['companyRegisterType',{rules: [{ required: true, message: '请输入企业登记注册类型', whitespace: true}]}]"
+                >
                   <a-select-option value="1">股份合作企业</a-select-option>
                   <a-select-option value="2">联营企业</a-select-option>
                   <a-select-option value="3">有限责任公司</a-select-option>
@@ -199,7 +202,7 @@
               </a-form-item>
             </a-col>
           </a-row>
-          <!--进度 1.5 / 4-->
+
           <a-row class="form-row" :gutter="16">
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="主要原料">
@@ -264,7 +267,7 @@
               </a-form-item>
             </a-col>
           </a-row>
-          <!-- <a-row class="form-row" :gutter="16">
+          <a-row class="form-row" :gutter="16">
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="建设开始时间" required>
                 <a-date-picker v-decorator="['buildingBeginDate']" style="width:100%" />
@@ -276,7 +279,7 @@
                 <a-date-picker v-decorator="['buildingEndDate']" style="width:100%" />
               </a-form-item>
             </a-col>
-          </a-row>-->
+          </a-row>
           <a-row class="form-row" :gutter="16">
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="是否人才项目">
@@ -527,7 +530,7 @@ export default {
   components: { PageLayout, JEditor, JDictSelectTag },
   data() {
     return {
-      title: '首页 / 技改项目 / 项目维护',
+      title: '首页 / 拿地项目 / 项目维护',
       //   form: {}
       form: this.$form.createForm(this, { name: 'addProjectLandForm' }),
       formItem: {
@@ -686,8 +689,10 @@ export default {
           // let formData = {}
           let formData = Object.assign(this.model, values)
           // formData.setUpYear = formData.setUpYear ? formData.setUpYear.format() : null
-          // formData.buildingBeginDate = formData.buildingBeginDate ? formData.buildingBeginDate.format() : null
-          // formData.buildingEndDate = formData.buildingEndDate ? formData.buildingEndDate.format() : null
+          formData.buildingBeginDate = formData.buildingBeginDate ? formData.buildingBeginDate.format() : null
+          formData.buildingEndDate = formData.buildingEndDate ? formData.buildingEndDate.format() : null
+          formData.buildingBeginDate = formData.buildingBeginDate.slice(0, 10)
+          formData.buildingEndDate = formData.buildingEndDate.slice(0, 10)
           // console.log(formData)
 
           //qs.stringify  目前看来必须转换

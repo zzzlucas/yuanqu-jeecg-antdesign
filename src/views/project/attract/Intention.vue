@@ -56,12 +56,12 @@
               <a @click.stop="showTwo(record)">跟踪记录</a>
             </a-menu-item>
             <a-menu-item>
-              <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
+              <a-popconfirm title="确定转为重点跟进吗?" @confirm="() => handleDelete(record.id)">
                 <a>转为重点跟进</a>
               </a-popconfirm>
             </a-menu-item>
             <a-menu-item>
-              <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
+              <a-popconfirm title="确定转为拟落地吗?" @confirm="() => handleDelete(record.id)">
                 <a>转为拟落地</a>
               </a-popconfirm>
             </a-menu-item>
@@ -69,7 +69,7 @@
               <a @click="goLuoDi()">转为落地</a>
             </a-menu-item>
             <a-menu-item>
-              <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
+              <a-popconfirm title="确定转为留存吗?" @confirm="() => handleDelete(record.id)">
                 <a>转为留存</a>
               </a-popconfirm>
             </a-menu-item>
@@ -153,7 +153,7 @@ export default {
           align: 'center',
           dataIndex: 'projectType',
           customRender: text => {
-            return filterDictText(this.projectTypeDictOptions,text);
+            return filterDictText(this.projectTypeDictOptions, text)
           }
         },
         {
@@ -161,7 +161,7 @@ export default {
           align: 'center',
           dataIndex: 'industrySectorValue',
           customRender: text => {
-            return filterDictText(this.industrySectorValueDictOptions,text);
+            return filterDictText(this.industrySectorValueDictOptions, text)
           }
         },
         {
@@ -184,7 +184,7 @@ export default {
           align: 'center',
           dataIndex: 'status',
           customRender: text => {
-            return filterDictText(this.statusDictOptions,text);
+            return filterDictText(this.statusDictOptions, text)
           }
         },
         {
@@ -209,6 +209,7 @@ export default {
           on: {
             click: e => {
               this.$router.push({ path: '/project/attract/detail' })
+              // this.$router.push({ path: '/project/attract/detail/:record.projectId' })
             }
           }
         }
@@ -234,7 +235,10 @@ export default {
     this.initDictConfig()
   },
   methods: {
-    //路由跳转
+    // searchQuery() {},
+    // searchQuery() {
+    //   this.loadData(1)
+    // },
     // 数据字典使用步骤4
     initDictConfig() {
       initDictOptions('projectType').then(res => {
