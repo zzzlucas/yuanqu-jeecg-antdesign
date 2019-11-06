@@ -37,11 +37,12 @@
             </a-col>
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="成立年份" required>
-                <!-- <a-date-picker
-                  style="width:100%"
-                  v-decorator="['setUpYear', {initialValue:!model.setUpYear?null:moment(model.setUpYear,dateFormat)}]"
-                />-->
-                <a-date-picker style="width:100%" v-decorator="['setUpYear']" />
+                <a-input
+                  placeholder
+                  v-decorator="['setUpYear',{rules: [{ required: true, message: '请输入成立年份', whitespace: true}]}]"
+                />
+                <!-- 此处不应使用时间框 -->
+                <!-- <a-date-picker style="width:100%" v-decorator="['setUpYear']" /> -->
               </a-form-item>
             </a-col>
           </a-row>
@@ -163,7 +164,7 @@
         <!-- 22222222 -->
         <a-card :bordered="false" style="width:1200px;margin:auto;margin-top:20px" title="项目信息">
           <!-- 行1 -->
-        <a-row class="form-row" :gutter="16">
+          <a-row class="form-row" :gutter="16">
             <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="建设项目名称">
                 <a-input
@@ -190,7 +191,7 @@
                 ></a-textarea>
               </a-form-item>
             </a-col>
-          </a-row> 
+          </a-row>
           <a-row class="form-row" :gutter="16">
             <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="亩均效绩介（A类、B类、C类、D类）">
@@ -275,7 +276,7 @@
                 <a-date-picker v-decorator="['buildingEndDate']" style="width:100%" />
               </a-form-item>
             </a-col>
-          </a-row> -->
+          </a-row>-->
           <a-row class="form-row" :gutter="16">
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="是否人才项目">
@@ -287,7 +288,10 @@
             </a-col>
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="拿地面积（m²）">
-                <a-input placeholder v-decorator="['gainArea',{rules: [{ required: true, message: '请输入拿地面积', whitespace: true}]}]" />
+                <a-input
+                  placeholder
+                  v-decorator="['gainArea',{rules: [{ required: true, message: '请输入拿地面积', whitespace: true}]}]"
+                />
               </a-form-item>
             </a-col>
           </a-row>
@@ -299,7 +303,9 @@
           <a-row class="form-row" :gutter="16">
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="项目总投资（万元）">
-                <a-input v-decorator="['investAmount',{rules: [{ required: true, message: '请输入数额', whitespace: true}]}]" />
+                <a-input
+                  v-decorator="['investAmount',{rules: [{ required: true, message: '请输入数额', whitespace: true}]}]"
+                />
               </a-form-item>
             </a-col>
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
@@ -311,7 +317,9 @@
           <a-row class="form-row" :gutter="16">
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="注册资本（万元）">
-                <a-input v-decorator="[ 'registerCapital',{rules: [{ required: true, message: '请输入数额', whitespace: true}]}]" />
+                <a-input
+                  v-decorator="[ 'registerCapital',{rules: [{ required: true, message: '请输入数额', whitespace: true}]}]"
+                />
               </a-form-item>
             </a-col>
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
@@ -428,7 +436,7 @@
           <a-row class="form-row" :gutter="16">
             <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="项目申请理由简述">
-                <a-textarea :rows="4" v-decorator="['applyReason' ]" ></a-textarea>
+                <a-textarea :rows="4" v-decorator="['applyReason' ]"></a-textarea>
               </a-form-item>
             </a-col>
           </a-row>
@@ -436,7 +444,7 @@
           <!-- 富文本  projectTechnologyFlow   项目工艺流程及说明 -->
           <a-row class="form-row" :gutter="16">
             <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-              <a-form-item label="备注">
+              <a-form-item label="项目工艺流程（图示式）及说明">
                 <j-editor v-decorator="['projectTechnologyFlow']"></j-editor>
               </a-form-item>
             </a-col>
@@ -445,7 +453,7 @@
           <a-row class="form-row" :gutter="16">
             <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="备注">
-                <a-textarea :rows="4" v-decorator="['remark' ]" ></a-textarea>
+                <a-textarea :rows="4" v-decorator="['remark' ]"></a-textarea>
               </a-form-item>
             </a-col>
           </a-row>
@@ -469,14 +477,33 @@
               </a-form-item>
             </a-col>
           </a-row>
-
           <!-- upload  addDocFiles   附件 -->
-          
+          <a-row class="form-row" :gutter="16">
+            <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
+              <a-form-item label="附件">
+                <a-upload
+                  name="file"
+                  :showUploadList="true"
+                  :multiple="false"
+                  :headers="tokenHeader"
+                  :action="importExcelUrl"
+                  @change="handleImportExcel"
+                >
+                  <a-button type="primary" icon="import">上传附件</a-button>
+                  <!-- <span>（单个图片大小不可超过10.00M，全部图片大小不可超过30.00M）</span> -->
+                </a-upload>
+              </a-form-item>
+            </a-col>
+          </a-row>
         </a-card>
-        <a-form-item>
-          <a-button type="primary" @click="handleSubmit">Test Submit</a-button>
+        <a-card
+          :bordered="false"
+          size="small"
+          style="position:fixed;bottom:0;width:calc(100% - 200px - 15px)"
+        >
+          <a-button style="float:right;" type="primary" @click="handleSubmit">保存（Test Submit）</a-button>
           <!-- <a-button type="primary" html-type="submit" @click="handleSubmit">Test Submit</a-button> -->
-        </a-form-item>
+        </a-card>
       </a-form>
     </page-layout>
   </div>
@@ -635,7 +662,7 @@ export default {
       // console.log(this.form.getFieldValue('setUpYear'))
       const that = this
       // 触发表单验证
-      this.form.validateFields((err, values) => {
+      this.form.validateFieldsAndScroll((err, values) => {
         // values.setUpYear = 1
         // console.log(values.setUpYear)
 
@@ -658,7 +685,7 @@ export default {
 
           // let formData = {}
           let formData = Object.assign(this.model, values)
-          formData.setUpYear = formData.setUpYear ? formData.setUpYear.format() : null
+          // formData.setUpYear = formData.setUpYear ? formData.setUpYear.format() : null
           // formData.buildingBeginDate = formData.buildingBeginDate ? formData.buildingBeginDate.format() : null
           // formData.buildingEndDate = formData.buildingEndDate ? formData.buildingEndDate.format() : null
           // console.log(formData)

@@ -113,6 +113,7 @@
                     :headers="tokenHeader"
                     :action="importExcelUrl"
                     @change="handleImportExcel"
+                    v-decorator="['addDocFiles']"
                   >
                     <a-button type="primary" icon="import">上传附件</a-button>
                     <!-- <span>（单个图片大小不可超过10.00M，全部图片大小不可超过30.00M）</span> -->
