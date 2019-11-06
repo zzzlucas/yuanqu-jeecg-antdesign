@@ -87,9 +87,9 @@
 
 <script>
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-  import Config from '@/defaultSettings'
   import ParksAddForm from '@views/industrial-parks/components/ParksAddForm'
   import { postAction } from '@/api/manage'
+  import qs from 'querystring'
 
   export default {
     name: "IndustrialParksList",
@@ -161,7 +161,9 @@
     },
     methods: {
       onSubmit(data){
-        postAction(this.url.add, {BasePark: data}).then(res => {
+        console.log(data)
+        data = qs.stringify(data)
+        postAction(this.url.add, data).then(res => {
           if(res.code === 200){
             this.$message.success(res.message)
             this.rightShow = false
