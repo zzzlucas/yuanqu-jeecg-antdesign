@@ -155,7 +155,7 @@ export default {
       },
       url: {
         add: '/park.project/mgrProjectInfo/addProject',
-        edit: '/park.mgr/mgrProjectInfo/edit'
+        edit: '/park.project/mgrProjectInfo/editProject'
       }
     }
   },

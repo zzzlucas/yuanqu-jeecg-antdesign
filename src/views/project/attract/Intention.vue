@@ -43,9 +43,8 @@
       :pagination="ipagination"
       :loading="loading"
       @change="handleTableChange"
-       :customRow="customRow"
+      :customRow="customRow"
     >
-     
       <span slot="action" slot-scope="text, record">
         <a-dropdown>
           <a class="ant-dropdown-link" @click.stop="showZero(record)">
@@ -104,8 +103,8 @@
 </template>
 <script>
 //不知道是否必要
-function stopDefault( e ) {  
-    e.stopPropagation()
+function stopDefault(e) {
+  e.stopPropagation()
 }
 
 import { filterObj } from '@/utils/util'
@@ -232,7 +231,8 @@ export default {
         editCementSend: 'sys/sysAnnouncementSend/editByAnntIdAndUserId',
         readAllMsg: 'sys/sysAnnouncementSend/readAll'
       },
-      loading: false
+      loading: false,
+      confirmLoading: false
       // rightShow: false
     }
   },
@@ -243,7 +243,7 @@ export default {
   },
   methods: {
     //路由跳转
-    
+
     goAddLand() {
       this.$router.push({ path: '/project/attract/addprojectland' })
     },
