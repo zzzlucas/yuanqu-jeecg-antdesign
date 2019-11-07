@@ -17,14 +17,14 @@
         <a-form-item label="项目名称">
           <a-input
             placeholder="请输入项目名称"
-            v-decorator="['ppppp',  {rules: [{required: true, message: '请输入项目名称'}]}]"
+            v-decorator="['id',  {rules: [{required: true, message: '请输入项目名称'}]}]"
           />
         </a-form-item>
         <a-form-item label="跟踪人" required>
           <!-- 数据字典 -->
           <a-input
             placeholder="请输入跟踪人"
-            v-decorator="['ppppp',  {rules: [{required: true, message: '请输入跟踪人'}]}]"
+            v-decorator="['projectManager',  {rules: [{required: true, message: '请输入跟踪人'}]}]"
           />
         </a-form-item>
       </a-form>
@@ -36,6 +36,11 @@
 </template>
 
 <script>
+import { httpAction } from '@/api/manage'
+import pick from 'lodash.pick'
+import moment from 'moment'
+
+import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 export default {
   name: 'SysAnnouncementModal',
   components: {},
@@ -65,15 +70,53 @@ export default {
         fullScreen: false
       },
       url: {
-        list: '/park.project/mgrProjectInfo/list',
-        editCementSend: 'sys/sysAnnouncementSend/editByAnntIdAndUserId',
-        readAllMsg: 'sys/sysAnnouncementSend/readAll'
+        list: '/park.project/mgrProjectInfo/assignProject',
       }
     }
   },
   created() {},
   methods: {
-    handleOk() {},
+    handleOk() {
+      const that = this
+      // 触发表单验证
+      this.form.validateFieldsAndScroll((err, values) => {
+        if (!err) {
+          that.confirmLoading = true
+          let httpurl = ''
+          let method = ''
+          // console.log('2222')
+          if (!this.model.id) {
+            //增
+            console.log('post方式')
+            httpurl += this.url.add
+            method = 'post'
+          } else {
+            //改
+            console.log('put方式')
+            httpurl += this.url.edit
+            method = 'put'
+          }
+          // let formData = {}
+          let formData = Object.assign(this.model, values)
+          formData = qs.stringify(formData)
+          console.log(formData)
+          httpAction(httpurl, formData, method)
+            .then(res => {
+              if (res.success) {
+                that.$message.success(res.message)
+                // that.$emit('ok')
+              } else {
+                that.$message.warning(res.message)
+              }
+            })
+            .finally(() => {
+              that.confirmLoading = false
+              // that.close()
+            })
+        }
+      })
+      // this.form.resetFields()
+    },
     detail(record) {
       this.visible = true
       this.record = record

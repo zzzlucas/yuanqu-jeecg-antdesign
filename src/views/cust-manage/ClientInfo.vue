@@ -4,11 +4,11 @@
     <div class="table-page-search-wrapper">
       <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
-          <a-col :md="6" :sm="8">
+          <!-- <a-col :md="6" :sm="8">
             <a-form-item label="项目">
-              <a-input placeholder v-model="queryParam.parkId"></a-input>
+              <a-input placeholder v-model="queryParam.caseId"></a-input>
             </a-form-item>
-          </a-col>
+          </a-col> -->
           <a-col :md="6" :sm="8">
             <a-form-item label="楼宇">
               <a-input placeholder v-model="queryParam.buidling"></a-input>
@@ -99,19 +99,9 @@ export default {
   mixins: [JeecgListMixin],
   data() {
     return {
-      description: '园区信息管理页面',
+      description: '企业管理-客户信息列表页',
       // 表头
       columns: [
-        // {
-        //   title: '#',
-        //   dataIndex: '',
-        //   key: 'rowIndex',
-        //   width: 60,
-        //   align: 'center',
-        //   customRender: function(t, r, index) {
-        //     return parseInt(index) + 1
-        //   }
-        // },
         {
           title: '序号',
           align: 'center',
@@ -151,23 +141,23 @@ export default {
       ],
       url: {
         list: '/park.customer/baseCustomer/list',
-        queryParam: '/park.customer/baseCustomer/list',
-        // list: Config.mock + '/park.base/basePark/list',
-        delete: '/park.base/basePark/delete',
-        deleteBatch: Config.mock + '/park.base/basePark/deleteBatch',
-        exportXlsUrl: 'park.base/basePark/exportXls',
-        importExcelUrl: 'park.base/basePark/importExcel'
+        // list: '/park.base/basePark/list',
+        queryParam: '/park.customer/baseCustomer/queryById',
+        // delete: '/park.base/basePark/delete',
+        // deleteBatch: '/park.base/basePark/deleteBatch',
+        // exportXlsUrl: 'park.base/basePark/exportXls',
+        // importExcelUrl: 'park.base/basePark/importExcel'
       },
       rightShow: false
     }
   },
   computed: {
-    importExcelUrl: function() {
-      return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`
-    }
+    // importExcelUrl: function() {
+    //   return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`
+    // }
   },
   methods: {
-    handleImportExcel() {},
+    // handleImportExcel() {},
     showZero() {
       this.$refs.ShowZero.detail()
     }

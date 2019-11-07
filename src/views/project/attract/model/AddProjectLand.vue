@@ -262,8 +262,7 @@
             <!-- 按要求，应该使用数据字典 -->
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="所属行业" required>
-                <!-- <JDictSelectTag v-model="this.DictDataindustrySectorValue" dictCode="INDUSTRY_SECTOR_VALUE"></JDictSelectTag> -->
-                <!-- <JDictSelectTag v-decorator="['industrySectorValue']" dictCode="sex"></JDictSelectTag> -->
+                <!-- <JDictSelectTag v-decorator="['industrySectorValue', {initValue: '1'}]" dictCode="INDUSTRY_SECTOR_VALUE"></JDictSelectTag> -->
               </a-form-item>
             </a-col>
           </a-row>
@@ -514,19 +513,19 @@
 
 <script>
 // import '@/components/dict/JDictSelectUtil'
-import qs from 'qs'
+// import { JeecgListMixin } from '@/mixins/JeecgListMixin'     //1107
 
+import qs from 'qs'
 import PageLayout from '@/components/page/PageLayout'
 import JEditor from '@/components/jeecg/JEditor'
 import JDictSelectTag from '@/components/dict/JDictSelectTag'
-
 import { initDictOptions } from '@/components/dict/JDictSelectUtil'
-
 import { httpAction } from '@/api/manage'
 import pick from 'lodash.pick'
 import moment from 'moment'
 export default {
   name: 'addProjectLandForm',
+  // mixins: [JeecgListMixin],
   components: { PageLayout, JEditor, JDictSelectTag },
   data() {
     return {

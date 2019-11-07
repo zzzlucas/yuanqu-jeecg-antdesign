@@ -11,6 +11,10 @@
       </span>
     </a-select-option>
   </a-select>
+
+  <!-- <a-select slot="addonAfter" style="width: 100px;" v-decorator="['feeScaleUnit', {initialValue: dict.parksStationExt[0].value}]">
+    <a-select-option v-for="(item, key) in dict.parksStationExt" :value="item.value" :key="key">{{ item.text }}</a-select-option>
+</a-select> -->
 </template>
 
 <script>

@@ -7,7 +7,7 @@
         <a-tab-pane tab="企业基本信息" key="1">
           <detail-list>
             <detail-list-item term="投资额">{{ info.investAmount }}（万元）</detail-list-item>
-            <detail-list-item term="注册投资">已取货</detail-list-item>
+            <detail-list-item term="注册投资">{{ info.registerMoney }} </detail-list-item>
             <detail-list-item term="年产值">{{ info.annualProductionValue }}(万元)</detail-list-item>
             <detail-list-item term="年税金">{{ info.annualTaxes }}(万元)</detail-list-item>
             <detail-list-item term="重要程度">一般项目</detail-list-item>
@@ -39,9 +39,8 @@
             :dataSource="dataSource"
             :pagination="ipagination"
             :loading="loading"
-            
           >
-          <!-- @change -->
+            <!-- @change -->
             <span slot="action" slot-scope="text, record">
               <a @click.stop>编辑</a>&nbsp;
               <a @click.stop>查看</a>
@@ -100,22 +99,25 @@ export default {
       }
     }
   },
-  // async created() {
-  //   // if (typeof this.$route.params.id !== 'string') {
-  //   //   this.$router.back()
-  //   //   this.$message.warning('ID不正确')
-  //   //   return false
-  //   // }
-  //   getAction('/park.project/mgrProjectInfo/queryById', { id: '01' }).then(res => {
-  //     if (res.code === 200) {
-  //       this.loading = false
-  //       this.info = res.result
-  //     } else {
-  //       this.$router.back()
-  //       this.$message.error(res.message)
-  //     }
-  //   })
-  // },
+
+  async created() {
+    if (typeof this.$route.params.id !== 'string') {
+      this.$router.back()
+      this.$message.warning('ID不正确')
+      return false
+    }
+    getAction('/park.project/mgrProjectInfo/queryById', { id: this.$route.params.id }).then(res => {
+      if (res.code === 200) {
+        this.loading = false
+        this.info = res.result
+        console.log(this.info)
+      } else {
+        this.$router.back()
+        this.$message.error(res.message)
+      }
+    })
+  },
+
   methods: {},
   filters: {
     statusFilter(status) {
