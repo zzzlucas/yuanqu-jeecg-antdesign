@@ -33,10 +33,8 @@
           <a-form-item label="工位收费标准" :label-col="formItem.label" :wrapper-col="formItem.value">
             <span>
               <a-input v-decorator="['feeScale', {rules: [{pattern: /^\d+\.\d{2}$/, message: '请输入金额，补齐两位小数'}]}]">
-                <a-select slot="addonAfter" style="width: 100px;" v-decorator="['feeScaleUnit', {initialValue: '1'}]">
-                  <a-select-option value="1">元/天</a-select-option>
-                  <a-select-option value="2">元/月</a-select-option>
-                  <a-select-option value="3">元/年</a-select-option>
+                <a-select slot="addonAfter" style="width: 100px;" v-decorator="['feeScaleUnit', {initialValue: dict.parksStationExt[0].value}]">
+                  <a-select-option v-for="(item, key) in dict.parksStationExt" :value="item.value" :key="key">{{ item.text }}</a-select-option>
                 </a-select>
               </a-input>
             </span>
@@ -47,13 +45,8 @@
           <a-form-item label="独立空间收费标准" :label-col="formItem.label" :wrapper-col="formItem.value">
             <span>
               <a-input v-decorator="['feeScaleRoom', {rules: [{pattern: /^\d+\.\d{2}$/, message: '请输入金额，补齐两位小数'}]}]">
-                <a-select
-slot="addonAfter"
-style="width: 100px"
-                          v-decorator="['feeScaleRoomUnit', {initialValue: '1'}]">
-                  <a-select-option value="1">元/㎡/天</a-select-option>
-                  <a-select-option value="2">元/㎡/月</a-select-option>
-                  <a-select-option value="3">元/㎡/年</a-select-option>
+                <a-select slot="addonAfter" style="width: 100px" v-decorator="['feeScaleRoomUnit', {initialValue: dict.parksInterspaceExt[0].value}]">
+                  <a-select-option v-for="(item, key) in dict.parksInterspaceExt" :value="item.value" :key="key">{{ item.text }}</a-select-option>
                 </a-select>
               </a-input>
             </span>
@@ -127,6 +120,7 @@ style="width: 100px"
 
 <script>
   import JEditor from '@comp/jeecg/JEditor'
+  import { initDictOptions } from '@comp/dict/JDictSelectUtil'
 
   export default {
     name: 'ParksAddForm',
@@ -141,6 +135,18 @@ style="width: 100px"
       prop: 'show',
       event: 'close'
     },
+    created(){
+      initDictOptions('parks_station_ext').then(res => {
+        if(res.code === 0 && res.success){
+          this.dict.parksStationExt = res.result
+        }
+      })
+      initDictOptions('parks_interspace_ext').then(res => {
+        if(res.code === 0 && res.success){
+          this.dict.parksInterspaceExt = res.result
+        }
+      })
+    },
     data() {
       return {
         formItem: {
@@ -151,6 +157,10 @@ style="width: 100px"
         editor: {
           content: '',
           policy: ''
+        },
+        dict: {
+          parksStationExt: [{value: '1'}],
+          parksInterspaceExt: [{value: '1'}]
         }
       }
     },
@@ -159,15 +169,19 @@ style="width: 100px"
         this.$emit('close', false)
       },
       handleSubmit() {
-        this.form.validateFieldsAndScroll(this.onSubmit.bind(this))
-      },
-      onSubmit(err, form) {
-        if (err === null) {
-          const { content, policy } = this.editor
-          form.content = content
-          form.policy = policy
-          this.$emit('submit', form)
-        }
+        console.log('asd')
+        console.log(this.form)
+        const fields = ['parkName', 'address', 'feeScale', 'feeScaleUnit', 'feeScaleRoom', 'feeScaleRoomUnit', 'roomRate', 'telephone', 'totalBulidingArea', 'totalRoom', 'totalWorkstation']
+        this.form.validateFieldsAndScroll(fields, (err, form) => {
+          console.log(err)
+          console.log(form)
+          if (err === null) {
+            const { content, policy } = this.editor
+            form.content = content
+            form.policy = policy
+            this.$emit('submit', form)
+          }
+        })
       },
       validateLngLat(type, rule, value, callback) {
         const num = Number(value)
@@ -202,6 +216,7 @@ style="width: 100px"
         if(num > 100 || num < 0){
           return callback(new Error('不能大于 100 或小于 0'))
         }
+        callback()
       }
     }
   }
