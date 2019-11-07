@@ -7,7 +7,7 @@
         <a-row :gutter="24">
           <a-col :span="6">
             <a-form-item label="关键字">
-              <a-input placeholder="输入项目名称" v-model="queryParam.titile"></a-input>
+              <a-input placeholder="输入项目名称" v-model="queryParam.projectName"></a-input>
             </a-form-item>
           </a-col>
 
@@ -56,33 +56,32 @@
               <a @click.stop="showTwo(record)">跟踪记录</a>
             </a-menu-item>
             <a-menu-item>
-              <a-popconfirm title="确定转为重点跟进吗?" @confirm="() => handleDelete(record.id)">
+              <a-popconfirm title="确定转为重点跟进吗?" @confirm="() => handleDelete(record.projectId)">
                 <a>转为重点跟进</a>
               </a-popconfirm>
             </a-menu-item>
             <a-menu-item>
-              <a-popconfirm title="确定转为拟落地吗?" @confirm="() => handleDelete(record.id)">
+              <a-popconfirm title="确定转为拟落地吗?" @confirm="() => handleDelete(record.projectId)">
                 <a>转为拟落地</a>
               </a-popconfirm>
             </a-menu-item>
             <a-menu-item>
-              <a @click="goLuoDi()">转为落地</a>
+              <a @click="goLuoDi(record.projectId)">转为落地</a>
             </a-menu-item>
             <a-menu-item>
-              <a-popconfirm title="确定转为留存吗?" @confirm="() => handleDelete(record.id)">
+              <a-popconfirm title="确定转为留存吗?" @confirm="() => handleDelete(record.projectId)">
                 <a>转为留存</a>
               </a-popconfirm>
             </a-menu-item>
             <a-menu-item>
-              <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
+              <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.projectId)">
                 <a>删除</a>
               </a-popconfirm>
             </a-menu-item>
           </a-menu>
         </a-dropdown>
         <a-divider type="vertical" />
-        <!-- 写一个三元表达式判断对应表单类型？
-        -->
+        <!-- 写一个三元表达式判断对应表单类型？-->
         <a @click.stop="goAddLease(record)">项目维护</a>
 
         <a-divider type="vertical" />
@@ -91,31 +90,27 @@
     </a-table>
 
     <!-- 表单区域 -->
-
     <!-- <mgr-project-trace-drawer v-model="rightShow"></mgr-project-trace-drawer> -->
-
+    <!-- <register-form v-model="rightShow"></register-form> -->
     <show-zero ref="ShowZero"></show-zero>
     <show-two @showOneToZero="showZero" ref="ShowTwo"></show-two>
     <show-one ref="ShowOne"></show-one>
-
-    <!-- <register-form v-model="rightShow"></register-form> -->
   </a-card>
 </template>
 <script>
-//不知道是否必要
-function stopDefault(e) {
-  e.stopPropagation()
-}
+//
+// function stopDefault(e) {
+//   e.stopPropagation()
+// }
 
 import { filterObj } from '@/utils/util'
-//必要
 import { getAction, putAction } from '@/api/manage'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 
 // import Config from '@/defaultSettings'
 // import RegisterForm from './modules/RegisterForm'
-
 // import MgrProjectTraceDrawer from './modules/mgrProjectTraceDrawer'
+
 import ShowOne from './modules/ShowOneD'
 import ShowTwo from './modules/ShowTwoM'
 import ShowZero from './modules/ShowZeroD'
@@ -136,7 +131,6 @@ export default {
   data() {
     return {
       description: '招商项目列表页',
-      queryParam: {},
       // 数据字典使用步骤1
       projectTypeDictOptions: '',
       industrySectorValueDictOptions: '',
@@ -145,7 +139,7 @@ export default {
         {
           title: '项目名称',
           align: 'center',
-          dataIndex: 'projectName' //数据绑定项目
+          dataIndex: 'projectName'
         },
         //用数据字典过滤，便于维护人员操作       数据字典使用步骤2
         {
@@ -214,19 +208,23 @@ export default {
           }
         }
       },
+
       url: {
-        // list: '/sys/sysAnnouncementSend/getMyAnnouncementSend',
         list: '/park.project/mgrProjectInfo/list',
         editCementSend: 'sys/sysAnnouncementSend/editByAnntIdAndUserId',
         readAllMsg: 'sys/sysAnnouncementSend/readAll'
       },
-      loading: false,
-      confirmLoading: false
+      confirmLoading: false,
+
+      // mixin中已定义
+      // loading: false,
+      // queryParam: {
+      //   projectName: ''
+      // }
       // rightShow: false
     }
   },
   mounted() {
-    // console.log('接下来显示数据 zzz')
     // console.log(this.columns)
     // console.log(this.columns.gainArea)
   },
@@ -235,10 +233,26 @@ export default {
     this.initDictConfig()
   },
   methods: {
-    // searchQuery() {},
-    // searchQuery() {
-    //   this.loadData(1)
+    getQueryParams() {
+      var param = Object.assign({}, this.queryParam, this.isorter)
+      param.field = this.getQueryField()
+      param.pageNo = this.ipagination.current
+      param.pageSize = this.ipagination.pageSize
+      return filterObj(param)
+    },
+    // searchReset() {
+    //   var that = this
+    //   that.queryParam.dictName = ''
+    //   that.queryParam.dictCode = ''
+    //   that.queryParam.projectName = ''
+    //   that.loadData(this.ipagination.current)
+    //   console.log('searchReset本页面')
     // },
+    searchReset() {
+      this.queryParam = {}
+      this.loadData(1)
+      console.log('searchReset本页面')
+    },
     // 数据字典使用步骤4
     initDictConfig() {
       initDictOptions('projectType').then(res => {
@@ -271,29 +285,17 @@ export default {
       this.$refs.sysAnnouncementModal.title = '查看'
     },
     showOne(record) {
-      // console.log("1101.1445 showone");
-      putAction(this.url.editCementSend, { anntId: record.anntId }).then(res => {
-        if (res.success) {
-          this.loadData()
-        }
-      })
+      // putAction(this.url.editCementSend, { anntId: record.anntId }).then(res => {
+      //   if (res.success) {
+      //     this.loadData()
+      //   }
+      // })
       this.$refs.ShowOne.detail(record)
     },
     showTwo(record) {
-      // putAction(this.url.editCementSend, { anntId: record.anntId }).then(res => {
-      //   if (res.success) {
-      //     this.loadData()
-      //   }
-      // })
       this.$refs.ShowTwo.detail(record)
     },
     showZero(record) {
-      // console.log("1101.1445 showzero");
-      // putAction(this.url.editCementSend, { anntId: record.anntId }).then(res => {
-      //   if (res.success) {
-      //     this.loadData()
-      //   }
-      // })
       this.$refs.ShowZero.detail(record)
     },
     readAll() {
