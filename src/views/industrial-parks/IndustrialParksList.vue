@@ -42,7 +42,7 @@
     </div>
 
     <!-- table区域-begin -->
-    <div>
+    <div class="industrial-parks-list">
       <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;">
         <i class="anticon anticon-info-circle ant-alert-icon"></i> 已选择 <a style="font-weight: 600">{{ selectedRowKeys.length }}</a>项
         <a style="margin-left: 24px" @click="onClearSelected">清空</a>
@@ -58,6 +58,7 @@
         :pagination="ipagination"
         :loading="loading"
         :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
+        :customRow="customRow"
         @change="handleTableChange">
 
         <span slot="action" slot-scope="text, record">
@@ -87,9 +88,9 @@
 
 <script>
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-  import Config from '@/defaultSettings'
   import ParksAddForm from '@views/industrial-parks/components/ParksAddForm'
   import { postAction } from '@/api/manage'
+  import qs from 'querystring'
 
   export default {
     name: "IndustrialParksList",
@@ -161,7 +162,9 @@
     },
     methods: {
       onSubmit(data){
-        postAction(this.url.add, {BasePark: data}).then(res => {
+        console.log(data)
+        data = qs.stringify(data)
+        postAction(this.url.add, data).then(res => {
           if(res.code === 200){
             this.$message.success(res.message)
             this.rightShow = false
@@ -170,10 +173,25 @@
             this.$message.error(res.message)
           }
         })
+      },
+      customRow(row){
+        return {
+          on: {
+            click: () => {
+              this.$router.push({name: 'industrial-parks-info-@id', params: {id: row.parkId}})
+            }
+          }
+        }
       }
     }
   }
 </script>
 <style lang="less">
   @import "../../assets/less/common.less";
+
+  .industrial-parks-list {
+    .ant-table-row {
+      cursor: pointer;
+    }
+  }
 </style>
