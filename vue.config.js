@@ -59,7 +59,7 @@ module.exports = {
     port: 3000,
     proxy: {
       '/jeecg-boot': {
-        target: 'http://139.155.126.195:8080', //请求本地 需要jeecg-boot后台项目
+        target: 'http://127.0.0.1:8080',
         ws: false,
         changeOrigin: true
       }

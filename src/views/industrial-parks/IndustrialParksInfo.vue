@@ -24,7 +24,7 @@
                 </a-col>
                 <a-col span="12" class="info-box">
                   <span>工位收费标准：</span>
-                  <span>123㎡</span>
+                  <span>{{ info.feeScale }} {{ filterDictText(dict.parksStationExt, info.feeScaleUnit) }}</span>
                 </a-col>
               </a-row>
               <!--空间数量和收费-->
@@ -35,7 +35,7 @@
                 </a-col>
                 <a-col span="12" class="info-box">
                   <span>独立空间收费标准：</span>
-                  <span>asd</span>
+                  <span>{{ info.feeScaleRoom }} {{ filterDictText(dict.parksInterspaceExt, info.feeScaleRoomUnit) }}</span>
                 </a-col>
               </a-row>
               <!--经纬度-->
@@ -80,6 +80,7 @@
 <script>
   import { getAction } from '@/api/manage'
   import { initDictOptions, filterDictText } from '@comp/dict/JDictSelectUtil'
+  import Numeral from 'numeral'
 
   export default {
     name: 'IndustrialParksInfo',
@@ -100,21 +101,23 @@
         return false
       }
 
-      initDictOptions('parks_station_ext').then(res => {
-        if (res.code === 0 && res.success) {
-          this.dict.parksStationExt = res.result
-        }
-      })
-      initDictOptions('parks_interspace_ext').then(res => {
-        if (res.code === 0 && res.success) {
-          this.dict.parksInterspaceExt = res.result
-        }
-      })
+      const DictParksStationExt = await initDictOptions('parks_station_ext')
+      if (DictParksStationExt.code === 0 && DictParksStationExt.success) {
+        this.dict.parksStationExt = DictParksStationExt.result
+      }
+      const DictParksInterspaceExt = await initDictOptions('parks_interspace_ext')
+      if (DictParksInterspaceExt.code === 0 && DictParksInterspaceExt.success) {
+        this.dict.parksInterspaceExt = DictParksInterspaceExt.result
+      }
+
 
       getAction('/park.park/basePark/queryById', { id: this.$route.params.id }).then(res => {
         if (res.code === 200) {
           this.loading = false
-          this.info = res.result
+          const info = res.result
+          info.feeScaleRoom = Numeral(info.feeScaleRoom).format('0,0.00')
+          info.feeScale = Numeral(info.feeScale).format('0,0.00')
+          this.info = info
         } else {
           this.$router.back()
           this.$message.error(res.message)
