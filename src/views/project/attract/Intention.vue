@@ -202,6 +202,7 @@ export default {
         return {
           on: {
             click: e => {
+              // this.$router.push({name: 'detail-@id', params: {id: row.projectId}})
               this.$router.push({ path: '/project/attract/detail' })
               // this.$router.push({ path: '/project/attract/detail/:record.projectId' })
             }
