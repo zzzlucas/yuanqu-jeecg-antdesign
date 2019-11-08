@@ -495,7 +495,7 @@
                 <a-upload name="file" :showUploadList="true" :multiple="false">
                   <!-- :headers="tokenHeader"
                   :action="importExcelUrl"
-                  @change="handleImportExcel" -->
+                  @change="handleImportExcel"-->
                   <a-button type="primary" icon="import">上传附件</a-button>
                   <!-- <span>（单个图片大小不可超过10.00M，全部图片大小不可超过30.00M）</span> -->
                 </a-upload>
@@ -707,8 +707,12 @@ export default {
           // formData.setUpYear = formData.setUpYear ? formData.setUpYear.format() : null
           formData.buildingBeginDate = formData.buildingBeginDate ? formData.buildingBeginDate.format() : null
           formData.buildingEndDate = formData.buildingEndDate ? formData.buildingEndDate.format() : null
-          formData.buildingBeginDate = formData.buildingBeginDate.slice(0, 10)
-          formData.buildingEndDate = formData.buildingEndDate.slice(0, 10)
+          if (formData.buildingBeginDate) {
+            formData.buildingBeginDate = formData.buildingBeginDate.slice(0, 10)
+          }
+          if (formData.buildingEndDate) {
+            formData.buildingEndDate = formData.buildingEndDate.slice(0, 10)
+          }
           // console.log(formData)
 
           //qs.stringify  目前看来必须转换

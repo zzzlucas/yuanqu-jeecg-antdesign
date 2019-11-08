@@ -92,7 +92,7 @@
     </div>
     <!-- table区域-end -->
     <show-zero ref="ShowZero"></show-zero>
-    <show-one ref="ShowOne"></show-one>
+    <!-- <show-one ref="ShowOne"></show-one> -->
     <!-- 表单区域 -->
     <parks-add-form v-model="rightShow"></parks-add-form>
   </a-card>
@@ -105,6 +105,8 @@ import ParksAddForm from '@views/industrial-parks/components/ParksAddForm'
 import { initDictOptions } from '@/components/dict/JDictSelectUtil'
 import ShowZero from './modules/ShowZeroD'
 import ShowOne from './modules/ShowOneM'
+import { getAction, putAction } from '@/api/manage'
+import qs from 'qs'
 
 export default {
   name: 'IndustrialParksList',
@@ -206,17 +208,26 @@ export default {
       this.$refs.ShowOne.detail()
     },
     showConfirm() {
-      // this.$confirm({
-      //   title: '确认迁出',
-      //   content: '确认要迁出吗？',
-      //   onOk() {
-      //     return new Promise((resolve, reject) => {
-      //       // setTimeout(Math.random() > 0.5 ? resolve : reject, 1000)
-            
-      //     }).catch(() => console.log('Oops errors!'))
-      //   },
-      //   onCancel() {}
-      // })
+      this.$confirm({
+        title: '确认迁出',
+        content: '确认要迁出吗？',
+        onOk() {
+          return new Promise((resolve, reject) => {
+            let formData = { cusId: '1192718061480706048', status: '0' }
+            formData = qs.stringify(formData)
+            putAction('/park.customer/baseCustomer/editStatus', formData).then(res => {
+              if (res.code === 200) {
+                console.log('迁入迁出成功')
+                // this.visible = false
+                // this.confirmLoading = false
+              } else {
+                this.$message.error(res.message)
+              }
+            })
+          }).catch(() => console.log('Oops errors!'))
+        },
+        onCancel() {}
+      })
     }
   }
 }

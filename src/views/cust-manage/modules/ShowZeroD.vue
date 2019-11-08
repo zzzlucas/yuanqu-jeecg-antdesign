@@ -539,7 +539,7 @@ import moment from 'moment'
 import { initDictOptions } from '@comp/dict/JDictSelectUtil'
 
 export default {
-  name: 'mgrProjectTraceDrawer',
+  name: '',
   //1111111111111111111111
   props: {
     show: {
@@ -722,10 +722,16 @@ export default {
           formData.merchantDate = formData.merchantDate ? formData.merchantDate.format() : null
           formData.registDate = formData.registDate ? formData.registDate.format() : null
           formData.settledDate = formData.settledDate ? formData.settledDate.format() : null
-          formData.merchantDate = formData.merchantDate.slice(0, 10)
-          formData.registDate = formData.registDate.slice(0, 10)
-          formData.settledDate = formData.settledDate.slice(0, 10)
-
+          if (formData.merchantDate) {
+            formData.merchantDate = formData.merchantDate.slice(0, 10)
+          }
+          if (formData.registDate) {
+            formData.registDate = formData.registDate.slice(0, 10)
+          }
+          if (formData.settledDate) {
+            formData.settledDate = formData.settledDate.slice(0, 10)
+          }
+          
           formData = qs.stringify(formData)
           console.log(formData)
 
