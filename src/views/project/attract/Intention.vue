@@ -7,7 +7,7 @@
         <a-row :gutter="24">
           <a-col :span="6">
             <a-form-item label="关键字">
-              <a-input placeholder="输入项目名称" v-model="queryParam.projectName"></a-input>
+              <a-input placeholder="输入项目名称" v-model="queryParam.keyword"></a-input>
             </a-form-item>
           </a-col>
 

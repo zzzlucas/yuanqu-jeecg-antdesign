@@ -54,36 +54,36 @@
           <a-form-item label="地址" :label-col="formItem.label" :wrapper-col="formItem.value">
             <a-input v-decorator="['address']"></a-input>
           </a-form-item>
-<!--          <a-form-item label="经度" :label-col="formItem.label" :wrapper-col="formItem.value">-->
-<!--            <a-input-->
-<!--              v-decorator="[-->
-<!--                'lng',-->
-<!--                {-->
-<!--                  rules: [-->
-<!--                    {-->
-<!--                      validator: (rule, value, callback) => {-->
-<!--                        validateLngLat('lng', rule, value, callback)-->
-<!--                      }-->
-<!--                    }-->
-<!--                  ]-->
-<!--                }-->
-<!--              ]"></a-input>-->
-<!--          </a-form-item>-->
-<!--          <a-form-item label="纬度" :label-col="formItem.label" :wrapper-col="formItem.value">-->
-<!--            <a-input-->
-<!--              v-decorator="[-->
-<!--                'lat',-->
-<!--                {-->
-<!--                  rules: [-->
-<!--                    {-->
-<!--                      validator: (rule, value, callback) => {-->
-<!--                        validateLngLat('lat', rule, value, callback)-->
-<!--                      }-->
-<!--                    }-->
-<!--                  ]-->
-<!--                }-->
-<!--              ]"></a-input>-->
-<!--          </a-form-item>-->
+          <a-form-item label="经度" :label-col="formItem.label" :wrapper-col="formItem.value">
+            <a-input
+              v-decorator="[
+                'lng',
+                {
+                  rules: [
+                    {
+                      validator: (rule, value, callback) => {
+                        validateLngLat('lng', rule, value, callback)
+                      }
+                    }
+                  ]
+                }
+              ]"></a-input>
+          </a-form-item>
+          <a-form-item label="纬度" :label-col="formItem.label" :wrapper-col="formItem.value">
+            <a-input
+              v-decorator="[
+                'lat',
+                {
+                  rules: [
+                    {
+                      validator: (rule, value, callback) => {
+                        validateLngLat('lat', rule, value, callback)
+                      }
+                    }
+                  ]
+                }
+              ]"></a-input>
+          </a-form-item>
           <a-form-item label="得房率" :label-col="formItem.label" :wrapper-col="formItem.value">
             <a-input
               v-decorator="[
@@ -216,6 +216,7 @@
         if(num > 100 || num < 0){
           return callback(new Error('不能大于 100 或小于 0'))
         }
+        callback()
       }
     }
   }

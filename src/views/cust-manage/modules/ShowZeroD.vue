@@ -7,6 +7,7 @@
     @close="close"
     :visible="visible"
   >-->
+  <!-- 登记新客户 -->
   <a-drawer
     wrapClassName="mgr-project-trace-drawer"
     width="70%"
@@ -16,10 +17,10 @@
   >
     <div>
       <a-form class="project-drawer-form" :form="form">
-        <a-row>
-          <a-col span="15">
-            <a-card class="daily-article" :bordered="false" title="基本信息">
-              <a-spin :spinning="confirmLoading">
+        <a-spin :spinning="confirmLoading">
+          <a-row>
+            <a-col span="15">
+              <a-card class="daily-article" :bordered="false" title="基本信息">
                 <!-- 一行 -->
                 <a-col span="12">
                   <a-form-item
@@ -28,7 +29,7 @@
                     label="企业名称"
                   >
                     <a-input
-                      v-decorator="['customerName',{rules: [{ required: true, message: '请输入项目单位', whitespace:true}]}]"
+                      v-decorator="['customerName',{rules: [{ required: true, message: '请输入企业名称', whitespace:true}]}]"
                     ></a-input>
                   </a-form-item>
                 </a-col>
@@ -76,10 +77,13 @@
                     :wrapperCol="wrapperCol.default"
                     label="招商人员"
                   >
-                    <!-- <a-select defaultValue="1" style="width:100%">
-                      <a-select-option value="1">来访</a-select-option>
-                      <a-select-option value="2">联营企业</a-select-option>
-                    </a-select>-->
+                    <a-select v-decorator="['merchantManager']" placeholder="请选择">
+                      <a-select-option
+                        v-for="(item, key) in dict.merchantManagerExt"
+                        :value="item.value"
+                        :key="key"
+                      >{{ item.text }}</a-select-option>
+                    </a-select>
                   </a-form-item>
                 </a-col>
                 <!-- 一行 -->
@@ -89,10 +93,13 @@
                     :wrapperCol="wrapperCol.default"
                     label="服务人员"
                   >
-                    <!-- <a-select defaultValue="1" style="width:100%">
-                      <a-select-option value="1">来访</a-select-option>
-                      <a-select-option value="2">联营企业</a-select-option>
-                    </a-select>-->
+                    <a-select v-decorator="['servicer']" placeholder="请选择">
+                      <a-select-option
+                        v-for="(item, key) in dict.servicerExt"
+                        :value="item.value"
+                        :key="key"
+                      >{{ item.text }}</a-select-option>
+                    </a-select>
                   </a-form-item>
                 </a-col>
                 <a-col span="12">
@@ -136,10 +143,10 @@
                     label="所属项目"
                   >
                     <!-- caseId -->
-                    <a-select defaultValue="1" style="width:100%">
+                    <!-- <a-select defaultValue="1" style="width:100%">
                       <a-select-option value="1">来访</a-select-option>
                       <a-select-option value="2">联营企业</a-select-option>
-                    </a-select>
+                    </a-select>-->
                   </a-form-item>
                 </a-col>
                 <a-col span="12">
@@ -149,10 +156,10 @@
                     label="所属楼宇"
                   >
                     <!-- buidling -->
-                    <a-select defaultValue="1" style="width:100%">
+                    <!-- <a-select defaultValue="1" style="width:100%">
                       <a-select-option value="1">来访</a-select-option>
                       <a-select-option value="2">联营企业</a-select-option>
-                    </a-select>
+                    </a-select>-->
                   </a-form-item>
                 </a-col>
                 <!-- 一行 -->
@@ -194,39 +201,57 @@
                     </a-form-item>
                   </a-col>
                 </a-row>
-              </a-spin>
-            </a-card>
-          </a-col>
+              </a-card>
+            </a-col>
 
-          <a-col span="9">
-            <a-card class="daily-article" :bordered="false" title="企业标识">
-              <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label>
-                <!-- <a-checkbox-group :options="plainOptions" v-model="checkedList" @change="onChange" /> -->
-                <a-checkbox-group :options="plainOptions" v-model="checkedList" @change="onChange">
-                  <a-row>
-                    <a-col :span="8">
-                      <a-checkbox value="A">A</a-checkbox>
-                    </a-col>
-                    <a-col :span="8">
-                      <a-checkbox value="B">B</a-checkbox>
-                    </a-col>
-                    <a-col :span="8">
-                      <a-checkbox value="C">C</a-checkbox>
-                    </a-col>
-                    <a-col :span="8">
-                      <a-checkbox value="D">D</a-checkbox>
-                    </a-col>
-                    <a-col :span="8">
-                      <a-checkbox value="E">E</a-checkbox>
-                    </a-col>
-                  </a-row>
-                </a-checkbox-group>
-              </a-form-item>
-            </a-card>
-            <a-card class="daily-article" :bordered="false" title="附件">
-              <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label>
-                <!-- <a-input placeholder="请输入附件组ID" v-decorator="['addDocFiles', {}]" /> -->
-                <a-upload
+            <a-col span="9">
+              <a-card class="daily-article" :bordered="false" title="企业标识">
+                <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label>
+                  <!-- <a-checkbox-group :options="plainOptions" v-model="checkedList" @change="onChange" /> -->
+                  <a-checkbox-group
+                    :options="plainOptions"
+                    v-model="checkedList"
+                    @change="onChange"
+                  >
+                    <a-row>
+                      <a-col :span="8">
+                        <a-checkbox value="A">A</a-checkbox>
+                      </a-col>
+                      <a-col :span="8">
+                        <a-checkbox value="B">B</a-checkbox>
+                      </a-col>
+                      <a-col :span="8">
+                        <a-checkbox value="C">C</a-checkbox>
+                      </a-col>
+                      <a-col :span="8">
+                        <a-checkbox value="D">D</a-checkbox>
+                      </a-col>
+                      <a-col :span="8">
+                        <a-checkbox value="E">E</a-checkbox>
+                      </a-col>
+                      <a-col :span="8">
+                        <a-checkbox value="E">E</a-checkbox>
+                      </a-col>
+                      <a-col :span="8">
+                        <a-checkbox value="E">E</a-checkbox>
+                      </a-col>
+                      <a-col :span="8">
+                        <a-checkbox value="E">E</a-checkbox>
+                      </a-col>
+                      <a-col :span="8">
+                        <a-checkbox value="E">E</a-checkbox>
+                      </a-col>
+                      <a-col :span="8">
+                        <a-checkbox value="E">E</a-checkbox>
+                      </a-col>
+                    </a-row>
+                  </a-checkbox-group>
+                </a-form-item>
+              </a-card>
+              <a-card class="daily-article" :bordered="false" title="附件">
+                <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label>
+                  <!-- <a-input placeholder="请输入附件组ID" v-decorator="['addDocFiles', {}]" /> -->
+                  <!-- <a-upload
                   name="file"
                   :showUploadList="true"
                   :multiple="false"
@@ -235,220 +260,256 @@
                   @change="handleImportExcel"
                 >
                   <a-button type="primary" icon="import">营业执照</a-button>
-                  <!-- <span>（单个图片大小不可超过10.00M，全部图片大小不可超过30.00M）</span> -->
-                </a-upload>
-              </a-form-item>
-              <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label>
-                <!-- <a-input placeholder="请输入附件组ID" v-decorator="['addDocFiles', {}]" /> -->
-                <a-upload
+                  </a-upload>-->
+                </a-form-item>
+                <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label>
+                  <!-- <a-input placeholder="请输入附件组ID" v-decorator="['addDocFiles', {}]" /> -->
+                  <!-- <a-upload
                   name="file"
                   :showUploadList="true"
                   :multiple="false"
                   :headers="tokenHeader"
                   :action="importExcelUrl"
                   @change="handleImportExcel"
-                >
+                > 
                   <a-button type="primary" icon="import">其他附件</a-button>
-                  <!-- <span>（单个图片大小不可超过10.00M，全部图片大小不可超过30.00M）</span> -->
-                </a-upload>
-              </a-form-item>
-            </a-card>
-          </a-col>
-        </a-row>
-        <a-card class="daily-article" :bordered="false" title="分类信息">
-          <a-row>
-            <a-col span="8">
-              <a-form-item
-                :labelCol="labelCol.default"
-                :wrapperCol="wrapperCol.default"
-                label="公司性质"
-              >
-                <a-select defaultValue="1" style="width:100%">
-                  <a-select-option value="1">来访</a-select-option>
-                  <a-select-option value="2">联营企业</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col span="8">
-              <a-form-item
-                :labelCol="labelCol.default"
-                :wrapperCol="wrapperCol.default"
-                label="行业类型"
-              >
-                <a-select defaultValue="1" style="width:100%">
-                  <a-select-option value="1">来访</a-select-option>
-                  <a-select-option value="2">联营企业</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col span="8">
-              <a-form-item
-                :labelCol="labelCol.default"
-                :wrapperCol="wrapperCol.default"
-                label="公司类型"
-              >
-                <a-select defaultValue="1" style="width:100%">
-                  <a-select-option value="1">来访</a-select-option>
-                  <a-select-option value="2">联营企业</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col span="8">
-              <a-form-item
-                :labelCol="labelCol.default"
-                :wrapperCol="wrapperCol.default"
-                label="技术领域"
-              >
-                <a-select defaultValue="1" style="width:100%">
-                  <a-select-option value="1">来访</a-select-option>
-                  <a-select-option value="2">联营企业</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col span="8">
-              <a-form-item
-                :labelCol="labelCol.default"
-                :wrapperCol="wrapperCol.default"
-                label="企业评级"
-              >
-                <a-select defaultValue="1" style="width:100%">
-                  <a-select-option value="1">来访</a-select-option>
-                  <a-select-option value="2">联营企业</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col span="8">
-              <a-form-item
-                :labelCol="labelCol.default"
-                :wrapperCol="wrapperCol.default"
-                label="注册类型"
-              >
-                <a-select defaultValue="1" style="width:100%">
-                  <a-select-option value="1">来访</a-select-option>
-                  <a-select-option value="2">联营企业</a-select-option>
-                </a-select>
-              </a-form-item>
+                  </a-upload>-->
+                </a-form-item>
+              </a-card>
             </a-col>
           </a-row>
-        </a-card>
+          <a-card class="daily-article" :bordered="false" title="分类信息">
+            <a-row>
+              <a-col span="8">
+                <a-form-item
+                  :labelCol="labelCol.default"
+                  :wrapperCol="wrapperCol.default"
+                  label="公司性质"
+                >
+                  <a-select v-decorator="['unitNature']" placeholder="请选择">
+                    <a-select-option
+                      v-for="(item, key) in dict.unitNatureExt"
+                      :value="item.value"
+                      :key="key"
+                    >{{ item.text }}</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col span="8">
+                <a-form-item
+                  :labelCol="labelCol.default"
+                  :wrapperCol="wrapperCol.default"
+                  label="行业类型"
+                >
+                  <a-select v-decorator="['industryCategory']" placeholder="请选择">
+                    <a-select-option
+                      v-for="(item, key) in dict.industryCategoryExt"
+                      :value="item.value"
+                      :key="key"
+                    >{{ item.text }}</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col span="8">
+                <a-form-item
+                  :labelCol="labelCol.default"
+                  :wrapperCol="wrapperCol.default"
+                  label="公司类型"
+                >
+                  <a-select v-decorator="['organizational']" placeholder="请选择">
+                    <a-select-option
+                      v-for="(item, key) in dict.organizationalExt"
+                      :value="item.value"
+                      :key="key"
+                    >{{ item.text }}</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col span="8">
+                <a-form-item
+                  :labelCol="labelCol.default"
+                  :wrapperCol="wrapperCol.default"
+                  label="技术领域"
+                >
+                  <a-select v-decorator="['technicalField']" placeholder="请选择">
+                    <a-select-option
+                      v-for="(item, key) in dict.technicalFieldExt"
+                      :value="item.value"
+                      :key="key"
+                    >{{ item.text }}</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col span="8">
+                <a-form-item
+                  :labelCol="labelCol.default"
+                  :wrapperCol="wrapperCol.default"
+                  label="企业评级"
+                >
+                  <a-select v-decorator="['enterpriseRating']" placeholder="请选择">
+                    <a-select-option
+                      v-for="(item, key) in dict.enterpriseRatingExt"
+                      :value="item.value"
+                      :key="key"
+                    >{{ item.text }}</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col span="8">
+                <a-form-item
+                  :labelCol="labelCol.default"
+                  :wrapperCol="wrapperCol.default"
+                  label="注册类型"
+                >
+                  <a-select v-decorator="['registrationType']" placeholder="请选择">
+                    <a-select-option
+                      v-for="(item, key) in dict.registrationTypeExt"
+                      :value="item.value"
+                      :key="key"
+                    >{{ item.text }}</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </a-card>
 
-        <a-card class="daily-article" :bordered="false" title="工商/税务信息">
-          <a-row>
-            <a-col span="8">
-              <a-form-item
-                :labelCol="labelCol.default"
-                :wrapperCol="wrapperCol.default"
-                label="注册日期"
-              >
-                <a-date-picker style="width:100%" v-decorator="[ 'registDate']" />
-              </a-form-item>
-            </a-col>
-            <a-col span="8">
-              <a-form-item
-                :labelCol="labelCol.default"
-                :wrapperCol="wrapperCol.default"
-                label="注册资本"
-              >
-                <a-input v-decorator="[ 'registeredCapital']" />
-                <!-- <a-select defaultValue="1" style="width:100%" v-decorator="[ 'registeredCapitalUnit']">
+          <a-card class="daily-article" :bordered="false" title="工商/税务信息">
+            <a-row>
+              <a-col span="8">
+                <a-form-item
+                  :labelCol="labelCol.default"
+                  :wrapperCol="wrapperCol.default"
+                  label="注册日期"
+                >
+                  <a-date-picker style="width:100%" v-decorator="[ 'registDate']" />
+                </a-form-item>
+              </a-col>
+              <a-col span="8">
+                <a-form-item
+                  :labelCol="labelCol.default"
+                  :wrapperCol="wrapperCol.default"
+                  label="注册资本"
+                >
+                  <a-input v-decorator="[ 'registeredCapital']" />
+                  <!-- <a-select defaultValue="1" style="width:100%" v-decorator="[ 'registeredCapitalUnit']">
                 <a-select-option value="1">注册资本单位</a-select-option>
-                </a-select>-->
-              </a-form-item>
-            </a-col>
-            <a-col span="8">
-              <a-form-item
-                :labelCol="labelCol.default"
-                :wrapperCol="wrapperCol.default"
-                label="转化为人民币"
-              >
-                <a-input addonAfter="万元" v-decorator="[ 'registeredCapital']" />
-              </a-form-item>
-            </a-col>
-            <a-col span="8">
-              <a-form-item
-                :labelCol="labelCol.default"
-                :wrapperCol="wrapperCol.default"
-                label="工商状态"
-              >
-                <a-select defaultValue="1" style="width:100%">
-                  <a-select-option value="1">工商正常</a-select-option>
-                  <a-select-option value="2">工商未办</a-select-option>
-                  <a-select-option value="3">工商未迁</a-select-option>
-                  <a-select-option value="4">工商迁出</a-select-option>
-                  <a-select-option value="5">工商吊销</a-select-option>
-                  <a-select-option value="6">工商注销</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col span="8">
-              <a-form-item
-                :labelCol="labelCol.default"
-                :wrapperCol="wrapperCol.default"
-                label="税务状态"
-              >
-                <a-select defaultValue="1" style="width:100%">
-                  <a-select-option value="1">来访</a-select-option>
-                  <a-select-option value="2">联营企业</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col span="8">
-              <a-form-item
-                :labelCol="labelCol.default"
-                :wrapperCol="wrapperCol.default"
-                label="统一社会信用号码"
-              >
-                <a-input v-decorator="[ 'registeredCapital']" />
-              </a-form-item>
-            </a-col>
-            <a-col span="16">
-              <a-form-item
-                :labelCol="labelCol.default"
-                :wrapperCol="wrapperCol.default"
-                label="注册地址"
-              >
-                <a-input v-decorator="[ 'registeredCapital']" />
-              </a-form-item>
-            </a-col>
-            <a-col span="8">
-              <a-form-item
-                :labelCol="labelCol.default"
-                :wrapperCol="wrapperCol.default"
-                label="注册地邮编"
-              >
-                <a-input v-decorator="[ 'registeredCapital']" />
-              </a-form-item>
-            </a-col>
-            <a-col span="16">
-              <a-form-item
-                :labelCol="labelCol.default"
-                :wrapperCol="wrapperCol.default"
-                label="经营地址"
-              >
-                <a-input v-decorator="[ 'registeredCapital']" />
-              </a-form-item>
-            </a-col>
-            <a-col span="8">
-              <a-form-item
-                :labelCol="labelCol.default"
-                :wrapperCol="wrapperCol.default"
-                label="经营地邮编"
-              >
-                <a-input v-decorator="[ 'registeredCapital']" />
-              </a-form-item>
-            </a-col>
-            <a-col span="24">
-              <a-form-item :labelCol="labelCol.whole" :wrapperCol="wrapperCol.whole" label="经营范围">
-                <a-textarea :rows="4" v-decorator="['businessScope', {}]"></a-textarea>
-              </a-form-item>
-            </a-col>
-            <a-col span="24">
-              <a-form-item :labelCol="labelCol.whole" :wrapperCol="wrapperCol.whole" label="特许经营范围">
-                <a-textarea :rows="4" v-decorator="['businessScopePermit', {}]"></a-textarea>
-              </a-form-item>
-            </a-col>
-          </a-row>
-        </a-card>
+                  </a-select>-->
+                </a-form-item>
+              </a-col>
+              <a-col span="8">
+                <a-form-item
+                  :labelCol="labelCol.default"
+                  :wrapperCol="wrapperCol.default"
+                  label="转化为人民币"
+                >
+                  <a-input addonAfter="万元" v-decorator="[ 'RCToRMB']" />
+                </a-form-item>
+              </a-col>
+              <a-col span="8">
+                <a-form-item
+                  :labelCol="labelCol.default"
+                  :wrapperCol="wrapperCol.default"
+                  label="工商状态"
+                >
+                  <a-select style="width:100%" v-decorator="['bussinessStatus']" placeholder="请选择">
+                    <a-select-option value="1">工商正常</a-select-option>
+                    <a-select-option value="2">工商未办</a-select-option>
+                    <a-select-option value="3">工商未迁</a-select-option>
+                    <a-select-option value="4">工商迁出</a-select-option>
+                    <a-select-option value="5">工商吊销</a-select-option>
+                    <a-select-option value="6">工商注销</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col span="8">
+                <a-form-item
+                  :labelCol="labelCol.default"
+                  :wrapperCol="wrapperCol.default"
+                  label="税务状态"
+                >
+                  <a-select style="width:100%" v-decorator="['taxStatus']" placeholder="请选择">
+                    <a-select-option value="1">税务正常</a-select-option>
+                    <a-select-option value="2">税务未办</a-select-option>
+                    <a-select-option value="3">税务未迁</a-select-option>
+                    <a-select-option value="4">税务迁出</a-select-option>
+                    <a-select-option value="5">税务吊销</a-select-option>
+                    <a-select-option value="6">税务注销</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col span="8">
+                <a-form-item
+                  :labelCol="labelCol.default"
+                  :wrapperCol="wrapperCol.default"
+                  label="统一社会信用号码"
+                >
+                  <a-input v-decorator="[ 'creditCode']" />
+                </a-form-item>
+              </a-col>
+              <a-col span="16">
+                <a-form-item
+                  :labelCol="labelCol.default"
+                  :wrapperCol="wrapperCol.default"
+                  label="注册地址"
+                >
+                  <a-input v-decorator="[ 'registerAddress']" />
+                </a-form-item>
+              </a-col>
+              <a-col span="8">
+                <a-form-item
+                  :labelCol="labelCol.default"
+                  :wrapperCol="wrapperCol.default"
+                  label="注册地邮编"
+                >
+                  <a-input v-decorator="[ 'registerAddressZipCode']" />
+                </a-form-item>
+              </a-col>
+              <a-col span="16">
+                <a-form-item
+                  :labelCol="labelCol.default"
+                  :wrapperCol="wrapperCol.default"
+                  label="经营地址"
+                >
+                  <a-input v-decorator="[ 'businessAddress']" />
+                </a-form-item>
+              </a-col>
+              <a-col span="8">
+                <a-form-item
+                  :labelCol="labelCol.default"
+                  :wrapperCol="wrapperCol.default"
+                  label="经营地邮编"
+                >
+                  <a-input v-decorator="[ 'businessAddressZipCode']" />
+                </a-form-item>
+              </a-col>
+              <a-col span="24">
+                <a-form-item :labelCol="labelCol.whole" :wrapperCol="wrapperCol.whole" label="经营范围">
+                  <a-textarea :rows="4" v-decorator="['businessScope', {}]"></a-textarea>
+                </a-form-item>
+              </a-col>
+              <a-col span="24">
+                <a-form-item
+                  :labelCol="labelCol.whole"
+                  :wrapperCol="wrapperCol.whole"
+                  label="特许经营范围"
+                >
+                  <a-textarea :rows="4" v-decorator="['businessScopePermit', {}]"></a-textarea>
+                </a-form-item>
+              </a-col>
+              <a-col span="24">
+                <a-form-item
+                  :labelCol="labelCol.whole"
+                  :wrapperCol="wrapperCol.whole"
+                  label="parkId"
+                >
+                  <a-input
+                    v-decorator="['parkId',{rules: [{ required: true, message: '请输入parkId', whitespace:true}]}]"
+                  ></a-input>
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </a-card>
+        </a-spin>
       </a-form>
       <div
         :style="{
@@ -471,9 +532,11 @@
 </template>
 
 <script>
+import qs from 'qs'
 import { httpAction } from '@/api/manage'
 import pick from 'lodash.pick'
 import moment from 'moment'
+import { initDictOptions } from '@comp/dict/JDictSelectUtil'
 
 export default {
   name: 'mgrProjectTraceDrawer',
@@ -496,6 +559,7 @@ export default {
       title: '操作',
       visible: false,
       model: {},
+      checkedList: [],
       labelCol: {
         long: {
           span: 4
@@ -525,13 +589,66 @@ export default {
         parkId: { rules: [{ required: true, message: '请输入园区ID!' }] }
       },
       url: {
-        add: '/park.mgr/mgrProjectTrace/add',
-        edit: '/park.mgr/mgrProjectTrace/edit'
+        add: '/park.customer/baseCustomer/add',
+        edit: '/park.customer/baseCustomer/edit'
+      },
+      merchantManager: '',
+      dict: {
+        merchantManagerExt: [{ value: '' }],
+        servicerExt: [{ value: '' }],
+        unitNatureExt: [{ value: '' }],
+        industryCategoryExt: [{ value: '' }],
+        organizationalExt: [{ value: '' }],
+        technicalFieldExt: [{ value: '' }],
+        enterpriseRatingExt: [{ value: '' }],
+        registrationTypeExt: [{ value: '' }]
       }
     }
   },
-  created() {},
+  created() {
+    initDictOptions('attract_staff').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.merchantManagerExt = res.result
+      }
+    }),
+      initDictOptions('service_staff').then(res => {
+        if (res.code === 0 && res.success) {
+          this.dict.servicerExt = res.result
+        }
+      }),
+      initDictOptions('unit_nature').then(res => {
+        if (res.code === 0 && res.success) {
+          this.dict.unitNatureExt = res.result
+        }
+      }),
+      initDictOptions('industry_gategory').then(res => {
+        if (res.code === 0 && res.success) {
+          this.dict.industryCategoryExt = res.result
+        }
+      }),
+      initDictOptions('organizational').then(res => {
+        if (res.code === 0 && res.success) {
+          this.dict.organizationalExt = res.result
+        }
+      }),
+      initDictOptions('technical_field').then(res => {
+        if (res.code === 0 && res.success) {
+          this.dict.technicalFieldExt = res.result
+        }
+      }),
+      initDictOptions('enterprise_rating').then(res => {
+        if (res.code === 0 && res.success) {
+          this.dict.enterpriseRatingExt = res.result
+        }
+      }),
+      initDictOptions('registration_type').then(res => {
+        if (res.code === 0 && res.success) {
+          this.dict.registrationTypeExt = res.result
+        }
+      })
+  },
   methods: {
+    plainOptions() {},
     showDrawer() {
       this.visible = true
     },
@@ -578,7 +695,7 @@ export default {
           )
         )
         //时间格式化
-        this.form.setFieldsValue({ trackDate: this.model.trackDate ? moment(this.model.trackDate) : null })
+        // this.form.setFieldsValue({ trackDate: this.model.trackDate ? moment(this.model.trackDate) : null })
       })
     },
     close() {
@@ -602,9 +719,16 @@ export default {
           }
           let formData = Object.assign(this.model, values)
           //时间格式化
-          formData.trackDate = formData.trackDate ? formData.trackDate.format() : null
+          formData.merchantDate = formData.merchantDate ? formData.merchantDate.format() : null
+          formData.registDate = formData.registDate ? formData.registDate.format() : null
+          formData.settledDate = formData.settledDate ? formData.settledDate.format() : null
+          formData.merchantDate = formData.merchantDate.slice(0, 10)
+          formData.registDate = formData.registDate.slice(0, 10)
+          formData.settledDate = formData.settledDate.slice(0, 10)
 
+          formData = qs.stringify(formData)
           console.log(formData)
+
           httpAction(httpurl, formData, method)
             .then(res => {
               if (res.success) {

@@ -8,7 +8,7 @@
             <a-form-item label="项目">
               <a-input placeholder v-model="queryParam.caseId"></a-input>
             </a-form-item>
-          </a-col> -->
+          </a-col>-->
           <a-col :md="6" :sm="8">
             <a-form-item label="楼宇">
               <a-input placeholder v-model="queryParam.buidling"></a-input>
@@ -16,7 +16,15 @@
           </a-col>
           <a-col :md="6" :sm="8">
             <a-form-item label="行业类型">
-              <a-input placeholder v-model="queryParam.industryCategory"></a-input>
+              <a-select v-model="queryParam.industryCategory" placeholder="请选择">
+                <!-- <a-select v-decorator="['industryCategory']" placeholder="请选择"> -->
+                <a-select-option
+                  v-for="(item, key) in dict.industryCategoryExt"
+                  :value="item.value"
+                  :key="key"
+                >{{ item.text }}</a-select-option>
+              </a-select>
+              <!-- <a-input placeholder v-model="queryParam.industryCategory"></a-input> -->
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
@@ -26,9 +34,10 @@
           </a-col>
           <a-col :md="6" :sm="8">
             <a-form-item label="状态">
-              <a-radio-group @change="onChange" v-model="queryParam.status">
-                <a-radio :style="radioStyle" :value="1">在园</a-radio>
-                <a-radio :style="radioStyle" :value="2">离园</a-radio>
+              <a-radio-group v-model="queryParam.status">
+                <a-radio value="1">在园</a-radio>
+                <a-radio value="2">离园</a-radio>
+                <!-- <a-radio :style="radioStyle" :value="2">离园</a-radio> -->
               </a-radio-group>
             </a-form-item>
           </a-col>
@@ -69,9 +78,11 @@
         :pagination="ipagination"
         :loading="loading"
         @change="handleTableChange"
+        :customRow="customRow"
       >
         <span slot="action" slot-scope="text, record">
-          <a @click="handleEdit(record)">迁出</a>
+          <a @click.stop="showConfirm(record)">迁出</a>
+          <!-- <a @click.stop="showOne(record)">迁出</a> -->
           <a-divider type="vertical" />
           <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
             <a>删除</a>
@@ -81,6 +92,7 @@
     </div>
     <!-- table区域-end -->
     <show-zero ref="ShowZero"></show-zero>
+    <show-one ref="ShowOne"></show-one>
     <!-- 表单区域 -->
     <parks-add-form v-model="rightShow"></parks-add-form>
   </a-card>
@@ -90,17 +102,27 @@
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import Config from '@/defaultSettings'
 import ParksAddForm from '@views/industrial-parks/components/ParksAddForm'
-
+import { initDictOptions } from '@/components/dict/JDictSelectUtil'
 import ShowZero from './modules/ShowZeroD'
+import ShowOne from './modules/ShowOneM'
 
 export default {
   name: 'IndustrialParksList',
-  components: { ParksAddForm, ShowZero },
+  components: { ParksAddForm, ShowZero, ShowOne },
   mixins: [JeecgListMixin],
   data() {
     return {
       description: '企业管理-客户信息列表页',
-      // 表头
+      dict: {
+        merchantManagerExt: [{ value: '' }],
+        servicerExt: [{ value: '' }],
+        unitNatureExt: [{ value: '' }],
+        industryCategoryExt: [{ value: '' }],
+        organizationalExt: [{ value: '' }],
+        // technicalFieldExt: [{ value: '' }],
+        enterpriseRatingExt: [{ value: '' }],
+        registrationTypeExt: [{ value: '' }]
+      },
       columns: [
         {
           title: '序号',
@@ -130,7 +152,7 @@ export default {
         {
           title: '状态',
           align: 'center',
-          dataIndex: 'telephone'
+          dataIndex: 'status'
         },
         {
           title: '操作',
@@ -142,7 +164,7 @@ export default {
       url: {
         list: '/park.customer/baseCustomer/list',
         // list: '/park.base/basePark/list',
-        queryParam: '/park.customer/baseCustomer/queryById',
+        queryParam: '/park.customer/baseCustomer/queryById'
         // delete: '/park.base/basePark/delete',
         // deleteBatch: '/park.base/basePark/deleteBatch',
         // exportXlsUrl: 'park.base/basePark/exportXls',
@@ -156,10 +178,45 @@ export default {
     //   return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`
     // }
   },
+  created() {
+    initDictOptions('industry_gategory').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.industryCategoryExt = res.result
+      }
+    })
+  },
   methods: {
+    handleOut() {},
+    customRow(row) {
+      return {
+        on: {
+          click: () => {
+            console.log(row.custId)
+            //拿到id
+            this.$router.push({ name: 'cust-manage-detail-@id', params: { id: row.custId } })
+          }
+        }
+      }
+    },
     // handleImportExcel() {},
     showZero() {
       this.$refs.ShowZero.detail()
+    },
+    showOne() {
+      this.$refs.ShowOne.detail()
+    },
+    showConfirm() {
+      // this.$confirm({
+      //   title: '确认迁出',
+      //   content: '确认要迁出吗？',
+      //   onOk() {
+      //     return new Promise((resolve, reject) => {
+      //       // setTimeout(Math.random() > 0.5 ? resolve : reject, 1000)
+            
+      //     }).catch(() => console.log('Oops errors!'))
+      //   },
+      //   onCancel() {}
+      // })
     }
   }
 }
