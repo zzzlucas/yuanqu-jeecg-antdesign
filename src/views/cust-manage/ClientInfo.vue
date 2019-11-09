@@ -224,7 +224,7 @@ export default {
         onOk() {
           return new Promise((resolve, reject) => {
             //如何获得custid
-            let formData = { cusId: '1192718061480706048', status: '0' }
+            let formData = { custId: '1192718061480706048', status: '1' }
             formData = qs.stringify(formData)
             putAction('/park.customer/baseCustomer/editStatus', formData).then(res => {
               if (res.code === 200) {

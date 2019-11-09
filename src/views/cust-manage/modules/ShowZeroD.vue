@@ -208,11 +208,8 @@
               <a-card class="daily-article" :bordered="false" title="企业标识">
                 <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label>
                   <!-- <a-checkbox-group :options="plainOptions" v-model="checkedList" @change="onChange" /> -->
-                  <a-checkbox-group
-                    :options="plainOptions"
-                    v-model="checkedList"
-                    @change="onChange"
-                  >
+                  <!-- :options="plainOptions"   摘出 -->
+                  <a-checkbox-group v-model="checkedList" @change="onChange">
                     <a-row>
                       <a-col :span="8">
                         <a-checkbox value="A">A</a-checkbox>
@@ -719,9 +716,12 @@ export default {
           }
           let formData = Object.assign(this.model, values)
           //时间格式化
-          formData.merchantDate = formData.merchantDate ? formData.merchantDate.format('YYYY-MM-DD') : null
-          formData.registDate = formData.registDate ? formData.registDate.format('YYYY-MM-DD') : null
-          formData.settledDate = formData.settledDate ? formData.settledDate.format('YYYY-MM-DD') : null
+          if (formData.merchantDate)
+            formData.merchantDate = formData.merchantDate ? formData.merchantDate.format('YYYY-MM-DD') : null
+          if (formData.registDate)
+            formData.registDate = formData.registDate ? formData.registDate.format('YYYY-MM-DD') : null
+          if (formData.settledDate)
+            formData.settledDate = formData.settledDate ? formData.settledDate.format('YYYY-MM-DD') : null
 
           formData = qs.stringify(formData)
           console.log(formData)
