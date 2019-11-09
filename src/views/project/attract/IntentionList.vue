@@ -7,7 +7,7 @@
         <a-row :gutter="24">
           <a-col :span="6">
             <a-form-item label="关键字">
-              <a-input placeholder="输入项目名称" v-model="queryParam.projectName"></a-input>
+              <a-input placeholder="输入项目名称" v-model="queryParam.keyword"></a-input>
             </a-form-item>
           </a-col>
 
@@ -102,6 +102,7 @@
 // function stopDefault(e) {
 //   e.stopPropagation()
 // }
+import qs from 'querystring'
 
 import { filterObj } from '@/utils/util'
 import { getAction, putAction } from '@/api/manage'
@@ -118,7 +119,7 @@ import ShowZero from './modules/ShowZeroD'
 import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
 
 export default {
-  name: 'UserAnnouncementList',
+  name: '',
   mixins: [JeecgListMixin],
   components: {
     ShowOne,
@@ -184,7 +185,8 @@ export default {
         {
           title: '拿地面积（m²）',
           align: 'center',
-          dataIndex: 'gainArea'
+          dataIndex: 'getArea'
+          //暂改
         },
         {
           title: '最近跟踪纪要',
@@ -198,23 +200,12 @@ export default {
           scopedSlots: { customRender: 'action' }
         }
       ],
-      customRow: record => {
-        return {
-          on: {
-            click: e => {
-              this.$router.push({ path: '/project/attract/detail' })
-              // this.$router.push({ path: '/project/attract/detail/:record.projectId' })
-            }
-          }
-        }
-      },
-
       url: {
         list: '/park.project/mgrProjectInfo/list',
         editCementSend: 'sys/sysAnnouncementSend/editByAnntIdAndUserId',
         readAllMsg: 'sys/sysAnnouncementSend/readAll'
       },
-      confirmLoading: false,
+      confirmLoading: false
 
       // mixin中已定义
       // loading: false,
@@ -225,14 +216,26 @@ export default {
     }
   },
   mounted() {
-    // console.log(this.columns)
-    // console.log(this.columns.gainArea)
+    console.log(this.columns);
+    //此处拿不到res，应当去ajax里拿
+    console.log(this.columns);
   },
   created() {
     //数据字典使用步骤3
     this.initDictConfig()
   },
   methods: {
+    customRow(row) {
+      return {
+        on: {
+          click: () => {
+            console.log(row.projectId)
+            //拿到id
+            this.$router.push({ name: 'project-attract-detail-@id', params: { id: row.projectId } })
+          }
+        }
+      }
+    },
     getQueryParams() {
       var param = Object.assign({}, this.queryParam, this.isorter)
       param.field = this.getQueryField()
@@ -240,14 +243,7 @@ export default {
       param.pageSize = this.ipagination.pageSize
       return filterObj(param)
     },
-    // searchReset() {
-    //   var that = this
-    //   that.queryParam.dictName = ''
-    //   that.queryParam.dictCode = ''
-    //   that.queryParam.projectName = ''
-    //   that.loadData(this.ipagination.current)
-    //   console.log('searchReset本页面')
-    // },
+
     searchReset() {
       this.queryParam = {}
       this.loadData(1)

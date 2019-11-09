@@ -52,7 +52,7 @@
               <a-form-item label="企业登记注册类型" required>
                 <a-select
                   style="width:100%"
-                  v-decorator="['companyRegisterType',{rules: [{ required: true, message: '请输入企业登记注册类型', whitespace: true}]}]"
+                  v-decorator="['companyRegisterType',{initialValue: '1'},{rules: [{ required: true, message: '请输入企业登记注册类型', whitespace: true}]}]"
                 >
                   <a-select-option value="1">股份合作企业</a-select-option>
                   <a-select-option value="2">联营企业</a-select-option>
@@ -262,8 +262,16 @@
             <!-- 按要求，应该使用数据字典 -->
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="所属行业" required>
-                <!-- <JDictSelectTag v-model="this.DictDataindustrySectorValue" dictCode="INDUSTRY_SECTOR_VALUE"></JDictSelectTag> -->
-                <!-- <JDictSelectTag v-decorator="['industrySectorValue']" dictCode="sex"></JDictSelectTag> -->
+                <!-- <JDictSelectTag v-decorator="['industrySectorValue', {initialValue: '1'}]" dictCode="INDUSTRY_SECTOR_VALUE"></JDictSelectTag> -->
+                <a-select
+                  v-decorator="['industrySectorValue', {initialValue: dict.industrySectorValueExt[0].value}]"
+                >
+                  <a-select-option
+                    v-for="(item, key) in dict.industrySectorValueExt"
+                    :value="item.value"
+                    :key="key"
+                  >{{ item.text }}</a-select-option>
+                </a-select>
               </a-form-item>
             </a-col>
           </a-row>
@@ -484,14 +492,10 @@
           <a-row class="form-row" :gutter="16">
             <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="附件">
-                <a-upload
-                  name="file"
-                  :showUploadList="true"
-                  :multiple="false"
-                  :headers="tokenHeader"
+                <a-upload name="file" :showUploadList="true" :multiple="false">
+                  <!-- :headers="tokenHeader"
                   :action="importExcelUrl"
-                  @change="handleImportExcel"
-                >
+                  @change="handleImportExcel"-->
                   <a-button type="primary" icon="import">上传附件</a-button>
                   <!-- <span>（单个图片大小不可超过10.00M，全部图片大小不可超过30.00M）</span> -->
                 </a-upload>
@@ -514,19 +518,19 @@
 
 <script>
 // import '@/components/dict/JDictSelectUtil'
-import qs from 'qs'
+// import { JeecgListMixin } from '@/mixins/JeecgListMixin'     //1107
 
+import qs from 'qs'
 import PageLayout from '@/components/page/PageLayout'
 import JEditor from '@/components/jeecg/JEditor'
 import JDictSelectTag from '@/components/dict/JDictSelectTag'
-
 import { initDictOptions } from '@/components/dict/JDictSelectUtil'
-
 import { httpAction } from '@/api/manage'
 import pick from 'lodash.pick'
 import moment from 'moment'
 export default {
   name: 'addProjectLandForm',
+  // mixins: [JeecgListMixin],
   components: { PageLayout, JEditor, JDictSelectTag },
   data() {
     return {
@@ -547,7 +551,10 @@ export default {
       dateFormat: 'YYYY-MM-DD',
       // record: { id: 1191619700384071680 }
       testData: '',
-      industrySectorValue: ''
+      industrySectorValue: '',
+      dict: {
+        industrySectorValueExt: [{ value: '1' }]
+      }
       // value:""
       // DictDataindustrySectorValue:this.form.getFieldValue('industrySectorValue')
     }
@@ -555,7 +562,16 @@ export default {
   updated() {
     // this.edit(this.record.id)
   },
+  created() {
+    initDictOptions('INDUSTRY_SECTOR_VALUE').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.industrySectorValueExt = res.result
+      }
+    })
+  },
   methods: {
+    importExcelUrl() {},
+    handleImportExcel() {},
     moment,
     add() {
       this.edit({})
@@ -689,10 +705,14 @@ export default {
           // let formData = {}
           let formData = Object.assign(this.model, values)
           // formData.setUpYear = formData.setUpYear ? formData.setUpYear.format() : null
-          formData.buildingBeginDate = formData.buildingBeginDate ? formData.buildingBeginDate.format() : null
-          formData.buildingEndDate = formData.buildingEndDate ? formData.buildingEndDate.format() : null
-          formData.buildingBeginDate = formData.buildingBeginDate.slice(0, 10)
-          formData.buildingEndDate = formData.buildingEndDate.slice(0, 10)
+          formData.buildingBeginDate = formData.buildingBeginDate ? formData.buildingBeginDate.format('YYYY-MM-DD') : null
+          formData.buildingEndDate = formData.buildingEndDate ? formData.buildingEndDate.format('YYYY-MM-DD') : null
+          // if (formData.buildingBeginDate) {
+          //   formData.buildingBeginDate = formData.buildingBeginDate.slice(0, 10)
+          // }
+          // if (formData.buildingEndDate) {
+          //   formData.buildingEndDate = formData.buildingEndDate.slice(0, 10)
+          // }
           // console.log(formData)
 
           //qs.stringify  目前看来必须转换
