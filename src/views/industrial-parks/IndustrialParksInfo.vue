@@ -70,8 +70,12 @@
             </a-col>
           </a-row>
         </a-tab-pane>
-        <a-tab-pane tab="园区简介" key="2"></a-tab-pane>
-        <a-tab-pane tab="优惠政策" key="3"></a-tab-pane>
+        <a-tab-pane tab="园区简介" key="2">
+          <article v-html="info.content"></article>
+        </a-tab-pane>
+        <a-tab-pane tab="优惠政策" key="3">
+          <article v-html="info.policy"></article>
+        </a-tab-pane>
       </a-tabs>
     </div>
   </a-card>

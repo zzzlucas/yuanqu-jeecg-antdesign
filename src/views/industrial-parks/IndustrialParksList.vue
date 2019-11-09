@@ -62,7 +62,7 @@
         @change="handleTableChange">
 
         <span slot="action" slot-scope="text, record">
-          <a @click="handleEdit(record)">编辑</a>
+          <a @click.stop="handleEdit(record, ...arguments)">编辑</a>
 
           <a-divider type="vertical" />
           <a-dropdown>
@@ -82,15 +82,16 @@
     <!-- table区域-end -->
 
     <!-- 表单区域 -->
-    <parks-add-form v-model="rightShow" @submit="onSubmit"></parks-add-form>
+    <parks-add-form v-model="rightShow" :edit="edit" :edit-data="editData" @submit="onSubmit" @edit="onEdit"></parks-add-form>
   </a-card>
 </template>
 
 <script>
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import ParksAddForm from '@views/industrial-parks/components/ParksAddForm'
-  import { postAction } from '@/api/manage'
+  import { postAction, putAction } from '@/api/manage'
   import qs from 'querystring'
+  import Dom7 from 'dom7'
 
   export default {
     name: "IndustrialParksList",
@@ -146,13 +147,16 @@
         url: {
           list: "/park.park/basePark/list",
           add: "/park.park/basePark/add",
+          edit: "/park.park/basePark/edit",
           delete: "/park.park/basePark/delete",
           deleteBatch: "/park.park/basePark/deleteBatch",
           exportXlsUrl: "park.park/basePark/exportXls",
           importExcelUrl: "park.park/basePark/importExcel",
         },
         deleteKey: 'parkId',
-        rightShow: false
+        rightShow: false,
+        edit: false,
+        editData: {}
       }
     },
     computed: {
@@ -162,12 +166,21 @@
     },
     methods: {
       onSubmit(data){
-        console.log(data)
         data = qs.stringify(data)
         postAction(this.url.add, data).then(res => {
           if(res.code === 200){
             this.$message.success(res.message)
-            this.rightShow = false
+            this.loadData();
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+      },
+      onEdit(data){
+        data = qs.stringify(data)
+        putAction(this.url.edit, data).then(res => {
+          if(res.code === 200){
+            this.$message.success(res.message)
             this.loadData();
           } else {
             this.$message.error(res.message)
@@ -182,6 +195,11 @@
             }
           }
         }
+      },
+      handleEdit(row, e){
+        row.__key = Dom7(e.currentTarget).parents('.ant-table-row').data('row-key')
+        this.rightShow = true
+        this.edit = true
       }
     }
   }

@@ -1,6 +1,6 @@
 <template>
   <a-drawer
-    title="登记园区"
+    :title="getTitle"
     wrapClassName="industrial-parks-list-form"
     width="65%"
     :closable="false"
@@ -121,6 +121,7 @@
 <script>
   import JEditor from '@comp/jeecg/JEditor'
   import { initDictOptions } from '@comp/dict/JDictSelectUtil'
+  import pick from 'lodash.pick'
 
   export default {
     name: 'ParksAddForm',
@@ -129,6 +130,16 @@
       show: {
         type: Boolean,
         default: false
+      },
+      edit: {
+        type: Boolean,
+        default: false
+      },
+      editData: {
+        type: Object,
+        default(){
+          return {}
+        }
       }
     },
     model: {
@@ -164,22 +175,32 @@
         }
       }
     },
+    computed: {
+      getTitle(){
+        return (this.edit ? '编辑' : '登记') + '园区'
+      }
+    },
     methods: {
       closeDrawer() {
         this.$emit('close', false)
+        this.form.resetFields()
+        this.editor = {
+          content: '',
+          policy: ''
+        }
       },
       handleSubmit() {
-        console.log('asd')
-        console.log(this.form)
-        const fields = ['parkName', 'address', 'feeScale', 'feeScaleUnit', 'feeScaleRoom', 'feeScaleRoomUnit', 'roomRate', 'telephone', 'totalBulidingArea', 'totalRoom', 'totalWorkstation']
-        this.form.validateFieldsAndScroll(fields, (err, form) => {
-          console.log(err)
-          console.log(form)
+        this.form.validateFieldsAndScroll((err, form) => {
           if (err === null) {
             const { content, policy } = this.editor
             form.content = content
             form.policy = policy
-            this.$emit('submit', form)
+            if(this.edit){
+              this.$emit('edit', form)
+            } else {
+              this.$emit('submit', form)
+            }
+            this.closeDrawer()
           }
         })
       },
