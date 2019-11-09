@@ -17,9 +17,6 @@ export const JeecgListMixin = {
       queryParam: {},
       /* 数据源 */
       dataSource:[],
-      //后台接收到status null可以无视
-      status:'0',
-      // projectType:'2',
       /* 分页参数 */
       ipagination:{
         current: 1,
@@ -105,8 +102,6 @@ export const JeecgListMixin = {
       param.field = this.getQueryField();
       param.pageNo = this.ipagination.current;
       param.pageSize = this.ipagination.pageSize;
-      param.status = this.status;
-      // param.projectType = this.projectType;
       return filterObj(param);
     },
     getQueryField() {

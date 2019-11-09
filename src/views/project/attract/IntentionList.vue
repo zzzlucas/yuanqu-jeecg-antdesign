@@ -201,7 +201,7 @@ export default {
         }
       ],
       url: {
-        list: '/park.project/mgrProjectInfo/list',
+        list: '/park.project/mgrProjectInfo/list?status=1',
         editCementSend: 'sys/sysAnnouncementSend/editByAnntIdAndUserId',
         readAllMsg: 'sys/sysAnnouncementSend/readAll'
       },

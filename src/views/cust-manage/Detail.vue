@@ -135,7 +135,6 @@ export default {
       columnsA: [],
       columnsB: [
         { title: '序号', align: 'center', dataIndex: 'projectName' },
-
         {
           title: '姓名',
           align: 'center',
@@ -159,17 +158,17 @@ export default {
           align: 'center',
           dataIndex: 'agentTel'
         },
-        {
-          title: '证件类型',
-          align: 'center',
-          dataIndex: 'getArea'
-          //暂改
-        },
-        {
-          title: '证件号码',
-          align: 'center',
-          dataIndex: ''
-        },
+        // {
+        //   title: '证件类型',
+        //   align: 'center',
+        //   dataIndex: 'getArea'
+        //   //暂改
+        // },
+        // {
+        //   title: '证件号码',
+        //   align: 'center',
+        //   dataIndex: ''
+        // },
         {
           title: '操作',
           dataIndex: 'action',
@@ -266,6 +265,15 @@ export default {
       if (item.value == this.info.baseCustomerType.industryCategory)
         return (this.dictText.industryCategoryText = item.text)
       //如何匹配到之后就不再运行该函数
+
+      // for (const key in object) {
+      //   if (object.hasOwnProperty(key)) {
+      //     const element = object[key];
+      //   }
+      // }
+      // for (const iterator of object) {
+      // }
+      
       // console.log(item.text)
     },
     switchFunctionO(item) {
