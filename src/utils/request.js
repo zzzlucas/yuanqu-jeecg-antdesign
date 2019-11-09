@@ -7,10 +7,7 @@ import { ACCESS_TOKEN } from "@/store/mutation-types"
 
 // 创建 axios 实例
 const service = axios.create({
-  baseURL: 'http://192.168.89.31:8080/jeecg-boot',  //线下数据库   //11.08上午改线上数据库
-  // baseURL: 'http://139.155.126.195:8080/jeecg-boot', 
-  // baseURL: 'http://localhost:8080/jeecg-boot',  
-  // baseURL: '/jeecg-boot',  
+  baseURL: '/jeecg-boot', // 开发环境去 vue.config.js 指定请求接口，这里会影响到 build
   timeout: 6000 // 请求超时时间
 })
 

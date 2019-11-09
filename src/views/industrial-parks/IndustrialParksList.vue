@@ -82,7 +82,7 @@
     <!-- table区域-end -->
 
     <!-- 表单区域 -->
-    <parks-add-form v-model="rightShow" :edit="edit" :edit-data="editData" @submit="onSubmit" @edit="onEdit"></parks-add-form>
+    <parks-add-form ref="form" v-model="rightShow" @submit="onSubmit" @edit="onEdit"></parks-add-form>
   </a-card>
 </template>
 
@@ -154,9 +154,7 @@
           importExcelUrl: "park.park/basePark/importExcel",
         },
         deleteKey: 'parkId',
-        rightShow: false,
-        edit: false,
-        editData: {}
+        rightShow: false
       }
     },
     computed: {
@@ -177,6 +175,7 @@
         })
       },
       onEdit(data){
+        console.log(data)
         data = qs.stringify(data)
         putAction(this.url.edit, data).then(res => {
           if(res.code === 200){
@@ -198,8 +197,7 @@
       },
       handleEdit(row, e){
         row.__key = Dom7(e.currentTarget).parents('.ant-table-row').data('row-key')
-        this.rightShow = true
-        this.edit = true
+        this.$refs.form.edit(row)
       }
     }
   }
