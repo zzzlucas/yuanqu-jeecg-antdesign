@@ -66,7 +66,7 @@
             <detail-list-item term="企业评级">{{info.baseCustomerType.enterpriseRating}}</detail-list-item>
             <!-- <detail-list-item term="注册类型">{{info.registrationType}}</detail-list-item> -->
             <detail-list-item term="注册类型">{{info.baseCustomerType.registrationType}}</detail-list-item>
-            <button @click="c">点击测试</button>
+            <button @click="detailTextGet">点击测试</button>
           </detail-list>
         </a-tab-pane>
         <a-tab-pane tab="工商/税务信息" key="5">
@@ -115,7 +115,7 @@ export default {
       // },
       columns: [],
       dict: { industryCategory: [''] },
-      industryCategoryText: 'industryCategoryText'
+      industryCategoryText: ''
     }
   },
 
@@ -141,45 +141,19 @@ export default {
     initDictOptions('industry_gategory').then(res => {
       if (res.code === 0 && res.success) {
         this.dict.industryCategory = res.result
-        console.log('1111111111111111111')
-        console.log(this.dict.industryCategory)
-        this.industryCategoryText = this.dict.industryCategory[2].text
-        console.log('this.industryCategoryText')
-        console.log(this.industryCategoryText)
+        //如何确保加载数据字典时候已经获得ajax数据
+        this.detailTextGet()
       }
     })
-    // this.industryCategoryText = this.dict.industryCategory[1]
-    // this.industryCategoryText = this.dict.industryCategory.forEach(this.myFunction).text
-    // console.log('this.industryCategoryText')
-    // console.log(this.industryCategoryText)
-
-    // this.dict.industryCategory.forEach((item)=>{
-    //   if(item.value =  )return
-    // } )
-    // this.dict.industryCategory = filterDictText(this.dict.industryCategory)
-    // console.log('222222222222222222')
-    // console.log(this.dict.industryCategory)
-    // console.log('3333333333333333333');
-    //     customRender: text => {
-    //   return filterDictText(this.projectTypeDictOptions, text)
-    // }
   },
   methods: {
-    c() {
-      this.industryCategoryText = this.dict.industryCategory.forEach(this.myFunction)
-      console.log(this.dict.industryCategory.forEach(this.myFunction))
-      // this.industryCategoryText = this.dict.industryCategory.forEach(this.myFunction).text
-      console.log(this.industryCategoryText)
+    detailTextGet() {
+      this.dict.industryCategory.forEach(this.myFunction)
     },
     myFunction(item) {
-      // console.log('11')
-      // console.log(this.info.baseCustomerType.industryCategory)
-      // console.log('22')
-      if (item.value == this.info.baseCustomerType.industryCategory)
-        // {
-        //   console.log(item)
-        // }
-        return item
+      if (item.value == this.info.baseCustomerType.industryCategory) return (this.industryCategoryText = item.text)
+      //如何匹配到之后就不再运行该函数
+      // console.log(item.text)
     },
     callback() {}
   },

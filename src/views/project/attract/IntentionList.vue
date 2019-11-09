@@ -216,8 +216,9 @@ export default {
     }
   },
   mounted() {
-    // console.log(this.columns)
-    // console.log(this.columns.gainArea)
+    console.log(this.columns);
+    //此处拿不到res，应当去ajax里拿
+    console.log(this.columns);
   },
   created() {
     //数据字典使用步骤3
