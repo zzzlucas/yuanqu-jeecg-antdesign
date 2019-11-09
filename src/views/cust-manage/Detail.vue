@@ -37,7 +37,7 @@
             size="default"
             bordered
             rowKey="id"
-            :columns="columns"
+            :columns="columnsA"
             :dataSource="dataSource"
             :pagination="ipagination"
             :loading="loading"
@@ -57,27 +57,43 @@
 
         <a-tab-pane tab="分类信息" key="4">
           <detail-list>
-            <detail-list-item term="公司性质">{{info.baseCustomerType.unitNature}}</detail-list-item>
-            <detail-list-item
-              term="行业类型"
-            >{{info.baseCustomerType.industryCategory}}{{industryCategoryText}}</detail-list-item>
-            <detail-list-item term="公司类型">{{info.baseCustomerType.organizational}}</detail-list-item>
-            <detail-list-item term="技术领域">{{info.baseCustomerType.technicalField}}</detail-list-item>
-            <detail-list-item term="企业评级">{{info.baseCustomerType.enterpriseRating}}</detail-list-item>
-            <!-- <detail-list-item term="注册类型">{{info.registrationType}}</detail-list-item> -->
-            <detail-list-item term="注册类型">{{info.baseCustomerType.registrationType}}</detail-list-item>
-            <button @click="detailTextGet">点击测试</button>
+            <detail-list-item term="公司性质">{{dictText.unitNatureText}}</detail-list-item>
+            <detail-list-item term="行业类型">{{dictText.industryCategoryText}}</detail-list-item>
+            <detail-list-item term="公司类型">{{dictText.organizationalText}}</detail-list-item>
+            <detail-list-item term="技术领域">{{dictText.technicalFieldText}}</detail-list-item>
+            <detail-list-item term="企业评级">{{dictText.enterpriseRatingText}}</detail-list-item>
+            <detail-list-item term="注册类型">{{dictText.registrationTypeText}}</detail-list-item>
           </detail-list>
         </a-tab-pane>
         <a-tab-pane tab="工商/税务信息" key="5">
           <detail-list>
-            <detail-list-item term="附件"></detail-list-item>
+            <detail-list-item term="注册日期">{{info.baseCustomerBusiness.registDate}}</detail-list-item>
+            <detail-list-item term="注册资本">{{info.baseCustomerBusiness.registeredCapital}}</detail-list-item>
+            <detail-list-item term="转化为人民币">{{info.baseCustomerBusiness.rctoRMB}}</detail-list-item>
+            <detail-list-item term="工商状态">{{info.baseCustomerBusiness.bussinessStatus}}</detail-list-item>
+            <detail-list-item term="税务状态">{{info.baseCustomerBusiness.taxStatus}}</detail-list-item>
+            <detail-list-item term="统一社会信用号码">{{info.baseCustomerBusiness.creditCode}}</detail-list-item>
+            <detail-list-item term="注册地址">{{info.baseCustomerBusiness.registerAddress}}</detail-list-item>
+            <detail-list-item term="注册地邮编">{{info.baseCustomerBusiness.registerAddressZipCode}}</detail-list-item>
+            <detail-list-item term="经营范围">{{info.baseCustomerBusiness.businessScope}}</detail-list-item>
+            <detail-list-item term="特许经营范围">{{info.baseCustomerBusiness.businessScopePermit}}</detail-list-item>
           </detail-list>
         </a-tab-pane>
         <a-tab-pane tab="联系人" key="6">
-          <detail-list>
-            <detail-list-item term="附件"></detail-list-item>
-          </detail-list>
+          <a-button style="margin-bottom:20px;" type="primary" @click="showAddFormDrawer">新建联系人</a-button>
+          <!-- :pagination="ipagination"      -->
+          <a-table
+            ref="table"
+            size="default"
+            bordered
+            rowKey="id"
+            :columns="columnsB"
+            :dataSource="dataSource"
+            :loading="loading"
+            @change="handleTableChange"
+            :customRow="customRow"
+          ></a-table>
+          <show-add-form-drawer ref="ShowAddFormDrawer"></show-add-form-drawer>
         </a-tab-pane>
       </a-tabs>
     </a-card>
@@ -96,13 +112,16 @@ import { filterObj } from '@/utils/util'
 import { getAction, putAction } from '@/api/manage'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 
+import ShowAddFormDrawer from './modules/ShowAddFormDrawer'
+
 export default {
   name: 'Detail',
   components: {
     PageLayout,
     ABadge,
     DetailList,
-    DetailListItem
+    DetailListItem,
+    ShowAddFormDrawer
   },
   data() {
     return {
@@ -113,9 +132,66 @@ export default {
       // url: {
       //   list: '/park.project/mgrProjectInfo/queryById'
       // },
-      columns: [],
-      dict: { industryCategory: [''] },
-      industryCategoryText: ''
+      columnsA: [],
+      columnsB: [
+        { title: '序号', align: 'center', dataIndex: 'projectName' },
+        {
+          title: '姓名',
+          align: 'center',
+          dataIndex: 'sendTime'
+        },
+        {
+          title: '性别',
+          align: 'center',
+          dataIndex: 'sex',
+          customRender: text => {
+            return filterDictText(this.projectTypeDictOptions, text)
+          }
+        },
+        {
+          title: '手机',
+          align: 'center',
+          dataIndex: 'agentPerson'
+        },
+        {
+          title: 'Email',
+          align: 'center',
+          dataIndex: 'agentTel'
+        },
+        // {
+        //   title: '证件类型',
+        //   align: 'center',
+        //   dataIndex: 'getArea'
+        //   //暂改
+        // },
+        // {
+        //   title: '证件号码',
+        //   align: 'center',
+        //   dataIndex: ''
+        // },
+        {
+          title: '操作',
+          dataIndex: 'action',
+          align: 'center',
+          scopedSlots: { customRender: 'action' }
+        }
+      ],
+      dict: {
+        unitNature: [],
+        industryCategory: [],
+        organizational: [],
+        technicalField: [],
+        enterpriseRating: [],
+        registrationType: []
+      },
+      dictText: {
+        unitNatureText: '',
+        industryCategoryText: '',
+        organizationalText: '',
+        technicalFieldText: '',
+        enterpriseRatingText: '',
+        registrationTypeText: ''
+      }
     }
   },
 
@@ -130,30 +206,89 @@ export default {
       if (res.code === 200) {
         this.loading = false
         this.info = res.result
-        console.log(this.info)
+        // console.log(this.info)
+        this.initDictConfig()
       } else {
         this.$router.back()
         this.$message.error(res.message)
       }
     })
   },
-  mounted() {
-    initDictOptions('industry_gategory').then(res => {
-      if (res.code === 0 && res.success) {
-        this.dict.industryCategory = res.result
-        //如何确保加载数据字典时候已经获得ajax数据
-        this.detailTextGet()
-      }
-    })
-  },
+  mounted() {},
   methods: {
-    detailTextGet() {
-      this.dict.industryCategory.forEach(this.myFunction)
+    showAddFormDrawer() {
+      this.$refs.ShowAddFormDrawer.add()
     },
-    myFunction(item) {
-      if (item.value == this.info.baseCustomerType.industryCategory) return (this.industryCategoryText = item.text)
+    initDictConfig() {
+      initDictOptions('unit_nature').then(res => {
+        if (res.code === 0 && res.success) {
+          this.dict.unitNature = res.result
+          this.dict.unitNature.forEach(this.switchFunctionU)
+        }
+      }),
+        initDictOptions('industry_gategory').then(res => {
+          if (res.code === 0 && res.success) {
+            this.dict.industryCategory = res.result
+            this.dict.industryCategory.forEach(this.switchFunctionI)
+          }
+        }),
+        initDictOptions('organizational').then(res => {
+          if (res.code === 0 && res.success) {
+            this.dict.organizational = res.result
+            this.dict.organizational.forEach(this.switchFunctionO)
+          }
+        }),
+        initDictOptions('technical_field').then(res => {
+          if (res.code === 0 && res.success) {
+            this.dict.technicalField = res.result
+            this.dict.technicalField.forEach(this.switchFunctionT)
+          }
+        }),
+        initDictOptions('enterprise_rating').then(res => {
+          if (res.code === 0 && res.success) {
+            this.dict.enterpriseRating = res.result
+            this.dict.enterpriseRating.forEach(this.switchFunctionE)
+          }
+        }),
+        initDictOptions('registration_type').then(res => {
+          if (res.code === 0 && res.success) {
+            this.dict.registrationType = res.result
+            this.dict.registrationType.forEach(this.switchFunctionR)
+          }
+        })
+    },
+    //数据字典匹配服务端传来数据值，返回数据字典字段，以下是forEach中的六条匹配规则
+    switchFunctionU(item) {
+      if (item.value == this.info.baseCustomerType.unitNature) return (this.dictText.unitNatureText = item.text)
+    },
+    switchFunctionI(item) {
+      if (item.value == this.info.baseCustomerType.industryCategory)
+        return (this.dictText.industryCategoryText = item.text)
       //如何匹配到之后就不再运行该函数
+
+      // for (const key in object) {
+      //   if (object.hasOwnProperty(key)) {
+      //     const element = object[key];
+      //   }
+      // }
+      // for (const iterator of object) {
+      // }
+      
       // console.log(item.text)
+    },
+    switchFunctionO(item) {
+      if (item.value == this.info.baseCustomerType.organizational) return (this.dictText.organizationalText = item.text)
+    },
+    switchFunctionT(item) {
+      if (item.value == this.info.baseCustomerType.technicalField) return (this.dictText.technicalFieldText = item.text)
+    },
+    switchFunctionE(item) {
+      if (item.value == this.info.baseCustomerType.enterpriseRating)
+        return (this.dictText.enterpriseRatingText = item.text)
+    },
+    switchFunctionR(item) {
+      if (item.value == this.info.baseCustomerType.registrationType)
+        return (this.dictText.registrationTypeText = item.text)
     },
     callback() {}
   },

@@ -174,14 +174,14 @@ export default {
           align: 'center',
           dataIndex: 'agentTel'
         },
-        {
-          title: '项目状态',
-          align: 'center',
-          dataIndex: 'status',
-          customRender: text => {
-            return filterDictText(this.statusDictOptions, text)
-          }
-        },
+        // {
+        //   title: '项目状态',
+        //   align: 'center',
+        //   dataIndex: 'status',
+        //   customRender: text => {
+        //     return filterDictText(this.statusDictOptions, text)
+        //   }
+        // },
         {
           title: '拿地面积（m²）',
           align: 'center',
@@ -201,7 +201,7 @@ export default {
         }
       ],
       url: {
-        list: '/park.project/mgrProjectInfo/list',
+        list: '/park.project/mgrProjectInfo/list?status=1',
         editCementSend: 'sys/sysAnnouncementSend/editByAnntIdAndUserId',
         readAllMsg: 'sys/sysAnnouncementSend/readAll'
       },
@@ -216,11 +216,26 @@ export default {
     }
   },
   mounted() {
-    console.log(this.columns);
-    //此处拿不到res，应当去ajax里拿
-    console.log(this.columns);
+    // console.log(this.columns)
   },
   created() {
+    // //尝试不经过url.list获取到数据，但是考虑到不走url.list方式，其他操作的数据如何传递
+    // let formData = { pageNo: '1', pageSize: '10', status: '2' }
+    // //此处进行qs转换反而错误
+    // // formData = qs.stringify(formData)
+    // getAction('/park.project/mgrProjectInfo/list', formData).then(res => {
+    //   if (res.code === 200) {
+    //     console.log('test strat')
+    //     // const info = res.result
+    //     // console.log(info)
+    //     this.dataSource = res.result.records
+    //     this.ipagination.total = res.result.total
+    //     console.log('test end')
+    //   } else {
+    //     this.$message.error(res.message)
+    //   }
+    // })
+
     //数据字典使用步骤3
     this.initDictConfig()
   },
