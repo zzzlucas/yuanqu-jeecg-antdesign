@@ -719,19 +719,10 @@ export default {
           }
           let formData = Object.assign(this.model, values)
           //时间格式化
-          formData.merchantDate = formData.merchantDate ? formData.merchantDate.format() : null
-          formData.registDate = formData.registDate ? formData.registDate.format() : null
-          formData.settledDate = formData.settledDate ? formData.settledDate.format() : null
-          if (formData.merchantDate) {
-            formData.merchantDate = formData.merchantDate.slice(0, 10)
-          }
-          if (formData.registDate) {
-            formData.registDate = formData.registDate.slice(0, 10)
-          }
-          if (formData.settledDate) {
-            formData.settledDate = formData.settledDate.slice(0, 10)
-          }
-          
+          formData.merchantDate = formData.merchantDate ? formData.merchantDate.format('YYYY-MM-DD') : null
+          formData.registDate = formData.registDate ? formData.registDate.format('YYYY-MM-DD') : null
+          formData.settledDate = formData.settledDate ? formData.settledDate.format('YYYY-MM-DD') : null
+
           formData = qs.stringify(formData)
           console.log(formData)
 
@@ -746,7 +737,8 @@ export default {
             })
             .finally(() => {
               that.confirmLoading = false
-              that.close()
+              // that.close()
+              // 不关闭，便于调试
             })
         }
       })

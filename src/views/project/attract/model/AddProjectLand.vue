@@ -705,14 +705,14 @@ export default {
           // let formData = {}
           let formData = Object.assign(this.model, values)
           // formData.setUpYear = formData.setUpYear ? formData.setUpYear.format() : null
-          formData.buildingBeginDate = formData.buildingBeginDate ? formData.buildingBeginDate.format() : null
-          formData.buildingEndDate = formData.buildingEndDate ? formData.buildingEndDate.format() : null
-          if (formData.buildingBeginDate) {
-            formData.buildingBeginDate = formData.buildingBeginDate.slice(0, 10)
-          }
-          if (formData.buildingEndDate) {
-            formData.buildingEndDate = formData.buildingEndDate.slice(0, 10)
-          }
+          formData.buildingBeginDate = formData.buildingBeginDate ? formData.buildingBeginDate.format('YYYY-MM-DD') : null
+          formData.buildingEndDate = formData.buildingEndDate ? formData.buildingEndDate.format('YYYY-MM-DD') : null
+          // if (formData.buildingBeginDate) {
+          //   formData.buildingBeginDate = formData.buildingBeginDate.slice(0, 10)
+          // }
+          // if (formData.buildingEndDate) {
+          //   formData.buildingEndDate = formData.buildingEndDate.slice(0, 10)
+          // }
           // console.log(formData)
 
           //qs.stringify  目前看来必须转换

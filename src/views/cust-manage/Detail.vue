@@ -6,17 +6,18 @@
       <a-tabs defaultActiveKey="1" @change="callback">
         <a-tab-pane tab="基本信息" key="1">
           <div class="div-detail-list">
-          <detail-list>
-            <detail-list-item term="企业简称">{{ info.customerAbbr }}（万元）</detail-list-item>
-            <detail-list-item term="企业编号">{{ info.customerNo }} </detail-list-item>
-            <detail-list-item term="法人">{{ info.legalPerson }}(万元)</detail-list-item>
-            <detail-list-item term="单位电话">{{ info.telephone }}(万元)</detail-list-item>
-            <detail-list-item term="招商人员">{{ info.merchantManager }}</detail-list-item>
-            <detail-list-item term="服务人员">{{ info.servicer }}</detail-list-item>
-            <detail-list-item term="所属项目">{{ info.caseId }}</detail-list-item>
-            <detail-list-item term="入驻日期">{{ info.settledDate }}</detail-list-item>
-            <detail-list-item term="所属楼宇">{{ info.buidling }}</detail-list-item>
-          </detail-list></div>
+            <detail-list>
+              <detail-list-item term="企业简称">{{ info.customerAbbr }}（万元）</detail-list-item>
+              <detail-list-item term="企业编号">{{ info.customerNo }}</detail-list-item>
+              <detail-list-item term="法人">{{ info.legalPerson }}(万元)</detail-list-item>
+              <detail-list-item term="单位电话">{{ info.telephone }}(万元)</detail-list-item>
+              <detail-list-item term="招商人员">{{ info.merchantManager }}</detail-list-item>
+              <detail-list-item term="服务人员">{{ info.servicer }}</detail-list-item>
+              <detail-list-item term="所属项目">{{ info.caseId }}</detail-list-item>
+              <detail-list-item term="入驻日期">{{ info.settledDate }}</detail-list-item>
+              <detail-list-item term="所属楼宇">{{ info.buidling }}</detail-list-item>
+            </detail-list>
+          </div>
           <detail-list>
             <detail-list-item term="邮 箱">否{{ info.email }}</detail-list-item>
           </detail-list>
@@ -50,14 +51,22 @@
         </a-tab-pane>
         <a-tab-pane tab="附件" key="3">
           <detail-list>
-            <detail-list-item term="租赁面积">1,000.00 m²</detail-list-item>
+            <detail-list-item term="附件">ASDASD</detail-list-item>
           </detail-list>
         </a-tab-pane>
 
         <a-tab-pane tab="分类信息" key="4">
           <detail-list>
-            <detail-list-item term="联系人">周易</detail-list-item>
-            <detail-list-item term="电话">1234567899</detail-list-item>
+            <detail-list-item term="公司性质">{{info.baseCustomerType.unitNature}}</detail-list-item>
+            <detail-list-item
+              term="行业类型"
+            >{{info.baseCustomerType.industryCategory}}{{industryCategoryText}}</detail-list-item>
+            <detail-list-item term="公司类型">{{info.baseCustomerType.organizational}}</detail-list-item>
+            <detail-list-item term="技术领域">{{info.baseCustomerType.technicalField}}</detail-list-item>
+            <detail-list-item term="企业评级">{{info.baseCustomerType.enterpriseRating}}</detail-list-item>
+            <!-- <detail-list-item term="注册类型">{{info.registrationType}}</detail-list-item> -->
+            <detail-list-item term="注册类型">{{info.baseCustomerType.registrationType}}</detail-list-item>
+            <button @click="c">点击测试</button>
           </detail-list>
         </a-tab-pane>
         <a-tab-pane tab="工商/税务信息" key="5">
@@ -81,7 +90,8 @@ import PageLayout from '@/components/page/PageLayout'
 import ABadge from 'ant-design-vue/es/badge/Badge'
 import DetailList from '@/components/tools/DetailList'
 const DetailListItem = DetailList.Item
-
+import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
+// import { initDictOptions } from '@comp/dict/JDictSelectUtil'
 import { filterObj } from '@/utils/util'
 import { getAction, putAction } from '@/api/manage'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
@@ -103,13 +113,14 @@ export default {
       // url: {
       //   list: '/park.project/mgrProjectInfo/queryById'
       // },
-      columns:[
-        
-      ]
+      columns: [],
+      dict: { industryCategory: [''] },
+      industryCategoryText: 'industryCategoryText'
     }
   },
 
-  async created() {
+  // async created() {
+  created() {
     if (typeof this.$route.params.id !== 'string') {
       this.$router.back()
       this.$message.warning('ID不正确')
@@ -126,8 +137,52 @@ export default {
       }
     })
   },
+  mounted() {
+    initDictOptions('industry_gategory').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.industryCategory = res.result
+        console.log('1111111111111111111')
+        console.log(this.dict.industryCategory)
+        this.industryCategoryText = this.dict.industryCategory[2].text
+        console.log('this.industryCategoryText')
+        console.log(this.industryCategoryText)
+      }
+    })
+    // this.industryCategoryText = this.dict.industryCategory[1]
+    // this.industryCategoryText = this.dict.industryCategory.forEach(this.myFunction).text
+    // console.log('this.industryCategoryText')
+    // console.log(this.industryCategoryText)
 
-  methods: {},
+    // this.dict.industryCategory.forEach((item)=>{
+    //   if(item.value =  )return
+    // } )
+    // this.dict.industryCategory = filterDictText(this.dict.industryCategory)
+    // console.log('222222222222222222')
+    // console.log(this.dict.industryCategory)
+    // console.log('3333333333333333333');
+    //     customRender: text => {
+    //   return filterDictText(this.projectTypeDictOptions, text)
+    // }
+  },
+  methods: {
+    c() {
+      this.industryCategoryText = this.dict.industryCategory.forEach(this.myFunction)
+      console.log(this.dict.industryCategory.forEach(this.myFunction))
+      // this.industryCategoryText = this.dict.industryCategory.forEach(this.myFunction).text
+      console.log(this.industryCategoryText)
+    },
+    myFunction(item) {
+      // console.log('11')
+      // console.log(this.info.baseCustomerType.industryCategory)
+      // console.log('22')
+      if (item.value == this.info.baseCustomerType.industryCategory)
+        // {
+        //   console.log(item)
+        // }
+        return item
+    },
+    callback() {}
+  },
   filters: {
     statusFilter(status) {
       const statusMap = {

@@ -121,7 +121,7 @@ export default {
         unitNatureExt: [{ value: '' }],
         industryCategoryExt: [{ value: '' }],
         organizationalExt: [{ value: '' }],
-        // technicalFieldExt: [{ value: '' }],
+        technicalFieldExt: [{ value: '' }],
         enterpriseRatingExt: [{ value: '' }],
         registrationTypeExt: [{ value: '' }]
       },
@@ -139,7 +139,7 @@ export default {
         {
           title: '注册资本',
           align: 'center',
-          dataIndex: 'registrationType'
+          dataIndex: 'baseCustomerBusiness.registeredCapital'
         },
         {
           title: '成立日期',
@@ -172,7 +172,8 @@ export default {
         // exportXlsUrl: 'park.base/basePark/exportXls',
         // importExcelUrl: 'park.base/basePark/importExcel'
       },
-      rightShow: false
+      rightShow: false,
+      cusId: ''
     }
   },
   computed: {
@@ -189,11 +190,20 @@ export default {
   },
   methods: {
     handleOut() {},
+    //获取row
+    // handleEdit(row, e) {
+    //   row.__key = Dom7(e.currentTarget)
+    //     .parents('.ant-table-row')
+    //     .data('row-key')
+    //   this.rightShow = true
+    //   this.edit = true
+    // },
     customRow(row) {
       return {
         on: {
           click: () => {
             console.log(row.custId)
+            this.cusId = row.custId
             //拿到id
             this.$router.push({ name: 'cust-manage-detail-@id', params: { id: row.custId } })
           }
@@ -213,14 +223,15 @@ export default {
         content: '确认要迁出吗？',
         onOk() {
           return new Promise((resolve, reject) => {
+            //如何获得custid
             let formData = { cusId: '1192718061480706048', status: '0' }
             formData = qs.stringify(formData)
             putAction('/park.customer/baseCustomer/editStatus', formData).then(res => {
               if (res.code === 200) {
                 console.log('迁入迁出成功')
-                // this.visible = false
-                // this.confirmLoading = false
+                resolve()
               } else {
+                reject(new Error(res.message))
                 this.$message.error(res.message)
               }
             })
