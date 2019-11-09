@@ -1,13 +1,13 @@
 <template>
   <a-drawer
-    title="登记园区"
+    :title="getTitle"
     wrapClassName="industrial-parks-list-form"
     width="65%"
     :closable="false"
     :mask-closable="false"
     :visible="show"
     @close="closeDrawer">
-    <a-form layout="horizontal" :form="form">
+    <a-form layout="horizontal" :form="form" style="padding-bottom: 20px;">
       <a-row>
         <a-col span="12">
           <a-form-item label="园区名称" :label-col="formItem.label" :wrapper-col="formItem.value">
@@ -33,7 +33,10 @@
           <a-form-item label="工位收费标准" :label-col="formItem.label" :wrapper-col="formItem.value">
             <span>
               <a-input v-decorator="['feeScale', {rules: [{pattern: /^\d+\.\d{2}$/, message: '请输入金额，补齐两位小数'}]}]">
-                <a-select slot="addonAfter" style="width: 100px;" v-decorator="['feeScaleUnit', {initialValue: dict.parksStationExt[0].value}]">
+                <a-select
+                  slot="addonAfter"
+                  style="width: 100px;"
+                  v-decorator="['feeScaleUnit', {initialValue: dict.parksStationExt[0].value}]">
                   <a-select-option v-for="(item, key) in dict.parksStationExt" :value="item.value" :key="key">{{ item.text }}</a-select-option>
                 </a-select>
               </a-input>
@@ -45,7 +48,10 @@
           <a-form-item label="独立空间收费标准" :label-col="formItem.label" :wrapper-col="formItem.value">
             <span>
               <a-input v-decorator="['feeScaleRoom', {rules: [{pattern: /^\d+\.\d{2}$/, message: '请输入金额，补齐两位小数'}]}]">
-                <a-select slot="addonAfter" style="width: 100px" v-decorator="['feeScaleRoomUnit', {initialValue: dict.parksInterspaceExt[0].value}]">
+                <a-select
+                  slot="addonAfter"
+                  style="width: 100px"
+                  v-decorator="['feeScaleRoomUnit', {initialValue: dict.parksInterspaceExt[0].value}]">
                   <a-select-option v-for="(item, key) in dict.parksInterspaceExt" :value="item.value" :key="key">{{ item.text }}</a-select-option>
                 </a-select>
               </a-input>
@@ -98,7 +104,8 @@
             </a-input>
           </a-form-item>
           <a-form-item label="联系电话" :label-col="formItem.label" :wrapper-col="formItem.value">
-            <a-input v-decorator="['telephone', {rules: [{pattern: /^1(3\d|4[5-7]|5[0-35-9]|7[0135-8]|8\d|9[89])\d{8}$/, message: '请输入正确的手机号'}]}]"></a-input>
+            <a-input
+              v-decorator="['telephone', {rules: [{pattern: /^1(3\d|4[5-7]|5[0-35-9]|7[0135-8]|8\d|9[89])\d{8}$/, message: '请输入正确的手机号'}]}]"></a-input>
           </a-form-item>
           <a-form-item label="具备设备" :label-col="formItem.label" :wrapper-col="formItem.value">
             <a-select mode="tags" v-decorator="['deviceGroupId']">
@@ -121,6 +128,8 @@
 <script>
   import JEditor from '@comp/jeecg/JEditor'
   import { initDictOptions } from '@comp/dict/JDictSelectUtil'
+  import pick from 'lodash.pick'
+  import { PickParksForm } from '@/config/pick-fields'
 
   export default {
     name: 'ParksAddForm',
@@ -135,14 +144,14 @@
       prop: 'show',
       event: 'close'
     },
-    created(){
+    created() {
       initDictOptions('parks_station_ext').then(res => {
-        if(res.code === 0 && res.success){
+        if (res.code === 0 && res.success) {
           this.dict.parksStationExt = res.result
         }
       })
       initDictOptions('parks_interspace_ext').then(res => {
-        if(res.code === 0 && res.success){
+        if (res.code === 0 && res.success) {
           this.dict.parksInterspaceExt = res.result
         }
       })
@@ -159,64 +168,95 @@
           policy: ''
         },
         dict: {
-          parksStationExt: [{value: '1'}],
-          parksInterspaceExt: [{value: '1'}]
-        }
+          parksStationExt: [{ value: '1' }],
+          parksInterspaceExt: [{ value: '1' }]
+        },
+        editBool: false,
+        editData: {}
+      }
+    },
+    computed: {
+      getTitle() {
+        return (this.edit ? '编辑' : '登记') + '园区'
       }
     },
     methods: {
       closeDrawer() {
         this.$emit('close', false)
+        this.form.resetFields()
+        this.editor = {
+          content: '',
+          policy: ''
+        }
       },
       handleSubmit() {
-        console.log('asd')
-        console.log(this.form)
-        const fields = ['parkName', 'address', 'feeScale', 'feeScaleUnit', 'feeScaleRoom', 'feeScaleRoomUnit', 'roomRate', 'telephone', 'totalBulidingArea', 'totalRoom', 'totalWorkstation']
-        this.form.validateFieldsAndScroll(fields, (err, form) => {
-          console.log(err)
-          console.log(form)
+        this.form.validateFieldsAndScroll((err, form) => {
           if (err === null) {
             const { content, policy } = this.editor
             form.content = content
             form.policy = policy
-            this.$emit('submit', form)
+            if (this.editBool) {
+              this.editBool = false
+              const {__key, parkId} = this.editData
+              form.__key = __key
+              form.parkId = parkId
+              this.$emit('edit', form)
+            } else {
+              this.$emit('submit', form)
+            }
+            this.closeDrawer()
           }
         })
       },
       validateLngLat(type, rule, value, callback) {
         const num = Number(value)
-        if(isNaN(num)){
+        if (isNaN(num)) {
           return callback(new Error('请输入数字'))
         }
-        if(/\.$/.test(value)){
+        if (/\.$/.test(value)) {
           return callback(new Error('请输入正确的小数'))
         }
         switch (type) {
           case 'lng':
-            if(num > 180 || num < -180){
+            if (num > 180 || num < -180) {
               return callback(new Error('请输入正确的经度'))
             }
             break
           case 'lat':
-            if(num > 90 || num < -90){
+            if (num > 90 || num < -90) {
               return callback(new Error('请输入正确的纬度'))
             }
             break
         }
         callback()
       },
-      validateRoomRate(rule, value, callback){
+      validateRoomRate(rule, value, callback) {
         const num = Number(value)
-        if(isNaN(num)){
+        if (isNaN(num)) {
           return callback(new Error('请输入数字'))
         }
-        if(/\.$/.test(value)){
+        if (/\.$/.test(value)) {
           return callback(new Error('请输入正确的小数'))
         }
-        if(num > 100 || num < 0){
+        if (num > 100 || num < 0) {
           return callback(new Error('不能大于 100 或小于 0'))
         }
         callback()
+      },
+      edit(row) {
+        this.editBool = true
+        this.editData = row
+        const editData = pick(row, PickParksForm)
+        editData.deviceGroupId = editData.deviceGroupId.split(',')
+
+        this.$emit('close', true)
+        this.$nextTick(() => {
+          this.editor = {
+            content: row.content,
+            policy: row.policy
+          }
+          this.form.setFieldsValue(editData)
+        })
       }
     }
   }
