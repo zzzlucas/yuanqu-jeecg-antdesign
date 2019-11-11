@@ -45,6 +45,10 @@
       @change="handleTableChange"
       :customRow="customRow"
     >
+      <span slot="actionA" slot-scope="text, record">
+        <a @click.stop="showCard(record, ...arguments)">查看</a>
+      </span>
+
       <span slot="action" slot-scope="text, record">
         <a-dropdown>
           <a class="ant-dropdown-link" @click.stop="showZero(record)">
@@ -95,6 +99,7 @@
     <show-zero ref="ShowZero"></show-zero>
     <show-two @showOneToZero="showZero" ref="ShowTwo"></show-two>
     <show-one ref="ShowOne"></show-one>
+    <show-card ref="ShowCard"></show-card>
   </a-card>
 </template>
 <script>
@@ -111,7 +116,7 @@ import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 // import Config from '@/defaultSettings'
 // import RegisterForm from './modules/RegisterForm'
 // import MgrProjectTraceDrawer from './modules/mgrProjectTraceDrawer'
-
+import ShowCard from './modules/ShowTwoMCard'
 import ShowOne from './modules/ShowOneD'
 import ShowTwo from './modules/ShowTwoM'
 import ShowZero from './modules/ShowZeroD'
@@ -126,7 +131,8 @@ export default {
     ShowOne,
     ShowTwo,
     ShowZero,
-    filterDictText
+    filterDictText,
+    ShowCard
     // RegisterForm,
     // MgrProjectTraceDrawer
   },
@@ -137,6 +143,7 @@ export default {
       projectTypeDictOptions: '',
       industrySectorValueDictOptions: '',
       statusDictOptions: '',
+      pagination: '',
       columns: [
         {
           title: '项目名称',
@@ -192,7 +199,8 @@ export default {
         {
           title: '最近跟踪纪要',
           align: 'center',
-          dataIndex: ''
+          dataIndex: 'actionA',
+          scopedSlots: { customRender: 'actionA' }
         },
         {
           title: '操作',
@@ -202,7 +210,8 @@ export default {
         }
       ],
       url: {
-        list: '/park.project/mgrProjectInfo/list?status=1',
+        list: '/park.project/mgrProjectInfo/list',
+        // list: '/park.project/mgrProjectInfo/list?status=1',
 
         add: '/park.project/mgrProjectTrace/addMgrProjectTrace',
         edit: '/park.project/mgrProjectTrace/edit',
@@ -223,6 +232,27 @@ export default {
   mounted() {
     // console.log(this.columns)
   },
+  async beforeRouteEnter (to, from, next) {
+    const projectTypeDictOptions = await initDictOptions('projectType')
+    if (!projectTypeDictOptions.success) {
+      console.log('error')
+    }
+
+    const industrySectorValueDictOptions = await initDictOptions('industrySectorValue')
+    if (!industrySectorValueDictOptions.success) {
+      console.log('error')
+    }
+
+    const statusDictOptions = await initDictOptions('project_status')
+    if (!statusDictOptions.success) {
+      console.log('error')
+    }
+    next(vm => {
+      vm.projectTypeDictOptions = projectTypeDictOptions.result
+      vm.industrySectorValueDictOptions = industrySectorValueDictOptions.result
+      vm.statusDictOptions = statusDictOptions.result
+    })
+  },
   created() {
     // //尝试不经过url.list获取到数据，但是考虑到不走url.list方式，其他操作的数据如何传递
     // let formData = { pageNo: '1', pageSize: '10', status: '2' }
@@ -240,16 +270,13 @@ export default {
     //     this.$message.error(res.message)
     //   }
     // })
-
-    //数据字典使用步骤3
-    this.initDictConfig()
   },
   methods: {
     customRow(row) {
       return {
         on: {
           click: () => {
-            console.log(row.projectId)
+            // console.log(row.projectId)
             //拿到id
             this.$router.push({ name: 'project-attract-detail-@id', params: { id: row.projectId } })
           }
@@ -268,24 +295,6 @@ export default {
       this.queryParam = {}
       this.loadData(1)
       console.log('searchReset本页面')
-    },
-    // 数据字典使用步骤4
-    initDictConfig() {
-      initDictOptions('projectType').then(res => {
-        if (res.success) {
-          this.projectTypeDictOptions = res.result
-        }
-      })
-      initDictOptions('industrySectorValue').then(res => {
-        if (res.success) {
-          this.industrySectorValueDictOptions = res.result
-        }
-      })
-      initDictOptions('project_status').then(res => {
-        if (res.success) {
-          this.statusDictOptions = res.result
-        }
-      })
     },
     goAddLand() {
       this.$router.push({ path: '/project/attract/addprojectland' })
@@ -339,6 +348,13 @@ export default {
           })
         }
       })
+    },
+    showCard(row, e) {
+      row.__key = Dom7(e.currentTarget)
+        .parents('.ant-table-row')
+        .data('row-key')
+      // console.log(row.__key)
+      this.$refs.ShowCard.detail(row)
     }
   }
 }

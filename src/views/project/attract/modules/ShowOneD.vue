@@ -1,30 +1,19 @@
 <template>
   <!-- 项目分配表单 -->
-  <!-- <a-drawer
-    class="announcementCustomModal"
-    :width="modelStyle.width"
-    :visible="visible"
-    :bodyStyle="bodyStyle"
-    @cancel="handleCancel"
-    destroyOnClose
-  :footer="null">-->
   <a-drawer title="选择跟踪人员" width="50%" destroyOnClose :visible="visible" @close="handleCancel">
-    <!-- <template slot="title">
-      <a-button icon="fullscreen" class="custom-btn" @click="handleClickToggleFullScreen" />
-    </template>-->
     <a-card :bordered="false">
       <a-form :form="form">
         <a-form-item label="项目名称">
           <a-input
             placeholder="请输入项目名称"
-            v-decorator="['id',  {rules: [{required: true, message: '请输入项目名称'}]}]"
+            v-decorator="['projectId',  {rules: [{required: true, message: '请输入项目名称'}]}]"
           />
         </a-form-item>
         <a-form-item label="跟踪人" required>
           <!-- 数据字典 -->
           <a-input
             placeholder="请输入跟踪人"
-            v-decorator="['projectManager',  {rules: [{required: true, message: '请输入跟踪人'}]}]"
+            v-decorator="['tracker',  {rules: [{required: true, message: '请输入跟踪人'}]}]"
           />
         </a-form-item>
       </a-form>
@@ -39,7 +28,7 @@
 import { httpAction } from '@/api/manage'
 import pick from 'lodash.pick'
 import moment from 'moment'
-
+import qs from 'qs'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 export default {
   name: 'SysAnnouncementModal',
@@ -71,6 +60,7 @@ export default {
       },
       url: {
         list: '/park.project/mgrProjectInfo/assignProject',
+        
       }
     }
   },

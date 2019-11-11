@@ -88,7 +88,7 @@ export default {
           this.loading = false
           this.info = res.result
           // console.log(this.info)
-          this.initDictConfig()
+          // this.initDictConfig()
         } else {
           this.$router.back()
           this.$message.error(res.message)

@@ -230,7 +230,7 @@ export default {
       if (arg === 1) {
         this.ipagination.current = 1
       }
-      let params = { cusId: '11111111' }
+      let params = { CusId: '11111111' }
       // this.loading = true
       console.log('test start000000000000')
       getAction('/park.customer/baseCustomerContact/list', params).then(res => {
@@ -238,7 +238,7 @@ export default {
         if (res.success) {
           console.log('test start11111111')
           console.log(res.result)
-          this.dataSource = res.result.records
+          this.dataSource = res.result
           this.ipagination.total = res.result.total
         }
         if (res.code === 510) {

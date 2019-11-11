@@ -110,6 +110,7 @@ export const JeecgListMixin = {
       this.columns.forEach(function (value) {
         str += "," + value.dataIndex;
       });
+      // console.log(str);
       return str;
     },
 
