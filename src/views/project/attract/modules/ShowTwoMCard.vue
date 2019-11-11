@@ -38,6 +38,7 @@
 <script>
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import DetailList from '@/components/tools/DetailList'
+import { getAction, putAction } from '@/api/manage'
 const DetailListItem = DetailList.Item
 
 export default {
@@ -68,6 +69,7 @@ export default {
         style: { top: '20px' },
         fullScreen: false
       },
+      info: {},
       url: {
         list: '/park.project/mgrProjectTrace/list'
       }
@@ -81,7 +83,7 @@ export default {
       this.record = record
       console.log(this.record.recordId)
       //定义获取小卡片内容的方法
-      getAction('/park.customer/baseCustomer/queryById', { recordId: this.record.recordId }).then(res => {
+      getAction('/park.project/mgrProjectTrace/selectById', { id: this.record.recordId }).then(res => {
         if (res.code === 200) {
           this.loading = false
           this.info = res.result

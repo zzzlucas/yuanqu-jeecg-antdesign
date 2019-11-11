@@ -83,6 +83,7 @@ import { getAction, putAction } from '@/api/manage'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import ShowCard from './ShowTwoMCard'
 import Dom7 from 'dom7'
+import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
 
 export default {
   mixins: [JeecgListMixin],
@@ -115,6 +116,8 @@ export default {
         style: { top: '20px' },
         fullScreen: false
       },
+      trackerDictOptions:'',
+      trackMethodDictOptions:'',
       columns: [
         {
           title: '序号',
@@ -129,7 +132,10 @@ export default {
         {
           title: '跟踪人员',
           align: 'center',
-          dataIndex: 'tracker'
+          dataIndex: 'trackr',
+          customRender: text => {
+            return filterDictText(this.trackerDictOptions, text)
+          }
         },
         {
           title: '跟踪纪要',
@@ -139,7 +145,10 @@ export default {
         {
           title: '跟踪方式',
           align: 'center',
-          dataIndex: 'trackMethod'
+          dataIndex: 'trackMethod',
+          customRender: text => {
+            return filterDictText(this.trackMethodDictOptions, text)
+          }
         },
         {
           title: '操作',
@@ -183,6 +192,18 @@ export default {
           this.$message.warning(res.message)
         }
         this.loading = false
+      })
+    },
+    initDictConfig() {
+      initDictOptions('tracker').then(res => {
+        if (res.success) {
+          this.trackerOptions = res.result
+        }
+      })
+      initDictOptions('track_method').then(res => {
+        if (res.success) {
+          this.trackMethodDictOptions = res.result
+        }
       })
     },
     //要给卡片传recordid
