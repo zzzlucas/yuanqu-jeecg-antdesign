@@ -55,17 +55,17 @@
         </a-tab-pane>
 
         <a-tab-pane tab="分类信息" key="4">
-          <!-- <detail-list>
+          <detail-list>
             <detail-list-item term="公司性质">{{dictText.unitNatureText}}</detail-list-item>
             <detail-list-item term="行业类型">{{dictText.industryCategoryText}}</detail-list-item>
             <detail-list-item term="公司类型">{{dictText.organizationalText}}</detail-list-item>
             <detail-list-item term="技术领域">{{dictText.technicalFieldText}}</detail-list-item>
             <detail-list-item term="企业评级">{{dictText.enterpriseRatingText}}</detail-list-item>
             <detail-list-item term="注册类型">{{dictText.registrationTypeText}}</detail-list-item>
-          </detail-list> -->
+          </detail-list>
         </a-tab-pane>
         <a-tab-pane tab="工商/税务信息" key="5">
-          <!-- <detail-list>
+          <detail-list>
             <detail-list-item term="注册日期">{{info.baseCustomerBusiness.registDate}}</detail-list-item>
             <detail-list-item term="注册资本">{{info.baseCustomerBusiness.registeredCapital}}</detail-list-item>
             <detail-list-item term="转化为人民币">{{info.baseCustomerBusiness.rctoRMB}}</detail-list-item>
@@ -76,7 +76,7 @@
             <detail-list-item term="注册地邮编">{{info.baseCustomerBusiness.registerAddressZipCode}}</detail-list-item>
             <detail-list-item term="经营范围">{{info.baseCustomerBusiness.businessScope}}</detail-list-item>
             <detail-list-item term="特许经营范围">{{info.baseCustomerBusiness.businessScopePermit}}</detail-list-item>
-          </detail-list> -->
+          </detail-list>
         </a-tab-pane>
         <a-tab-pane tab="联系人" key="6">
           <!-- <a-tab-pane tab="联系人" key="6" @click="getCustomerContact()"> -->
@@ -203,17 +203,17 @@ export default {
       this.$message.warning('ID不正确')
       return false
     }
-    // getAction('/park.customer/baseCustomer/queryById', { id: this.$route.params.id }).then(res => {
-    //   if (res.code === 200) {
-    //     this.loading = false
-    //     this.info = res.result
-    //     // console.log(this.info)
-    //     this.initDictConfig()
-    //   } else {
-    //     this.$router.back()
-    //     this.$message.error(res.message)
-    //   }
-    // })
+    getAction('/park.customer/baseCustomer/queryById', { id: this.$route.params.id }).then(res => {
+      if (res.code === 200) {
+        this.loading = false
+        this.info = res.result
+        // console.log(this.info)
+        this.initDictConfig()
+      } else {
+        this.$router.back()
+        this.$message.error(res.message)
+      }
+    })
 
     console.log('test start-------------')
     this.getCustomerContact()
@@ -231,7 +231,6 @@ export default {
         this.ipagination.current = 1
       }
       let params = { cusId: '11111111' }
-      // params = qs.stringify(params)
       // this.loading = true
       console.log('test start000000000000')
       getAction('/park.customer/baseCustomerContact/list', params).then(res => {
@@ -240,7 +239,7 @@ export default {
           console.log('test start11111111')
           console.log(res.result)
           this.dataSource = res.result.records
-          // this.ipagination.total = res.result.total
+          this.ipagination.total = res.result.total
         }
         if (res.code === 510) {
           this.$message.warning(res.message)

@@ -117,6 +117,7 @@ import ShowTwo from './modules/ShowTwoM'
 import ShowZero from './modules/ShowZeroD'
 //数据字典使用步骤0
 import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
+import Dom7 from 'dom7'
 
 export default {
   name: '',
@@ -202,6 +203,10 @@ export default {
       ],
       url: {
         list: '/park.project/mgrProjectInfo/list?status=1',
+
+        add: '/park.project/mgrProjectTrace/addMgrProjectTrace',
+        edit: '/park.project/mgrProjectTrace/edit',
+
         editCementSend: 'sys/sysAnnouncementSend/editByAnntIdAndUserId',
         readAllMsg: 'sys/sysAnnouncementSend/readAll'
       },
@@ -308,6 +313,13 @@ export default {
     },
     showZero(record) {
       this.$refs.ShowZero.detail(record)
+    },
+    handleEdit(row, e) {
+      row.__key = Dom7(e.currentTarget)
+        .parents('.ant-table-row')
+        .data('row-key')
+      // console.log(row.__key)
+      this.$refs.form.edit(row)
     },
     readAll() {
       var that = this

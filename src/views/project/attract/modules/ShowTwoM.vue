@@ -55,8 +55,8 @@
           bordered
           rowKey="id"
           :columns="columns"
-          :dataSource="dataSource"
-          :pagination="ipagination"
+          :dataSource="dataSourceSTM"
+          :pagination="ipaginationSTM"
           :loading="loading"
           @change="handleTableChange"
         >
@@ -69,9 +69,7 @@
             <a @click="deleteeee(record)">删除</a>
           </span>
         </a-table>
-
       </a-form>
-
     </a-card>
     <show-card ref="ShowCard"></show-card>
   </a-modal>
@@ -100,6 +98,8 @@ export default {
       wrapperCol: {
         span: 16
       },
+      dataSourceSTM: [],
+      ipaginationSTM: [],
       visible: false,
       loading: false,
       bodyStyle: {
@@ -150,8 +150,39 @@ export default {
       }
     }
   },
-  created() {},
+  created() {
+    console.log('test start-------------')
+    this.getProjectTrace()
+  },
   methods: {
+    //表格跟踪记录获取  通过projectId查询
+    getProjectTrace(arg = 1) {
+      // if (!this.url.list) {
+      //   this.$message.error('请设置url.list属性!')
+      //   return
+      // }
+      //加载数据 若传入参数1则加载第一页的内容
+      if (arg === 1) {
+        this.ipagination.current = 1
+      }
+      let params = { projectId: '222222' }
+      // this.loading = true
+      // console.log('test start000000000000')
+      getAction('/park.project/mgrProjectTrace/getById', params).then(res => {
+        // getAction('/park.customer/baseCustomerContact/list?cusId=11111111').then(res => {
+        if (res.success) {
+          console.log('test start11111111')
+          console.log(res.result)
+          this.dataSourceSTM = res.result
+          this.ipaginationSTM.total = res.result.total
+          console.log(this.dataSourceSTM)
+        }
+        if (res.code === 510) {
+          this.$message.warning(res.message)
+        }
+        // this.loading = false
+      })
+    },
     showCard(record) {
       this.$refs.ShowCard.detail(record)
     },

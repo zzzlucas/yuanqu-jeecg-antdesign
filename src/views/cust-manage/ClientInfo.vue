@@ -81,6 +81,8 @@
         :customRow="customRow"
       >
         <span slot="action" slot-scope="text, record">
+          <a @click.stop="handleEdit(record, ...arguments)">test</a>
+          <a-divider type="vertical" />
           <a @click.stop="showConfirm(record)">迁出</a>
           <!-- <a @click.stop="showOne(record)">迁出</a> -->
           <a-divider type="vertical" />
@@ -107,6 +109,7 @@ import ShowZero from './modules/ShowZeroD'
 import ShowOne from './modules/ShowOneM'
 import { getAction, putAction } from '@/api/manage'
 import qs from 'qs'
+import Dom7 from 'dom7'
 
 export default {
   name: 'IndustrialParksList',
@@ -189,15 +192,6 @@ export default {
     })
   },
   methods: {
-    handleOut() {},
-    //获取row
-    // handleEdit(row, e) {
-    //   row.__key = Dom7(e.currentTarget)
-    //     .parents('.ant-table-row')
-    //     .data('row-key')
-    //   this.rightShow = true
-    //   this.edit = true
-    // },
     customRow(row) {
       return {
         on: {
@@ -216,6 +210,22 @@ export default {
     },
     showOne() {
       this.$refs.ShowOne.detail()
+    },
+    handleOut() {},
+    //获取row
+    // handleEdit(row, e) {
+    //   row.__key = Dom7(e.currentTarget)
+    //     .parents('.ant-table-row')
+    //     .data('row-key')
+    //   this.rightShow = true
+    //   this.edit = true
+    // },
+    handleEdit(row, e) {
+      row.__key = Dom7(e.currentTarget)
+        .parents('.ant-table-row')
+        .data('row-key')
+      console.log(row.__key)
+      // this.$refs.form.edit(row)
     },
     showConfirm() {
       this.$confirm({
