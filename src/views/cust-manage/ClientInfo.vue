@@ -224,9 +224,9 @@ export default {
         onOk() {
           return new Promise((resolve, reject) => {
             //如何获得custid
-            let formData = { custId: '1192718061480706048', status: '1' }
-            formData = qs.stringify(formData)
-            putAction('/park.customer/baseCustomer/editStatus', formData).then(res => {
+            let params = { custId: '1192718061480706048', status: '1' }
+            params = qs.stringify(params)
+            putAction('/park.customer/baseCustomer/editStatus', params).then(res => {
               if (res.code === 200) {
                 console.log('迁入迁出成功')
                 resolve()
