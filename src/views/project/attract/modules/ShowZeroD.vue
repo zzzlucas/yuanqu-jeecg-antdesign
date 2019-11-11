@@ -219,6 +219,9 @@ export default {
     detail(record) {
       this.visible = true
       this.record = record
+      console.log('test showone start');
+      //成功获取到了 recordId，根据这个recordId 得到表单已填
+      console.log(this.record.recordId);
     },
     handleCancel() {
       this.visible = false

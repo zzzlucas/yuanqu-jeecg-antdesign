@@ -53,7 +53,7 @@
           </a>
           <a-menu slot="overlay">
             <a-menu-item>
-              <a @click.stop="showTwo(record)">跟踪记录</a>
+              <a @click.stop="showTwo(record, ...arguments)">跟踪记录</a>
             </a-menu-item>
             <a-menu-item>
               <a-popconfirm title="确定转为重点跟进吗?" @confirm="() => handleDelete(record.projectId)">
@@ -82,7 +82,7 @@
         </a-dropdown>
         <a-divider type="vertical" />
         <!-- 写一个三元表达式判断对应表单类型？-->
-        <a @click.stop="goAddLease(record)">项目维护</a>
+        <a @click.stop="goAddLand(record)">项目维护</a>
 
         <a-divider type="vertical" />
         <a @click.stop="showOne(record)">项目分配</a>
@@ -308,19 +308,23 @@ export default {
       // })
       this.$refs.ShowOne.detail(record)
     },
-    showTwo(record) {
-      this.$refs.ShowTwo.detail(record)
-    },
-    showZero(record) {
-      this.$refs.ShowZero.detail(record)
-    },
-    handleEdit(row, e) {
+    showTwo(row, e) {
       row.__key = Dom7(e.currentTarget)
         .parents('.ant-table-row')
         .data('row-key')
       // console.log(row.__key)
-      this.$refs.form.edit(row)
+      this.$refs.ShowTwo.detail(row)
     },
+    showZero(record) {
+      this.$refs.ShowZero.detail(record)
+    },
+    // handleEdit(row, e) {
+    //   row.__key = Dom7(e.currentTarget)
+    //     .parents('.ant-table-row')
+    //     .data('row-key')
+    //   // console.log(row.__key)
+    //   this.$refs.form.edit(row)
+    // },
     readAll() {
       var that = this
       that.$confirm({

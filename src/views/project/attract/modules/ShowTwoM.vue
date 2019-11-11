@@ -62,9 +62,9 @@
         >
           <!-- :customRow="customRow" -->
           <span slot="action" slot-scope="text, record">
-            <a @click="twoShowOne(record)">编辑</a>
+            <a @click="twoShowOne(record, ...arguments)">编辑</a>
             <a-divider type="vertical" />
-            <a @click="showCard(record)">查看</a>
+            <a @click="showCard(record, ...arguments)">查看</a>
             <a-divider type="vertical" />
             <a @click="deleteeee(record)">删除</a>
           </span>
@@ -82,6 +82,7 @@ import { getAction, putAction } from '@/api/manage'
 
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import ShowCard from './ShowTwoMCard'
+import Dom7 from 'dom7'
 
 export default {
   mixins: [JeecgListMixin],
@@ -89,6 +90,8 @@ export default {
   components: { ShowCard },
   data() {
     return {
+      //
+      confirmLoading: false,
       form: this.$form.createForm(this),
       title: '跟踪记录',
       record: {},
@@ -152,64 +155,58 @@ export default {
   },
   created() {
     console.log('test start-------------')
-    this.getProjectTrace()
+    // this.getProjectTrace()
   },
   methods: {
+    detail(record) {
+      this.visible = true
+      this.record = record
+      // this.record.projectId = record.projectId
+      //this.record.projectId 获取到了，在get请求前传入值
+      this.getProjectTrace()
+    },
     //表格跟踪记录获取  通过projectId查询
     getProjectTrace(arg = 1) {
-      // if (!this.url.list) {
-      //   this.$message.error('请设置url.list属性!')
-      //   return
-      // }
-      //加载数据 若传入参数1则加载第一页的内容
       if (arg === 1) {
         this.ipagination.current = 1
       }
-      let params = { projectId: '222222' }
-      // this.loading = true
-      // console.log('test start000000000000')
+      let params = { projectId: this.record.projectId }
+      this.loading = true
       getAction('/park.project/mgrProjectTrace/getById', params).then(res => {
-        // getAction('/park.customer/baseCustomerContact/list?cusId=11111111').then(res => {
         if (res.success) {
-          console.log('test start11111111')
+          console.log('test start getAction')
           console.log(res.result)
           this.dataSourceSTM = res.result
           this.ipaginationSTM.total = res.result.total
-          console.log(this.dataSourceSTM)
         }
         if (res.code === 510) {
           this.$message.warning(res.message)
         }
-        // this.loading = false
+        this.loading = false
       })
     },
-    showCard(record) {
-      this.$refs.ShowCard.detail(record)
+    //要给卡片传recordid
+    showCard(row, e) {
+      row.__key = Dom7(e.currentTarget)
+        .parents('.ant-table-row')
+        .data('row-key')
+      // console.log(row.__key)
+      this.$refs.ShowCard.detail(row)
     },
-    twoShowOne(record) {
-      // console.log('showone')
-      this.$emit('showOneToZero', record)
+    //其实是showzero
+    twoShowOne(row, e) {
+      row.__key = Dom7(e.currentTarget)
+        .parents('.ant-table-row')
+        .data('row-key')
+      console.log(row.__key)
+      this.$emit('showOneToZero', row)
     },
+
     handleOk() {},
-    detail(record) {
-      this.visible = true
-      this.record = record
-    },
     handleCancel() {
       this.visible = false
-    }
-    /** 切换全屏显示 */
-    // handleClickToggleFullScreen() {
-    //   let mode = !this.modelStyle.fullScreen
-    //   if (mode) {
-    //     this.modelStyle.width = '100%'
-    //     this.modelStyle.style.top = '20px'
-    //   } else {
-    //     this.modelStyle.width = '60%'
-    //     this.modelStyle.style.top = '50px'
-    //   }
-    //   this.modelStyle.fullScreen = mode
-    // }
+    },
+    deleteeee() {}
   }
 }
 </script>
