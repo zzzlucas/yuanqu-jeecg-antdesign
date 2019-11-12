@@ -1,50 +1,63 @@
 <template>
   <a-drawer
-    :title="title"
     width="65%"
     placement="right"
-    :closable="false"
-    @close="close"
+    :title="title"
     :visible="visible"
+    :mask-closable="false"
+    @close="close"
   >
-    <a-form class="drawer-form" layout="horizontal" :form="form">
+    <a-form class="drawer-form mgr-engineering-info-drawer" layout="horizontal" :form="form">
+      <h2>基本信息</h2>
       <a-row>
         <a-col span="12">
           <a-form-item
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
-            label="园区ID">
-            <a-input placeholder="请输入园区ID" v-decorator="['parkId', validatorRules.parkId ]"/>
+            label="所属园区">
+            <a-select placeholder="请选择园区" v-decorator="['parkId', {rules: rules.parkId}]">
+              <a-select-option value="1">园区1</a-select-option>
+              <a-select-option value="2">园区2</a-select-option>
+              <a-select-option value="3">园区3</a-select-option>
+            </a-select>
           </a-form-item>
           <a-form-item
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
             label="项目名称">
-            <a-input placeholder="请输入项目名称" v-decorator="['projectName', {}]"/>
+            <a-input placeholder="请输入项目名称" v-decorator="['projectName', {rules: rules.projectName}]"/>
           </a-form-item>
           <a-form-item
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
             label="项目类别">
-            <a-input placeholder="请输入项目类别" v-decorator="['types', {}]"/>
+            <a-select placeholder="请选择项目类别" v-decorator="['types', {rules: rules.types}]">
+              <a-select-option value="1">工业项目</a-select-option>
+              <a-select-option value="2">住宅项目</a-select-option>
+              <a-select-option value="3">商业项目</a-select-option>
+              <a-select-option value="4">基础设施项目</a-select-option>
+            </a-select>
           </a-form-item>
           <a-form-item
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
             label="项目进展">
-            <a-input placeholder="请输入项目进展" v-decorator="['engineeringProcess', {}]"/>
+            <a-select
+              placeholder="请选择项目进展"
+              v-decorator="['engineeringProcess', {initValue: '1', rules: rules.engineeringProcess}]">
+              <a-select-option value="1">前期准备</a-select-option>
+              <a-select-option value="2">办证</a-select-option>
+              <a-select-option value="3">已入库</a-select-option>
+              <a-select-option value="4">在建中</a-select-option>
+              <a-select-option value="5">已竣工</a-select-option>
+              <a-select-option value="6">已投产</a-select-option>
+            </a-select>
           </a-form-item>
           <a-form-item
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
             label="立项文号">
             <a-input placeholder="请输入立项文号" v-decorator="['setUpSerialNum', {}]"/>
-          </a-form-item>
-          <a-form-item
-            :labelCol="labelCol"
-            :wrapperCol="wrapperCol"
-            label="重点项目类别">
-            <a-input placeholder="请输入重点项目类别" v-decorator="['projectTypes', {}]"/>
           </a-form-item>
           <a-form-item
             :labelCol="labelCol"
@@ -61,38 +74,8 @@
           <a-form-item
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
-            label="创建日期">
-            <a-date-picker v-decorator="[ 'createrDate', {}]"/>
-          </a-form-item>
-          <a-form-item
-            :labelCol="labelCol"
-            :wrapperCol="wrapperCol"
             label="项目状态">
             <a-input placeholder="请输入项目状态" v-decorator="['status', {}]"/>
-          </a-form-item>
-          <a-form-item
-            :labelCol="labelCol"
-            :wrapperCol="wrapperCol"
-            label="每层面积">
-            <a-input-number v-decorator="[ 'defenceArea', {}]"/>
-          </a-form-item>
-          <a-form-item
-            :labelCol="labelCol"
-            :wrapperCol="wrapperCol"
-            label="绿地面积">
-            <a-input-number v-decorator="[ 'greenbeltArea', {}]"/>
-          </a-form-item>
-          <a-form-item
-            :labelCol="labelCol"
-            :wrapperCol="wrapperCol"
-            label="容积率">
-            <a-input-number v-decorator="[ 'plotRatio', {}]"/>
-          </a-form-item>
-          <a-form-item
-            :labelCol="labelCol"
-            :wrapperCol="wrapperCol"
-            label="绿地率">
-            <a-input-number v-decorator="[ 'greeningRate', {}]"/>
           </a-form-item>
         </a-col>
         <a-col span="12">
@@ -141,20 +124,29 @@
           <a-form-item
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
-            label="总建筑面积">
-            <a-input-number v-decorator="[ 'overGroundArea', {}]"/>
+            label="层数、层高、承重">
+            <a-input-number v-decorator="[ 'floorNumber', {}]"/>
           </a-form-item>
+        </a-col>
+        <a-col span="24">
+          <a-form-item
+            class="remark-item"
+            label="备注信息"
+            :labelCol="{span: 6}"
+            :wrapperCol="{span: 18}">
+            <a-textarea placeholder="请输入备注信息" v-decorator="['remark', {}]"/>
+          </a-form-item>
+        </a-col>
+      </a-row>
+
+      <h2>详细数据</h2>
+      <a-row>
+        <a-col span="12">
           <a-form-item
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
             label="总用地面积">
             <a-input-number v-decorator="[ 'area', {}]"/>
-          </a-form-item>
-          <a-form-item
-            :labelCol="labelCol"
-            :wrapperCol="wrapperCol"
-            label="层数、层高、承重">
-            <a-input-number v-decorator="[ 'floorNumber', {}]"/>
           </a-form-item>
           <a-form-item
             :labelCol="labelCol"
@@ -165,24 +157,43 @@
           <a-form-item
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
+            label="绿地面积">
+            <a-input-number v-decorator="[ 'greenbeltArea', {}]"/>
+          </a-form-item>
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="每层面积">
+            <a-input-number v-decorator="[ 'defenceArea', {}]"/>
+          </a-form-item>
+        </a-col>
+        <a-col span="12">
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="总建筑面积">
+            <a-input-number v-decorator="[ 'overGroundArea', {}]"/>
+          </a-form-item>
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="容积率">
+            <a-input-number v-decorator="[ 'plotRatio', {}]"/>
+          </a-form-item>
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="绿地率">
+            <a-input-number v-decorator="[ 'greeningRate', {}]"/>
+          </a-form-item>
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
             label="结构形式">
             <a-input placeholder="请输入结构形式" v-decorator="['structuralStyle', {}]"/>
           </a-form-item>
-          <a-form-item
-            :labelCol="labelCol"
-            :wrapperCol="wrapperCol"
-            label="经度">
-            <a-input placeholder="请输入经度" v-decorator="['lng', {}]"/>
-          </a-form-item>
-          <a-form-item
-            :labelCol="labelCol"
-            :wrapperCol="wrapperCol"
-            label="纬度">
-            <a-input placeholder="请输入纬度" v-decorator="['lat', {}]"/>
-          </a-form-item>
         </a-col>
       </a-row>
-
     </a-form>
     <div class="drawer-bottom-btn-group">
       <a-button style="margin-right: 8px" type="primary" @click="handleOk">确定</a-button>
@@ -195,21 +206,21 @@
   import { httpAction } from '@/api/manage'
   import pick from 'lodash.pick'
   import moment from 'moment'
+  import rules from '../js/rules'
 
   export default {
     name: 'MgrEngineeringInfoDrawer',
     data() {
       return {
+        rules,
         title: '工程',
         visible: false,
         model: {},
         labelCol: {
-          xs: { span: 24 },
-          sm: { span: 6 }
+          span: 6
         },
         wrapperCol: {
-          xs: { span: 24 },
-          sm: { span: 18 }
+          span: 18
         },
         form: this.$form.createForm(this, { name: 'engineering' }),
         validatorRules: {
@@ -292,3 +303,28 @@
     }
   }
 </script>
+
+<style lang="less">
+  .mgr-engineering-info-drawer {
+    & > h2 {
+      width: (50% / 24) * 6;
+      padding-right: 11px;
+      text-align: right;
+
+      //noinspection CssInvalidPseudoSelector
+      &:not(:first-of-type){
+        margin-top: 16px;
+      }
+    }
+
+    .remark-item {
+      .ant-form-item-label {
+        width: (50% / 24) * 6;
+      }
+
+      .ant-form-item-control-wrapper {
+        width: (50% / 24) * 18 + 50%;
+      }
+    }
+  }
+</style>
