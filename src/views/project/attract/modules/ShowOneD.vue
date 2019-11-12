@@ -41,7 +41,6 @@ export default {
     return {
       form: this.$form.createForm(this),
       title: '通知消息',
-      record: {},
       labelCol: {
         xs: { span: 24 },
         sm: { span: 5 }
@@ -50,8 +49,6 @@ export default {
         xs: { span: 24 },
         sm: { span: 16 }
       },
-      visible: false,
-      loading: false,
       bodyStyle: {
         padding: '0',
         height: window.innerHeight * 0.8 + 'px',
@@ -62,12 +59,16 @@ export default {
         style: { top: '20px' },
         fullScreen: false
       },
+      //常用数据初始化
+      record: {},
+      visible: false,
+      loading: false,
       dict: {
         trackerExt: [{ value: '1' }]
       },
       url: {
         // list: '/park.project/mgrProjectInfo/assignProject',
-        edit:'/park.project/mgrProjectInfo/assignProject'
+        edit: '/park.project/mgrProjectInfo/assignProject'
       }
     }
   },
@@ -86,7 +87,7 @@ export default {
           that.confirmLoading = true
           let httpurl = ''
           let method = ''
-          console.log(this.model);
+          console.log(this.model)
           // console.log(this.model.id);
           if (!this.model.projectId) {
             httpurl += this.url.add

@@ -221,9 +221,9 @@ export default {
         // console.log(form)
         this.queryform = form
       })
-      // console.log(this.queryform);
+      console.log(this.queryform);
       var param = Object.assign(sqp, this.queryParam, this.isorter, this.filters, this.queryform)
-      param.field = this.getQueryField()
+      // param.field = this.getQueryField()
       param.projectId = this.record.projectId
       param.pageNo = this.ipagination.current
       param.pageSize = this.ipagination.pageSize

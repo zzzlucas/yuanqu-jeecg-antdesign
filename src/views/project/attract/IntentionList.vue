@@ -86,7 +86,7 @@
         </a-dropdown>
         <a-divider type="vertical" />
         <!-- 写一个三元表达式判断对应表单类型？-->
-        <a @click.stop="showAddProjectLand(record, ...arguments)">项目维护</a>
+        <a @click.stop="showWeihu(record, ...arguments)">项目维护</a>
 
         <a-divider type="vertical" />
         <a @click.stop="showOne(record)">项目分配</a>
@@ -101,6 +101,7 @@
     <show-one ref="ShowOne"></show-one>
     <show-card ref="ShowCard"></show-card>
     <add-project-land ref="ShowAddProjectLand"></add-project-land>
+    <add-project-lease ref="ShowAddProjectLease"></add-project-lease>
   </a-card>
 </template>
 <script>
@@ -122,6 +123,8 @@ import ShowOne from './modules/ShowOneD'
 import ShowTwo from './modules/ShowTwoM'
 import ShowZero from './modules/ShowZeroD'
 import AddProjectLand from './modules/AddProjectLand'
+import AddProjectLease from './modules/AddProjectLease'
+
 //数据字典使用步骤0
 import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
 import Dom7 from 'dom7'
@@ -135,7 +138,8 @@ export default {
     ShowZero,
     filterDictText,
     ShowCard,
-    AddProjectLand
+    AddProjectLand,
+    AddProjectLease
     // RegisterForm,
     // MgrProjectTraceDrawer
   },
@@ -298,22 +302,33 @@ export default {
       this.loadData(1)
       console.log('searchReset本页面')
     },
-    goAddLand(row, e) {
+
+    goAddLand() {
+      //原先的新打开页面
+      // this.$router.push({ path: '/project/attract/addprojectland' })
+      //现在的drawer
+      this.$refs.ShowAddProjectLand.detail()
+    },
+    //项目维护
+    showWeihu(row, e) {
       row.__key = Dom7(e.currentTarget)
         .parents('.ant-table-row')
         .data('row-key')
-      // this.$refs.ShowTwo.detail(row)
-      this.$router.push({ path: '/project/attract/addprojectland' })
+      row.projectType == 1 ? this.$refs.ShowAddProjectLand.detail(row) : this.$refs.ShowAddProjectLease.detail(row)
     },
-    showAddProjectLand(row, e) {
-      row.__key = Dom7(e.currentTarget)
-        .parents('.ant-table-row')
-        .data('row-key')
-      this.$refs.ShowAddProjectLand.detail(row)
-    },
+
     goAddLease() {
-      this.$router.push({ path: '/project/attract/addprojectlease' })
+      // this.$router.push({ path: '/project/attract/addprojectlease' })
+      this.$refs.ShowAddProjectLease.detail()
     },
+
+    // showAddProjectLease(row, e) {
+    //   row.__key = Dom7(e.currentTarget)
+    //     .parents('.ant-table-row')
+    //     .data('row-key')
+    //   this.$refs.ShowAddProjectLease.detail(row)
+    // },
+
     goLuoDi() {
       this.$router.push({ path: '/project/attract/ldxm' })
     },
@@ -361,12 +376,21 @@ export default {
         }
       })
     },
+    //最新一条跟踪记录，数组中最后一个？从projectid获取到最新的一个recordid,然后用这个recordid请求
     showCard(row, e) {
       row.__key = Dom7(e.currentTarget)
         .parents('.ant-table-row')
         .data('row-key')
-      // console.log(row.__key)
-      this.$refs.ShowCard.detail(row)
+      let params = { projectId: row.projectId }
+      getAction('/park.project/mgrProjectTrace/getById', params).then(res => {
+        if (res.success) {
+          row = res.result[res.result.length - 1]
+          this.$refs.ShowCard.detail(row)
+        }
+        if (res.code === 510) {
+          this.$message.warning(res.message)
+        }
+      })
     }
   }
 }
