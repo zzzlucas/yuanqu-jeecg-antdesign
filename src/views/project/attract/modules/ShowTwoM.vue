@@ -15,26 +15,42 @@
     <a-card :bordered="false">
       <a-form :form="form">
         <a-row>
-          <a-col :span="7">
+          <a-col :span="5">
             <a-form-item label="跟踪日期" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-range-picker></a-range-picker>
+              <a-date-picker v-decorator="['beginDate']" />
             </a-form-item>
           </a-col>
           <a-col :span="5">
+            <a-form-item label="跟踪日期" :labelCol="labelCol" :wrapperCol="wrapperCol">
+              <a-date-picker v-decorator="['endDate']" />
+            </a-form-item>
+          </a-col>
+
+          <a-col :span="5">
             <a-form-item label="跟踪人" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-select style="width:100%" defaultValue="1">
-                <a-select-option value="1">小张</a-select-option>
-                <a-select-option value="2">小李</a-select-option>
+              <a-select v-decorator="['tracker']">
+                <a-select-option
+                  v-for="(item, key) in dict.trackerDictOptions"
+                  :value="item.value"
+                  :key="key"
+                >{{ item.text }}</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
-          <a-col :span="7">
+
+          <a-col :span="5">
             <a-form-item label="跟踪方式" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-input></a-input>
+              <a-select v-decorator="['trackMethod']">
+                <a-select-option
+                  v-for="(item, key) in dict.trackMethodDictOptions"
+                  :value="item.value"
+                  :key="key"
+                >{{ item.text }}</a-select-option>
+              </a-select>
             </a-form-item>
           </a-col>
           <!-- <a-col :md="6" :sm="8"> -->
-          <a-col :span="5">
+          <a-col :span="4">
             <span style="overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchReset" icon="reload">重置</a-button>
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
@@ -43,7 +59,7 @@
         </a-row>
         <a-row>
           <a-button
-            @click="twoShowOne(record)"
+            @click="twoShowOneAdd(record)"
             type="primary"
             icon="plus"
             style="float:left;margin-left:0"
@@ -55,23 +71,21 @@
           bordered
           rowKey="id"
           :columns="columns"
-          :dataSource="dataSource"
+          :dataSource="dataSourceSTM"
           :pagination="ipagination"
           :loading="loading"
           @change="handleTableChange"
         >
           <!-- :customRow="customRow" -->
           <span slot="action" slot-scope="text, record">
-            <a @click="twoShowOne(record)">编辑</a>
+            <a @click="twoShowOne(record, ...arguments)">编辑</a>
             <a-divider type="vertical" />
-            <a @click="showCard(record)">查看</a>
+            <a @click="showCard(record, ...arguments)">查看</a>
             <a-divider type="vertical" />
             <a @click="deleteeee(record)">删除</a>
           </span>
         </a-table>
-
       </a-form>
-
     </a-card>
     <show-card ref="ShowCard"></show-card>
   </a-modal>
@@ -84,13 +98,20 @@ import { getAction, putAction } from '@/api/manage'
 
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import ShowCard from './ShowTwoMCard'
+import Dom7 from 'dom7'
+import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
 
 export default {
   mixins: [JeecgListMixin],
   name: 'SysAnnouncementModal',
   components: { ShowCard },
+  // props: {
+  //   ipaginationSTM: ''
+  // },
   data() {
     return {
+      //
+      confirmLoading: false,
       form: this.$form.createForm(this),
       title: '跟踪记录',
       record: {},
@@ -100,6 +121,18 @@ export default {
       wrapperCol: {
         span: 16
       },
+      dataSourceSTM: [],
+      // ipaginationSTM: {
+      //   current: 1,
+      //   pageSize: 10,
+      //   pageSizeOptions: ['10', '20', '30'],
+      //   showTotal: (total, range) => {
+      //     return range[0] + '-' + range[1] + ' 共' + total + '条'
+      //   },
+      //   showQuickJumper: true,
+      //   showSizeChanger: true,
+      //   total: 0
+      // },
       visible: false,
       loading: false,
       bodyStyle: {
@@ -107,10 +140,17 @@ export default {
         height: window.innerHeight * 0.8 + 'px',
         'overflow-y': 'auto'
       },
+      queryform: {},
       modelStyle: {
         width: '60%',
         style: { top: '20px' },
         fullScreen: false
+      },
+      trackerDictOptions: '',
+      trackMethodDictOptions: '',
+      dict: {
+        trackerDictOptions: [{ value: '1' }],
+        trackMethodDictOptions: [{ value: '1' }]
       },
       columns: [
         {
@@ -126,7 +166,10 @@ export default {
         {
           title: '跟踪人员',
           align: 'center',
-          dataIndex: 'tracker'
+          dataIndex: 'tracker',
+          customRender: text => {
+            return filterDictText(this.dict.trackerDictOptions, text)
+          }
         },
         {
           title: '跟踪纪要',
@@ -136,7 +179,10 @@ export default {
         {
           title: '跟踪方式',
           align: 'center',
-          dataIndex: 'trackMethod'
+          dataIndex: 'trackMethod',
+          customRender: text => {
+            return filterDictText(this.dict.trackMethodDictOptions, text)
+          }
         },
         {
           title: '操作',
@@ -150,35 +196,99 @@ export default {
       }
     }
   },
-  created() {},
+  created() {
+    console.log('test start-------------')
+    this.initDictConfig()
+    // this.getProjectTrace()
+  },
   methods: {
-    showCard(record) {
-      this.$refs.ShowCard.detail(record)
-    },
-    twoShowOne(record) {
-      // console.log('showone')
-      this.$emit('showOneToZero', record)
-    },
-    handleOk() {},
     detail(record) {
       this.visible = true
       this.record = record
+      //this.record.projectId 获取到了，在get请求前传入值
+      this.getProjectTrace()
     },
+    searchQuery() {
+      this.getProjectTrace()
+    },
+    //获取查询条件
+    getQueryParams() {
+      let sqp = {}
+      if (this.superQueryParams) {
+        sqp['superQueryParams'] = encodeURI(this.superQueryParams)
+      }
+      this.form.validateFieldsAndScroll((err, form) => {
+        // console.log(form)
+        this.queryform = form
+      })
+      console.log(this.queryform);
+      var param = Object.assign(sqp, this.queryParam, this.isorter, this.filters, this.queryform)
+      // param.field = this.getQueryField()
+      param.projectId = this.record.projectId
+      param.pageNo = this.ipagination.current
+      param.pageSize = this.ipagination.pageSize
+      return filterObj(param)
+    },
+    //表格跟踪记录获取  通过projectId查询
+    //不使用loaddata（）的原因: params获取传进来的projectId
+    getProjectTrace(arg = 1) {
+      if (arg === 1) {
+        this.ipagination.current = 1
+      }
+      let params = this.getQueryParams()
+      // let params = { projectId: this.record.projectId }
+      this.loading = true
+      getAction('/park.project/mgrProjectTrace/getById', params).then(res => {
+        if (res.success) {
+          console.log('test start getAction')
+          console.log(res.result)
+          this.dataSourceSTM = res.result
+          this.ipagination.total = res.result.total
+        }
+        if (res.code === 510) {
+          this.$message.warning(res.message)
+        }
+        this.loading = false
+      })
+    },
+
+    initDictConfig() {
+      initDictOptions('tracker').then(res => {
+        if (res.success) {
+          this.dict.trackerDictOptions = res.result
+        }
+      })
+      initDictOptions('track_method').then(res => {
+        if (res.success) {
+          this.dict.trackMethodDictOptions = res.result
+        }
+      })
+    },
+    //要给卡片传recordid
+    showCard(row, e) {
+      row.__key = Dom7(e.currentTarget)
+        .parents('.ant-table-row')
+        .data('row-key')
+      // console.log(row.__key)
+      this.$refs.ShowCard.detail(row)
+    },
+    //其实最后调用是showzero
+    twoShowOne(row, e) {
+      row.__key = Dom7(e.currentTarget)
+        .parents('.ant-table-row')
+        .data('row-key')
+      console.log(row.__key)
+      this.$emit('showOneToZero', row)
+    },
+    twoShowOneAdd(row) {
+      this.$emit('showOneToZero', row)
+    },
+
+    handleOk() {},
     handleCancel() {
       this.visible = false
-    }
-    /** 切换全屏显示 */
-    // handleClickToggleFullScreen() {
-    //   let mode = !this.modelStyle.fullScreen
-    //   if (mode) {
-    //     this.modelStyle.width = '100%'
-    //     this.modelStyle.style.top = '20px'
-    //   } else {
-    //     this.modelStyle.width = '60%'
-    //     this.modelStyle.style.top = '50px'
-    //   }
-    //   this.modelStyle.fullScreen = mode
-    // }
+    },
+    deleteeee() {}
   }
 }
 </script>

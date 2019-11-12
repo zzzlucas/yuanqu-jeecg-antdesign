@@ -45,6 +45,10 @@
       @change="handleTableChange"
       :customRow="customRow"
     >
+      <span slot="actionA" slot-scope="text, record">
+        <a @click.stop="showCard(record, ...arguments)">查看</a>
+      </span>
+
       <span slot="action" slot-scope="text, record">
         <a-dropdown>
           <a class="ant-dropdown-link" @click.stop="showZero(record)">
@@ -53,7 +57,7 @@
           </a>
           <a-menu slot="overlay">
             <a-menu-item>
-              <a @click.stop="showTwo(record)">跟踪记录</a>
+              <a @click.stop="showTwo(record, ...arguments)">跟踪记录</a>
             </a-menu-item>
             <a-menu-item>
               <a-popconfirm title="确定转为重点跟进吗?" @confirm="() => handleDelete(record.projectId)">
@@ -82,7 +86,7 @@
         </a-dropdown>
         <a-divider type="vertical" />
         <!-- 写一个三元表达式判断对应表单类型？-->
-        <a @click.stop="goAddLease(record)">项目维护</a>
+        <a @click.stop="showWeihu(record, ...arguments)">项目维护</a>
 
         <a-divider type="vertical" />
         <a @click.stop="showOne(record)">项目分配</a>
@@ -95,6 +99,9 @@
     <show-zero ref="ShowZero"></show-zero>
     <show-two @showOneToZero="showZero" ref="ShowTwo"></show-two>
     <show-one ref="ShowOne"></show-one>
+    <show-card ref="ShowCard"></show-card>
+    <add-project-land ref="ShowAddProjectLand"></add-project-land>
+    <add-project-lease ref="ShowAddProjectLease"></add-project-lease>
   </a-card>
 </template>
 <script>
@@ -111,12 +118,16 @@ import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 // import Config from '@/defaultSettings'
 // import RegisterForm from './modules/RegisterForm'
 // import MgrProjectTraceDrawer from './modules/mgrProjectTraceDrawer'
-
+import ShowCard from './modules/ShowTwoMCard'
 import ShowOne from './modules/ShowOneD'
 import ShowTwo from './modules/ShowTwoM'
 import ShowZero from './modules/ShowZeroD'
+import AddProjectLand from './modules/AddProjectLand'
+import AddProjectLease from './modules/AddProjectLease'
+
 //数据字典使用步骤0
 import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
+import Dom7 from 'dom7'
 
 export default {
   name: '',
@@ -125,7 +136,10 @@ export default {
     ShowOne,
     ShowTwo,
     ShowZero,
-    filterDictText
+    filterDictText,
+    ShowCard,
+    AddProjectLand,
+    AddProjectLease
     // RegisterForm,
     // MgrProjectTraceDrawer
   },
@@ -136,6 +150,7 @@ export default {
       projectTypeDictOptions: '',
       industrySectorValueDictOptions: '',
       statusDictOptions: '',
+      pagination: '',
       columns: [
         {
           title: '项目名称',
@@ -191,7 +206,8 @@ export default {
         {
           title: '最近跟踪纪要',
           align: 'center',
-          dataIndex: ''
+          dataIndex: 'actionA',
+          scopedSlots: { customRender: 'actionA' }
         },
         {
           title: '操作',
@@ -201,7 +217,12 @@ export default {
         }
       ],
       url: {
-        list: '/park.project/mgrProjectInfo/list?status=1',
+        list: '/park.project/mgrProjectInfo/list',
+        // list: '/park.project/mgrProjectInfo/list?status=1',
+
+        add: '/park.project/mgrProjectTrace/addMgrProjectTrace',
+        edit: '/park.project/mgrProjectTrace/edit',
+
         editCementSend: 'sys/sysAnnouncementSend/editByAnntIdAndUserId',
         readAllMsg: 'sys/sysAnnouncementSend/readAll'
       },
@@ -217,6 +238,27 @@ export default {
   },
   mounted() {
     // console.log(this.columns)
+  },
+  async beforeRouteEnter(to, from, next) {
+    const projectTypeDictOptions = await initDictOptions('projectType')
+    if (!projectTypeDictOptions.success) {
+      console.log('error')
+    }
+
+    const industrySectorValueDictOptions = await initDictOptions('industrySectorValue')
+    if (!industrySectorValueDictOptions.success) {
+      console.log('error')
+    }
+
+    const statusDictOptions = await initDictOptions('project_status')
+    if (!statusDictOptions.success) {
+      console.log('error')
+    }
+    next(vm => {
+      vm.projectTypeDictOptions = projectTypeDictOptions.result
+      vm.industrySectorValueDictOptions = industrySectorValueDictOptions.result
+      vm.statusDictOptions = statusDictOptions.result
+    })
   },
   created() {
     // //尝试不经过url.list获取到数据，但是考虑到不走url.list方式，其他操作的数据如何传递
@@ -235,16 +277,13 @@ export default {
     //     this.$message.error(res.message)
     //   }
     // })
-
-    //数据字典使用步骤3
-    this.initDictConfig()
   },
   methods: {
     customRow(row) {
       return {
         on: {
           click: () => {
-            console.log(row.projectId)
+            // console.log(row.projectId)
             //拿到id
             this.$router.push({ name: 'project-attract-detail-@id', params: { id: row.projectId } })
           }
@@ -258,36 +297,38 @@ export default {
       param.pageSize = this.ipagination.pageSize
       return filterObj(param)
     },
-
     searchReset() {
       this.queryParam = {}
       this.loadData(1)
       console.log('searchReset本页面')
     },
-    // 数据字典使用步骤4
-    initDictConfig() {
-      initDictOptions('projectType').then(res => {
-        if (res.success) {
-          this.projectTypeDictOptions = res.result
-        }
-      })
-      initDictOptions('industrySectorValue').then(res => {
-        if (res.success) {
-          this.industrySectorValueDictOptions = res.result
-        }
-      })
-      initDictOptions('project_status').then(res => {
-        if (res.success) {
-          this.statusDictOptions = res.result
-        }
-      })
-    },
+
     goAddLand() {
-      this.$router.push({ path: '/project/attract/addprojectland' })
+      //原先的新打开页面
+      // this.$router.push({ path: '/project/attract/addprojectland' })
+      //现在的drawer
+      this.$refs.ShowAddProjectLand.detail()
     },
+    //项目维护
+    showWeihu(row, e) {
+      row.__key = Dom7(e.currentTarget)
+        .parents('.ant-table-row')
+        .data('row-key')
+      row.projectType == 1 ? this.$refs.ShowAddProjectLand.detail(row) : this.$refs.ShowAddProjectLease.detail(row)
+    },
+
     goAddLease() {
-      this.$router.push({ path: '/project/attract/addprojectlease' })
+      // this.$router.push({ path: '/project/attract/addprojectlease' })
+      this.$refs.ShowAddProjectLease.detail()
     },
+
+    // showAddProjectLease(row, e) {
+    //   row.__key = Dom7(e.currentTarget)
+    //     .parents('.ant-table-row')
+    //     .data('row-key')
+    //   this.$refs.ShowAddProjectLease.detail(row)
+    // },
+
     goLuoDi() {
       this.$router.push({ path: '/project/attract/ldxm' })
     },
@@ -303,12 +344,23 @@ export default {
       // })
       this.$refs.ShowOne.detail(record)
     },
-    showTwo(record) {
-      this.$refs.ShowTwo.detail(record)
+    showTwo(row, e) {
+      row.__key = Dom7(e.currentTarget)
+        .parents('.ant-table-row')
+        .data('row-key')
+      // console.log(row.__key)
+      this.$refs.ShowTwo.detail(row)
     },
     showZero(record) {
       this.$refs.ShowZero.detail(record)
     },
+    // handleEdit(row, e) {
+    //   row.__key = Dom7(e.currentTarget)
+    //     .parents('.ant-table-row')
+    //     .data('row-key')
+    //   // console.log(row.__key)
+    //   this.$refs.form.edit(row)
+    // },
     readAll() {
       var that = this
       that.$confirm({
@@ -321,6 +373,22 @@ export default {
               that.loadData()
             }
           })
+        }
+      })
+    },
+    //最新一条跟踪记录，数组中最后一个？从projectid获取到最新的一个recordid,然后用这个recordid请求
+    showCard(row, e) {
+      row.__key = Dom7(e.currentTarget)
+        .parents('.ant-table-row')
+        .data('row-key')
+      let params = { projectId: row.projectId }
+      getAction('/park.project/mgrProjectTrace/getById', params).then(res => {
+        if (res.success) {
+          row = res.result[res.result.length - 1]
+          this.$refs.ShowCard.detail(row)
+        }
+        if (res.code === 510) {
+          this.$message.warning(res.message)
         }
       })
     }

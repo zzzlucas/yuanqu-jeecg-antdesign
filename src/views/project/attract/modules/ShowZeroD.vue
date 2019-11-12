@@ -1,12 +1,4 @@
 <template>
-  <!-- <a-drawer
-    :title="title"
-    :width="800"
-    placement="right"
-    :closable="false"
-    @close="close"
-    :visible="visible"
-  >-->
   <a-drawer
     wrapClassName="mgr-project-trace-drawer"
     title="跟踪记录"
@@ -21,7 +13,7 @@
           <a-form class="project-drawer-form" :form="form">
             <a-row>
               <a-col span="24">
-                <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="项目名称">
+                <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="项目ID">
                   <!-- ui要求name，数据模板目前是id -->
                   <a-input
                     placeholder="请输入项目名称"
@@ -45,13 +37,14 @@
                 :labelCol="labelCol.default"
                 :wrapperCol="wrapperCol.default"
                 label="跟踪方式"
+                required
               >
-                <a-select defaultValue="1" style="width:100%">
-                  <a-select-option value="1">来访</a-select-option>
-                  <a-select-option value="2">联营企业</a-select-option>
-                  <a-select-option value="3">有限责任公司</a-select-option>
-                  <a-select-option value="4">股份有限公司</a-select-option>
-                  <a-select-option value="5">私营企业</a-select-option>
+                <a-select v-decorator="['trackMethod']">
+                  <a-select-option
+                    v-for="(item, key) in dict.trackMethodExt"
+                    :value="item.value"
+                    :key="key"
+                  >{{ item.text }}</a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
@@ -67,12 +60,12 @@
                     v-decorator="['tracker', {rules: [{required: true, message: '请输入跟踪人'}]}]"
                 />-->
                 <!-- v-model写着就没有默认 -->
-                <a-select defaultValue="1" style="width:100%">
-                  <a-select-option value="1">1</a-select-option>
-                  <a-select-option value="2">联营企业</a-select-option>
-                  <a-select-option value="3">有限责任公司</a-select-option>
-                  <a-select-option value="4">股份有限公司</a-select-option>
-                  <a-select-option value="5">私营企业</a-select-option>
+                <a-select v-decorator="['tracker']">
+                  <a-select-option
+                    v-for="(item, key) in dict.trackerExt"
+                    :value="item.value"
+                    :key="key"
+                  >{{ item.text }}</a-select-option>
                 </a-select>
               </a-form-item>
               <a-form-item
@@ -81,11 +74,8 @@
                 label="项目状态"
               >
                 <a-select defaultValue="1" style="width:100%">
-                  <a-select-option value="1">呵呵</a-select-option>
-                  <a-select-option value="2">联营企业</a-select-option>
-                  <a-select-option value="3">有限责任公司</a-select-option>
-                  <a-select-option value="4">股份有限公司</a-select-option>
-                  <a-select-option value="5">私营企业</a-select-option>
+                  <a-select-option value="1">?</a-select-option>
+                  <a-select-option value="2">??</a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
@@ -106,7 +96,7 @@
                 </a-form-item>
                 <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="附件组ID">
                   <!-- <a-input placeholder="请输入附件组ID" v-decorator="['addDocFiles', {}]" /> -->
-                  <a-upload
+                  <!-- <a-upload
                     name="file"
                     :showUploadList="true"
                     :multiple="false"
@@ -116,10 +106,22 @@
                     v-decorator="['addDocFiles']"
                   >
                     <a-button type="primary" icon="import">上传附件</a-button>
-                    <!-- <span>（单个图片大小不可超过10.00M，全部图片大小不可超过30.00M）</span> -->
-                  </a-upload>
+
+                  </a-upload>-->
                 </a-form-item>
               </a-col>
+            </a-row>
+            <a-row>
+              <a-form-item
+                :labelCol="labelCol.long"
+                :wrapperCol="wrapperCol.long"
+                label="parkId test"
+              >
+                <a-input
+                  placeholder
+                  v-decorator="['parkId', {rules: [{ required: true, message: '请输入parkId', whitespace: true}]}]"
+                />
+              </a-form-item>
             </a-row>
           </a-form>
         </a-spin>
@@ -131,13 +133,15 @@
 </template>
 
 <script>
-import { httpAction } from '@/api/manage'
+import { initDictOptions } from '@comp/dict/JDictSelectUtil'
+import { getAction, httpAction } from '@/api/manage'
 import pick from 'lodash.pick'
 import moment from 'moment'
+import qs from 'querystring'
+import { ProjectAttractShowZeroForm } from '@/config/pick-fields'
 
 export default {
   name: 'mgrProjectTraceDrawer',
-  //1111111111111111111111
   props: {
     show: {
       type: Boolean,
@@ -145,17 +149,16 @@ export default {
     }
     // headers:
   },
-  model: {
-    prop: 'show',
-    event: 'close'
-  },
+  // model: {
+  //   prop: 'show',
+  //   event: 'close'
+  // },
   visible: false,
-  //11111111111111111111112
   data() {
     return {
       title: '操作',
       visible: false,
-      model: {},
+      // model: {},
       labelCol: {
         long: {
           span: 4
@@ -173,23 +176,44 @@ export default {
         }
       },
       confirmLoading: false,
-      form: this.$form.createForm(this),
+      //name 的作用？
+      form: this.$form.createForm(this, { name: 'mgrProjectTraceDrawer' }),
       validatorRules: {
         recordId: { rules: [{ required: true, message: '请输入记录ID!' }] },
         parkId: { rules: [{ required: true, message: '请输入园区ID!' }] }
       },
+      dict: {
+        trackMethodExt: [{ value: '1' }],
+        trackerExt: [{ value: '1' }]
+      },
+      //是否开启编辑模式的标记
+      editBool: false,
+      editData: {},
       url: {
-        add: '/park.mgr/mgrProjectTrace/add',
-        edit: '/park.mgr/mgrProjectTrace/edit'
+        add: '/park.project/mgrProjectTrace/addMgrProjectTrace',
+        edit: '/park.project/mgrProjectTrace/edit'
       }
     }
   },
-  created() {},
+  //左上角标题变换
+  // computed: {
+  //   getTitle() {
+  //     return (this.edit ? '编辑' : '登记') + '园区'
+  //   }
+  // },
+  created() {
+    initDictOptions('track_method').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.trackMethodExt = res.result
+      }
+    })
+    initDictOptions('tracker').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.trackerExt = res.result
+      }
+    })
+  },
   methods: {
-    detail(record) {
-      this.visible = true
-      this.record = record
-    },
     handleCancel() {
       this.visible = false
     },
@@ -199,31 +223,52 @@ export default {
     add() {
       this.edit({})
     },
-    edit(record) {
+    // edit(row) {
+    //   this.editBool = true
+    //   this.editData = row
+    //   const editData = pick(row, ProjectAttractShowZeroForm)
+
+    //   //test
+    //   console.log(editData);
+    //   editData.deviceGroupId = editData.deviceGroupId.split(',')
+
+    //   this.$emit('close', true)
+    //   this.$nextTick(() => {
+    //     this.editor = {
+    //       content: row.content,
+    //       policy: row.policy
+    //     }
+    //     this.form.setFieldsValue(editData)
+    //   })
+    // },
+
+    //原edit
+    detail(record) {
+      this.record = record
+      // console.log(this.record.recordId)
       this.form.resetFields()
-      this.model = Object.assign({}, record)
-      this.visible = true
-      this.$nextTick(() => {
-        this.form.setFieldsValue(
-          pick(
-            this.model,
-            'recordId',
-            'projectId',
-            'tracker',
-            'trackMethod',
-            'status',
-            'content',
-            'resourceGroupId',
-            'remark',
-            'parkId',
-            'addDocFiles',
-            'version',
-            'createUserName',
-            'updateUserName'
-          )
-        )
-        //时间格式化
-        this.form.setFieldsValue({ trackDate: this.model.trackDate ? moment(this.model.trackDate) : null })
+      //可能是record对象缺少属性，从getlist api获取到的参数中只有projectid和parkid可以在这里使用
+      //方法一：需要api在传入时具备更多参数，使record具备更多参数
+      //方法二：获取到record里的projectid，根据这个发起get请求获取到项目跟踪信息，写入record
+      //但是，跟踪记录从逻辑上来说，应当只具备新表单能力即可，编辑旧表单反而破坏跟踪记录的意义，所以虽然后端api是put方式，当post使用即可
+      //最终是否获取有待商榷
+      getAction('/park.project/mgrProjectTrace/getById', { projectId: record.projectId }).then(res => {
+        if (res.success) {
+          this.record = res.result[res.result.length - 1]
+          console.log(res.result)
+          console.log(this.record)
+          this.model = Object.assign({}, this.record)
+          this.visible = true
+          // console.log(pick(this.model, ProjectAttractShowZeroForm))
+          this.$nextTick(() => {
+            this.form.setFieldsValue(pick(this.model, ProjectAttractShowZeroForm))
+            //时间格式化
+            this.form.setFieldsValue({ trackDate: this.model.trackDate ? moment(this.model.trackDate) : null })
+          })
+        }
+        if (res.code === 510) {
+          this.$message.warning(res.message)
+        }
       })
     },
     close() {
@@ -233,11 +278,12 @@ export default {
     handleOk() {
       const that = this
       // 触发表单验证
-      this.form.validateFields((err, values) => {
+      this.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
           that.confirmLoading = true
           let httpurl = ''
           let method = ''
+          //row里传过来的id
           if (!this.model.id) {
             httpurl += this.url.add
             method = 'post'
@@ -247,8 +293,8 @@ export default {
           }
           let formData = Object.assign(this.model, values)
           //时间格式化
-          formData.trackDate = formData.trackDate ? formData.trackDate.format() : null
-
+          formData.trackDate = formData.trackDate ? formData.trackDate.format('YYYY-MM-DD') : null
+          formData = qs.stringify(formData)
           console.log(formData)
           httpAction(httpurl, formData, method)
             .then(res => {

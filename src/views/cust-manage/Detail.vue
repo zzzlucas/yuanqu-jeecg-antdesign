@@ -32,7 +32,7 @@
           </detail-list>
         </a-tab-pane>
         <a-tab-pane tab="企业标识" key="2">
-          <a-table
+          <!-- <a-table
             ref="table"
             size="default"
             bordered
@@ -42,12 +42,11 @@
             :pagination="ipagination"
             :loading="loading"
           >
-            <!-- @change -->
             <span slot="action" slot-scope="text, record">
               <a @click.stop>编辑</a>&nbsp;
               <a @click.stop>查看</a>
             </span>
-          </a-table>
+          </a-table> -->
         </a-tab-pane>
         <a-tab-pane tab="附件" key="3">
           <detail-list>
@@ -80,6 +79,7 @@
           </detail-list>
         </a-tab-pane>
         <a-tab-pane tab="联系人" key="6">
+          <!-- <a-tab-pane tab="联系人" key="6" @click="getCustomerContact()"> -->
           <a-button style="margin-bottom:20px;" type="primary" @click="showAddFormDrawer">新建联系人</a-button>
           <!-- :pagination="ipagination"      -->
           <a-table
@@ -113,6 +113,7 @@ import { getAction, putAction } from '@/api/manage'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 
 import ShowAddFormDrawer from './modules/ShowAddFormDrawer'
+import qs from 'qs'
 
 export default {
   name: 'Detail',
@@ -138,25 +139,25 @@ export default {
         {
           title: '姓名',
           align: 'center',
-          dataIndex: 'sendTime'
+          dataIndex: 'contactName'
         },
         {
           title: '性别',
           align: 'center',
           dataIndex: 'sex',
-          customRender: text => {
-            return filterDictText(this.projectTypeDictOptions, text)
-          }
+          // customRender: text => {
+          //   return filterDictText(this.projectTypeDictOptions, text)
+          // }
         },
         {
           title: '手机',
           align: 'center',
-          dataIndex: 'agentPerson'
+          dataIndex: 'mobile'
         },
         {
           title: 'Email',
           align: 'center',
-          dataIndex: 'agentTel'
+          dataIndex: 'email'
         },
         // {
         //   title: '证件类型',
@@ -213,9 +214,39 @@ export default {
         this.$message.error(res.message)
       }
     })
+
+    console.log('test start-------------')
+    this.getCustomerContact()
   },
   mounted() {},
   methods: {
+    //tab页6：联系人表格数据获取 与 绑定
+    getCustomerContact(arg=1) {
+      // if (!this.url.list) {
+      //   this.$message.error('请设置url.list属性!')
+      //   return
+      // }
+      //加载数据 若传入参数1则加载第一页的内容
+      if (arg === 1) {
+        this.ipagination.current = 1
+      }
+      let params = { CusId: '11111111' }
+      // this.loading = true
+      console.log('test start000000000000')
+      getAction('/park.customer/baseCustomerContact/list', params).then(res => {
+      // getAction('/park.customer/baseCustomerContact/list?cusId=11111111').then(res => {
+        if (res.success) {
+          // console.log('test start11111111')
+          console.log(res.result)
+          this.dataSource = res.result
+          this.ipagination.total = res.result.total
+        }
+        if (res.code === 510) {
+          this.$message.warning(res.message)
+        }
+        // this.loading = false
+      })
+    },
     showAddFormDrawer() {
       this.$refs.ShowAddFormDrawer.add()
     },
@@ -253,7 +284,12 @@ export default {
         initDictOptions('registration_type').then(res => {
           if (res.code === 0 && res.success) {
             this.dict.registrationType = res.result
-            this.dict.registrationType.forEach(this.switchFunctionR)
+            // this.dict.registrationType.forEach(this.switchFunctionR)
+            for (const item of this.dict.registrationType) {
+              if (item.value == this.info.baseCustomerType.registrationType)
+                return (this.dictText.registrationTypeText = item.text)
+              // break 无需
+            }
           }
         })
     },
@@ -264,17 +300,6 @@ export default {
     switchFunctionI(item) {
       if (item.value == this.info.baseCustomerType.industryCategory)
         return (this.dictText.industryCategoryText = item.text)
-      //如何匹配到之后就不再运行该函数
-
-      // for (const key in object) {
-      //   if (object.hasOwnProperty(key)) {
-      //     const element = object[key];
-      //   }
-      // }
-      // for (const iterator of object) {
-      // }
-      
-      // console.log(item.text)
     },
     switchFunctionO(item) {
       if (item.value == this.info.baseCustomerType.organizational) return (this.dictText.organizationalText = item.text)
@@ -286,10 +311,10 @@ export default {
       if (item.value == this.info.baseCustomerType.enterpriseRating)
         return (this.dictText.enterpriseRatingText = item.text)
     },
-    switchFunctionR(item) {
-      if (item.value == this.info.baseCustomerType.registrationType)
-        return (this.dictText.registrationTypeText = item.text)
-    },
+    // switchFunctionR(item) {
+    //   if (item.value == this.info.baseCustomerType.registrationType)
+    //     return (this.dictText.registrationTypeText = item.text)
+    // },
     callback() {}
   },
   filters: {

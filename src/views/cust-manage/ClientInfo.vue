@@ -36,7 +36,7 @@
             <a-form-item label="状态">
               <a-radio-group v-model="queryParam.status">
                 <a-radio value="1">在园</a-radio>
-                <a-radio value="2">离园</a-radio>
+                <a-radio value="0">离园</a-radio>
                 <!-- <a-radio :style="radioStyle" :value="2">离园</a-radio> -->
               </a-radio-group>
             </a-form-item>
@@ -81,7 +81,9 @@
         :customRow="customRow"
       >
         <span slot="action" slot-scope="text, record">
-          <a @click.stop="showConfirm(record)">迁出</a>
+          <!-- <a @click.stop="handleEdit(record, ...arguments)">test</a>
+          <a-divider type="vertical" /> -->
+          <a @click.stop="showConfirm(record, ...arguments)">迁出</a>
           <!-- <a @click.stop="showOne(record)">迁出</a> -->
           <a-divider type="vertical" />
           <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
@@ -107,6 +109,7 @@ import ShowZero from './modules/ShowZeroD'
 import ShowOne from './modules/ShowOneM'
 import { getAction, putAction } from '@/api/manage'
 import qs from 'qs'
+import Dom7 from 'dom7'
 
 export default {
   name: 'IndustrialParksList',
@@ -172,6 +175,7 @@ export default {
         // exportXlsUrl: 'park.base/basePark/exportXls',
         // importExcelUrl: 'park.base/basePark/importExcel'
       },
+      temprow: '',
       rightShow: false,
       cusId: ''
     }
@@ -189,15 +193,7 @@ export default {
     })
   },
   methods: {
-    handleOut() {},
-    //获取row
-    // handleEdit(row, e) {
-    //   row.__key = Dom7(e.currentTarget)
-    //     .parents('.ant-table-row')
-    //     .data('row-key')
-    //   this.rightShow = true
-    //   this.edit = true
-    // },
+    handleTableChange() {},
     customRow(row) {
       return {
         on: {
@@ -217,17 +213,36 @@ export default {
     showOne() {
       this.$refs.ShowOne.detail()
     },
-    showConfirm() {
+    handleOut() {},
+    //获取row
+    // handleEdit(row, e) {
+    //   row.__key = Dom7(e.currentTarget)
+    //     .parents('.ant-table-row')
+    //     .data('row-key')
+    //   this.rightShow = true
+    //   this.edit = true
+    // },
+    handleEdit(row, e) {
+      row.__key = Dom7(e.currentTarget)
+        .parents('.ant-table-row')
+        .data('row-key')
+      this.temprow = row
+      console.log(this.temprow)
+      // this.$refs.form.edit(row)
+    },
+    showConfirm(row, e) {
+      const that = this
       this.$confirm({
         title: '确认迁出',
         content: '确认要迁出吗？',
         onOk() {
           return new Promise((resolve, reject) => {
             //如何获得custid
-            let formData = { custId: '1192718061480706048', status: '1' }
-            formData = qs.stringify(formData)
-            putAction('/park.customer/baseCustomer/editStatus', formData).then(res => {
+            let params = { custId: row.custId, status: row.status }
+            params = qs.stringify(params)
+            putAction('/park.customer/baseCustomer/editStatus', params).then(res => {
               if (res.code === 200) {
+                that.loadData()
                 console.log('迁入迁出成功')
                 resolve()
               } else {

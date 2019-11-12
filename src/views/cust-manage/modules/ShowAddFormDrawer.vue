@@ -119,11 +119,11 @@ export default {
     }
   },
   created() {
-    initDictOptions('INDUSTRY_SECTOR_VALUE').then(res => {
-      if (res.code === 0 && res.success) {
-        this.dict.industrySectorValueExt = res.result
-      }
-    })
+    // initDictOptions('INDUSTRY_SECTOR_VALUE').then(res => {
+    //   if (res.code === 0 && res.success) {
+    //     this.dict.industrySectorValueExt = res.result
+    //   }
+    // })
   },
   methods: {
     add() {

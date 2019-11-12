@@ -14,22 +14,22 @@
   >
     <a-card :bordered="false">
       <detail-list :col="2">
-        <detail-list-item term="项目名称">2000</detail-list-item>
-        <detail-list-item term="项目名称">???</detail-list-item>
-        <detail-list-item term="跟踪日期">200</detail-list-item>
-        <detail-list-item term="跟踪人">20</detail-list-item>
+        <detail-list-item term="项目ID">{{info.projectId}}</detail-list-item>
+        <detail-list-item term="项目名称">{{info.projectName}}</detail-list-item>
+        <detail-list-item term="跟踪日期">{{info.trackDate}}</detail-list-item>
+        <detail-list-item term="跟踪人">{{info.tracker}}</detail-list-item>
       </detail-list>
       <detail-list>
-        <detail-list-item term="跟踪方式">来访</detail-list-item>
+        <detail-list-item term="跟踪方式">{{info.trackMethod}}</detail-list-item>
       </detail-list>
       <detail-list>
-        <detail-list-item term="过程纪要">测试</detail-list-item>
+        <detail-list-item term="过程纪要">{{info.content}}</detail-list-item>
       </detail-list>
       <detail-list>
-        <detail-list-item term="意向房源"></detail-list-item>
+        <detail-list-item term="意向房源">{{info.resourceGroupId}}</detail-list-item>
       </detail-list>
       <detail-list>
-        <detail-list-item term="备注"></detail-list-item>
+        <detail-list-item term="备注">{{info.remark}}</detail-list-item>
       </detail-list>
     </a-card>
   </a-modal>
@@ -38,6 +38,7 @@
 <script>
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import DetailList from '@/components/tools/DetailList'
+import { getAction, putAction } from '@/api/manage'
 const DetailListItem = DetailList.Item
 
 export default {
@@ -46,6 +47,7 @@ export default {
   components: { DetailList, DetailListItem },
   data() {
     return {
+      confirmLoading: false,
       // form: this.$form.createForm(this),
       title: '跟踪记录',
       record: {},
@@ -67,6 +69,7 @@ export default {
         style: { top: '20px' },
         fullScreen: false
       },
+      info: {},
       url: {
         list: '/park.project/mgrProjectTrace/list'
       }
@@ -78,6 +81,19 @@ export default {
     detail(record) {
       this.visible = true
       this.record = record
+      console.log(this.record.recordId)
+      //定义获取小卡片内容的方法
+      getAction('/park.project/mgrProjectTrace/selectById', { id: this.record.recordId }).then(res => {
+        if (res.code === 200) {
+          this.loading = false
+          this.info = res.result
+          // console.log(this.info)
+          // this.initDictConfig()
+        } else {
+          this.$router.back()
+          this.$message.error(res.message)
+        }
+      })
     },
     handleCancel() {
       this.visible = false
