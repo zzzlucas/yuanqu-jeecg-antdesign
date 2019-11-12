@@ -6,7 +6,7 @@
         <a-select
           defaultValue="0"
           style="width: 120px"
-          @change="handleChange"
+          @change="handleChange()"
           v-decorator="['type']"
         >
           <a-select-option value="0">不限</a-select-option>
@@ -174,7 +174,7 @@ export default {
   },
   methods: {
     handleChange() {
-      loadData()
+      this.loadData()
     },
     loadData() {
       let params = { }

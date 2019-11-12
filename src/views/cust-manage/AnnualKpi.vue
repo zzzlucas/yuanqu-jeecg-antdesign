@@ -2,7 +2,7 @@
   <a-card :bordered="false">
     <!-- 操作按钮区域 -->
     <div class="table-operator">
-      <a-button  @click="goAnnualKpiAddForm()" type="primary" icon="plus">新增预算指标</a-button>
+      <a-button @click="goAnnualKpiAddForm()" type="primary" icon="plus">新增预算指标</a-button>
       <a-dropdown v-if="selectedRowKeys.length > 0">
         <a-menu slot="overlay">
           <a-menu-item key="1" @click="batchDel">
@@ -92,6 +92,7 @@ export default {
           customRender: function(t, r, index) {
             // console.log(t);
             if (t == 'YS') return '预算'
+            if (t == 'SJ') return '实际'
             // return parseInt(index) + 1
           }
         },
@@ -156,7 +157,7 @@ export default {
   },
   methods: {
     loadData() {
-      getAction(this.url.list).then(res => {
+      getAction(this.url.list, { type: 'YS' }).then(res => {
         if (res.success) {
           this.dataSource = res.result
         }
