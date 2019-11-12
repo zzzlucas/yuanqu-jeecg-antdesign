@@ -13,7 +13,7 @@
           <a-form class="project-drawer-form" :form="form">
             <a-row>
               <a-col span="24">
-                <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="项目名称">
+                <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="项目ID">
                   <!-- ui要求name，数据模板目前是id -->
                   <a-input
                     placeholder="请输入项目名称"
@@ -134,7 +134,7 @@
 
 <script>
 import { initDictOptions } from '@comp/dict/JDictSelectUtil'
-import { httpAction } from '@/api/manage'
+import { getAction, httpAction } from '@/api/manage'
 import pick from 'lodash.pick'
 import moment from 'moment'
 import qs from 'querystring'
@@ -142,7 +142,6 @@ import { ProjectAttractShowZeroForm } from '@/config/pick-fields'
 
 export default {
   name: 'mgrProjectTraceDrawer',
-  //1111111111111111111111
   props: {
     show: {
       type: Boolean,
@@ -150,17 +149,16 @@ export default {
     }
     // headers:
   },
-  model: {
-    prop: 'show',
-    event: 'close'
-  },
+  // model: {
+  //   prop: 'show',
+  //   event: 'close'
+  // },
   visible: false,
-  //11111111111111111111112
   data() {
     return {
       title: '操作',
       visible: false,
-      model: {},
+      // model: {},
       labelCol: {
         long: {
           span: 4
@@ -216,13 +214,6 @@ export default {
     })
   },
   methods: {
-    detail(record) {
-      this.visible = true
-      this.record = record
-      console.log('test showone start');
-      //成功获取到了 recordId，根据这个recordId 得到表单已填
-      console.log(this.record.recordId);
-    },
     handleCancel() {
       this.visible = false
     },
@@ -250,31 +241,34 @@ export default {
     //     this.form.setFieldsValue(editData)
     //   })
     // },
-    edit(record) {
+
+    //原edit
+    detail(record) {
+      this.record = record
+      // console.log(this.record.recordId)
       this.form.resetFields()
-      this.model = Object.assign({}, record)
-      this.visible = true
-      this.$nextTick(() => {
-        this.form.setFieldsValue(
-          pick(
-            this.model,
-            'recordId',
-            'projectId',
-            'tracker',
-            'trackMethod',
-            'status',
-            'content',
-            'resourceGroupId',
-            'remark',
-            'parkId',
-            'addDocFiles',
-            'version',
-            'createUserName',
-            'updateUserName'
-          )
-        )
-        //时间格式化
-        this.form.setFieldsValue({ trackDate: this.model.trackDate ? moment(this.model.trackDate) : null })
+      //可能是record对象缺少属性，从getlist api获取到的参数中只有projectid和parkid可以在这里使用
+      //方法一：需要api在传入时具备更多参数，使record具备更多参数
+      //方法二：获取到record里的projectid，根据这个发起get请求获取到项目跟踪信息，写入record
+      //但是，跟踪记录从逻辑上来说，应当只具备新表单能力即可，编辑旧表单反而破坏跟踪记录的意义，所以虽然后端api是put方式，当post使用即可
+      //最终是否获取有待商榷
+      getAction('/park.project/mgrProjectTrace/getById', { projectId: record.projectId }).then(res => {
+        if (res.success) {
+          this.record = res.result[res.result.length - 1]
+          console.log(res.result)
+          console.log(this.record)
+          this.model = Object.assign({}, this.record)
+          this.visible = true
+          // console.log(pick(this.model, ProjectAttractShowZeroForm))
+          this.$nextTick(() => {
+            this.form.setFieldsValue(pick(this.model, ProjectAttractShowZeroForm))
+            //时间格式化
+            this.form.setFieldsValue({ trackDate: this.model.trackDate ? moment(this.model.trackDate) : null })
+          })
+        }
+        if (res.code === 510) {
+          this.$message.warning(res.message)
+        }
       })
     },
     close() {

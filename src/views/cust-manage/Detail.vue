@@ -236,7 +236,7 @@ export default {
       getAction('/park.customer/baseCustomerContact/list', params).then(res => {
       // getAction('/park.customer/baseCustomerContact/list?cusId=11111111').then(res => {
         if (res.success) {
-          console.log('test start11111111')
+          // console.log('test start11111111')
           console.log(res.result)
           this.dataSource = res.result
           this.ipagination.total = res.result.total

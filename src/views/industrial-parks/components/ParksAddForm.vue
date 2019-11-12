@@ -199,7 +199,7 @@ export default {
   },
   computed: {
     getTitle() {
-      return (this.edit ? '编辑' : '登记') + '园区'
+      return (this.editBool ? '编辑' : '登记') + '园区'
     }
   },
   methods: {

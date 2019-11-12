@@ -36,7 +36,7 @@
             <a-form-item label="状态">
               <a-radio-group v-model="queryParam.status">
                 <a-radio value="1">在园</a-radio>
-                <a-radio value="2">离园</a-radio>
+                <a-radio value="0">离园</a-radio>
                 <!-- <a-radio :style="radioStyle" :value="2">离园</a-radio> -->
               </a-radio-group>
             </a-form-item>
