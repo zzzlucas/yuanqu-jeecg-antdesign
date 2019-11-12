@@ -1,3 +1,5 @@
+import { phone } from '@/config/regex'
+
 /**
  * 经纬度校验
  * @param type
@@ -80,6 +82,6 @@ export default {
     }
   ],
   telephone: [
-    {pattern: /^1(3\d|4[5-7]|5[0-35-9]|7[0135-8]|8\d|9[89])\d{8}$/, message: '请输入正确的手机号'}
+    {pattern: phone, message: '请输入正确的手机号'}
   ]
 }
