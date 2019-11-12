@@ -43,6 +43,10 @@
     height: 100%;
   }
 
+  .drawer-form {
+    padding-bottom: 30px !important;
+  }
+
   .drawer-bottom-btn-group {
     position: absolute;
     left: 0;
@@ -52,5 +56,6 @@
     padding: 10px 16px;
     background: #fff;
     text-align: right;
+    z-index: 20;
   }
 </style>
