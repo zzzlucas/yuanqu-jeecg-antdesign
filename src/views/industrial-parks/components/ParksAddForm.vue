@@ -8,7 +8,7 @@
     :visible="show"
     @close="closeDrawer"
   >
-    <a-form layout="horizontal" :form="form" style="padding-bottom: 20px;">
+    <a-form class="drawer-form" layout="horizontal" :form="form">
       <a-row>
         <a-col span="12">
           <a-form-item label="园区名称" :label-col="formItem.label" :wrapper-col="formItem.value">
