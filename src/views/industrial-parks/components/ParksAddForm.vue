@@ -130,7 +130,7 @@
             ></a-input>
           </a-form-item>
           <a-form-item label="具备设备" :label-col="formItem.label" :wrapper-col="formItem.value">
-            <a-select mode="tags" v-decorator="['deviceGroupId']">
+            <a-select mode="multiple" v-decorator="['deviceGroupId']">
               <a-select-option value="1">桌子</a-select-option>
               <a-select-option value="2">椅子</a-select-option>
               <a-select-option value="3">电脑</a-select-option>
