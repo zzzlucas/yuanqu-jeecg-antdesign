@@ -86,7 +86,7 @@
         </a-dropdown>
         <a-divider type="vertical" />
         <!-- 写一个三元表达式判断对应表单类型？-->
-        <a @click.stop="goAddLand(record)">项目维护</a>
+        <a @click.stop="showAddProjectLand(record, ...arguments)">项目维护</a>
 
         <a-divider type="vertical" />
         <a @click.stop="showOne(record)">项目分配</a>
@@ -100,6 +100,7 @@
     <show-two @showOneToZero="showZero" ref="ShowTwo"></show-two>
     <show-one ref="ShowOne"></show-one>
     <show-card ref="ShowCard"></show-card>
+    <add-project-land ref="ShowAddProjectLand"></add-project-land>
   </a-card>
 </template>
 <script>
@@ -120,6 +121,7 @@ import ShowCard from './modules/ShowTwoMCard'
 import ShowOne from './modules/ShowOneD'
 import ShowTwo from './modules/ShowTwoM'
 import ShowZero from './modules/ShowZeroD'
+import AddProjectLand from './modules/AddProjectLand'
 //数据字典使用步骤0
 import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
 import Dom7 from 'dom7'
@@ -132,7 +134,8 @@ export default {
     ShowTwo,
     ShowZero,
     filterDictText,
-    ShowCard
+    ShowCard,
+    AddProjectLand
     // RegisterForm,
     // MgrProjectTraceDrawer
   },
@@ -232,7 +235,7 @@ export default {
   mounted() {
     // console.log(this.columns)
   },
-  async beforeRouteEnter (to, from, next) {
+  async beforeRouteEnter(to, from, next) {
     const projectTypeDictOptions = await initDictOptions('projectType')
     if (!projectTypeDictOptions.success) {
       console.log('error')
@@ -290,14 +293,23 @@ export default {
       param.pageSize = this.ipagination.pageSize
       return filterObj(param)
     },
-
     searchReset() {
       this.queryParam = {}
       this.loadData(1)
       console.log('searchReset本页面')
     },
-    goAddLand() {
+    goAddLand(row, e) {
+      row.__key = Dom7(e.currentTarget)
+        .parents('.ant-table-row')
+        .data('row-key')
+      // this.$refs.ShowTwo.detail(row)
       this.$router.push({ path: '/project/attract/addprojectland' })
+    },
+    showAddProjectLand(row, e) {
+      row.__key = Dom7(e.currentTarget)
+        .parents('.ant-table-row')
+        .data('row-key')
+      this.$refs.ShowAddProjectLand.detail(row)
     },
     goAddLease() {
       this.$router.push({ path: '/project/attract/addprojectlease' })

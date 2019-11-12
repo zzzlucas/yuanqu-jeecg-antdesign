@@ -1,20 +1,23 @@
 <template>
   <!-- 项目分配表单 -->
-  <a-drawer title="选择跟踪人员" width="50%" destroyOnClose :visible="visible" @close="handleCancel">
+  <a-drawer title="选择跟踪人员" width="40%" destroyOnClose :visible="visible" @close="handleCancel">
     <a-card :bordered="false">
       <a-form :form="form">
         <a-form-item label="项目名称">
           <a-input
             placeholder="请输入项目名称"
-            v-decorator="['projectId',  {rules: [{required: true, message: '请输入项目名称'}]}]"
+            v-decorator="['projectName',  {rules: [{required: true, message: '请输入项目名称'}]}]"
           />
         </a-form-item>
         <a-form-item label="跟踪人" required>
           <!-- 数据字典 -->
-          <a-input
-            placeholder="请输入跟踪人"
-            v-decorator="['tracker',  {rules: [{required: true, message: '请输入跟踪人'}]}]"
-          />
+          <a-select v-decorator="['tracker',  {rules: [{required: true, message: '请输入选择项目跟踪人'}]}]">
+            <a-select-option
+              v-for="(item, key) in dict.trackerExt"
+              :value="item.value"
+              :key="key"
+            >{{ item.text }}</a-select-option>
+          </a-select>
         </a-form-item>
       </a-form>
 
@@ -30,6 +33,7 @@ import pick from 'lodash.pick'
 import moment from 'moment'
 import qs from 'qs'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+import { initDictOptions } from '@comp/dict/JDictSelectUtil'
 export default {
   name: 'SysAnnouncementModal',
   components: {},
@@ -58,31 +62,36 @@ export default {
         style: { top: '20px' },
         fullScreen: false
       },
+      dict: {
+        trackerExt: [{ value: '1' }]
+      },
       url: {
-        list: '/park.project/mgrProjectInfo/assignProject',
-        
+        // list: '/park.project/mgrProjectInfo/assignProject',
+        edit:'/park.project/mgrProjectInfo/assignProject'
       }
     }
   },
-  created() {},
+  created() {
+    initDictOptions('tracker').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.trackerExt = res.result
+      }
+    })
+  },
   methods: {
     handleOk() {
       const that = this
-      // 触发表单验证
       this.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
           that.confirmLoading = true
           let httpurl = ''
           let method = ''
-          // console.log('2222')
-          if (!this.model.id) {
-            //增
-            console.log('post方式')
+          console.log(this.model);
+          // console.log(this.model.id);
+          if (!this.model.projectId) {
             httpurl += this.url.add
             method = 'post'
           } else {
-            //改
-            console.log('put方式')
             httpurl += this.url.edit
             method = 'put'
           }
@@ -108,8 +117,17 @@ export default {
       // this.form.resetFields()
     },
     detail(record) {
-      this.visible = true
       this.record = record
+      // console.log(this.record.recordId)
+      this.form.resetFields()
+      this.model = Object.assign({}, this.record)
+      this.visible = true
+      // console.log(pick(this.model, ProjectAttractShowZeroForm))
+      this.$nextTick(() => {
+        this.form.setFieldsValue(pick(this.model, 'projectName'))
+        //时间格式化
+        // this.form.setFieldsValue({ trackDate: this.model.trackDate ? moment(this.model.trackDate) : null })
+      })
     },
     handleCancel() {
       this.visible = false
