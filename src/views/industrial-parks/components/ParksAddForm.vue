@@ -12,7 +12,7 @@
       <a-row>
         <a-col span="12">
           <a-form-item label="园区名称" :label-col="formItem.label" :wrapper-col="formItem.value">
-            <a-input v-decorator="['parkName', {rules: [{required: true, message: '请输入园区名称'}]}]"></a-input>
+            <a-input v-decorator="['parkName', {rules: rules.parkName}]"></a-input>
           </a-form-item>
           <a-form-item label="园区简介" :label-col="formItem.label" :wrapper-col="formItem.value">
             <j-editor v-model="editor.content"></j-editor>
@@ -24,20 +24,20 @@
         <a-col span="12">
           <a-form-item label="总建筑面积" :label-col="formItem.label" :wrapper-col="formItem.value">
             <a-input
-              v-decorator="['totalBulidingArea', {rules: [{pattern: /^\d+(\.\d{1,2})?$/, message: '请输入数字，最多两位小数'}]}]"
+              v-decorator="['totalBulidingArea', {rules: rules.totalBulidingArea}]"
             >
               <span slot="addonAfter">㎡</span>
             </a-input>
           </a-form-item>
           <a-form-item label="工位总数" :label-col="formItem.label" :wrapper-col="formItem.value">
             <a-input
-              v-decorator="['totalWorkstation', {rules: [{pattern: /^\d+$/, message: '请输入数字'}]}]"
+              v-decorator="['totalWorkstation', {rules: rules.totalWorkstation}]"
             ></a-input>
           </a-form-item>
           <a-form-item label="工位收费标准" :label-col="formItem.label" :wrapper-col="formItem.value">
             <span>
               <a-input
-                v-decorator="['feeScale', {rules: [{pattern: /^\d+\.\d{2}$/, message: '请输入金额，补齐两位小数'}]}]"
+                v-decorator="['feeScale', {rules: rules.feeScale}]"
               >
                 <a-select
                   slot="addonAfter"
@@ -54,12 +54,12 @@
             </span>
           </a-form-item>
           <a-form-item label="独立空间总数" :label-col="formItem.label" :wrapper-col="formItem.value">
-            <a-input v-decorator="['totalRoom', {rules: [{pattern: /^\d+$/, message: '请输入数字'}]}]"></a-input>
+            <a-input v-decorator="['totalRoom', {rules: rules.totalRoom}]"></a-input>
           </a-form-item>
           <a-form-item label="独立空间收费标准" :label-col="formItem.label" :wrapper-col="formItem.value">
             <span>
               <a-input
-                v-decorator="['feeScaleRoom', {rules: [{pattern: /^\d+\.\d{2}$/, message: '请输入金额，补齐两位小数'}]}]"
+                v-decorator="['feeScaleRoom', {rules: rules.feeScaleRoom}]"
               >
                 <a-select
                   slot="addonAfter"
@@ -79,54 +79,19 @@
             <a-input v-decorator="['address']"></a-input>
           </a-form-item>
           <a-form-item label="经度" :label-col="formItem.label" :wrapper-col="formItem.value">
-            <a-input
-              v-decorator="[
-                'lng',
-                {
-                  rules: [
-                    {
-                      validator: (rule, value, callback) => {
-                        validateLngLat('lng', rule, value, callback)
-                      }
-                    }
-                  ]
-                }
-              ]"
-            ></a-input>
+            <a-input v-decorator="['lng', {rules: rules.lng}]"></a-input>
           </a-form-item>
           <a-form-item label="纬度" :label-col="formItem.label" :wrapper-col="formItem.value">
-            <a-input
-              v-decorator="[
-                'lat',
-                {
-                  rules: [
-                    {
-                      validator: (rule, value, callback) => {
-                        validateLngLat('lat', rule, value, callback)
-                      }
-                    }
-                  ]
-                }
-              ]"
-            ></a-input>
+            <a-input v-decorator="['lat', {rules: rules.lat}]"></a-input>
           </a-form-item>
           <a-form-item label="得房率" :label-col="formItem.label" :wrapper-col="formItem.value">
-            <a-input
-              v-decorator="[
-                'roomRate',
-                {
-                  rules: [
-                    {validator: this.validateRoomRate}
-                  ]
-                }
-              ]"
-            >
+            <a-input v-decorator="['roomRate', {rules: rules.roomRate}]">
               <span slot="addonAfter">%</span>
             </a-input>
           </a-form-item>
           <a-form-item label="联系电话" :label-col="formItem.label" :wrapper-col="formItem.value">
             <a-input
-              v-decorator="['telephone', {rules: [{pattern: /^1(3\d|4[5-7]|5[0-35-9]|7[0135-8]|8\d|9[89])\d{8}$/, message: '请输入正确的手机号'}]}]"
+              v-decorator="['telephone', {rules: rules.telephone}]"
             ></a-input>
           </a-form-item>
           <a-form-item label="具备设备" :label-col="formItem.label" :wrapper-col="formItem.value">
@@ -148,138 +113,105 @@
 </template>
 
 <script>
-import JEditor from '@comp/jeecg/JEditor'
-import { initDictOptions } from '@comp/dict/JDictSelectUtil'
-import pick from 'lodash.pick'
-import { PickParksForm } from '@/config/pick-fields'
+  import JEditor from '@comp/jeecg/JEditor'
+  import { initDictOptions } from '@comp/dict/JDictSelectUtil'
+  import pick from 'lodash.pick'
+  import { PickParksForm } from '@/config/pick-fields'
+  import rules from '../js/rules'
 
-export default {
-  name: 'ParksAddForm',
-  components: { JEditor },
-  props: {
-    show: {
-      type: Boolean,
-      default: false
-    }
-  },
-  model: {
-    prop: 'show',
-    event: 'close'
-  },
-  created() {
-    initDictOptions('parks_station_ext').then(res => {
-      if (res.code === 0 && res.success) {
-        this.dict.parksStationExt = res.result
-      }
-    })
-    initDictOptions('parks_interspace_ext').then(res => {
-      if (res.code === 0 && res.success) {
-        this.dict.parksInterspaceExt = res.result
-      }
-    })
-  },
-  data() {
-    return {
-      formItem: {
-        label: { span: 6 },
-        value: { span: 18 }
-      },
-      form: this.$form.createForm(this, { name: 'park' }),
-      editor: {
-        content: '',
-        policy: ''
-      },
-      dict: {
-        parksStationExt: [{ value: '1' }],
-        parksInterspaceExt: [{ value: '1' }]
-      },
-      editBool: false,
-      editData: {}
-    }
-  },
-  computed: {
-    getTitle() {
-      return (this.editBool ? '编辑' : '登记') + '园区'
-    }
-  },
-  methods: {
-    closeDrawer() {
-      this.$emit('close', false)
-      this.form.resetFields()
-      this.editor = {
-        content: '',
-        policy: ''
+  export default {
+    name: 'ParksAddForm',
+    components: { JEditor },
+    props: {
+      show: {
+        type: Boolean,
+        default: false
       }
     },
-    handleSubmit() {
-      this.form.validateFieldsAndScroll((err, form) => {
-        if (err === null) {
-          const { content, policy } = this.editor
-          form.content = content
-          form.policy = policy
-          if (this.editBool) {
-            this.editBool = false
-            const { __key, parkId } = this.editData
-            form.__key = __key
-            form.parkId = parkId
-            this.$emit('edit', form)
-          } else {
-            this.$emit('submit', form)
-          }
-          this.closeDrawer()
+    model: {
+      prop: 'show',
+      event: 'close'
+    },
+    created() {
+      initDictOptions('parks_station_ext').then(res => {
+        if (res.code === 0 && res.success) {
+          this.dict.parksStationExt = res.result
+        }
+      })
+      initDictOptions('parks_interspace_ext').then(res => {
+        if (res.code === 0 && res.success) {
+          this.dict.parksInterspaceExt = res.result
         }
       })
     },
-    validateLngLat(type, rule, value, callback) {
-      const num = Number(value)
-      if (isNaN(num)) {
-        return callback(new Error('请输入数字'))
+    data() {
+      return {
+        rules,
+        formItem: {
+          label: { span: 6 },
+          value: { span: 18 }
+        },
+        form: this.$form.createForm(this, { name: 'park' }),
+        editor: {
+          content: '',
+          policy: ''
+        },
+        dict: {
+          parksStationExt: [{ value: '1' }],
+          parksInterspaceExt: [{ value: '1' }]
+        },
+        editBool: false,
+        editData: {}
       }
-      if (/\.$/.test(value)) {
-        return callback(new Error('请输入正确的小数'))
-      }
-      switch (type) {
-        case 'lng':
-          if (num > 180 || num < -180) {
-            return callback(new Error('请输入正确的经度'))
-          }
-          break
-        case 'lat':
-          if (num > 90 || num < -90) {
-            return callback(new Error('请输入正确的纬度'))
-          }
-          break
-      }
-      callback()
     },
-    validateRoomRate(rule, value, callback) {
-      const num = Number(value)
-      if (isNaN(num)) {
-        return callback(new Error('请输入数字'))
+    computed: {
+      getTitle() {
+        return (this.editBool ? '编辑' : '登记') + '园区'
       }
-      if (/\.$/.test(value)) {
-        return callback(new Error('请输入正确的小数'))
-      }
-      if (num > 100 || num < 0) {
-        return callback(new Error('不能大于 100 或小于 0'))
-      }
-      callback()
     },
-    edit(row) {
-      this.editBool = true
-      this.editData = row
-      const editData = pick(row, PickParksForm)
-      editData.deviceGroupId = editData.deviceGroupId.split(',')
-
-      this.$emit('close', true)
-      this.$nextTick(() => {
+    methods: {
+      closeDrawer() {
+        this.$emit('close', false)
+        this.form.resetFields()
         this.editor = {
-          content: row.content,
-          policy: row.policy
+          content: '',
+          policy: ''
         }
-        this.form.setFieldsValue(editData)
-      })
+      },
+      handleSubmit() {
+        this.form.validateFieldsAndScroll((err, form) => {
+          if (err === null) {
+            const { content, policy } = this.editor
+            form.content = content
+            form.policy = policy
+            if (this.editBool) {
+              this.editBool = false
+              const { __key, parkId } = this.editData
+              form.__key = __key
+              form.parkId = parkId
+              this.$emit('edit', form)
+            } else {
+              this.$emit('submit', form)
+            }
+            this.closeDrawer()
+          }
+        })
+      },
+      edit(row) {
+        this.editBool = true
+        this.editData = row
+        const editData = pick(row, PickParksForm)
+        editData.deviceGroupId = editData.deviceGroupId.split(',')
+
+        this.$emit('close', true)
+        this.$nextTick(() => {
+          this.editor = {
+            content: row.content,
+            policy: row.policy
+          }
+          this.form.setFieldsValue(editData)
+        })
+      }
     }
   }
-}
 </script>
