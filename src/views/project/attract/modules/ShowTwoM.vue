@@ -28,7 +28,7 @@
 
           <a-col :span="5">
             <a-form-item label="跟踪人" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-select v-decorator="['tracker']">
+              <a-select v-decorator="['keyword']">
                 <a-select-option
                   v-for="(item, key) in dict.trackerDictOptions"
                   :value="item.value"
@@ -206,7 +206,7 @@ export default {
       this.visible = true
       this.record = record
       //this.record.projectId 获取到了，在get请求前传入值
-      this.getProjectTrace()
+      this.loadData()
     },
     searchQuery() {
       this.getProjectTrace()
@@ -218,11 +218,11 @@ export default {
         sqp['superQueryParams'] = encodeURI(this.superQueryParams)
       }
       this.form.validateFieldsAndScroll((err, form) => {
-        // console.log(form)
+        console.log(form)
         this.queryform = form
       })
-      console.log(this.queryform);
-      var param = Object.assign(sqp, this.queryParam, this.isorter, this.filters, this.queryform)
+      console.log(this.queryform)
+      var param = Object.assign(this.queryform)
       // param.field = this.getQueryField()
       param.projectId = this.record.projectId
       param.pageNo = this.ipagination.current
@@ -230,18 +230,18 @@ export default {
       return filterObj(param)
     },
     //表格跟踪记录获取  通过projectId查询
-    //不使用loaddata（）的原因: params获取传进来的projectId
-    getProjectTrace(arg = 1) {
-      if (arg === 1) {
-        this.ipagination.current = 1
-      }
-      let params = this.getQueryParams()
-      // let params = { projectId: this.record.projectId }
+
+    //第一个获取方法  列表获取
+    loadData() {
+      // if (arg === 1) {
+      //   this.ipagination.current = 1
+      // }
+      let params = { projectId: this.record.projectId }
       this.loading = true
       getAction('/park.project/mgrProjectTrace/getById', params).then(res => {
         if (res.success) {
-          console.log('test start getAction')
-          console.log(res.result)
+          // console.log('test start getAction')
+          // console.log(res.result)
           this.dataSourceSTM = res.result
           this.ipagination.total = res.result.total
         }
@@ -251,6 +251,28 @@ export default {
         this.loading = false
       })
     },
+
+    //第二个获取方法，查询获取
+    getProjectTrace(arg = 1) {
+      if (arg === 1) {
+        this.ipagination.current = 1
+      }
+      let params = this.getQueryParams()
+      this.loading = true
+      getAction('/park.project/mgrProjectTrace/list', params).then(res => {
+        if (res.success) {
+          console.log('test start getAction')
+          console.log(res.result)
+          this.dataSourceSTM = res.result.records
+          this.ipagination.total = res.result.total
+        }
+        if (res.code === 510) {
+          this.$message.warning(res.message)
+        }
+        this.loading = false
+      })
+    },
+
 
     initDictConfig() {
       initDictOptions('tracker').then(res => {

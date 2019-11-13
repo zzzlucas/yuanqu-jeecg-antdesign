@@ -55,7 +55,7 @@ export default {
   name: 'baseIndicatorsMsgModal',
   data() {
     return {
-      title: '新增预算指标',
+      title: '新增完成情况',
       visible: false,
       model: {},
       labelCol: {
@@ -126,7 +126,7 @@ export default {
           let httpurl = ''
           let method = ''
           //真的有区分吗
-          if (!this.model.month) {
+          if (!this.model.year) {
             console.log('post');
             httpurl += this.url.add
             method = 'post'
