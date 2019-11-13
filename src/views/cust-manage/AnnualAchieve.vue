@@ -8,7 +8,7 @@
           <a-select
             style="width: 120px"
             @change="handleChange"
-            v-decorator="['type',{initialValue: 'YS'}]"
+            v-decorator="['type',{initialValue: ''}]"
           >
             <a-select-option value>不限</a-select-option>
             <a-select-option value="YS">预算</a-select-option>

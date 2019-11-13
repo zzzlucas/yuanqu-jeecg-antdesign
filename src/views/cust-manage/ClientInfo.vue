@@ -80,9 +80,11 @@
         @change="handleTableChange"
         :customRow="customRow"
       >
+        <!-- :pagination="ipagination" -->
+
         <span slot="action" slot-scope="text, record">
           <!-- <a @click.stop="handleEdit(record, ...arguments)">test</a>
-          <a-divider type="vertical" /> -->
+          <a-divider type="vertical" />-->
           <a @click.stop="showConfirm(record, ...arguments)">迁出</a>
           <a-divider type="vertical" />
           <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
@@ -93,7 +95,6 @@
     </div>
     <!-- table区域-end -->
     <show-zero ref="ShowZero" @reload="loadData"></show-zero>
-
   </a-card>
 </template>
 

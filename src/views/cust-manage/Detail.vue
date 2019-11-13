@@ -3,7 +3,7 @@
     <!-- 应该在page-layout组件vue里写abadge -->
     <!-- <div style="width:1200px;margin:auto;"> -->
     <a-card :bordered="false">
-      <a-tabs defaultActiveKey="1" @change="callback">
+      <a-tabs defaultActiveKey="1" @tabClick="getCustomerContact">
         <a-tab-pane tab="基本信息" key="1">
           <div class="div-detail-list">
             <detail-list>
@@ -46,7 +46,7 @@
               <a @click.stop>编辑</a>&nbsp;
               <a @click.stop>查看</a>
             </span>
-          </a-table> -->
+          </a-table>-->
         </a-tab-pane>
         <a-tab-pane tab="附件" key="3">
           <detail-list>
@@ -68,7 +68,7 @@
           <detail-list>
             <detail-list-item term="注册日期">{{info.baseCustomerBusiness.registDate}}</detail-list-item>
             <detail-list-item term="注册资本">{{info.baseCustomerBusiness.registeredCapital}}</detail-list-item>
-            <detail-list-item term="转化为人民币">{{info.baseCustomerBusiness.rctoRMB}}</detail-list-item>
+            <detail-list-item term="转化为人民币">{{info.baseCustomerBusiness.rCToRMB}}</detail-list-item>
             <detail-list-item term="工商状态">{{info.baseCustomerBusiness.bussinessStatus}}</detail-list-item>
             <detail-list-item term="税务状态">{{info.baseCustomerBusiness.taxStatus}}</detail-list-item>
             <detail-list-item term="统一社会信用号码">{{info.baseCustomerBusiness.creditCode}}</detail-list-item>
@@ -78,9 +78,10 @@
             <detail-list-item term="特许经营范围">{{info.baseCustomerBusiness.businessScopePermit}}</detail-list-item>
           </detail-list>
         </a-tab-pane>
+        <!-- <a-tab-pane tab="联系人" key="6"> -->
         <a-tab-pane tab="联系人" key="6">
-          <!-- <a-tab-pane tab="联系人" key="6" @click="getCustomerContact()"> -->
-          <a-button style="margin-bottom:20px;" type="primary" @click="showAddFormDrawer">新建联系人</a-button>
+          <!-- <a-button style="margin-bottom:20px;" type="primary" @click="getCustomerContact">获取联系人</a-button> -->
+          <a-button style="margin-bottom:20px;" type="primary" @click="ShowAddCFormDrawer">新建联系人</a-button>
           <!-- :pagination="ipagination"      -->
           <a-table
             ref="table"
@@ -90,10 +91,17 @@
             :columns="columnsB"
             :dataSource="dataSource"
             :loading="loading"
-            @change="handleTableChange"
             :customRow="customRow"
-          ></a-table>
-          <show-add-form-drawer ref="ShowAddFormDrawer"></show-add-form-drawer>
+          >
+            <span slot="action" slot-scope="text, record">
+              <a @click.stop="editAddCFormDrawer(record, ...arguments)">编辑</a>
+              <a-divider type="vertical" />
+              <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
+                <a>删除</a>
+              </a-popconfirm>
+            </span>
+          </a-table>
+          <show-add-c-form-drawer ref="ShowAddCFormDrawer"></show-add-c-form-drawer>
         </a-tab-pane>
       </a-tabs>
     </a-card>
@@ -112,9 +120,9 @@ import { filterObj } from '@/utils/util'
 import { getAction, putAction } from '@/api/manage'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 
-import ShowAddFormDrawer from './modules/ShowAddFormDrawer'
+import ShowAddCFormDrawer from './modules/ShowAddCFormDrawer'
 import qs from 'qs'
-
+import Dom7 from 'dom7'
 export default {
   name: 'Detail',
   components: {
@@ -122,7 +130,7 @@ export default {
     ABadge,
     DetailList,
     DetailListItem,
-    ShowAddFormDrawer
+    ShowAddCFormDrawer
   },
   data() {
     return {
@@ -135,7 +143,16 @@ export default {
       // },
       columnsA: [],
       columnsB: [
-        { title: '序号', align: 'center', dataIndex: 'projectName' },
+        {
+          title: '序号',
+          dataIndex: '',
+          key: 'rowIndex',
+          width: 100,
+          align: 'center',
+          customRender: function(t, r, index) {
+            return parseInt(index) + 1
+          }
+        },
         {
           title: '姓名',
           align: 'center',
@@ -144,7 +161,7 @@ export default {
         {
           title: '性别',
           align: 'center',
-          dataIndex: 'sex',
+          dataIndex: 'sex'
           // customRender: text => {
           //   return filterDictText(this.projectTypeDictOptions, text)
           // }
@@ -173,6 +190,7 @@ export default {
         {
           title: '操作',
           dataIndex: 'action',
+          width: 200,
           align: 'center',
           scopedSlots: { customRender: 'action' }
         }
@@ -207,7 +225,8 @@ export default {
       if (res.code === 200) {
         this.loading = false
         this.info = res.result
-        // console.log(this.info)
+
+        //这一步晚了，所以报错？ 要提前，虽然其实得到了数据
         this.initDictConfig()
       } else {
         this.$router.back()
@@ -216,27 +235,22 @@ export default {
     })
 
     console.log('test start-------------')
-    this.getCustomerContact()
+    // this.getCustomerContact()
   },
   mounted() {},
   methods: {
     //tab页6：联系人表格数据获取 与 绑定
-    getCustomerContact(arg=1) {
-      // if (!this.url.list) {
-      //   this.$message.error('请设置url.list属性!')
-      //   return
-      // }
+    getCustomerContact(arg = 1) {
       //加载数据 若传入参数1则加载第一页的内容
       if (arg === 1) {
         this.ipagination.current = 1
       }
-      let params = { CusId: '11111111' }
+      let params = { custId: '7777' }
       // this.loading = true
-      console.log('test start000000000000')
+      console.log('test start 777777777777')
       getAction('/park.customer/baseCustomerContact/list', params).then(res => {
-      // getAction('/park.customer/baseCustomerContact/list?cusId=11111111').then(res => {
         if (res.success) {
-          // console.log('test start11111111')
+          console.log('test start11111111')
           console.log(res.result)
           this.dataSource = res.result
           this.ipagination.total = res.result.total
@@ -247,8 +261,14 @@ export default {
         // this.loading = false
       })
     },
-    showAddFormDrawer() {
-      this.$refs.ShowAddFormDrawer.add()
+    editAddCFormDrawer(row, e) {
+      row.__key = Dom7(e.currentTarget)
+        .parents('.ant-table-row')
+        .data('row-key')
+      this.$refs.ShowAddCFormDrawer.edit(row)
+    },
+    ShowAddCFormDrawer() {
+      this.$refs.ShowAddCFormDrawer.add()
     },
     initDictConfig() {
       initDictOptions('unit_nature').then(res => {
@@ -315,7 +335,20 @@ export default {
     //   if (item.value == this.info.baseCustomerType.registrationType)
     //     return (this.dictText.registrationTypeText = item.text)
     // },
-    callback() {}
+    // callback() {
+    //   console.log('callback');
+    //   // this.getCustomerContact()
+    // },
+    handleDelete() {},
+    customRow(row) {
+      return {
+        on: {
+          // click: () => {
+          //   this.$router.push({ name: 'industrial-parks-info-@id', params: { id: row.parkId } })
+          // }
+        }
+      }
+    }
   },
   filters: {
     statusFilter(status) {

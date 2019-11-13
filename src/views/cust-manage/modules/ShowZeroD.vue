@@ -163,10 +163,7 @@
                     :wrapperCol="wrapperCol.default"
                     label="所属楼宇"
                   >
-                    <a-input
-                      placeholder="暂无联动"
-                      v-decorator="['buidling',{rules: [{ required: true, message: '请输入', whitespace:true}]}]"
-                    ></a-input>
+                    <a-input placeholder="暂无联动" v-decorator="['buidling']"></a-input>
                     <!-- buidling -->
                     <!-- <a-select defaultValue="1" style="width:100%">
                       <a-select-option value="1">来访</a-select-option>
@@ -310,7 +307,10 @@
                   :wrapperCol="wrapperCol.default"
                   label="行业类型"
                 >
-                  <a-select v-decorator="['industryCategory']" placeholder="请选择">
+                  <a-select
+                    v-decorator="['industryCategory',{rules: [{ required: true, message: '请选择行业类型', whitespace:true}]}]"
+                    placeholder="请选择"
+                  >
                     <a-select-option
                       v-for="(item, key) in dict.industryCategoryExt"
                       :value="item.value"
@@ -452,7 +452,9 @@
                   :wrapperCol="wrapperCol.default"
                   label="统一社会信用号码"
                 >
-                  <a-input v-decorator="[ 'creditCode']" />
+                  <a-input
+                    v-decorator="[ 'creditCode',{rules: [{ required: true, message: '请输入统一社会信用号码', whitespace:true}]}]"
+                  />
                 </a-form-item>
               </a-col>
               <a-col span="16">
@@ -506,7 +508,7 @@
                 </a-form-item>
               </a-col>
               <a-col span="24">
-                <a-form-item
+                <!-- <a-form-item
                   :labelCol="labelCol.whole"
                   :wrapperCol="wrapperCol.whole"
                   label="parkId"
@@ -514,7 +516,7 @@
                   <a-input
                     v-decorator="['parkId',{rules: [{ required: true, message: '请输入parkId', whitespace:true}]}]"
                   ></a-input>
-                </a-form-item>
+                </a-form-item>-->
               </a-col>
             </a-row>
           </a-card>
@@ -547,6 +549,7 @@ import { httpAction } from '@/api/manage'
 import pick from 'lodash.pick'
 import moment from 'moment'
 import { initDictOptions } from '@comp/dict/JDictSelectUtil'
+import { AddbaseCustomerForm } from '@/config/pick-fields'
 
 export default {
   name: '',
@@ -599,8 +602,8 @@ export default {
         parkId: { rules: [{ required: true, message: '请输入园区ID!' }] }
       },
       url: {
-        add: '/park.customer/baseCustomer/add'
-        // edit: '/park.customer/baseCustomer/edit'
+        add: '/park.customer/baseCustomer/add',
+        edit: '/park.customer/baseCustomer/edit'
       },
       merchantManager: '',
       dict: {
@@ -668,9 +671,15 @@ export default {
     onChange(checkedValues) {
       console.log('checked = ', checkedValues)
     },
+    //新页面 详情 打开的，咋传，考虑一哈
     detail(record) {
+      // this.record = record
+      this.form.resetFields()
+      this.model = Object.assign({}, record)
       this.visible = true
-      this.record = record
+      this.$nextTick(() => {
+        this.form.setFieldsValue(pick(this.model, AddbaseCustomerForm))
+      })
     },
     handleCancel() {
       this.visible = false
@@ -678,36 +687,6 @@ export default {
     handleImportExcel() {},
     importExcelUrl() {},
     tokenHeader() {},
-    add() {
-      this.edit({})
-    },
-    edit(record) {
-      this.form.resetFields()
-      this.model = Object.assign({}, record)
-      this.visible = true
-      this.$nextTick(() => {
-        this.form.setFieldsValue(
-          pick(
-            this.model,
-            'recordId',
-            'projectId',
-            'tracker',
-            'trackMethod',
-            'status',
-            'content',
-            'resourceGroupId',
-            'remark',
-            'parkId',
-            'addDocFiles',
-            'version',
-            'createUserName',
-            'updateUserName'
-          )
-        )
-        //时间格式化
-        // this.form.setFieldsValue({ trackDate: this.model.trackDate ? moment(this.model.trackDate) : null })
-      })
-    },
     close() {
       this.$emit('close')
       this.visible = false
@@ -720,22 +699,15 @@ export default {
           that.confirmLoading = true
           let httpurl = ''
           let method = ''
-          // if (!this.model.id) {
           httpurl += this.url.add
           method = 'post'
-          // } else {
-          // httpurl += this.url.edit
-          // method = 'put'
-          // }
           let formData = Object.assign(this.model, values)
-          //时间格式化
           if (formData.merchantDate)
             formData.merchantDate = formData.merchantDate ? formData.merchantDate.format('YYYY-MM-DD') : null
           if (formData.registDate)
             formData.registDate = formData.registDate ? formData.registDate.format('YYYY-MM-DD') : null
           if (formData.settledDate)
             formData.settledDate = formData.settledDate ? formData.settledDate.format('YYYY-MM-DD') : null
-
           formData = qs.stringify(formData)
           console.log(formData)
 
@@ -751,7 +723,6 @@ export default {
             .finally(() => {
               that.confirmLoading = false
               that.close()
-              // 不关闭，便于调试
             })
         }
       })
