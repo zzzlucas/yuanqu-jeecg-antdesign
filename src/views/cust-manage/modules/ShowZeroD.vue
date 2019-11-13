@@ -128,6 +128,10 @@
                     :wrapperCol="wrapperCol.default"
                     label="所属园区"
                   >
+                    <a-input
+                      placeholder="暂无联动"
+                      v-decorator="['parkId',{rules: [{ required: true, message: '请输入', whitespace:true}]}]"
+                    ></a-input>
                     <!-- 传递园区名到此处？ -->
                     <!-- <a-select defaultValue="1" style="width:100%">
                       <a-select-option value="1">来访</a-select-option>
@@ -142,6 +146,10 @@
                     :wrapperCol="wrapperCol.default"
                     label="所属项目"
                   >
+                    <a-input
+                      placeholder="暂无联动"
+                      v-decorator="['caseId',{rules: [{ required: true, message: '请输入', whitespace:true}]}]"
+                    ></a-input>
                     <!-- caseId -->
                     <!-- <a-select defaultValue="1" style="width:100%">
                       <a-select-option value="1">来访</a-select-option>
@@ -155,6 +163,10 @@
                     :wrapperCol="wrapperCol.default"
                     label="所属楼宇"
                   >
+                    <a-input
+                      placeholder="暂无联动"
+                      v-decorator="['buidling',{rules: [{ required: true, message: '请输入', whitespace:true}]}]"
+                    ></a-input>
                     <!-- buidling -->
                     <!-- <a-select defaultValue="1" style="width:100%">
                       <a-select-option value="1">来访</a-select-option>
@@ -508,6 +520,7 @@
           </a-card>
         </a-spin>
       </a-form>
+
       <div
         :style="{
           position: 'absolute',
@@ -586,8 +599,8 @@ export default {
         parkId: { rules: [{ required: true, message: '请输入园区ID!' }] }
       },
       url: {
-        add: '/park.customer/baseCustomer/add',
-        edit: '/park.customer/baseCustomer/edit'
+        add: '/park.customer/baseCustomer/add'
+        // edit: '/park.customer/baseCustomer/edit'
       },
       merchantManager: '',
       dict: {
@@ -707,13 +720,13 @@ export default {
           that.confirmLoading = true
           let httpurl = ''
           let method = ''
-          if (!this.model.id) {
-            httpurl += this.url.add
-            method = 'post'
-          } else {
-            httpurl += this.url.edit
-            method = 'put'
-          }
+          // if (!this.model.id) {
+          httpurl += this.url.add
+          method = 'post'
+          // } else {
+          // httpurl += this.url.edit
+          // method = 'put'
+          // }
           let formData = Object.assign(this.model, values)
           //时间格式化
           if (formData.merchantDate)
@@ -730,14 +743,14 @@ export default {
             .then(res => {
               if (res.success) {
                 that.$message.success(res.message)
-                that.$emit('ok')
+                that.$emit('reload')
               } else {
                 that.$message.warning(res.message)
               }
             })
             .finally(() => {
               that.confirmLoading = false
-              // that.close()
+              that.close()
               // 不关闭，便于调试
             })
         }

@@ -213,7 +213,7 @@ export default {
     // },
 
     goAnnualAchieveAddForm() {
-      this.$refs.AnnualAchieveAddForm.edit()
+      this.$refs.AnnualAchieveAddForm.add()
     },
     showAnnualAchieveAddForm(row, e) {
       row.__key = Dom7(e.currentTarget)

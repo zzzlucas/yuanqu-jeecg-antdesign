@@ -14,10 +14,7 @@
         </a-form-item>
         <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="年度">
           <!-- <a-input placeholder="请输入年度" v-decorator="['year', validatorRules.year ]" /> -->
-          <a-select
-            @change="handleChange"
-            v-decorator="['year', validatorRules.year,{initialValue: ''}]"
-          >
+          <a-select v-decorator="['year', validatorRules.year,{initialValue: ''}]">
             <a-select-option value="2018">2018</a-select-option>
             <a-select-option value="2019">2019</a-select-option>
             <a-select-option value="2020">2020</a-select-option>

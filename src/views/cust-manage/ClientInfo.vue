@@ -84,7 +84,6 @@
           <!-- <a @click.stop="handleEdit(record, ...arguments)">test</a>
           <a-divider type="vertical" /> -->
           <a @click.stop="showConfirm(record, ...arguments)">迁出</a>
-          <!-- <a @click.stop="showOne(record)">迁出</a> -->
           <a-divider type="vertical" />
           <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
             <a>删除</a>
@@ -93,27 +92,23 @@
       </a-table>
     </div>
     <!-- table区域-end -->
-    <show-zero ref="ShowZero"></show-zero>
-    <!-- <show-one ref="ShowOne"></show-one> -->
-    <!-- 表单区域 -->
-    <parks-add-form v-model="rightShow"></parks-add-form>
+    <show-zero ref="ShowZero" @reload="loadData"></show-zero>
+
   </a-card>
 </template>
 
 <script>
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import Config from '@/defaultSettings'
-import ParksAddForm from '@views/industrial-parks/components/ParksAddForm'
 import { initDictOptions } from '@/components/dict/JDictSelectUtil'
 import ShowZero from './modules/ShowZeroD'
-import ShowOne from './modules/ShowOneM'
 import { getAction, putAction } from '@/api/manage'
 import qs from 'qs'
 import Dom7 from 'dom7'
 
 export default {
   name: 'IndustrialParksList',
-  components: { ParksAddForm, ShowZero, ShowOne },
+  components: { ShowZero },
   mixins: [JeecgListMixin],
   data() {
     return {
@@ -210,18 +205,7 @@ export default {
     showZero() {
       this.$refs.ShowZero.detail()
     },
-    showOne() {
-      this.$refs.ShowOne.detail()
-    },
     handleOut() {},
-    //获取row
-    // handleEdit(row, e) {
-    //   row.__key = Dom7(e.currentTarget)
-    //     .parents('.ant-table-row')
-    //     .data('row-key')
-    //   this.rightShow = true
-    //   this.edit = true
-    // },
     handleEdit(row, e) {
       row.__key = Dom7(e.currentTarget)
         .parents('.ant-table-row')
