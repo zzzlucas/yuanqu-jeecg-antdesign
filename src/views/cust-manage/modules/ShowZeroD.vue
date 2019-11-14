@@ -1,16 +1,7 @@
 <template>
-  <!-- <a-drawer
-    :title="title"
-    :width="800"
-    placement="right"
-    :closable="false"
-    @close="close"
-    :visible="visible"
-  >-->
-  <!-- 登记新客户 -->
   <a-drawer
     wrapClassName="mgr-project-trace-drawer"
-    width="70%"
+    width="80%"
     :visible="visible"
     @close="close"
     destroyOnClose
@@ -411,7 +402,7 @@
                   :wrapperCol="wrapperCol.default"
                   label="转化为人民币"
                 >
-                  <a-input addonAfter="万元" v-decorator="[ 'RCToRMB']" />
+                  <a-input addonAfter="万元" v-decorator="[ 'rCToRMB']" />
                 </a-form-item>
               </a-col>
               <a-col span="8">
@@ -671,14 +662,42 @@ export default {
     onChange(checkedValues) {
       console.log('checked = ', checkedValues)
     },
+    add() {
+      this.visible = true
+    },
     //新页面 详情 打开的，咋传，考虑一哈
     detail(record) {
       // this.record = record
+      console.log(record)
       this.form.resetFields()
+      record.unitNature = record.baseCustomerType.unitNature
+      record.industryCategory = record.baseCustomerType.industryCategory
+      record.organizational = record.baseCustomerType.organizational
+      record.technicalField = record.baseCustomerType.technicalField
+      record.enterpriseRating = record.baseCustomerType.enterpriseRating
+      record.registrationType = record.baseCustomerType.registrationType
+
+      record.registDate = record.baseCustomerBusiness.registDate
+      record.registeredCapital = record.baseCustomerBusiness.registeredCapital
+      record.bussinessStatus = record.baseCustomerBusiness.bussinessStatus
+      record.taxStatus = record.baseCustomerBusiness.taxStatus
+      record.creditCode = record.baseCustomerBusiness.creditCode
+      record.registerAddress = record.baseCustomerBusiness.registerAddress
+      record.registerAddressZipCode = record.baseCustomerBusiness.registerAddressZipCode
+      record.businessAddress = record.baseCustomerBusiness.businessAddress
+      record.businessAddressZipCode = record.baseCustomerBusiness.businessAddressZipCode
+      record.businessScope = record.baseCustomerBusiness.businessScope
+      record.businessScopePermit = record.baseCustomerBusiness.businessScopePermit
+      record.rCToRMB = record.baseCustomerBusiness.rCToRMB
+
+
       this.model = Object.assign({}, record)
       this.visible = true
       this.$nextTick(() => {
         this.form.setFieldsValue(pick(this.model, AddbaseCustomerForm))
+        this.form.setFieldsValue({ merchantDate: this.model.merchantDate ? moment(this.model.merchantDate) : null })
+        this.form.setFieldsValue({ settledDate: this.model.settledDate ? moment(this.model.settledDate) : null })
+        this.form.setFieldsValue({ registDate: this.model.registDate ? moment(this.model.registDate) : null })
       })
     },
     handleCancel() {
@@ -744,7 +763,7 @@ export default {
   }
 
   .project-drawer-form {
-    @width: 150px;
+    @width: 180px;
     .ant-form-item-label {
       width: @width;
     }

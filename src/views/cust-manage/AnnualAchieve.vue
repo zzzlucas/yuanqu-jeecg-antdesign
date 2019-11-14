@@ -186,7 +186,29 @@ export default {
       let params = { type: this.typee }
       getAction(this.url.list, params).then(res => {
         if (res.success) {
+          //111111111111   处理dataSource，为需要的格式  /遍历操作
+          // let RealDataSource = []
+          // for (const item of res.result) {
+          //   console.log('item');
+          //   console.log(item);
+          //   if (item.type == 'YS' && item.year == '2019') {
+          //     RealDataSource.push(item)
+          //     RealDataSource[0].children = []
+          //   }
+          //   function sortMonth(a, b) {
+          //     return a.month - b.month
+          //   }
+          //   // if (item.type == "SJ" && RealDataSource[0] == true) {
+          //   if (item.type == 'SJ') {
+          //     RealDataSource[0].children.push(item)
+          //     RealDataSource[0].children.sort(sortMonth)
+          //   }
+          // }
+          // res.result = RealDataSource
+          // 22222222222
           this.dataSource = res.result
+          
+          
         }
         if (res.code === 510) {
           this.$message.warning(res.message)

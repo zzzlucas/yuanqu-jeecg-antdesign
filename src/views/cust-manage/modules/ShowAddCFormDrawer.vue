@@ -183,7 +183,7 @@ export default {
             .then(res => {
               if (res.success) {
                 that.$message.success(res.message)
-                that.$emit('ok')
+                that.$emit('reload')
               } else {
                 that.$message.warning(res.message)
               }

@@ -30,6 +30,21 @@
           <detail-list>
             <detail-list-item term="企业简介">{{ info.content }}</detail-list-item>
           </detail-list>
+          <div
+            :style="{
+          position: 'absolute',
+          left: 0,
+          bottom: 0,
+          width: '100%',
+          borderTop: '1px solid #e9e9e9',
+          padding: '10px 16px',
+          background: '#fff',
+          textAlign: 'right',
+        }"
+          >
+            <!-- <a-button :style="{marginRight: '8px'}" @click="onClose">Cancel</a-button> -->
+            <a-button @click="editZero()" type="primary">编辑</a-button>
+          </div>
         </a-tab-pane>
         <a-tab-pane tab="企业标识" key="2">
           <!-- <a-table
@@ -101,16 +116,16 @@
               </a-popconfirm>
             </span>
           </a-table>
-          <show-add-c-form-drawer ref="ShowAddCFormDrawer"></show-add-c-form-drawer>
+          <show-add-c-form-drawer ref="ShowAddCFormDrawer" @reload="getCustomerContact()"></show-add-c-form-drawer>
         </a-tab-pane>
       </a-tabs>
     </a-card>
+    <show-zero ref="ShowZero"></show-zero>
   </page-layout>
 </template>
 
 <script>
 import PageLayout from '@/components/page/PageLayout'
-
 import ABadge from 'ant-design-vue/es/badge/Badge'
 import DetailList from '@/components/tools/DetailList'
 const DetailListItem = DetailList.Item
@@ -119,8 +134,9 @@ import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUt
 import { filterObj } from '@/utils/util'
 import { getAction, putAction } from '@/api/manage'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-
+import ShowZero from './modules/ShowZeroD'
 import ShowAddCFormDrawer from './modules/ShowAddCFormDrawer'
+
 import qs from 'qs'
 import Dom7 from 'dom7'
 export default {
@@ -130,7 +146,8 @@ export default {
     ABadge,
     DetailList,
     DetailListItem,
-    ShowAddCFormDrawer
+    ShowAddCFormDrawer,
+    ShowZero
   },
   data() {
     return {
@@ -141,6 +158,7 @@ export default {
       // url: {
       //   list: '/park.project/mgrProjectInfo/queryById'
       // },
+      custId: '',
       columnsA: [],
       columnsB: [
         {
@@ -215,6 +233,7 @@ export default {
   },
 
   // async created() {
+
   created() {
     if (typeof this.$route.params.id !== 'string') {
       this.$router.back()
@@ -224,6 +243,7 @@ export default {
     getAction('/park.customer/baseCustomer/queryById', { id: this.$route.params.id }).then(res => {
       if (res.code === 200) {
         this.loading = false
+        //info就是表单需要的东西
         this.info = res.result
 
         //这一步晚了，所以报错？ 要提前，虽然其实得到了数据
@@ -239,19 +259,28 @@ export default {
   },
   mounted() {},
   methods: {
+    editZero() {
+      //在这里要把当前页面的custId传过去，在新页面自己获取
+      // let
+      this.$refs.ShowZero.detail(this.info)
+    },
     //tab页6：联系人表格数据获取 与 绑定
     getCustomerContact(arg = 1) {
       //加载数据 若传入参数1则加载第一页的内容
       if (arg === 1) {
         this.ipagination.current = 1
       }
-      let params = { custId: '7777' }
+      //获取到当前页面的custId
+      let params = { custId: this.info.custId }
       // this.loading = true
-      console.log('test start 777777777777')
+      // console.log('test start 777777777777')
+      console.log(this.info);
+      console.log(this.info.baseCustomerBusiness);
+
       getAction('/park.customer/baseCustomerContact/list', params).then(res => {
         if (res.success) {
-          console.log('test start11111111')
-          console.log(res.result)
+          // console.log('test start11111111')
+          // console.log(res.result)
           this.dataSource = res.result
           this.ipagination.total = res.result.total
         }

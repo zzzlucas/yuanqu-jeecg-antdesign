@@ -204,7 +204,7 @@ export default {
     },
     // handleImportExcel() {},
     showZero() {
-      this.$refs.ShowZero.detail()
+      this.$refs.ShowZero.add()
     },
     handleOut() {},
     handleEdit(row, e) {

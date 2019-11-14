@@ -55,10 +55,6 @@
                 label="跟踪人"
                 required
               >
-                <!-- <a-input
-                    placeholder="请输入跟踪人"
-                    v-decorator="['tracker', {rules: [{required: true, message: '请输入跟踪人'}]}]"
-                />-->
                 <!-- v-model写着就没有默认 -->
                 <a-select v-decorator="['tracker']">
                   <a-select-option
@@ -217,32 +213,16 @@ export default {
     handleCancel() {
       this.visible = false
     },
+    // handleCancel() {
+    //   this.close()
+    // },
     handleImportExcel() {},
     importExcelUrl() {},
     tokenHeader() {},
     add() {
-      this.edit({})
+      this.visible = true
     },
-    // edit(row) {
-    //   this.editBool = true
-    //   this.editData = row
-    //   const editData = pick(row, ProjectAttractShowZeroForm)
 
-    //   //test
-    //   console.log(editData);
-    //   editData.deviceGroupId = editData.deviceGroupId.split(',')
-
-    //   this.$emit('close', true)
-    //   this.$nextTick(() => {
-    //     this.editor = {
-    //       content: row.content,
-    //       policy: row.policy
-    //     }
-    //     this.form.setFieldsValue(editData)
-    //   })
-    // },
-
-    //原edit
     detail(record) {
       this.record = record
       // console.log(this.record.recordId)
@@ -264,6 +244,24 @@ export default {
             this.form.setFieldsValue(pick(this.model, ProjectAttractShowZeroForm))
             //时间格式化
             this.form.setFieldsValue({ trackDate: this.model.trackDate ? moment(this.model.trackDate) : null })
+          })
+        }
+        if (res.code === 510) {
+          this.$message.warning(res.message)
+        }
+      })
+    },
+    //只获取部分对应行的属性
+    partDetail(record) {
+      this.record = record
+      this.form.resetFields()
+      getAction('/park.project/mgrProjectTrace/getById', { projectId: record.projectId }).then(res => {
+        if (res.success) {
+          this.record = res.result[res.result.length - 1]
+          this.model = Object.assign({}, this.record)
+          this.visible = true
+          this.$nextTick(() => {
+            this.form.setFieldsValue(pick(this.model, 'projectId'))
           })
         }
         if (res.code === 510) {
@@ -311,9 +309,6 @@ export default {
             })
         }
       })
-    },
-    handleCancel() {
-      this.close()
     }
   }
 }

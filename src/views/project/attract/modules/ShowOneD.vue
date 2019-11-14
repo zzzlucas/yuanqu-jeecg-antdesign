@@ -104,14 +104,14 @@ export default {
             .then(res => {
               if (res.success) {
                 that.$message.success(res.message)
-                // that.$emit('ok')
+                that.$emit('reload')
               } else {
                 that.$message.warning(res.message)
               }
             })
             .finally(() => {
               that.confirmLoading = false
-              // that.close()
+              that.handleCancel()
             })
         }
       })
@@ -125,7 +125,7 @@ export default {
       this.visible = true
       // console.log(pick(this.model, ProjectAttractShowZeroForm))
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.model, 'projectName'))
+        this.form.setFieldsValue(pick(this.model, 'projectName','tracker'))
         //时间格式化
         // this.form.setFieldsValue({ trackDate: this.model.trackDate ? moment(this.model.trackDate) : null })
       })

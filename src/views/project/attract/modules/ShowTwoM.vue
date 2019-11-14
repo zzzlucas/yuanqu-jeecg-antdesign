@@ -302,8 +302,8 @@ export default {
       console.log(row.__key)
       this.$emit('showOneToZero', row)
     },
-    twoShowOneAdd(row) {
-      this.$emit('showOneToZero', row)
+    twoShowOneAdd() {
+      this.$emit('showOneToZero')
     },
 
     handleOk() {},

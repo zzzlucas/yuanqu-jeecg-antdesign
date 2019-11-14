@@ -76,7 +76,7 @@
                 <a-form-item label="注册资金（万元）">
                   <a-input
                     placeholder
-                    v-decorator="['registerMoney',{rules: [{ required: true, message: '请输入注册资金', whitespace: true}]}]"
+                    v-decorator="['registerMoney',{rules: [{ required: true, message: '请输入注册资金'}]}]"
                   />
                 </a-form-item>
               </a-col>
@@ -86,14 +86,14 @@
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="企业总资产（万元）">
                   <a-input
-                    v-decorator="['totalAsset',{rules: [{ required: true, message: '请输入企业总资产', whitespace: true}]}]"
+                    v-decorator="['totalAsset',{rules: [{ required: true, message: '请输入企业总资产'}]}]"
                   />
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="固定资产净值（万元）">
                   <a-input
-                    v-decorator="['fixedAsset',{rules: [{ required: true, message: '请输入固定资产净值', whitespace: true}]}]"
+                    v-decorator="['fixedAsset',{rules: [{ required: true, message: '请输入固定资产净值'}]}]"
                   />
                 </a-form-item>
               </a-col>
@@ -308,7 +308,7 @@
                 <a-form-item label="拿地面积（m²）">
                   <a-input
                     placeholder
-                    v-decorator="['gainArea',{rules: [{ required: true, message: '请输入拿地面积', whitespace: true}]}]"
+                    v-decorator="['gainArea',{rules: [{ required: true, message: '请输入拿地面积'}]}]"
                   />
                 </a-form-item>
               </a-col>
@@ -322,7 +322,7 @@
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="项目总投资（万元）">
                   <a-input
-                    v-decorator="['investAmount',{rules: [{ required: true, message: '请输入数额', whitespace: true}]}]"
+                    v-decorator="['investAmount',{rules: [{ required: true, message: '请输入数额'}]}]"
                   />
                 </a-form-item>
               </a-col>
@@ -336,7 +336,7 @@
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="注册资本（万元）">
                   <a-input
-                    v-decorator="[ 'registerCapital',{rules: [{ required: true, message: '请输入数额', whitespace: true}]}]"
+                    v-decorator="[ 'registerCapital',{rules: [{ required: true, message: '请输入数额'}]}]"
                   />
                 </a-form-item>
               </a-col>
@@ -495,6 +495,16 @@
                 </a-form-item>
               </a-col>
             </a-row>
+            <a-row class="form-row" :gutter="16">
+              <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
+                <a-form-item label="projectType test">
+                  <a-input
+                    placeholder
+                    v-decorator="['projectType', {rules: [{ required: true, message: '请输入projectType', whitespace: true}]}]"
+                  />
+                </a-form-item>
+              </a-col>
+            </a-row>
             <!-- upload  addDocFiles   附件 -->
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
@@ -586,7 +596,7 @@ export default {
     handleImportExcel() {},
     moment,
     add() {
-      this.edit({})
+      this.visible = true
     },
     // add() {
     //   this.picUrl = ''
@@ -597,6 +607,62 @@ export default {
       // this.record = record
       // console.log(this.record.recordId)
       this.form.resetFields()
+      //后端少的内容
+      record.totalAsset = record.mgrProjectCust.totalAsset
+      record.legalTel = record.mgrProjectCust.legalTel
+      record.companyDescription = record.mgrProjectCust.companyDescription
+      record.updateUserName = record.mgrProjectCust.updateUserName
+      record.createUserName = record.mgrProjectCust.createUserName
+      record.updateTime = record.mgrProjectCust.updateTime
+      record.fillUnit = record.mgrProjectCust.fillUnit
+      record.version = record.mgrProjectCust.version
+      record.unitAddress = record.mgrProjectCust.unitAddress
+      // record.parkId = record.mgrProjectCust.parkId
+      record.companyRegisterType = record.mgrProjectCust.companyRegisterType
+      record.createBy = record.mgrProjectCust.createBy
+      record.creditCode = record.mgrProjectCust.legalTel
+      record.createTime = record.mgrProjectCust.createTime
+      record.updateBy = record.mgrProjectCust.updateBy
+      record.legalPerson = record.mgrProjectCust.legalPerson
+      record.fixedAsset = record.mgrProjectCust.fixedAsset
+      record.registerMoney = record.mgrProjectCust.registerMoney
+      record.teamMemberDescription = record.mgrProjectCust.teamMemberDescription
+      // record.projectId = record.mgrProjectCust.projectId
+      record.setUpYear = record.mgrProjectCust.setUpYear
+      record.email = record.mgrProjectCust.email
+
+      record.isForeignCapital = record.mgrProjectInvest.isForeignCapital
+      record.fixedAssetInvest = record.mgrProjectInvest.fixedAssetInvest
+      record.newProfit = record.mgrProjectInvest.newProfit
+      record.remark = record.mgrProjectInvest.remark
+      record.createUserName = record.mgrProjectInvest.createUserName
+      // // record.parkId = record.mgrProjectInvest.parkId
+      record.projectUseInvest = record.mgrProjectInvest.projectUseInvest
+      record.newTax = record.mgrProjectInvest.newTax
+      record.freeCapital = record.mgrProjectInvest.freeCapital
+      record.addDocFiles = record.mgrProjectInvest.addDocFiles
+      record.updateBy = record.mgrProjectInvest.updateBy
+      record.civilWork = record.mgrProjectInvest.civilWork
+      record.otherCapital = record.mgrProjectInvest.otherCapital
+      record.budget = record.mgrProjectInvest.budget
+      record.bankLoan = record.mgrProjectInvest.bankLoan
+      record.sharesBond = record.mgrProjectInvest.sharesBond
+      record.updateUserName = record.mgrProjectInvest.updateUserName
+      record.updateTime = record.mgrProjectInvest.updateTime
+      record.foreignEarning = record.mgrProjectInvest.foreignEarning
+      record.version = record.mgrProjectInvest.version
+      record.createBy = record.mgrProjectInvest.createBy
+      record.registerCapital = record.mgrProjectInvest.registerCapital
+      record.install = record.mgrProjectInvest.install
+      record.projectBuilding = record.mgrProjectInvest.projectBuilding
+      record.createTime = record.mgrProjectInvest.createTime
+      record.investAmount = record.mgrProjectInvest.investAmount
+      record.bottomWorkingCapital = record.mgrProjectInvest.bottomWorkingCapital
+      record.newSale = record.mgrProjectInvest.bottomWorkingCapital
+      // record.projectId = record.mgrProjectInvest.projectId
+      record.device = record.mgrProjectInvest.device
+      record.buildingInterest = record.mgrProjectInvest.buildingInterest
+
       this.model = Object.assign({}, record)
       this.visible = true
       // console.log(pick(this.model, ProjectAttractShowZeroForm))
@@ -618,10 +684,7 @@ export default {
       })
       // console.log(this.model)
     },
-    // close() {
-    //   this.$emit('close')
-    //   this.visible = false
-    // },
+
     handleCancel() {
       this.visible = false
     },
@@ -638,7 +701,7 @@ export default {
           let httpurl = ''
           let method = ''
           // console.log('2222')
-          if (!this.model.id) {
+          if (!this.model.projectName) {
             //增
             console.log('post方式')
             httpurl += this.url.add
@@ -657,13 +720,7 @@ export default {
             ? formData.buildingBeginDate.format('YYYY-MM-DD')
             : null
           formData.buildingEndDate = formData.buildingEndDate ? formData.buildingEndDate.format('YYYY-MM-DD') : null
-          // if (formData.buildingBeginDate) {
-          //   formData.buildingBeginDate = formData.buildingBeginDate.slice(0, 10)
-          // }
-          // if (formData.buildingEndDate) {
-          //   formData.buildingEndDate = formData.buildingEndDate.slice(0, 10)
-          // }
-          // console.log(formData)
+
 
           //qs.stringify  目前看来必须转换
           formData = qs.stringify(formData)
@@ -675,9 +732,9 @@ export default {
           httpAction(httpurl, formData, method)
             .then(res => {
               if (res.success) {
-                that.$message.success('项目维护编辑成功')
-                // that.$message.success(res.message)
-                // that.$emit('ok')
+                // that.$message.success('项目维护编辑成功')
+                that.$message.success(res.message)
+                that.$emit('reload')
                 this.visible = false
               } else {
                 that.$message.warning(res.message)
