@@ -15,13 +15,13 @@
     <a-card :bordered="false">
       <a-form :form="form">
         <a-row>
-          <a-col :span="5">
+          <a-col :span="4">
             <a-form-item label="跟踪日期" :labelCol="labelCol" :wrapperCol="wrapperCol">
               <a-date-picker v-decorator="['beginDate']" />
             </a-form-item>
           </a-col>
-          <a-col :span="5">
-            <a-form-item label="跟踪日期" :labelCol="labelCol" :wrapperCol="wrapperCol">
+          <a-col :span="4">
+            <a-form-item label :labelCol="labelCol" :wrapperCol="wrapperCol">
               <a-date-picker v-decorator="['endDate']" />
             </a-form-item>
           </a-col>
@@ -50,7 +50,7 @@
             </a-form-item>
           </a-col>
           <!-- <a-col :md="6" :sm="8"> -->
-          <a-col :span="4">
+          <a-col :span="6">
             <span style="overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchReset" icon="reload">重置</a-button>
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
@@ -116,23 +116,12 @@ export default {
       title: '跟踪记录',
       record: {},
       labelCol: {
-        span: 5
+        span: 8
       },
       wrapperCol: {
         span: 16
       },
       dataSourceSTM: [],
-      // ipaginationSTM: {
-      //   current: 1,
-      //   pageSize: 10,
-      //   pageSizeOptions: ['10', '20', '30'],
-      //   showTotal: (total, range) => {
-      //     return range[0] + '-' + range[1] + ' 共' + total + '条'
-      //   },
-      //   showQuickJumper: true,
-      //   showSizeChanger: true,
-      //   total: 0
-      // },
       visible: false,
       loading: false,
       bodyStyle: {

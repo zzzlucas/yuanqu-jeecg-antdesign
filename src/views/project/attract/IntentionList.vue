@@ -351,10 +351,10 @@ export default {
     //   console.log(record.projectId);
     // },
     //写法2
-    showZeroAdd(row, e) {
-      row.__key = Dom7(e.currentTarget)
-        .parents('.ant-table-row')
-        .data('row-key')
+    showZeroAdd(row) {
+      // row.__key = Dom7(e.currentTarget)
+      //   .parents('.ant-table-row')
+      //   .data('row-key')
       this.$refs.ShowZero.partDetail(row)
       // console.log('showZeroAdd')
       //从list和modal内调用得到的参数有什么区别
