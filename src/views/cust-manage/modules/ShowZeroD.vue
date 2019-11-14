@@ -670,6 +670,7 @@ export default {
       // this.record = record
       console.log(record)
       this.form.resetFields()
+
       record.unitNature = record.baseCustomerType.unitNature
       record.industryCategory = record.baseCustomerType.industryCategory
       record.organizational = record.baseCustomerType.organizational
@@ -689,7 +690,16 @@ export default {
       record.businessScope = record.baseCustomerBusiness.businessScope
       record.businessScopePermit = record.baseCustomerBusiness.businessScopePermit
       record.rCToRMB = record.baseCustomerBusiness.rCToRMB
-
+      //浏览器编辑请求里多余的东西来自record，把record里的对象遍历出来删掉
+      delete record.baseCustomerBusiness
+      delete record.baseCustomerType
+      delete record.longLat
+      // let Rrecord = {}
+      // for (const item in record) {
+      //   if (item != baseCustomerType && item != baseCustomerBusiness) {
+      //     Rrecord.push(item)
+      //   }
+      // }
 
       this.model = Object.assign({}, record)
       this.visible = true
@@ -718,8 +728,13 @@ export default {
           that.confirmLoading = true
           let httpurl = ''
           let method = ''
-          httpurl += this.url.add
-          method = 'post'
+          if (!this.model.customerName) {
+            httpurl += this.url.add
+            method = 'post'
+          } else {
+            httpurl += this.url.edit
+            method = 'put'
+          }
           let formData = Object.assign(this.model, values)
           if (formData.merchantDate)
             formData.merchantDate = formData.merchantDate ? formData.merchantDate.format('YYYY-MM-DD') : null

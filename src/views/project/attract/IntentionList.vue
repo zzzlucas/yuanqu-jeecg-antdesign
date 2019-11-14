@@ -51,7 +51,7 @@
 
       <span slot="action" slot-scope="text, record">
         <a-dropdown>
-          <a class="ant-dropdown-link" @click.stop="showZeroAdd(record)">
+          <a class="ant-dropdown-link" @click.stop="showZeroAdd(record, ...arguments)">
             跟踪登记
             <a-icon type="down" />
           </a>
@@ -94,10 +94,10 @@
     </a-table>
 
     <!-- 表单区域 -->
-    <!-- <mgr-project-trace-drawer v-model="rightShow"></mgr-project-trace-drawer> -->
-    <!-- <register-form v-model="rightShow"></register-form> -->
     <show-zero ref="ShowZero" @reload="loadData()"></show-zero>
-    <show-two @showOneToZero="showZeroEdit" ref="ShowTwo"></show-two>
+
+    <show-two @showOneToZeroEdit="showZeroEdit" @showOneToZeroAdd="showZeroAdd" ref="ShowTwo"></show-two>
+
     <show-one ref="ShowOne" @reload="loadData()"></show-one>
     <show-card ref="ShowCard"></show-card>
     <add-project-land ref="ShowAddProjectLand" @reload="loadData()"></add-project-land>
@@ -340,9 +340,26 @@ export default {
 
     showZeroEdit(record) {
       this.$refs.ShowZero.detail(record)
+      console.log('showZeroEdit')
     },
-    showZeroAdd(record) {
-      this.$refs.ShowZero.partDetail(record)
+    // //写法1
+    // showZeroAdd(record) {
+    //   this.$refs.ShowZero.partDetail(record)
+    //   console.log('showZeroAdd');
+    //   //从list和modal内调用得到的参数有什么区别
+    //   console.log(record);
+    //   console.log(record.projectId);
+    // },
+    //写法2
+    showZeroAdd(row, e) {
+      row.__key = Dom7(e.currentTarget)
+        .parents('.ant-table-row')
+        .data('row-key')
+      this.$refs.ShowZero.partDetail(row)
+      // console.log('showZeroAdd')
+      //从list和modal内调用得到的参数有什么区别
+      // console.log(record)
+      // console.log(record.projectId)
     },
 
     //最新一条跟踪记录，数组中最后一个？从projectid获取到最新的一个recordid,然后用这个recordid请求

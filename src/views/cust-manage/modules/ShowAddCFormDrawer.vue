@@ -15,8 +15,11 @@
           label="联系人ID">
           <a-input placeholder="请输入联系人ID" v-decorator="['contactId', validatorRules.contactId ]" />
         </a-form-item>-->
-        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="企业ID？企业名称">
-          <a-input placeholder="请输入企业ID" v-decorator="['custId', validatorRules.custId ]" />
+        <!-- <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="企业ID">
+          <a-input disabled placeholder="请输入企业ID" v-decorator="['custId', validatorRules.custId ]" />
+        </a-form-item>-->
+        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="企业名称">
+          <a-input disabled placeholder="请输入企业名称" v-decorator="['customerName']" />
         </a-form-item>
         <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="姓名">
           <a-input placeholder="请输入姓名" v-decorator="['contactName', validatorRules.contactName]" />
@@ -26,7 +29,8 @@
         </a-form-item>
         <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="性别">
           <!-- <a-input placeholder="请输入性别" v-decorator="['sex', {}]" /> -->
-          <a-radio-group v-decorator="['sex', {}]">
+          <a-input placeholder="请输入手机" v-decorator="['sex', {}]" />
+          <a-radio-group v-decorator="['sex', {initialValue:''}]">
             <a-radio :value="1">男</a-radio>
             <a-radio :value="2">女</a-radio>
           </a-radio-group>
@@ -66,7 +70,7 @@
         <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="个人简介">
           <a-textarea :row="4" placeholder v-decorator="['position', {}]" />
         </a-form-item>-->
-        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="版本号">
+        <!-- <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="版本号">
           <a-input-number v-decorator="[ 'version', {}]" />
         </a-form-item>
         <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="创建者名称">
@@ -74,7 +78,7 @@
         </a-form-item>
         <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="更新者名称">
           <a-input placeholder="请输入更新者名称" v-decorator="['updateUserName', {}]" />
-        </a-form-item>
+        </a-form-item>-->
       </a-form>
     </a-spin>
     <a-button type="primary" @click="handleOk">确定</a-button>
@@ -114,7 +118,7 @@ export default {
       },
       url: {
         add: '/park.customer/baseCustomerContact/add',
-        edit: '/park.base/baseCustomerContact/edit'
+        edit: '/park.customer/baseCustomerContact/edit'
       }
     }
   },
@@ -126,8 +130,13 @@ export default {
     // })
   },
   methods: {
-    add() {
-      this.edit({})
+    add(record) {
+      this.form.resetFields()
+      this.model = Object.assign({}, record)
+      this.visible = true
+      this.$nextTick(() => {
+        this.form.setFieldsValue(pick(this.model, 'custId', 'customerName'))
+      })
     },
     edit(record) {
       this.form.resetFields()
@@ -138,6 +147,7 @@ export default {
           pick(
             this.model,
             'contactId',
+            'customerName',
             'custId',
             'contactName',
             'mobile',
@@ -163,11 +173,15 @@ export default {
       const that = this
       // 触发表单验证
       this.form.validateFields((err, values) => {
+        console.log('values');
+        console.log(values);
         if (!err) {
           that.confirmLoading = true
           let httpurl = ''
           let method = ''
-          if (!this.model.id) {
+          console.log('this.model.contactName')
+          console.log(this.model.contactName)
+          if (!this.model.contactName) {
             httpurl += this.url.add
             method = 'post'
           } else {
@@ -177,7 +191,7 @@ export default {
           let formData = Object.assign(this.model, values)
           //时间格式化
           formData = qs.stringify(formData)
-          console.log(formData)
+          // console.log(formData)
 
           httpAction(httpurl, formData, method)
             .then(res => {

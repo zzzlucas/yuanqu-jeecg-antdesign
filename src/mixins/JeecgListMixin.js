@@ -98,6 +98,7 @@ export const JeecgListMixin = {
       if(this.superQueryParams){
         sqp['superQueryParams']=encodeURI(this.superQueryParams)
       }
+      // param.status = status
       var param = Object.assign(sqp, this.queryParam, this.isorter ,this.filters);
       param.field = this.getQueryField();
       param.pageNo = this.ipagination.current;

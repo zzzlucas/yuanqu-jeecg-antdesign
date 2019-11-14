@@ -59,7 +59,7 @@
         </a-row>
         <a-row>
           <a-button
-            @click="twoShowOneAdd(record)"
+            @click="twoShowOneAdd()"
             type="primary"
             icon="plus"
             style="float:left;margin-left:0"
@@ -273,7 +273,6 @@ export default {
       })
     },
 
-
     initDictConfig() {
       initDictOptions('tracker').then(res => {
         if (res.success) {
@@ -294,16 +293,21 @@ export default {
       // console.log(row.__key)
       this.$refs.ShowCard.detail(row)
     },
-    //其实最后调用是showzero
+    //其实最后调用是showzero   这里需要modal内对应行的数据，ok
     twoShowOne(row, e) {
       row.__key = Dom7(e.currentTarget)
         .parents('.ant-table-row')
         .data('row-key')
       console.log(row.__key)
-      this.$emit('showOneToZero', row)
+      this.$emit('showOneToZeroEdit', row)
     },
+
+    //这里需要list对应行的数据  不在这里给
     twoShowOneAdd() {
-      this.$emit('showOneToZero')
+      //获得当前modal的projectId
+      // console.log('----------');
+      // console.log(this.record.projectId);
+      this.$emit('showOneToZeroAdd', this.record)
     },
 
     handleOk() {},

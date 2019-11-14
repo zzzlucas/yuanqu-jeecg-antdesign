@@ -83,7 +83,8 @@
           <detail-list>
             <detail-list-item term="注册日期">{{info.baseCustomerBusiness.registDate}}</detail-list-item>
             <detail-list-item term="注册资本">{{info.baseCustomerBusiness.registeredCapital}}</detail-list-item>
-            <detail-list-item term="转化为人民币">{{info.baseCustomerBusiness.rCToRMB}}</detail-list-item>
+            <detail-list-item term="转化为人民币">{{info.baseCustomerBusiness.rctoRMB}}</detail-list-item>
+            <!-- 这俩用字典搞一下还怎么说 -->
             <detail-list-item term="工商状态">{{info.baseCustomerBusiness.bussinessStatus}}</detail-list-item>
             <detail-list-item term="税务状态">{{info.baseCustomerBusiness.taxStatus}}</detail-list-item>
             <detail-list-item term="统一社会信用号码">{{info.baseCustomerBusiness.creditCode}}</detail-list-item>
@@ -116,11 +117,13 @@
               </a-popconfirm>
             </span>
           </a-table>
-          <show-add-c-form-drawer ref="ShowAddCFormDrawer" @reload="getCustomerContact()"></show-add-c-form-drawer>
         </a-tab-pane>
       </a-tabs>
     </a-card>
+
+    <show-add-c-form-drawer ref="ShowAddCFormDrawer" @reload="getCustomerContact()"></show-add-c-form-drawer>
     <show-zero ref="ShowZero"></show-zero>
+    <show-c-card ref="ShowCCard"></show-c-card>
   </page-layout>
 </template>
 
@@ -136,6 +139,7 @@ import { getAction, putAction } from '@/api/manage'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import ShowZero from './modules/ShowZeroD'
 import ShowAddCFormDrawer from './modules/ShowAddCFormDrawer'
+import ShowCCard from './modules/ShowCCard'
 
 import qs from 'qs'
 import Dom7 from 'dom7'
@@ -147,7 +151,8 @@ export default {
     DetailList,
     DetailListItem,
     ShowAddCFormDrawer,
-    ShowZero
+    ShowZero,
+    ShowCCard
   },
   data() {
     return {
@@ -179,10 +184,16 @@ export default {
         {
           title: '性别',
           align: 'center',
-          dataIndex: 'sex'
-          // customRender: text => {
-          //   return filterDictText(this.projectTypeDictOptions, text)
-          // }
+          dataIndex: 'sex',
+          customRender: function(text) {
+            if (text == 1) {
+              return '男'
+            } else if (text == 2) {
+              return '女'
+            } else {
+              return text
+            }
+          }
         },
         {
           title: '手机',
@@ -259,6 +270,24 @@ export default {
   },
   mounted() {},
   methods: {
+    customRow(row) {
+      return {
+        on: {
+          click: () => {
+            row.customerName = this.info.customerName
+            this.$refs.ShowCCard.detail(row)
+            // this.$router.push({ name: 'industrial-parks-info-@id', params: { id: row.parkId } })
+          }
+        }
+      }
+    },
+    // ShowCCard(row, e) {
+    //   row.__key = Dom7(e.currentTarget)
+    //     .parents('.ant-table-row')
+    //     .data('row-key')
+    //   this.$refs.ShowCCard.detail(row)
+    // },
+
     editZero() {
       //在这里要把当前页面的custId传过去，在新页面自己获取
       // let
@@ -274,8 +303,8 @@ export default {
       let params = { custId: this.info.custId }
       // this.loading = true
       // console.log('test start 777777777777')
-      console.log(this.info);
-      console.log(this.info.baseCustomerBusiness);
+      console.log(this.info)
+      console.log(this.info.baseCustomerBusiness)
 
       getAction('/park.customer/baseCustomerContact/list', params).then(res => {
         if (res.success) {
@@ -294,10 +323,12 @@ export default {
       row.__key = Dom7(e.currentTarget)
         .parents('.ant-table-row')
         .data('row-key')
+      row.customerName = this.info.customerName
       this.$refs.ShowAddCFormDrawer.edit(row)
     },
     ShowAddCFormDrawer() {
-      this.$refs.ShowAddCFormDrawer.add()
+      let row = { custId: this.$route.params.id, customerName: this.info.customerName }
+      this.$refs.ShowAddCFormDrawer.add(row)
     },
     initDictConfig() {
       initDictOptions('unit_nature').then(res => {
@@ -368,16 +399,7 @@ export default {
     //   console.log('callback');
     //   // this.getCustomerContact()
     // },
-    handleDelete() {},
-    customRow(row) {
-      return {
-        on: {
-          // click: () => {
-          //   this.$router.push({ name: 'industrial-parks-info-@id', params: { id: row.parkId } })
-          // }
-        }
-      }
-    }
+    handleDelete() {}
   },
   filters: {
     statusFilter(status) {
@@ -404,31 +426,4 @@ export default {
   font-weight: 500;
   margin-bottom: 16px;
 }
-// .div-detail-list{
-//   .ant-row{
-//     div{
-//       float: left!important;
-//     }
-//   }
-// }
-// .flex1 {
-//   margin-top: 15px;
-//   display: flex;
-//   height: 420px;
-
-//   .flex11 {
-//     width: 55%;
-//     height: 100%;
-//     margin-right: 10px;
-//   }
-//   .flex12 {
-//     display: flex;
-//     flex: 1;
-//     flex-direction: column;
-//     justify-content: space-between;
-//     .ant-card {
-//       margin-bottom: 10px;
-//     }
-//   }
-// }
 </style>

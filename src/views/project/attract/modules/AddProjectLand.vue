@@ -662,6 +662,9 @@ export default {
       // record.projectId = record.mgrProjectInvest.projectId
       record.device = record.mgrProjectInvest.device
       record.buildingInterest = record.mgrProjectInvest.buildingInterest
+      delete record.mgrProjectCust
+      delete record.mgrProjectInvest
+      delete record.mgrProjectInvestLease
 
       this.model = Object.assign({}, record)
       this.visible = true

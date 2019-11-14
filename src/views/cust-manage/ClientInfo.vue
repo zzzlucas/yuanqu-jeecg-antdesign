@@ -34,7 +34,7 @@
           </a-col>
           <a-col :md="6" :sm="8">
             <a-form-item label="状态">
-              <a-radio-group v-model="queryParam.status">
+              <a-radio-group defaultValue="" v-model="queryParam.status">
                 <a-radio value="1">在园</a-radio>
                 <a-radio value="0">离园</a-radio>
                 <!-- <a-radio :style="radioStyle" :value="2">离园</a-radio> -->
@@ -70,7 +70,7 @@
     <div>
       <a-table
         ref="table"
-        size="middle"
+        size="default"
         bordered
         rowKey="id"
         :columns="columns"
@@ -80,11 +80,7 @@
         @change="handleTableChange"
         :customRow="customRow"
       >
-        <!-- :pagination="ipagination" -->
-
         <span slot="action" slot-scope="text, record">
-          <!-- <a @click.stop="handleEdit(record, ...arguments)">test</a>
-          <a-divider type="vertical" />-->
           <a @click.stop="showConfirm(record, ...arguments)">迁出</a>
           <a-divider type="vertical" />
           <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
@@ -101,14 +97,16 @@
 <script>
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import Config from '@/defaultSettings'
-import { initDictOptions } from '@/components/dict/JDictSelectUtil'
+import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
 import ShowZero from './modules/ShowZeroD'
 import { getAction, putAction } from '@/api/manage'
 import qs from 'qs'
 import Dom7 from 'dom7'
+import { filterObj } from '@/utils/util'
+
 
 export default {
-  name: 'IndustrialParksList',
+  name: '',
   components: { ShowZero },
   mixins: [JeecgListMixin],
   data() {
@@ -153,7 +151,19 @@ export default {
         {
           title: '状态',
           align: 'center',
-          dataIndex: 'status'
+          dataIndex: 'status',
+          customRender: function(text) {
+            if (text == 1) {
+              return '在园'
+            } else if (text == 0) {
+              return '离园'
+            } else {
+              return text
+            }
+          }
+          // customRender: text => {
+          //   return filterDictText(this.statusDictOptions, text)
+          // }
         },
         {
           title: '操作',
@@ -172,14 +182,21 @@ export default {
         // importExcelUrl: 'park.base/basePark/importExcel'
       },
       temprow: '',
-      rightShow: false,
-      cusId: ''
+      // rightShow: false,
+      // custId: '',
+      status: '1'
     }
   },
   computed: {
     // importExcelUrl: function() {
     //   return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`
     // }
+  },
+  mounted() {
+    //这个status基本不能从筛选处获取，要自己手写写一次，但又不能写死，要能够被筛选处覆写
+    // this.status = this.queryParam.status
+    // console.log('this.status')
+    // console.log(this.status)
   },
   created() {
     initDictOptions('industry_gategory').then(res => {
@@ -189,6 +206,44 @@ export default {
     })
   },
   methods: {
+    //本地定制化加载
+    loadData(arg) {
+      if (!this.url.list) {
+        this.$message.error('请设置url.list属性!')
+        return
+      }
+      if (arg === 1) {
+        this.ipagination.current = 1
+      }
+      var params = this.getQueryParams()
+      this.loading = true
+      getAction(this.url.list, params).then(res => {
+        if (res.success) {
+          this.dataSource = res.result.records
+          this.ipagination.total = res.result.total
+        }
+        if (res.code === 510) {
+          this.$message.warning(res.message)
+        }
+        this.loading = false
+      })
+    },
+    getQueryParams() {
+      let sqp = {}
+      if (this.superQueryParams) {
+        sqp['superQueryParams'] = encodeURI(this.superQueryParams)
+      }
+
+      var param = Object.assign(sqp, this.queryParam, this.isorter, this.filters)
+      param.field = this.getQueryField()
+      // this.status = this.queryParam.status
+      //如何获取到status，在页面刚进来时候  钩子函数
+      // param.status = this.status
+      param.pageNo = this.ipagination.current
+      param.pageSize = this.ipagination.pageSize
+      return filterObj(param)
+    },
+
     handleTableChange() {},
     customRow(row) {
       return {

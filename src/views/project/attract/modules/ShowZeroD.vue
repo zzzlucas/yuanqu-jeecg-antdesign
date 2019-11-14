@@ -16,8 +16,8 @@
                 <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="项目ID">
                   <!-- ui要求name，数据模板目前是id -->
                   <a-input
-                    placeholder="请输入项目名称"
-                    v-decorator="['projectId',  {rules: [{required: true, message: '请输入项目名称'}]}]"
+                    placeholder="请输入项目Id"
+                    v-decorator="['projectId',  {rules: [{required: true, message: '请输入项目Id'}]}]"
                   />
                 </a-form-item>
               </a-col>
@@ -69,7 +69,7 @@
                 :wrapperCol="wrapperCol.default"
                 label="项目状态"
               >
-                <a-select defaultValue="1" style="width:100%">
+                <a-select style="width:100%">
                   <a-select-option value="1">?</a-select-option>
                   <a-select-option value="2">??</a-select-option>
                 </a-select>
@@ -253,20 +253,11 @@ export default {
     },
     //只获取部分对应行的属性
     partDetail(record) {
-      this.record = record
       this.form.resetFields()
-      getAction('/park.project/mgrProjectTrace/getById', { projectId: record.projectId }).then(res => {
-        if (res.success) {
-          this.record = res.result[res.result.length - 1]
-          this.model = Object.assign({}, this.record)
-          this.visible = true
-          this.$nextTick(() => {
-            this.form.setFieldsValue(pick(this.model, 'projectId'))
-          })
-        }
-        if (res.code === 510) {
-          this.$message.warning(res.message)
-        }
+      this.model = Object.assign({}, record)
+      this.visible = true
+      this.$nextTick(() => {
+        this.form.setFieldsValue(pick(this.model, 'projectId'))
       })
     },
     close() {
