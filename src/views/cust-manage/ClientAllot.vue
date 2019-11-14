@@ -181,7 +181,6 @@ export default {
     })
   },
   methods: {
-    handleTableChange() {},
     customRow(row) {
       return {
         on: {

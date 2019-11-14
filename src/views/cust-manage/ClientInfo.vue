@@ -70,7 +70,7 @@
     <div>
       <a-table
         ref="table"
-        size="default"
+        size="middle"
         bordered
         rowKey="id"
         :columns="columns"
@@ -243,8 +243,6 @@ export default {
       param.pageSize = this.ipagination.pageSize
       return filterObj(param)
     },
-
-    handleTableChange() {},
     customRow(row) {
       return {
         on: {
