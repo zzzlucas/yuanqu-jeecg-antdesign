@@ -56,26 +56,21 @@
           <a-form-item
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
-            label="立项文号">
-            <a-input placeholder="请输入立项文号" v-decorator="['setUpSerialNum', {}]"/>
-          </a-form-item>
-          <a-form-item
-            :labelCol="labelCol"
-            :wrapperCol="wrapperCol"
-            label="土地编号">
-            <a-input placeholder="请输入土地编号" v-decorator="['serialNum', {}]"/>
-          </a-form-item>
-          <a-form-item
-            :labelCol="labelCol"
-            :wrapperCol="wrapperCol"
-            label="计划完工日期">
-            <a-date-picker v-decorator="[ 'planEndDate', {}]"></a-date-picker>
-          </a-form-item>
-          <a-form-item
-            :labelCol="labelCol"
-            :wrapperCol="wrapperCol"
             label="项目状态">
             <a-input placeholder="请输入项目状态" v-decorator="['status', {}]"/>
+          </a-form-item>
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="项目总投资">
+            <a-input v-decorator="[ 'invest', {}]"/>
+          </a-form-item>
+          <a-form-item
+            class="form-picker"
+            label="计划开工日期"
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol">
+            <a-date-picker v-decorator="[ 'planStartDate', {}]"></a-date-picker>
           </a-form-item>
         </a-col>
         <a-col span="12">
@@ -88,14 +83,20 @@
           <a-form-item
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
-            label="项目总投资">
-            <a-input-number v-decorator="[ 'invest', {}]"/>
+            label="项目联系人">
+            <a-input placeholder="请输入项目联系人" v-decorator="['manager', {}]"/>
           </a-form-item>
           <a-form-item
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
-            label="立项金额">
-            <a-input-number v-decorator="[ 'setUpInvest', {}]"/>
+            label="立项文号">
+            <a-input placeholder="请输入立项文号" v-decorator="['setUpSerialNum', {}]"/>
+          </a-form-item>
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="土地编号">
+            <a-input placeholder="请输入土地编号" v-decorator="['serialNum', {}]"/>
           </a-form-item>
           <a-form-item
             :labelCol="labelCol"
@@ -106,35 +107,31 @@
           <a-form-item
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
-            label="计划开工日期">
-            <a-date-picker v-decorator="[ 'planStartDate', {}]"></a-date-picker>
+            label="立项金额">
+            <a-input v-decorator="[ 'setUpInvest', {}]"/>
           </a-form-item>
           <a-form-item
+            class="form-picker"
+            label="计划完工日期"
             :labelCol="labelCol"
-            :wrapperCol="wrapperCol"
-            label="项目联系人">
-            <a-input placeholder="请输入项目联系人" v-decorator="['manager', {}]"/>
-          </a-form-item>
-          <a-form-item
-            :labelCol="labelCol"
-            :wrapperCol="wrapperCol"
-            label="项目性质">
-            <a-input placeholder="请输入项目性质" v-decorator="['nature', {}]"/>
-          </a-form-item>
-          <a-form-item
-            :labelCol="labelCol"
-            :wrapperCol="wrapperCol"
-            label="层数、层高、承重">
-            <a-input-number v-decorator="[ 'floorNumber', {}]"/>
+            :wrapperCol="wrapperCol">
+            <a-date-picker v-decorator="[ 'planEndDate', {}]"></a-date-picker>
           </a-form-item>
         </a-col>
         <a-col span="24">
           <a-form-item
-            class="remark-item"
+            class="full-item"
+            label="项目性质"
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol">
+            <a-input placeholder="请输入项目性质" v-decorator="['nature', {}]"/>
+          </a-form-item>
+          <a-form-item
+            class="full-item"
             label="备注信息"
             :labelCol="{span: 6}"
             :wrapperCol="{span: 18}">
-            <a-textarea placeholder="请输入备注信息" v-decorator="['remark', {}]"/>
+            <a-textarea rows="3" placeholder="请输入备注信息" v-decorator="['description', {}]"/>
           </a-form-item>
         </a-col>
       </a-row>
@@ -146,25 +143,37 @@
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
             label="总用地面积">
-            <a-input-number v-decorator="[ 'area', {}]"/>
+            <a-input v-decorator="[ 'area', {}]"/>
           </a-form-item>
           <a-form-item
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
             label="总户数">
-            <a-input-number v-decorator="[ 'familyNum', {}]"/>
+            <a-input v-decorator="[ 'familyNum', {}]"/>
           </a-form-item>
           <a-form-item
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
             label="绿地面积">
-            <a-input-number v-decorator="[ 'greenbeltArea', {}]"/>
+            <a-input v-decorator="[ 'greenbeltArea', {}]"/>
           </a-form-item>
           <a-form-item
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
             label="每层面积">
-            <a-input-number v-decorator="[ 'defenceArea', {}]"/>
+            <a-input v-decorator="[ 'defenceArea', {}]"/>
+          </a-form-item>
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="层数">
+            <a-input v-decorator="[ 'floorNumber', {}]"/>
+          </a-form-item>
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="承重">
+            <a-input v-decorator="[ 'loadBearing', {}]"/>
           </a-form-item>
         </a-col>
         <a-col span="12">
@@ -172,25 +181,98 @@
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
             label="总建筑面积">
-            <a-input-number v-decorator="[ 'overGroundArea', {}]"/>
+            <a-input v-decorator="[ 'overGroundArea', {}]"/>
           </a-form-item>
           <a-form-item
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
             label="容积率">
-            <a-input-number v-decorator="[ 'plotRatio', {}]"/>
+            <a-input v-decorator="[ 'plotRatio', {}]"/>
           </a-form-item>
           <a-form-item
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
             label="绿地率">
-            <a-input-number v-decorator="[ 'greeningRate', {}]"/>
+            <a-input v-decorator="[ 'greeningRate', {}]"/>
           </a-form-item>
           <a-form-item
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
             label="结构形式">
             <a-input placeholder="请输入结构形式" v-decorator="['structuralStyle', {}]"/>
+          </a-form-item>
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="层高">
+            <a-input v-decorator="[ 'floorHeight', {}]"/>
+          </a-form-item>
+        </a-col>
+      </a-row>
+    </a-form>
+
+    <a-form class="drawer-form mgr-engineering-info-drawer" :form="builderForm">
+      <h2>参建单位</h2>
+      <a-row>
+        <a-col span="12">
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="建设单位">
+            <a-input v-decorator="[ 'builder', {}]"/>
+          </a-form-item>
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="代建单位">
+            <a-input v-decorator="[ 'agency_builder', {}]"/>
+          </a-form-item>
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="施工单位">
+            <a-input v-decorator="[ 'constructor', {}]"/>
+          </a-form-item>
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="项目地址">
+            <a-input v-decorator="[ 'address', {}]"/>
+          </a-form-item>
+        </a-col>
+        <a-col span="12">
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="设计单位">
+            <a-input v-decorator="[ 'designer', {}]"/>
+          </a-form-item>
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="勘察单位">
+            <a-input v-decorator="[ 'perambulator', {}]"/>
+          </a-form-item>
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="监理单位">
+            <a-input v-decorator="[ 'supervisor', {}]"/>
+          </a-form-item>
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="联系方式">
+            <a-input v-decorator="[ 'tel', {}]"/>
+          </a-form-item>
+        </a-col>
+        <a-col span="24">
+          <a-form-item
+            class="full-item"
+            label="备注信息"
+            :labelCol="{span: 6}"
+            :wrapperCol="{span: 18}">
+            <a-textarea rows="3" placeholder="请输入备注信息" v-decorator="['description', {}]"/>
           </a-form-item>
         </a-col>
       </a-row>
@@ -223,6 +305,7 @@
           span: 18
         },
         form: this.$form.createForm(this, { name: 'engineering' }),
+        builderForm: this.$form.createForm(this, { name: 'engineeringBuilder' }),
         validatorRules: {
           projectId: { rules: [{ required: true, message: '请输入项目ID!' }] },
           parkId: { rules: [{ required: true, message: '请输入园区ID!' }] }
@@ -292,8 +375,6 @@
               that.confirmLoading = false
               that.close()
             })
-
-
           }
         })
       },
@@ -312,18 +393,29 @@
       text-align: right;
 
       //noinspection CssInvalidPseudoSelector
-      &:not(:first-of-type){
+      &:not(:first-of-type) {
         margin-top: 16px;
       }
     }
 
-    .remark-item {
+    .full-item {
       .ant-form-item-label {
         width: (50% / 24) * 6;
       }
 
       .ant-form-item-control-wrapper {
         width: (50% / 24) * 18 + 50%;
+      }
+    }
+
+    .form-picker {
+      .ant-form-item-children {
+        width: 100%;
+        display: block;
+
+        .ant-calendar-picker {
+          width: 100%;
+        }
       }
     }
   }
