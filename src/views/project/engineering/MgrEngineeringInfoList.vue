@@ -7,29 +7,40 @@
         <a-row :gutter="24">
 
           <a-col :md="6" :sm="8">
-            <a-form-item label="项目ID">
-              <a-input placeholder="请输入项目ID" v-model="queryParam.projectId"></a-input>
+            <a-form-item label="项目名称">
+              <a-input placeholder="请输入项目名称" v-model="queryParam.keyword"></a-input>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
-            <a-form-item label="项目名称">
-              <a-input placeholder="请输入项目名称" v-model="queryParam.projectName"></a-input>
+            <a-form-item label="项目状态">
+              <a-select placeholder="请选择项目状态" allow-clear v-model="queryParam.status">
+                <a-select-option value="1">未开始</a-select-option>
+                <a-select-option value="2">进行中</a-select-option>
+                <a-select-option value="3">已完成</a-select-option>
+              </a-select>
             </a-form-item>
           </a-col>
           <template v-if="toggleSearchStatus">
             <a-col :md="6" :sm="8">
-              <a-form-item label="所属单位">
-                <a-input placeholder="请输入所属单位" v-model="queryParam.customerName"></a-input>
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="8">
               <a-form-item label="项目类别">
-                <a-input placeholder="请输入项目类别" v-model="queryParam.types"></a-input>
+                <a-select placeholder="请选择项目类别" allow-clear v-model="queryParam.types">
+                  <a-select-option value="1">工业项目</a-select-option>
+                  <a-select-option value="2">住宅项目</a-select-option>
+                  <a-select-option value="3">商业项目</a-select-option>
+                  <a-select-option value="4">基础设施项目</a-select-option>
+                </a-select>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="8">
-              <a-form-item label="项目总投资">
-                <a-input placeholder="请输入项目总投资" v-model="queryParam.invest"></a-input>
+              <a-form-item label="项目进展">
+                <a-select placeholder="请选择项目进展" allow-clear v-model="queryParam.engineeringProcess">
+                  <a-select-option value="1">前期准备</a-select-option>
+                  <a-select-option value="2">办证</a-select-option>
+                  <a-select-option value="3">已入库</a-select-option>
+                  <a-select-option value="4">在建中</a-select-option>
+                  <a-select-option value="5">已竣工</a-select-option>
+                  <a-select-option value="6">已投产</a-select-option>
+                </a-select>
               </a-form-item>
             </a-col>
           </template>

@@ -357,18 +357,20 @@
           form.createrDate = form.createrDate ? form.createrDate.format('YYYY-MM-DD') : ''
 
           form.mgrEngineeringBuilder = builderForm
-          form = qs.stringify(form)
 
           this.confirmLoading = true
           let httpUrl = ''
           let method = ''
-          if (!this.model.id) {
+          if (!this.model.projectId) {
             httpUrl += this.url.add
             method = 'post'
           } else {
+            form.projectId = this.model.projectId
             httpUrl += this.url.edit
             method = 'put'
           }
+
+          form = qs.stringify(form)
 
           httpAction(httpUrl, form, method).then((res) => {
             this.confirmLoading = false
