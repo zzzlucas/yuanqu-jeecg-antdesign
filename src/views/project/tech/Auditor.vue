@@ -7,11 +7,11 @@
         <a-row :gutter="24">
           <a-col :span="6">
             <a-form-item label="审核阶段">
-              <a-select v-model="queryParam.sex" placeholder="全部" >
-                <a-select-option value="1" >全部</a-select-option>
-                <a-select-option value="2" >部门审核</a-select-option>
-                <a-select-option value="3" >分管领导审核</a-select-option>
-                <a-select-option value="4" >主要领导审核</a-select-option>
+              <a-select v-model="queryParam.sex" placeholder="全部">
+                <a-select-option value="1">全部</a-select-option>
+                <a-select-option value="2">部门审核</a-select-option>
+                <a-select-option value="3">分管领导审核</a-select-option>
+                <a-select-option value="4">主要领导审核</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
@@ -21,7 +21,7 @@
             </a-form-item>
           </a-col>-->
 
-          <a-col :span="8">
+          <a-col>
             <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
               <a-button
@@ -32,10 +32,25 @@
               >重置</a-button>
             </span>
           </a-col>
+
+          <a-col>
+            <a-dropdown v-if="selectedRowKeys.length > 0">
+              <a-menu slot="overlay">
+                <a-menu-item key="1" @click="batchDel">
+                  <a-icon type="delete" />删除
+                </a-menu-item>
+              </a-menu>
+              <a-button style="margin-left: 8px">
+                批量操作
+                <a-icon type="down" />
+              </a-button>
+            </a-dropdown>
+          </a-col>
+
           <!-- 右侧新建项目 -->
-          <a-col :span="8" style="float: right">
+          <a-col :span="4" style="float: right">
             <span style="float: right;overflow: hidden;" class="table-page-search-submitButtons">
-              <a-button type="primary" @click="searchQuery">添加审核人</a-button>
+              <a-button type="primary" @click="AuditorAddForm">添加审核人</a-button>
             </span>
           </a-col>
         </a-row>
@@ -46,23 +61,29 @@
       <a-button type="primary" @click="readAll" icon="book">全部标注已读</a-button>
     </div>-->
 
-    <a-table
-      ref="table"
-      size="default"
-      bordered
-      rowKey="id"
-      :columns="columns"
-      :dataSource="dataSource"
-      :pagination="ipagination"
-      :loading="loading"
-      @change="handleTableChange"
-      :rowSelection="rowSelection"
-    >
-      <!-- <span slot="action" slot-scope="text, record">
-        <a @click="showAnnouncement(record)">审核</a>&nbsp
-        <a @click="showAnnouncement(record)">项目维护</a>
-      </span> -->
-    </a-table>
+    <!-- table区域-begin -->
+    <div class="industrial-parks-list">
+      <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;">
+        <i class="anticon anticon-info-circle ant-alert-icon"></i> 已选择
+        <a style="font-weight: 600">{{ selectedRowKeys.length }}</a>项
+        <a style="margin-left: 24px" @click="onClearSelected">清空</a>
+      </div>
+
+      <a-table
+        ref="table"
+        size="middle"
+        bordered
+        rowKey="id"
+        :columns="columns"
+        :dataSource="dataSource"
+        :pagination="ipagination"
+        :loading="loading"
+        :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
+        @change="handleTableChange"
+      ></a-table>
+      <!-- :customRow="customRow" -->
+    </div>
+    <auditor-add-form @reload="loadData" ref="AuditorAddForm"></auditor-add-form>
 
     <show-announcement ref="ShowAnnouncement"></show-announcement>
   </a-card>
@@ -71,36 +92,39 @@
 import { filterObj } from '@/utils/util'
 import { getAction, putAction } from '@/api/manage'
 import ShowAnnouncement from '@/components/tools/ShowAnnouncement'
+import AuditorAddForm from './modules/AuditorAddFormM'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 export default {
   name: 'UserAnnouncementList',
   mixins: [JeecgListMixin],
   components: {
-    ShowAnnouncement
+    ShowAnnouncement,
+    AuditorAddForm
   },
   data() {
     return {
-      description: '项目登记页面（原系统通告表管理页面）',
+      description: '',
       queryParam: {},
-      rowSelection:{},
+      rowSelection: {},
       columns: [
         {
           title: '审核部门',
           align: 'center',
           dataIndex: 'msgCategory'
+          //不存在
         },
         {
           title: '审核人',
           align: 'center',
-          dataIndex: 'priority'
+          dataIndex: 'userId'
         },
         {
+          //不存在，咋整
           title: ' 审核阶段',
           align: 'center',
           dataIndex: 'readFlag',
           customRender: function(text) {
             if (text == '1') {
-              //返回此页的数据目前是 undefined？
               return '已审核'
             } else if (text == '2') {
               return '未审核'
@@ -108,31 +132,20 @@ export default {
               return '未审核'
             }
           }
-        },
-        // {
-        //   title: '操作',
-        //   dataIndex: 'action',
-        //   align: 'center',
-        //   scopedSlots: { customRender: 'action' }
-        // }
+        }
       ],
       url: {
-        list: '/sys/sysAnnouncementSend/getMyAnnouncementSend',
-        editCementSend: 'sys/sysAnnouncementSend/editByAnntIdAndUserId',
-        readAllMsg: 'sys/sysAnnouncementSend/readAll'
+        list: '/park.workflow/baseWorkFlowProject/list'
       },
       loading: false
     }
   },
-  created() {
-    //生效了？？？ url.list ?
-    this.loadData()
-  },
+  created() {},
   methods: {
-    handleDetail: function(record) {
-      this.$refs.sysAnnouncementModal.detail(record)
-      this.$refs.sysAnnouncementModal.title = '查看'
+    AuditorAddForm() {
+      this.$refs.AuditorAddForm.add()
     },
+
     showAnnouncement(record) {
       putAction(this.url.editCementSend, { anntId: record.anntId }).then(res => {
         if (res.success) {
@@ -140,21 +153,6 @@ export default {
         }
       })
       this.$refs.ShowAnnouncement.detail(record)
-    },
-    readAll() {
-      var that = this
-      that.$confirm({
-        title: '确认操作',
-        content: '是否全部标注已读?',
-        onOk: function() {
-          putAction(that.url.readAllMsg).then(res => {
-            if (res.success) {
-              that.$message.success(res.message)
-              that.loadData()
-            }
-          })
-        }
-      })
     }
   }
 }

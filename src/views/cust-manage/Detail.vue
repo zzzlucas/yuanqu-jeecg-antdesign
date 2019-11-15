@@ -83,10 +83,10 @@
           <detail-list>
             <detail-list-item term="注册日期">{{info.baseCustomerBusiness.registDate}}</detail-list-item>
             <detail-list-item term="注册资本">{{info.baseCustomerBusiness.registeredCapital}}</detail-list-item>
-            <detail-list-item term="转化为人民币">{{info.baseCustomerBusiness.rctoRMB}}</detail-list-item>
+            <detail-list-item term="转化为人民币">{{info.baseCustomerBusiness.rCToRMB}}</detail-list-item>
             <!-- 这俩用字典搞一下还怎么说 -->
-            <detail-list-item term="工商状态">{{info.baseCustomerBusiness.bussinessStatus}}</detail-list-item>
-            <detail-list-item term="税务状态">{{info.baseCustomerBusiness.taxStatus}}</detail-list-item>
+            <detail-list-item term="工商状态">{{dictText.bussinessStatusText}}</detail-list-item>
+            <detail-list-item term="税务状态">{{dictText.taxStatusText}}</detail-list-item>
             <detail-list-item term="统一社会信用号码">{{info.baseCustomerBusiness.creditCode}}</detail-list-item>
             <detail-list-item term="注册地址">{{info.baseCustomerBusiness.registerAddress}}</detail-list-item>
             <detail-list-item term="注册地邮编">{{info.baseCustomerBusiness.registerAddressZipCode}}</detail-list-item>
@@ -122,7 +122,7 @@
     </a-card>
 
     <show-add-c-form-drawer ref="ShowAddCFormDrawer" @reload="getCustomerContact()"></show-add-c-form-drawer>
-    <show-zero ref="ShowZero"></show-zero>
+    <show-zero ref="ShowZero" @reload="getloadData"></show-zero>
     <show-c-card ref="ShowCCard"></show-c-card>
   </page-layout>
 </template>
@@ -225,6 +225,8 @@ export default {
         }
       ],
       dict: {
+        bussinessStatus: [],
+        taxStatus: [],
         unitNature: [],
         industryCategory: [],
         organizational: [],
@@ -233,6 +235,8 @@ export default {
         registrationType: []
       },
       dictText: {
+        bussinessStatusText: '',
+        taxStatusText: '',
         unitNatureText: '',
         industryCategoryText: '',
         organizationalText: '',
@@ -251,20 +255,7 @@ export default {
       this.$message.warning('ID不正确')
       return false
     }
-    getAction('/park.customer/baseCustomer/queryById', { id: this.$route.params.id }).then(res => {
-      if (res.code === 200) {
-        this.loading = false
-        //info就是表单需要的东西
-        this.info = res.result
-
-        //这一步晚了，所以报错？ 要提前，虽然其实得到了数据
-        this.initDictConfig()
-      } else {
-        this.$router.back()
-        this.$message.error(res.message)
-      }
-    })
-
+    this.getloadData()
     console.log('test start-------------')
     // this.getCustomerContact()
   },
@@ -287,7 +278,21 @@ export default {
     //     .data('row-key')
     //   this.$refs.ShowCCard.detail(row)
     // },
+    getloadData() {
+      getAction('/park.customer/baseCustomer/queryById', { id: this.$route.params.id }).then(res => {
+        if (res.code === 200) {
+          this.loading = false
+          //info就是表单需要的东西
+          this.info = res.result
 
+          //这一步晚了，所以报错？ 要提前，虽然其实得到了数据
+          this.initDictConfig()
+        } else {
+          this.$router.back()
+          this.$message.error(res.message)
+        }
+      })
+    },
     editZero() {
       //在这里要把当前页面的custId传过去，在新页面自己获取
       // let
@@ -368,6 +373,28 @@ export default {
             for (const item of this.dict.registrationType) {
               if (item.value == this.info.baseCustomerType.registrationType)
                 return (this.dictText.registrationTypeText = item.text)
+              // break 无需
+            }
+          }
+        }),
+        initDictOptions('bussiness_status').then(res => {
+          if (res.code === 0 && res.success) {
+            this.dict.bussinessStatus = res.result
+            // this.dict.registrationType.forEach(this.switchFunctionR)
+            for (const item of this.dict.bussinessStatus) {
+              if (item.value == this.info.baseCustomerBusiness.bussinessStatus)
+                return (this.dictText.bussinessStatusText = item.text)
+              // break 无需
+            }
+          }
+        }),
+        initDictOptions('tax_status').then(res => {
+          if (res.code === 0 && res.success) {
+            this.dict.taxStatus = res.result
+            // this.dict.registrationType.forEach(this.switchFunctionR)
+            for (const item of this.dict.taxStatus) {
+              if (item.value == this.info.baseCustomerBusiness.taxStatus)
+                return (this.dictText.taxStatusText = item.text)
               // break 无需
             }
           }

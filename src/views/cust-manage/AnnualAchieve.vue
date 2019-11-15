@@ -158,7 +158,8 @@ export default {
         }
       ],
       url: {
-        list: '/park.indicators/baseIndicatorsMsg/list',
+        listN: '/park.indicators/baseIndicatorsMsg/list',
+        listM: '/park.indicators/baseIndicatorsMsg/listFinish',
         delete: '/park.park/basePark/delete',
         deleteBatch: '/park.park/basePark/deleteBatch'
       },
@@ -184,7 +185,8 @@ export default {
     },
     loadData() {
       let params = { type: this.typee }
-      getAction(this.url.list, params).then(res => {
+      //当type为不限时，走listM的api ， type筛选时，走最简单的listN
+      getAction(this.url.listN, params).then(res => {
         if (res.success) {
           //111111111111   处理dataSource，为需要的格式  /遍历操作
           // let RealDataSource = []
@@ -206,9 +208,9 @@ export default {
           // }
           // res.result = RealDataSource
           // 22222222222
-          this.dataSource = res.result
-          
-          
+          this.dataSource = res.result          
+          //分页查询未在此实现
+
         }
         if (res.code === 510) {
           this.$message.warning(res.message)

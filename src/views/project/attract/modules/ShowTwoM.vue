@@ -6,7 +6,6 @@
     :width="1300"
     :visible="visible"
     :confirmLoading="confirmLoading"
-    @ok="handleOk"
     @cancel="handleCancel"
     cancelText="关闭"
     destroyOnClose
@@ -195,6 +194,7 @@ export default {
       this.visible = true
       this.record = record
       //this.record.projectId 获取到了，在get请求前传入值
+      console.log(this.record.projectId);
       this.loadData()
     },
     searchQuery() {
@@ -298,8 +298,6 @@ export default {
       // console.log(this.record.projectId);
       this.$emit('showOneToZeroAdd', this.record)
     },
-
-    handleOk() {},
     handleCancel() {
       this.visible = false
     },
