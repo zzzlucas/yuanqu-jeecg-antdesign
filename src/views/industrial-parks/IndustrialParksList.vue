@@ -76,7 +76,7 @@
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import ParksAddForm from '@views/industrial-parks/components/ParksAddForm'
   import { postAction, putAction } from '@/api/manage'
-  import qs from 'querystring'
+  import qs from 'qs'
   import Dom7 from 'dom7'
 
   export default {
