@@ -16,9 +16,9 @@
             :wrapperCol="wrapperCol"
             label="所属园区">
             <a-select placeholder="请选择园区" v-decorator="['parkId', {rules: rules.parkId}]">
-              <a-select-option value="1">园区1</a-select-option>
-              <a-select-option value="2">园区2</a-select-option>
-              <a-select-option value="3">园区3</a-select-option>
+              <a-select-option value="1193719771573518336">园区1</a-select-option>
+              <a-select-option value="1193773294512242688">园区2</a-select-option>
+              <a-select-option value="1193775260059566080">园区3</a-select-option>
             </a-select>
           </a-form-item>
           <a-form-item
@@ -289,6 +289,8 @@
   import pick from 'lodash.pick'
   import moment from 'moment'
   import rules from '../js/rules'
+  import { promiseForm } from '@utils/util'
+  import qs from 'qs'
 
   export default {
     name: 'MgrEngineeringInfoDrawer',
@@ -343,39 +345,43 @@
         this.visible = false
       },
       handleOk() {
-        const that = this
         // 触发表单验证
-        this.form.validateFields((err, values) => {
-          if (!err) {
-            that.confirmLoading = true
-            let httpurl = ''
-            let method = ''
-            if (!this.model.id) {
-              httpurl += this.url.add
-              method = 'post'
-            } else {
-              httpurl += this.url.edit
-              method = 'put'
-            }
-            let formData = Object.assign(this.model, values)
-            //时间格式化
-            formData.planStartDate = formData.planStartDate ? formData.planStartDate.format() : null
-            formData.planEndDate = formData.planEndDate ? formData.planEndDate.format() : null
-            formData.createrDate = formData.createrDate ? formData.createrDate.format() : null
+        const form = promiseForm(this.form)
+        const builderForm = promiseForm(this.builderForm)
 
-            console.log(formData)
-            httpAction(httpurl, formData, method).then((res) => {
-              if (res.success) {
-                that.$message.success(res.message)
-                that.$emit('ok')
-              } else {
-                that.$message.warning(res.message)
-              }
-            }).finally(() => {
-              that.confirmLoading = false
-              that.close()
-            })
+        // TODO: 工程项目：提交的数据还要改
+        Promise.all([form, builderForm]).then(([form, builderForm]) => {
+          //时间格式化
+          form.planStartDate = form.planStartDate ? form.planStartDate.format('YYYY-MM-DD') : ''
+          form.planEndDate = form.planEndDate ? form.planEndDate.format('YYYY-MM-DD') : ''
+          form.createrDate = form.createrDate ? form.createrDate.format('YYYY-MM-DD') : ''
+
+          form.mgrEngineeringBuilder = builderForm
+          form = qs.stringify(form)
+
+          this.confirmLoading = true
+          let httpUrl = ''
+          let method = ''
+          if (!this.model.id) {
+            httpUrl += this.url.add
+            method = 'post'
+          } else {
+            httpUrl += this.url.edit
+            method = 'put'
           }
+
+          httpAction(httpUrl, form, method).then((res) => {
+            this.confirmLoading = false
+            if (res.success) {
+              this.$message.success(res.message)
+              this.$emit('ok')
+              this.close()
+            } else {
+              this.$message.warning(res.message)
+            }
+          })
+        }).catch(err => {
+          console.log('工程项目新增：', err)
         })
       },
       handleCancel() {
