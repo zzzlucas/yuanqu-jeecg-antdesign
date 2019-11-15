@@ -9,35 +9,77 @@
   >
     <a-spin :spinning="confirmLoading">
       <a-form :form="form">
-        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="园区ID">
+        <a-row>
+          <a-col span="12">
+            <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="年度">
+              <a-select
+                placeholder="请选择年份"
+                v-decorator="['year', validatorRules.year,{initialValue: ''}]"
+              >
+                <a-select-option value="2018">2018</a-select-option>
+                <a-select-option value="2019">2019</a-select-option>
+                <a-select-option value="2020">2020</a-select-option>
+                <a-select-option value="2021">2021</a-select-option>
+                <a-select-option value="2022">2022</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+          <a-col span="12">
+            <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="月份">
+              <a-select
+                placeholder="请选择月份"
+                v-decorator="['month', validatorRules.month,{initialValue: ''}]"
+              >
+                <a-select-option value="1">1</a-select-option>
+                <a-select-option value="2">2</a-select-option>
+                <a-select-option value="3">3</a-select-option>
+                <a-select-option value="4">4</a-select-option>
+                <a-select-option value="5">5</a-select-option>
+                <a-select-option value="6">6</a-select-option>
+                <a-select-option value="7">7</a-select-option>
+                <a-select-option value="8">8</a-select-option>
+                <a-select-option value="9">9</a-select-option>
+                <a-select-option value="10">10</a-select-option>
+                <a-select-option value="11">11</a-select-option>
+                <a-select-option value="12">12</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+          <!-- <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="区分">
+          <a-input placeholder="请输入区分" v-decorator="['type', {}]" />
+          </a-form-item>-->
+          <a-col span="12">
+            <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="企业所得税（万元）">
+              <a-input v-decorator="[ 'corporateIncomeTax', validatorRules.corporateIncomeTax,{}]" />
+            </a-form-item>
+          </a-col>
+          <a-col span="12">
+            <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="个人所得税（万元）">
+              <a-input v-decorator="[ 'individualIncomeTax', {}]" />
+            </a-form-item>
+          </a-col>
+          <a-col span="12">
+            <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="城建税（万元）">
+              <a-input v-decorator="[ 'cityTax', {}]" />
+            </a-form-item>
+          </a-col>
+          <a-col span="12">
+            <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="增值税（万元）">
+              <a-input v-decorator="[ 'addedValueTax', {}]" />
+            </a-form-item>
+          </a-col>
+          <a-col span="12">
+            <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="其他税（万元）">
+              <a-input v-decorator="[ 'otherTax', {}]" />
+            </a-form-item>
+          </a-col>
+        </a-row>
+
+        <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="园区ID">
           <a-input placeholder="请输入园区ID" v-decorator="['parkId', validatorRules.parkId ]" />
         </a-form-item>
-        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="年度">
-          <a-input placeholder="请输入年度" v-decorator="['year', validatorRules.year ]" />
-        </a-form-item>
-        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="月份">
-          <a-input v-decorator="[ 'month', validatorRules.month ]" />
-        </a-form-item>
-        <!-- <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="区分">
-          <a-input placeholder="请输入区分" v-decorator="['type', {}]" />
-        </a-form-item>-->
-        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="企业所得税（万元）">
-          <a-input v-decorator="[ 'corporateIncomeTax', {}]" />
-        </a-form-item>
-        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="个人所得税（万元）">
-          <a-input v-decorator="[ 'individualIncomeTax', {}]" />
-        </a-form-item>
-        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="城建税（万元）">
-          <a-input v-decorator="[ 'cityTax', {}]" />
-        </a-form-item>
-        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="增值税（万元）">
-          <a-input v-decorator="[ 'addedValueTax', {}]" />
-        </a-form-item>
-        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="其他税（万元）">
-          <a-input v-decorator="[ 'otherTax', {}]" />
-        </a-form-item>
         <!-- 物业地址 -->
-        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="备注">
+        <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="备注">
           <a-textarea :rows="4" placeholder="请输入备注" v-decorator="['remark', {}]" />
         </a-form-item>
         <!-- 附件 -->
@@ -61,12 +103,14 @@ export default {
       visible: false,
       model: {},
       labelCol: {
-        xs: { span: 24 },
-        sm: { span: 4 }
+        // xs: { span: 24 },
+        sm: { span: 10 },
+        long: { span: 5 }
       },
       wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 20 }
+        // xs: { span: 24 },
+        sm: { span: 14 },
+        long: { span: 19 }
       },
 
       confirmLoading: false,
@@ -74,7 +118,8 @@ export default {
       validatorRules: {
         parkId: { rules: [{ required: true, message: '请输入园区ID!' }] },
         year: { rules: [{ required: true, message: '请输入年度!' }] },
-        month: { rules: [{ required: true, message: '请输入月份!' }] }
+        month: { rules: [{ required: true, message: '请输入月份!' }] },
+        corporateIncomeTax: { rules: [{ required: true, message: '请输入企业所得税!' }] }
       },
       url: {
         add: '/park.indicators/baseIndicatorsTaxes/add',

@@ -15,23 +15,18 @@
     <a-card :bordered="false">
       <a-spin :spinning="confirmLoading">
         <detail-list :col="2">
-          <detail-list-item term="项目ID">{{info.projectId}}</detail-list-item>
-          <detail-list-item term="项目名称">{{info.projectName}}</detail-list-item>
-          <detail-list-item term="跟踪日期">{{info.trackDate}}</detail-list-item>
-          <detail-list-item term="跟踪人">{{info.tracker}}</detail-list-item>
+          <detail-list-item term="企业名称">{{info.customerName}}</detail-list-item>
+          <detail-list-item term="姓名">{{info.contactName}}</detail-list-item>
+          <detail-list-item term="手机">{{info.mobile}}</detail-list-item>
+          <detail-list-item term="Email">{{info.email}}</detail-list-item>
+          <detail-list-item term="微信号">{{info.weChat}}</detail-list-item>
+          <detail-list-item term="QQ">{{info.qq}}</detail-list-item>
+          <detail-list-item term="性别">{{info.sex}}</detail-list-item>
+          <detail-list-item term="职务">{{info.position}}</detail-list-item>
         </detail-list>
-        <detail-list>
-          <detail-list-item term="跟踪方式">{{info.trackMethod}}</detail-list-item>
-        </detail-list>
-        <detail-list>
-          <detail-list-item term="过程纪要">{{info.content}}</detail-list-item>
-        </detail-list>
-        <detail-list>
-          <detail-list-item term="意向房源">{{info.resourceGroupId}}</detail-list-item>
-        </detail-list>
-        <detail-list>
-          <detail-list-item term="备注">{{info.remark}}</detail-list-item>
-        </detail-list>
+        <!-- <detail-list>
+          <detail-list-item term="个人简介">{{info.trackMethod}}</detail-list-item>
+        </detail-list>-->
       </a-spin>
     </a-card>
   </a-modal>
@@ -51,7 +46,7 @@ export default {
     return {
       confirmLoading: false,
       // form: this.$form.createForm(this),
-      title: '跟踪记录',
+      title: '查看联系人',
       record: {},
       labelCol: {
         span: 5
@@ -82,26 +77,23 @@ export default {
     handleOk() {},
     detail(record) {
       this.visible = true
-      this.record = record
+      // this.record = record
       this.confirmLoading = true
       // console.log(this.record)
       //定义获取小卡片内容的方法
 
-      //存在跟踪记录才请求
-      if (this.record) {
-        getAction('/park.project/mgrProjectTrace/selectById', { id: this.record.recordId }).then(res => {
-          if (res.code === 200) {
-            this.info = res.result
-            // console.log(this.info)
-            // this.initDictConfig()
-          } else {
-            this.$router.back()
-            this.$message.error(res.message)
-          }
+      getAction('/park.customer/baseCustomerContact/queryById', { id: record.contactId }).then(res => {
+        if (res.code === 200) {
           this.confirmLoading = false
-        })
-      }
-      // setTimeout((this.confirmLoading = false), 5000)
+          this.info = res.result
+          this.info.customerName = record.customerName  
+          // console.log(this.info)
+          // this.initDictConfig()
+        } else {
+          this.$router.back()
+          this.$message.error(res.message)
+        }
+      })
     },
     handleCancel() {
       this.visible = false

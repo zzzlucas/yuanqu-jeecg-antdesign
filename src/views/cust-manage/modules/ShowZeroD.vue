@@ -1,16 +1,7 @@
 <template>
-  <!-- <a-drawer
-    :title="title"
-    :width="800"
-    placement="right"
-    :closable="false"
-    @close="close"
-    :visible="visible"
-  >-->
-  <!-- 登记新客户 -->
   <a-drawer
     wrapClassName="mgr-project-trace-drawer"
-    width="70%"
+    width="80%"
     :visible="visible"
     @close="close"
     destroyOnClose
@@ -128,6 +119,10 @@
                     :wrapperCol="wrapperCol.default"
                     label="所属园区"
                   >
+                    <a-input
+                      placeholder="暂无联动"
+                      v-decorator="['parkId',{rules: [{ required: true, message: '请输入', whitespace:true}]}]"
+                    ></a-input>
                     <!-- 传递园区名到此处？ -->
                     <!-- <a-select defaultValue="1" style="width:100%">
                       <a-select-option value="1">来访</a-select-option>
@@ -142,6 +137,10 @@
                     :wrapperCol="wrapperCol.default"
                     label="所属项目"
                   >
+                    <a-input
+                      placeholder="暂无联动"
+                      v-decorator="['caseId',{rules: [{ required: true, message: '请输入', whitespace:true}]}]"
+                    ></a-input>
                     <!-- caseId -->
                     <!-- <a-select defaultValue="1" style="width:100%">
                       <a-select-option value="1">来访</a-select-option>
@@ -155,6 +154,7 @@
                     :wrapperCol="wrapperCol.default"
                     label="所属楼宇"
                   >
+                    <a-input placeholder="暂无联动" v-decorator="['buidling']"></a-input>
                     <!-- buidling -->
                     <!-- <a-select defaultValue="1" style="width:100%">
                       <a-select-option value="1">来访</a-select-option>
@@ -298,7 +298,10 @@
                   :wrapperCol="wrapperCol.default"
                   label="行业类型"
                 >
-                  <a-select v-decorator="['industryCategory']" placeholder="请选择">
+                  <a-select
+                    v-decorator="['industryCategory',{rules: [{ required: true, message: '请选择行业类型', whitespace:true}]}]"
+                    placeholder="请选择"
+                  >
                     <a-select-option
                       v-for="(item, key) in dict.industryCategoryExt"
                       :value="item.value"
@@ -399,7 +402,7 @@
                   :wrapperCol="wrapperCol.default"
                   label="转化为人民币"
                 >
-                  <a-input addonAfter="万元" v-decorator="[ 'RCToRMB']" />
+                  <a-input addonAfter="万元" v-decorator="[ 'rCToRMB']" />
                 </a-form-item>
               </a-col>
               <a-col span="8">
@@ -440,7 +443,9 @@
                   :wrapperCol="wrapperCol.default"
                   label="统一社会信用号码"
                 >
-                  <a-input v-decorator="[ 'creditCode']" />
+                  <a-input
+                    v-decorator="[ 'creditCode',{rules: [{ required: true, message: '请输入统一社会信用号码', whitespace:true}]}]"
+                  />
                 </a-form-item>
               </a-col>
               <a-col span="16">
@@ -494,7 +499,7 @@
                 </a-form-item>
               </a-col>
               <a-col span="24">
-                <a-form-item
+                <!-- <a-form-item
                   :labelCol="labelCol.whole"
                   :wrapperCol="wrapperCol.whole"
                   label="parkId"
@@ -502,12 +507,13 @@
                   <a-input
                     v-decorator="['parkId',{rules: [{ required: true, message: '请输入parkId', whitespace:true}]}]"
                   ></a-input>
-                </a-form-item>
+                </a-form-item>-->
               </a-col>
             </a-row>
           </a-card>
         </a-spin>
       </a-form>
+
       <div
         :style="{
           position: 'absolute',
@@ -534,6 +540,7 @@ import { httpAction } from '@/api/manage'
 import pick from 'lodash.pick'
 import moment from 'moment'
 import { initDictOptions } from '@comp/dict/JDictSelectUtil'
+import { AddbaseCustomerForm } from '@/config/pick-fields'
 
 export default {
   name: '',
@@ -655,9 +662,53 @@ export default {
     onChange(checkedValues) {
       console.log('checked = ', checkedValues)
     },
-    detail(record) {
+    add() {
       this.visible = true
-      this.record = record
+    },
+    //新页面 详情 打开的，咋传，考虑一哈
+    detail(record) {
+      // this.record = record
+      console.log(record)
+      this.form.resetFields()
+
+      record.unitNature = record.baseCustomerType.unitNature
+      record.industryCategory = record.baseCustomerType.industryCategory
+      record.organizational = record.baseCustomerType.organizational
+      record.technicalField = record.baseCustomerType.technicalField
+      record.enterpriseRating = record.baseCustomerType.enterpriseRating
+      record.registrationType = record.baseCustomerType.registrationType
+
+      record.registDate = record.baseCustomerBusiness.registDate
+      record.registeredCapital = record.baseCustomerBusiness.registeredCapital
+      record.bussinessStatus = record.baseCustomerBusiness.bussinessStatus
+      record.taxStatus = record.baseCustomerBusiness.taxStatus
+      record.creditCode = record.baseCustomerBusiness.creditCode
+      record.registerAddress = record.baseCustomerBusiness.registerAddress
+      record.registerAddressZipCode = record.baseCustomerBusiness.registerAddressZipCode
+      record.businessAddress = record.baseCustomerBusiness.businessAddress
+      record.businessAddressZipCode = record.baseCustomerBusiness.businessAddressZipCode
+      record.businessScope = record.baseCustomerBusiness.businessScope
+      record.businessScopePermit = record.baseCustomerBusiness.businessScopePermit
+      record.rCToRMB = record.baseCustomerBusiness.rCToRMB
+      //浏览器编辑请求里多余的东西来自record，把record里的对象遍历出来删掉
+      delete record.baseCustomerBusiness
+      delete record.baseCustomerType
+      delete record.longLat
+      // let Rrecord = {}
+      // for (const item in record) {
+      //   if (item != baseCustomerType && item != baseCustomerBusiness) {
+      //     Rrecord.push(item)
+      //   }
+      // }
+
+      this.model = Object.assign({}, record)
+      this.visible = true
+      this.$nextTick(() => {
+        this.form.setFieldsValue(pick(this.model, AddbaseCustomerForm))
+        this.form.setFieldsValue({ merchantDate: this.model.merchantDate ? moment(this.model.merchantDate) : null })
+        this.form.setFieldsValue({ settledDate: this.model.settledDate ? moment(this.model.settledDate) : null })
+        this.form.setFieldsValue({ registDate: this.model.registDate ? moment(this.model.registDate) : null })
+      })
     },
     handleCancel() {
       this.visible = false
@@ -665,36 +716,6 @@ export default {
     handleImportExcel() {},
     importExcelUrl() {},
     tokenHeader() {},
-    add() {
-      this.edit({})
-    },
-    edit(record) {
-      this.form.resetFields()
-      this.model = Object.assign({}, record)
-      this.visible = true
-      this.$nextTick(() => {
-        this.form.setFieldsValue(
-          pick(
-            this.model,
-            'recordId',
-            'projectId',
-            'tracker',
-            'trackMethod',
-            'status',
-            'content',
-            'resourceGroupId',
-            'remark',
-            'parkId',
-            'addDocFiles',
-            'version',
-            'createUserName',
-            'updateUserName'
-          )
-        )
-        //时间格式化
-        // this.form.setFieldsValue({ trackDate: this.model.trackDate ? moment(this.model.trackDate) : null })
-      })
-    },
     close() {
       this.$emit('close')
       this.visible = false
@@ -707,7 +728,7 @@ export default {
           that.confirmLoading = true
           let httpurl = ''
           let method = ''
-          if (!this.model.id) {
+          if (!this.model.customerName) {
             httpurl += this.url.add
             method = 'post'
           } else {
@@ -715,14 +736,12 @@ export default {
             method = 'put'
           }
           let formData = Object.assign(this.model, values)
-          //时间格式化
           if (formData.merchantDate)
             formData.merchantDate = formData.merchantDate ? formData.merchantDate.format('YYYY-MM-DD') : null
           if (formData.registDate)
             formData.registDate = formData.registDate ? formData.registDate.format('YYYY-MM-DD') : null
           if (formData.settledDate)
             formData.settledDate = formData.settledDate ? formData.settledDate.format('YYYY-MM-DD') : null
-
           formData = qs.stringify(formData)
           console.log(formData)
 
@@ -730,15 +749,14 @@ export default {
             .then(res => {
               if (res.success) {
                 that.$message.success(res.message)
-                that.$emit('ok')
+                that.$emit('reload')
               } else {
                 that.$message.warning(res.message)
               }
             })
             .finally(() => {
               that.confirmLoading = false
-              // that.close()
-              // 不关闭，便于调试
+              that.close()
             })
         }
       })
@@ -760,7 +778,7 @@ export default {
   }
 
   .project-drawer-form {
-    @width: 150px;
+    @width: 180px;
     .ant-form-item-label {
       width: @width;
     }

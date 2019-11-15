@@ -15,20 +15,20 @@
     <a-card :bordered="false">
       <a-form :form="form">
         <a-row>
-          <a-col :span="5">
+          <a-col :span="4">
             <a-form-item label="跟踪日期" :labelCol="labelCol" :wrapperCol="wrapperCol">
               <a-date-picker v-decorator="['beginDate']" />
             </a-form-item>
           </a-col>
-          <a-col :span="5">
-            <a-form-item label="跟踪日期" :labelCol="labelCol" :wrapperCol="wrapperCol">
+          <a-col :span="4">
+            <a-form-item label :labelCol="labelCol" :wrapperCol="wrapperCol">
               <a-date-picker v-decorator="['endDate']" />
             </a-form-item>
           </a-col>
 
           <a-col :span="5">
             <a-form-item label="跟踪人" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-select v-decorator="['tracker']">
+              <a-select v-decorator="['keyword']">
                 <a-select-option
                   v-for="(item, key) in dict.trackerDictOptions"
                   :value="item.value"
@@ -50,7 +50,7 @@
             </a-form-item>
           </a-col>
           <!-- <a-col :md="6" :sm="8"> -->
-          <a-col :span="4">
+          <a-col :span="6">
             <span style="overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchReset" icon="reload">重置</a-button>
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
@@ -59,7 +59,7 @@
         </a-row>
         <a-row>
           <a-button
-            @click="twoShowOneAdd(record)"
+            @click="twoShowOneAdd()"
             type="primary"
             icon="plus"
             style="float:left;margin-left:0"
@@ -116,23 +116,12 @@ export default {
       title: '跟踪记录',
       record: {},
       labelCol: {
-        span: 5
+        span: 8
       },
       wrapperCol: {
         span: 16
       },
       dataSourceSTM: [],
-      // ipaginationSTM: {
-      //   current: 1,
-      //   pageSize: 10,
-      //   pageSizeOptions: ['10', '20', '30'],
-      //   showTotal: (total, range) => {
-      //     return range[0] + '-' + range[1] + ' 共' + total + '条'
-      //   },
-      //   showQuickJumper: true,
-      //   showSizeChanger: true,
-      //   total: 0
-      // },
       visible: false,
       loading: false,
       bodyStyle: {
@@ -206,7 +195,7 @@ export default {
       this.visible = true
       this.record = record
       //this.record.projectId 获取到了，在get请求前传入值
-      this.getProjectTrace()
+      this.loadData()
     },
     searchQuery() {
       this.getProjectTrace()
@@ -218,11 +207,11 @@ export default {
         sqp['superQueryParams'] = encodeURI(this.superQueryParams)
       }
       this.form.validateFieldsAndScroll((err, form) => {
-        // console.log(form)
+        console.log(form)
         this.queryform = form
       })
-      console.log(this.queryform);
-      var param = Object.assign(sqp, this.queryParam, this.isorter, this.filters, this.queryform)
+      console.log(this.queryform)
+      var param = Object.assign(this.queryform)
       // param.field = this.getQueryField()
       param.projectId = this.record.projectId
       param.pageNo = this.ipagination.current
@@ -230,19 +219,40 @@ export default {
       return filterObj(param)
     },
     //表格跟踪记录获取  通过projectId查询
-    //不使用loaddata（）的原因: params获取传进来的projectId
+
+    //第一个获取方法  列表获取
+    loadData() {
+      // if (arg === 1) {
+      //   this.ipagination.current = 1
+      // }
+      let params = { projectId: this.record.projectId }
+      this.loading = true
+      getAction('/park.project/mgrProjectTrace/getById', params).then(res => {
+        if (res.success) {
+          // console.log('test start getAction')
+          // console.log(res.result)
+          this.dataSourceSTM = res.result
+          this.ipagination.total = res.result.total
+        }
+        if (res.code === 510) {
+          this.$message.warning(res.message)
+        }
+        this.loading = false
+      })
+    },
+
+    //第二个获取方法，查询获取
     getProjectTrace(arg = 1) {
       if (arg === 1) {
         this.ipagination.current = 1
       }
       let params = this.getQueryParams()
-      // let params = { projectId: this.record.projectId }
       this.loading = true
-      getAction('/park.project/mgrProjectTrace/getById', params).then(res => {
+      getAction('/park.project/mgrProjectTrace/list', params).then(res => {
         if (res.success) {
           console.log('test start getAction')
           console.log(res.result)
-          this.dataSourceSTM = res.result
+          this.dataSourceSTM = res.result.records
           this.ipagination.total = res.result.total
         }
         if (res.code === 510) {
@@ -272,16 +282,21 @@ export default {
       // console.log(row.__key)
       this.$refs.ShowCard.detail(row)
     },
-    //其实最后调用是showzero
+    //其实最后调用是showzero   这里需要modal内对应行的数据，ok
     twoShowOne(row, e) {
       row.__key = Dom7(e.currentTarget)
         .parents('.ant-table-row')
         .data('row-key')
       console.log(row.__key)
-      this.$emit('showOneToZero', row)
+      this.$emit('showOneToZeroEdit', row)
     },
-    twoShowOneAdd(row) {
-      this.$emit('showOneToZero', row)
+
+    //这里需要list对应行的数据  不在这里给
+    twoShowOneAdd() {
+      //获得当前modal的projectId
+      // console.log('----------');
+      // console.log(this.record.projectId);
+      this.$emit('showOneToZeroAdd', this.record)
     },
 
     handleOk() {},

@@ -12,12 +12,43 @@
         <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="园区ID">
           <a-input placeholder="请输入园区ID" v-decorator="['parkId', validatorRules.parkId ]" />
         </a-form-item>
+        <!-- <a-row>
+        <a-col span="12">-->
         <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="年度">
-          <a-input placeholder="请输入年度" v-decorator="['year', validatorRules.year ]" />
+          <a-select
+            placeholder="请选择年份"
+            v-decorator="['year', validatorRules.year,{initialValue: ''}]"
+          >
+            <a-select-option value="2018">2018</a-select-option>
+            <a-select-option value="2019">2019</a-select-option>
+            <a-select-option value="2020">2020</a-select-option>
+            <a-select-option value="2021">2021</a-select-option>
+            <a-select-option value="2022">2022</a-select-option>
+          </a-select>
         </a-form-item>
+        <!-- </a-col>
+        <a-col span="12">-->
         <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="月份">
-          <a-input placeholder="请输入月份" v-decorator="['month', validatorRules.month ]" />
+          <a-select
+            placeholder="请选择月份"
+            v-decorator="['month', validatorRules.month,{initialValue: ''}]"
+          >
+            <a-select-option value="1">1</a-select-option>
+            <a-select-option value="2">2</a-select-option>
+            <a-select-option value="3">3</a-select-option>
+            <a-select-option value="4">4</a-select-option>
+            <a-select-option value="5">5</a-select-option>
+            <a-select-option value="6">6</a-select-option>
+            <a-select-option value="7">7</a-select-option>
+            <a-select-option value="8">8</a-select-option>
+            <a-select-option value="9">9</a-select-option>
+            <a-select-option value="10">10</a-select-option>
+            <a-select-option value="11">11</a-select-option>
+            <a-select-option value="12">12</a-select-option>
+          </a-select>
         </a-form-item>
+        <!-- </a-col>
+        </a-row>-->
         <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="地区生产总值（万元）">
           <a-input v-decorator="[ 'originalLeader', {}]" />
         </a-form-item>
@@ -55,7 +86,7 @@ export default {
   name: 'baseIndicatorsMsgModal',
   data() {
     return {
-      title: '新增预算指标',
+      title: '新增完成情况',
       visible: false,
       model: {},
       labelCol: {
@@ -72,7 +103,7 @@ export default {
       validatorRules: {
         parkId: { rules: [{ required: true, message: '请输入园区ID!' }] },
         year: { rules: [{ required: true, message: '请输入年度!' }] },
-        month: { rules: [{ required: true, message: '请输入月份!' }] },
+        month: { rules: [{ required: true, message: '请输入月份!' }] }
       },
       url: {
         add: '/park.indicators/baseIndicatorsMsg/add',
@@ -126,12 +157,12 @@ export default {
           let httpurl = ''
           let method = ''
           //真的有区分吗
-          if (!this.model.month) {
-            console.log('post');
+          if (!this.model.year) {
+            console.log('post')
             httpurl += this.url.add
             method = 'post'
           } else {
-            console.log('put');
+            console.log('put')
             httpurl += this.url.edit
             method = 'put'
           }

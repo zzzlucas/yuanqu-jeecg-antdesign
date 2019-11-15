@@ -7,7 +7,7 @@
         <a-tab-pane tab="企业基本信息" key="1">
           <detail-list>
             <detail-list-item term="投资额">{{ info.investAmount }}（万元）</detail-list-item>
-            <detail-list-item term="注册投资">{{ info.registerMoney }} </detail-list-item>
+            <detail-list-item term="注册投资">{{ info.registerMoney }}</detail-list-item>
             <detail-list-item term="年产值">{{ info.annualProductionValue }}(万元)</detail-list-item>
             <detail-list-item term="年税金">{{ info.annualTaxes }}(万元)</detail-list-item>
             <detail-list-item term="重要程度">{{ info.importance }}</detail-list-item>
@@ -95,9 +95,9 @@ export default {
       loading: false,
       info: {},
       url: {
-        list: '/park.project/mgrProjectInfo/queryById'
+        list: '/park.project/mgrProjectInfo/queryProjectById'
       },
-columns: [
+      columns: [
         {
           title: '项目名称',
           align: 'center',
@@ -131,7 +131,7 @@ columns: [
           align: 'center',
           scopedSlots: { customRender: 'action' }
         }
-      ],
+      ]
     }
   },
 
@@ -141,7 +141,7 @@ columns: [
       this.$message.warning('ID不正确')
       return false
     }
-    getAction('/park.project/mgrProjectInfo/queryById', { id: this.$route.params.id }).then(res => {
+    getAction('/park.project/mgrProjectInfo/queryProjectById', { projectId: this.$route.params.id }).then(res => {
       if (res.code === 200) {
         this.loading = false
         this.info = res.result

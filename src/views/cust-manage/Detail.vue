@@ -3,7 +3,7 @@
     <!-- 应该在page-layout组件vue里写abadge -->
     <!-- <div style="width:1200px;margin:auto;"> -->
     <a-card :bordered="false">
-      <a-tabs defaultActiveKey="1" @change="callback">
+      <a-tabs defaultActiveKey="1" @tabClick="getCustomerContact">
         <a-tab-pane tab="基本信息" key="1">
           <div class="div-detail-list">
             <detail-list>
@@ -30,6 +30,21 @@
           <detail-list>
             <detail-list-item term="企业简介">{{ info.content }}</detail-list-item>
           </detail-list>
+          <div
+            :style="{
+          position: 'absolute',
+          left: 0,
+          bottom: 0,
+          width: '100%',
+          borderTop: '1px solid #e9e9e9',
+          padding: '10px 16px',
+          background: '#fff',
+          textAlign: 'right',
+        }"
+          >
+            <!-- <a-button :style="{marginRight: '8px'}" @click="onClose">Cancel</a-button> -->
+            <a-button @click="editZero()" type="primary">编辑</a-button>
+          </div>
         </a-tab-pane>
         <a-tab-pane tab="企业标识" key="2">
           <!-- <a-table
@@ -46,7 +61,7 @@
               <a @click.stop>编辑</a>&nbsp;
               <a @click.stop>查看</a>
             </span>
-          </a-table> -->
+          </a-table>-->
         </a-tab-pane>
         <a-tab-pane tab="附件" key="3">
           <detail-list>
@@ -69,6 +84,7 @@
             <detail-list-item term="注册日期">{{info.baseCustomerBusiness.registDate}}</detail-list-item>
             <detail-list-item term="注册资本">{{info.baseCustomerBusiness.registeredCapital}}</detail-list-item>
             <detail-list-item term="转化为人民币">{{info.baseCustomerBusiness.rctoRMB}}</detail-list-item>
+            <!-- 这俩用字典搞一下还怎么说 -->
             <detail-list-item term="工商状态">{{info.baseCustomerBusiness.bussinessStatus}}</detail-list-item>
             <detail-list-item term="税务状态">{{info.baseCustomerBusiness.taxStatus}}</detail-list-item>
             <detail-list-item term="统一社会信用号码">{{info.baseCustomerBusiness.creditCode}}</detail-list-item>
@@ -78,9 +94,10 @@
             <detail-list-item term="特许经营范围">{{info.baseCustomerBusiness.businessScopePermit}}</detail-list-item>
           </detail-list>
         </a-tab-pane>
+        <!-- <a-tab-pane tab="联系人" key="6"> -->
         <a-tab-pane tab="联系人" key="6">
-          <!-- <a-tab-pane tab="联系人" key="6" @click="getCustomerContact()"> -->
-          <a-button style="margin-bottom:20px;" type="primary" @click="showAddFormDrawer">新建联系人</a-button>
+          <!-- <a-button style="margin-bottom:20px;" type="primary" @click="getCustomerContact">获取联系人</a-button> -->
+          <a-button style="margin-bottom:20px;" type="primary" @click="ShowAddCFormDrawer">新建联系人</a-button>
           <!-- :pagination="ipagination"      -->
           <a-table
             ref="table"
@@ -90,19 +107,28 @@
             :columns="columnsB"
             :dataSource="dataSource"
             :loading="loading"
-            @change="handleTableChange"
             :customRow="customRow"
-          ></a-table>
-          <show-add-form-drawer ref="ShowAddFormDrawer"></show-add-form-drawer>
+          >
+            <span slot="action" slot-scope="text, record">
+              <a @click.stop="editAddCFormDrawer(record, ...arguments)">编辑</a>
+              <a-divider type="vertical" />
+              <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
+                <a>删除</a>
+              </a-popconfirm>
+            </span>
+          </a-table>
         </a-tab-pane>
       </a-tabs>
     </a-card>
+
+    <show-add-c-form-drawer ref="ShowAddCFormDrawer" @reload="getCustomerContact()"></show-add-c-form-drawer>
+    <show-zero ref="ShowZero"></show-zero>
+    <show-c-card ref="ShowCCard"></show-c-card>
   </page-layout>
 </template>
 
 <script>
 import PageLayout from '@/components/page/PageLayout'
-
 import ABadge from 'ant-design-vue/es/badge/Badge'
 import DetailList from '@/components/tools/DetailList'
 const DetailListItem = DetailList.Item
@@ -111,10 +137,12 @@ import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUt
 import { filterObj } from '@/utils/util'
 import { getAction, putAction } from '@/api/manage'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+import ShowZero from './modules/ShowZeroD'
+import ShowAddCFormDrawer from './modules/ShowAddCFormDrawer'
+import ShowCCard from './modules/ShowCCard'
 
-import ShowAddFormDrawer from './modules/ShowAddFormDrawer'
 import qs from 'qs'
-
+import Dom7 from 'dom7'
 export default {
   name: 'Detail',
   components: {
@@ -122,7 +150,9 @@ export default {
     ABadge,
     DetailList,
     DetailListItem,
-    ShowAddFormDrawer
+    ShowAddCFormDrawer,
+    ShowZero,
+    ShowCCard
   },
   data() {
     return {
@@ -133,9 +163,19 @@ export default {
       // url: {
       //   list: '/park.project/mgrProjectInfo/queryById'
       // },
+      custId: '',
       columnsA: [],
       columnsB: [
-        { title: '序号', align: 'center', dataIndex: 'projectName' },
+        {
+          title: '序号',
+          dataIndex: '',
+          key: 'rowIndex',
+          width: 100,
+          align: 'center',
+          customRender: function(t, r, index) {
+            return parseInt(index) + 1
+          }
+        },
         {
           title: '姓名',
           align: 'center',
@@ -145,9 +185,15 @@ export default {
           title: '性别',
           align: 'center',
           dataIndex: 'sex',
-          // customRender: text => {
-          //   return filterDictText(this.projectTypeDictOptions, text)
-          // }
+          customRender: function(text) {
+            if (text == 1) {
+              return '男'
+            } else if (text == 2) {
+              return '女'
+            } else {
+              return text
+            }
+          }
         },
         {
           title: '手机',
@@ -173,6 +219,7 @@ export default {
         {
           title: '操作',
           dataIndex: 'action',
+          width: 200,
           align: 'center',
           scopedSlots: { customRender: 'action' }
         }
@@ -197,6 +244,7 @@ export default {
   },
 
   // async created() {
+
   created() {
     if (typeof this.$route.params.id !== 'string') {
       this.$router.back()
@@ -206,8 +254,10 @@ export default {
     getAction('/park.customer/baseCustomer/queryById', { id: this.$route.params.id }).then(res => {
       if (res.code === 200) {
         this.loading = false
+        //info就是表单需要的东西
         this.info = res.result
-        // console.log(this.info)
+
+        //这一步晚了，所以报错？ 要提前，虽然其实得到了数据
         this.initDictConfig()
       } else {
         this.$router.back()
@@ -216,28 +266,50 @@ export default {
     })
 
     console.log('test start-------------')
-    this.getCustomerContact()
+    // this.getCustomerContact()
   },
   mounted() {},
   methods: {
+    customRow(row) {
+      return {
+        on: {
+          click: () => {
+            row.customerName = this.info.customerName
+            this.$refs.ShowCCard.detail(row)
+            // this.$router.push({ name: 'industrial-parks-info-@id', params: { id: row.parkId } })
+          }
+        }
+      }
+    },
+    // ShowCCard(row, e) {
+    //   row.__key = Dom7(e.currentTarget)
+    //     .parents('.ant-table-row')
+    //     .data('row-key')
+    //   this.$refs.ShowCCard.detail(row)
+    // },
+
+    editZero() {
+      //在这里要把当前页面的custId传过去，在新页面自己获取
+      // let
+      this.$refs.ShowZero.detail(this.info)
+    },
     //tab页6：联系人表格数据获取 与 绑定
-    getCustomerContact(arg=1) {
-      // if (!this.url.list) {
-      //   this.$message.error('请设置url.list属性!')
-      //   return
-      // }
+    getCustomerContact(arg = 1) {
       //加载数据 若传入参数1则加载第一页的内容
       if (arg === 1) {
         this.ipagination.current = 1
       }
-      let params = { CusId: '11111111' }
+      //获取到当前页面的custId
+      let params = { custId: this.info.custId }
       // this.loading = true
-      console.log('test start000000000000')
+      // console.log('test start 777777777777')
+      console.log(this.info)
+      console.log(this.info.baseCustomerBusiness)
+
       getAction('/park.customer/baseCustomerContact/list', params).then(res => {
-      // getAction('/park.customer/baseCustomerContact/list?cusId=11111111').then(res => {
         if (res.success) {
           // console.log('test start11111111')
-          console.log(res.result)
+          // console.log(res.result)
           this.dataSource = res.result
           this.ipagination.total = res.result.total
         }
@@ -247,8 +319,16 @@ export default {
         // this.loading = false
       })
     },
-    showAddFormDrawer() {
-      this.$refs.ShowAddFormDrawer.add()
+    editAddCFormDrawer(row, e) {
+      row.__key = Dom7(e.currentTarget)
+        .parents('.ant-table-row')
+        .data('row-key')
+      row.customerName = this.info.customerName
+      this.$refs.ShowAddCFormDrawer.edit(row)
+    },
+    ShowAddCFormDrawer() {
+      let row = { custId: this.$route.params.id, customerName: this.info.customerName }
+      this.$refs.ShowAddCFormDrawer.add(row)
     },
     initDictConfig() {
       initDictOptions('unit_nature').then(res => {
@@ -315,7 +395,11 @@ export default {
     //   if (item.value == this.info.baseCustomerType.registrationType)
     //     return (this.dictText.registrationTypeText = item.text)
     // },
-    callback() {}
+    // callback() {
+    //   console.log('callback');
+    //   // this.getCustomerContact()
+    // },
+    handleDelete() {}
   },
   filters: {
     statusFilter(status) {
@@ -342,31 +426,4 @@ export default {
   font-weight: 500;
   margin-bottom: 16px;
 }
-// .div-detail-list{
-//   .ant-row{
-//     div{
-//       float: left!important;
-//     }
-//   }
-// }
-// .flex1 {
-//   margin-top: 15px;
-//   display: flex;
-//   height: 420px;
-
-//   .flex11 {
-//     width: 55%;
-//     height: 100%;
-//     margin-right: 10px;
-//   }
-//   .flex12 {
-//     display: flex;
-//     flex: 1;
-//     flex-direction: column;
-//     justify-content: space-between;
-//     .ant-card {
-//       margin-bottom: 10px;
-//     }
-//   }
-// }
 </style>

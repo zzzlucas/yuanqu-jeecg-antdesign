@@ -34,7 +34,7 @@
           </a-col>
           <a-col :md="6" :sm="8">
             <a-form-item label="状态">
-              <a-radio-group v-model="queryParam.status">
+              <a-radio-group defaultValue="" v-model="queryParam.status">
                 <a-radio value="1">在园</a-radio>
                 <a-radio value="0">离园</a-radio>
                 <!-- <a-radio :style="radioStyle" :value="2">离园</a-radio> -->
@@ -81,10 +81,7 @@
         :customRow="customRow"
       >
         <span slot="action" slot-scope="text, record">
-          <!-- <a @click.stop="handleEdit(record, ...arguments)">test</a>
-          <a-divider type="vertical" /> -->
           <a @click.stop="showConfirm(record, ...arguments)">迁出</a>
-          <!-- <a @click.stop="showOne(record)">迁出</a> -->
           <a-divider type="vertical" />
           <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
             <a>删除</a>
@@ -93,27 +90,24 @@
       </a-table>
     </div>
     <!-- table区域-end -->
-    <show-zero ref="ShowZero"></show-zero>
-    <!-- <show-one ref="ShowOne"></show-one> -->
-    <!-- 表单区域 -->
-    <parks-add-form v-model="rightShow"></parks-add-form>
+    <show-zero ref="ShowZero" @reload="loadData"></show-zero>
   </a-card>
 </template>
 
 <script>
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import Config from '@/defaultSettings'
-import ParksAddForm from '@views/industrial-parks/components/ParksAddForm'
-import { initDictOptions } from '@/components/dict/JDictSelectUtil'
+import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
 import ShowZero from './modules/ShowZeroD'
-import ShowOne from './modules/ShowOneM'
 import { getAction, putAction } from '@/api/manage'
 import qs from 'qs'
 import Dom7 from 'dom7'
+import { filterObj } from '@/utils/util'
+
 
 export default {
-  name: 'IndustrialParksList',
-  components: { ParksAddForm, ShowZero, ShowOne },
+  name: '',
+  components: { ShowZero },
   mixins: [JeecgListMixin],
   data() {
     return {
@@ -157,7 +151,19 @@ export default {
         {
           title: '状态',
           align: 'center',
-          dataIndex: 'status'
+          dataIndex: 'status',
+          customRender: function(text) {
+            if (text == 1) {
+              return '在园'
+            } else if (text == 0) {
+              return '离园'
+            } else {
+              return text
+            }
+          }
+          // customRender: text => {
+          //   return filterDictText(this.statusDictOptions, text)
+          // }
         },
         {
           title: '操作',
@@ -176,14 +182,21 @@ export default {
         // importExcelUrl: 'park.base/basePark/importExcel'
       },
       temprow: '',
-      rightShow: false,
-      cusId: ''
+      // rightShow: false,
+      // custId: '',
+      status: '1'
     }
   },
   computed: {
     // importExcelUrl: function() {
     //   return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`
     // }
+  },
+  mounted() {
+    //这个status基本不能从筛选处获取，要自己手写写一次，但又不能写死，要能够被筛选处覆写
+    // this.status = this.queryParam.status
+    // console.log('this.status')
+    // console.log(this.status)
   },
   created() {
     initDictOptions('industry_gategory').then(res => {
@@ -193,7 +206,43 @@ export default {
     })
   },
   methods: {
-    handleTableChange() {},
+    //本地定制化加载
+    loadData(arg) {
+      if (!this.url.list) {
+        this.$message.error('请设置url.list属性!')
+        return
+      }
+      if (arg === 1) {
+        this.ipagination.current = 1
+      }
+      var params = this.getQueryParams()
+      this.loading = true
+      getAction(this.url.list, params).then(res => {
+        if (res.success) {
+          this.dataSource = res.result.records
+          this.ipagination.total = res.result.total
+        }
+        if (res.code === 510) {
+          this.$message.warning(res.message)
+        }
+        this.loading = false
+      })
+    },
+    getQueryParams() {
+      let sqp = {}
+      if (this.superQueryParams) {
+        sqp['superQueryParams'] = encodeURI(this.superQueryParams)
+      }
+
+      var param = Object.assign(sqp, this.queryParam, this.isorter, this.filters)
+      param.field = this.getQueryField()
+      // this.status = this.queryParam.status
+      //如何获取到status，在页面刚进来时候  钩子函数
+      // param.status = this.status
+      param.pageNo = this.ipagination.current
+      param.pageSize = this.ipagination.pageSize
+      return filterObj(param)
+    },
     customRow(row) {
       return {
         on: {
@@ -208,20 +257,9 @@ export default {
     },
     // handleImportExcel() {},
     showZero() {
-      this.$refs.ShowZero.detail()
-    },
-    showOne() {
-      this.$refs.ShowOne.detail()
+      this.$refs.ShowZero.add()
     },
     handleOut() {},
-    //获取row
-    // handleEdit(row, e) {
-    //   row.__key = Dom7(e.currentTarget)
-    //     .parents('.ant-table-row')
-    //     .data('row-key')
-    //   this.rightShow = true
-    //   this.edit = true
-    // },
     handleEdit(row, e) {
       row.__key = Dom7(e.currentTarget)
         .parents('.ant-table-row')

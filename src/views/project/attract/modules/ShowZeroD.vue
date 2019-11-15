@@ -16,8 +16,8 @@
                 <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="项目ID">
                   <!-- ui要求name，数据模板目前是id -->
                   <a-input
-                    placeholder="请输入项目名称"
-                    v-decorator="['projectId',  {rules: [{required: true, message: '请输入项目名称'}]}]"
+                    placeholder="请输入项目Id"
+                    v-decorator="['projectId',  {rules: [{required: true, message: '请输入项目Id'}]}]"
                   />
                 </a-form-item>
               </a-col>
@@ -55,10 +55,6 @@
                 label="跟踪人"
                 required
               >
-                <!-- <a-input
-                    placeholder="请输入跟踪人"
-                    v-decorator="['tracker', {rules: [{required: true, message: '请输入跟踪人'}]}]"
-                />-->
                 <!-- v-model写着就没有默认 -->
                 <a-select v-decorator="['tracker']">
                   <a-select-option
@@ -73,7 +69,7 @@
                 :wrapperCol="wrapperCol.default"
                 label="项目状态"
               >
-                <a-select defaultValue="1" style="width:100%">
+                <a-select style="width:100%">
                   <a-select-option value="1">?</a-select-option>
                   <a-select-option value="2">??</a-select-option>
                 </a-select>
@@ -217,32 +213,16 @@ export default {
     handleCancel() {
       this.visible = false
     },
+    // handleCancel() {
+    //   this.close()
+    // },
     handleImportExcel() {},
     importExcelUrl() {},
     tokenHeader() {},
     add() {
-      this.edit({})
+      this.visible = true
     },
-    // edit(row) {
-    //   this.editBool = true
-    //   this.editData = row
-    //   const editData = pick(row, ProjectAttractShowZeroForm)
 
-    //   //test
-    //   console.log(editData);
-    //   editData.deviceGroupId = editData.deviceGroupId.split(',')
-
-    //   this.$emit('close', true)
-    //   this.$nextTick(() => {
-    //     this.editor = {
-    //       content: row.content,
-    //       policy: row.policy
-    //     }
-    //     this.form.setFieldsValue(editData)
-    //   })
-    // },
-
-    //原edit
     detail(record) {
       this.record = record
       // console.log(this.record.recordId)
@@ -269,6 +249,15 @@ export default {
         if (res.code === 510) {
           this.$message.warning(res.message)
         }
+      })
+    },
+    //只获取部分对应行的属性
+    partDetail(record) {
+      this.form.resetFields()
+      this.model = Object.assign({}, record)
+      this.visible = true
+      this.$nextTick(() => {
+        this.form.setFieldsValue(pick(this.model, 'projectId'))
       })
     },
     close() {
@@ -311,9 +300,6 @@ export default {
             })
         }
       })
-    },
-    handleCancel() {
-      this.close()
     }
   }
 }

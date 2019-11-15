@@ -1,23 +1,26 @@
 <template>
-  <!-- 项目分配表单 -->
-  <a-drawer title="选择跟踪人员" width="40%" destroyOnClose :visible="visible" @close="handleCancel">
+  <!-- 客户分配表单 -->
+  <a-drawer title="客户分配" width="40%" destroyOnClose :visible="visible" @close="handleCancel">
     <a-card :bordered="false">
       <a-form :form="form">
-        <a-form-item label="项目名称">
-          <a-input
-            placeholder="请输入项目名称"
-            v-decorator="['projectName',  {rules: [{required: true, message: '请输入项目名称'}]}]"
-          />
+        <a-form-item label="企业ID">
+          <a-input v-decorator="['custId',  {rules: [{required: true, message: '请输入企业ID'}]}]" />
         </a-form-item>
-        <a-form-item label="跟踪人" required>
+        <!-- <a-form-item label="企业名称">
+          <a-input
+            v-decorator="['customerName',  {rules: [{required: true, message: '请输入企业名称'}]}]"
+          />
+        </a-form-item> -->
+        <a-form-item label="服务人员" required>
+          <a-input v-decorator="['servicer',  {rules: [{required: true, message: '请输入服务人员'}]}]" />
           <!-- 数据字典 -->
-          <a-select v-decorator="['tracker',  {rules: [{required: true, message: '请输入选择项目跟踪人'}]}]">
+          <!-- <a-select v-decorator="['servicer',  {rules: [{required: true, message: '请输入服务人员'}]}]">
             <a-select-option
               v-for="(item, key) in dict.trackerExt"
               :value="item.value"
               :key="key"
             >{{ item.text }}</a-select-option>
-          </a-select>
+          </a-select>-->
         </a-form-item>
       </a-form>
 
@@ -63,12 +66,12 @@ export default {
       record: {},
       visible: false,
       loading: false,
+      //这是跟踪人，不是服务人员，是否走字典有待考究
       dict: {
         trackerExt: [{ value: '1' }]
       },
       url: {
-        // list: '/park.project/mgrProjectInfo/assignProject',
-        edit: '/park.project/mgrProjectInfo/assignProject'
+        edit: '/park.customer/baseCustomer/editServicer'
       }
     }
   },
@@ -88,14 +91,14 @@ export default {
           let httpurl = ''
           let method = ''
           console.log(this.model)
-          // console.log(this.model.id);
-          if (!this.model.projectId) {
-            httpurl += this.url.add
-            method = 'post'
-          } else {
-            httpurl += this.url.edit
-            method = 'put'
-          }
+          //这里其实默认走put了
+          // if (!this.model.servicer) {
+          //   httpurl += this.url.add
+          //   method = 'post'
+          // } else {
+          httpurl += this.url.edit
+          method = 'put'
+          // }
           // let formData = {}
           let formData = Object.assign(this.model, values)
           formData = qs.stringify(formData)
@@ -104,6 +107,7 @@ export default {
             .then(res => {
               if (res.success) {
                 that.$message.success(res.message)
+                // that.visible = false
                 that.$emit('reload')
               } else {
                 that.$message.warning(res.message)
@@ -118,32 +122,18 @@ export default {
       // this.form.resetFields()
     },
     detail(record) {
-      this.record = record
-      // console.log(this.record.recordId)
+      // this.record = record
+      // console.log('record');
+      // console.log(record);
       this.form.resetFields()
-      this.model = Object.assign({}, this.record)
+      this.model = Object.assign({},record)
       this.visible = true
-      // console.log(pick(this.model, ProjectAttractShowZeroForm))
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.model, 'projectName','tracker'))
-        //时间格式化
-        // this.form.setFieldsValue({ trackDate: this.model.trackDate ? moment(this.model.trackDate) : null })
+        this.form.setFieldsValue(pick(this.model, 'custId', 'servicer'))
       })
     },
     handleCancel() {
       this.visible = false
-    },
-    /** 切换全屏显示 */
-    handleClickToggleFullScreen() {
-      let mode = !this.modelStyle.fullScreen
-      if (mode) {
-        this.modelStyle.width = '100%'
-        this.modelStyle.style.top = '20px'
-      } else {
-        this.modelStyle.width = '60%'
-        this.modelStyle.style.top = '50px'
-      }
-      this.modelStyle.fullScreen = mode
     }
   }
 }

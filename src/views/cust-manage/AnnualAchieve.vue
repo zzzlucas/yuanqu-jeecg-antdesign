@@ -1,35 +1,38 @@
 <template>
   <a-card :bordered="false">
     <!-- 操作按钮区域 -->
-    <div class="table-operator">
-      <a-form :form="form">
-        <a-select
-          defaultValue="0"
-          style="width: 120px"
-          @change="handleChange()"
-          v-decorator="['type']"
-        >
-          <a-select-option value="0">不限</a-select-option>
-          <a-select-option value="1">预算</a-select-option>
-          <a-select-option value="2">实际</a-select-option>
-        </a-select>
-        <a-button
-          style="margin-left:15px"
-          @click="goAnnualAchieveAddForm()"
-          type="primary"
-          icon="plus"
-        >新增完成情况</a-button>
-        <a-dropdown v-if="selectedRowKeys.length > 0">
-          <a-menu slot="overlay">
-            <a-menu-item key="1" @click="batchDel">
-              <a-icon type="delete" />删除
-            </a-menu-item>
-          </a-menu>
-          <a-button style="margin-left: 8px">
-            批量操作
-            <a-icon type="down" />
-          </a-button>
-        </a-dropdown>
+    <div class="table-operator annual">
+      <a-form :form="form" :layout="formLayout">
+        <a-form-item label="区分" :label-col="formItem.label" :wrapper-col="formItem.value">
+          <!-- <a-form-item label="区分"  label-col="6" wrapper-col="10"> -->
+          <a-select
+            style="width: 120px"
+            @change="handleChange"
+            v-decorator="['type',{initialValue: ''}]"
+          >
+            <a-select-option value>不限</a-select-option>
+            <a-select-option value="YS">预算</a-select-option>
+            <a-select-option value="SJ">实际</a-select-option>
+          </a-select>
+
+          <a-button
+            style="margin-left:15px"
+            @click="goAnnualAchieveAddForm()"
+            type="primary"
+            icon="plus"
+          >新增完成情况</a-button>
+          <a-dropdown v-if="selectedRowKeys.length > 0">
+            <a-menu slot="overlay">
+              <a-menu-item key="1" @click="batchDel">
+                <a-icon type="delete" />删除
+              </a-menu-item>
+            </a-menu>
+            <a-button style="margin-left: 8px">
+              批量操作
+              <a-icon type="down" />
+            </a-button>
+          </a-dropdown>
+        </a-form-item>
       </a-form>
     </div>
 
@@ -71,6 +74,7 @@
 </template>
 
 <script>
+import { filterObj } from '@/utils/util'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import AnnualAchieveAddForm from './modules/AnnualAchieveAddForm'
 import { postAction, putAction, getAction } from '@/api/manage'
@@ -83,20 +87,18 @@ export default {
   mixins: [JeecgListMixin],
   data() {
     return {
-      description: '园区信息管理页面',
+      description: '',
       // 表头
+      // type:'',
       form: this.$form.createForm(this),
+      formLayout: 'horizontal',
+      queryform: {},
+      typee: null,
+      formItem: {
+        label: { span: 1 },
+        value: { span: 5 }
+      },
       columns: [
-        // {
-        //   title: '#',
-        //   dataIndex: '',
-        //   key:'rowIndex',
-        //   width:60,
-        //   align:"center",
-        //   customRender:function (t,r,index) {
-        //     return parseInt(index)+1;
-        //   }
-        // },
         {
           title: '年度',
           align: 'center',
@@ -173,15 +175,40 @@ export default {
     }
   },
   methods: {
-    handleChange() {
+    handleChange(e) {
+      console.log('eeeeeeeeeeeeeeeeeee')
+      console.log(e)
+      console.log(typeof e)
+      this.typee = e
       this.loadData()
     },
     loadData() {
-      let params = { }
-      // let params = { type: 'YS' }
+      let params = { type: this.typee }
       getAction(this.url.list, params).then(res => {
         if (res.success) {
+          //111111111111   处理dataSource，为需要的格式  /遍历操作
+          // let RealDataSource = []
+          // for (const item of res.result) {
+          //   console.log('item');
+          //   console.log(item);
+          //   if (item.type == 'YS' && item.year == '2019') {
+          //     RealDataSource.push(item)
+          //     RealDataSource[0].children = []
+          //   }
+          //   function sortMonth(a, b) {
+          //     return a.month - b.month
+          //   }
+          //   // if (item.type == "SJ" && RealDataSource[0] == true) {
+          //   if (item.type == 'SJ') {
+          //     RealDataSource[0].children.push(item)
+          //     RealDataSource[0].children.sort(sortMonth)
+          //   }
+          // }
+          // res.result = RealDataSource
+          // 22222222222
           this.dataSource = res.result
+          
+          
         }
         if (res.code === 510) {
           this.$message.warning(res.message)
@@ -189,8 +216,26 @@ export default {
         this.loading = false
       })
     },
+    // getQueryParams() {
+    //   let sqp = {}
+    //   if (this.superQueryParams) {
+    //     sqp['superQueryParams'] = encodeURI(this.superQueryParams)
+    //   }
+    //   this.form.validateFieldsAndScroll((err, form) => {
+    //     console.log(form)
+    //     this.queryform = form
+    //   })
+    //   // console.log(this.queryform)
+    //   var param = Object.assign(sqp, this.queryParam, this.isorter, this.filters, this.queryform)
+    //   // param.field = this.getQueryField()
+    //   // param.projectId = this.record.projectId
+    //   param.pageNo = this.ipagination.current
+    //   param.pageSize = this.ipagination.pageSize
+    //   return filterObj(param)
+    // },
+
     goAnnualAchieveAddForm() {
-      this.$refs.AnnualAchieveAddForm.edit()
+      this.$refs.AnnualAchieveAddForm.add()
     },
     showAnnualAchieveAddForm(row, e) {
       row.__key = Dom7(e.currentTarget)
@@ -241,12 +286,11 @@ export default {
   }
 }
 </script>
-<style lang="less">
+<style lang="less" scope>
 @import '../../assets/less/common.less';
-
-.industrial-parks-list {
-  .ant-table-row {
-    cursor: pointer;
+.annual {
+  .ant-form-item-label {
+    width: auto;
   }
 }
 </style>
