@@ -123,10 +123,20 @@ export default {
         registrationTypeExt: [{ value: '' }]
       },
       columns: [
+        // {
+        //   title: '序号',
+        //   align: 'center',
+        //   dataIndex: 'custId'
+        // },
         {
           title: '序号',
+          dataIndex: '',
+          key: 'rowIndex',
+          width: 60,
           align: 'center',
-          dataIndex: 'custId'
+          customRender: function(t, r, index) {
+            return parseInt(index) + 1
+          }
         },
         {
           title: '企业名称',

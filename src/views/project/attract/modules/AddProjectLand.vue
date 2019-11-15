@@ -462,7 +462,8 @@
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="项目工艺流程（图示式）及说明">
-                  <j-editor v-decorator="['projectTechnologyFlow']"></j-editor>
+                  <j-editor v-model="editor.projectTechnologyFlow"></j-editor>
+                  <!-- <j-editor v-decorator="['projectTechnologyFlow']"></j-editor> -->
                 </a-form-item>
               </a-col>
             </a-row>
@@ -577,7 +578,10 @@ export default {
       },
       record: {},
       visible: false,
-      loading: false
+      loading: false,
+      editor:{
+        projectTechnologyFlow:''
+      }
       // value:""
       // DictDataindustrySectorValue:this.form.getFieldValue('industrySectorValue')
     }
@@ -704,9 +708,10 @@ export default {
       this.form.validateFieldsAndScroll((err, values) => {
         // values.setUpYear = 1
         // console.log(values.setUpYear)
-
         if (!err) {
           that.confirmLoading = true
+          const { projectTechnologyFlow } = this.editor
+          
           let httpurl = ''
           let method = ''
           // console.log('2222')
@@ -729,7 +734,10 @@ export default {
             ? formData.buildingBeginDate.format('YYYY-MM-DD')
             : null
           formData.buildingEndDate = formData.buildingEndDate ? formData.buildingEndDate.format('YYYY-MM-DD') : null
-
+          formData.projectTechnologyFlow = projectTechnologyFlow
+          console.log('1111111')
+          console.log(formData.projectTechnologyFlow)
+          console.log('222222')
           //qs.stringify  目前看来必须转换
           formData = qs.stringify(formData)
           console.log(formData)

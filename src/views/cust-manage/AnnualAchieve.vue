@@ -102,7 +102,8 @@ export default {
         {
           title: '年度',
           align: 'center',
-          dataIndex: 'year'
+          dataIndex: 'year',
+          width:100
         },
         {
           title: '区分',
@@ -184,9 +185,10 @@ export default {
       this.loadData()
     },
     loadData() {
-      let params = { type: this.typee }
-      //当type为不限时，走listM的api ， type筛选时，走最简单的listN
-      getAction(this.url.listN, params).then(res => {
+      // let params = { type: this.typee }
+      let params = { parkId: 555 }
+      //当type为不限时，走listM的api / type筛选时，走最简单的listN
+      getAction(this.url.listM, params).then(res => {
         if (res.success) {
           //111111111111   处理dataSource，为需要的格式  /遍历操作
           // let RealDataSource = []
@@ -208,6 +210,7 @@ export default {
           // }
           // res.result = RealDataSource
           // 22222222222
+
           this.dataSource = res.result          
           //分页查询未在此实现
 
