@@ -23,7 +23,7 @@
 
           <a-col :span="8" style="float: right">
             <span style="float: right;overflow: hidden;" class="table-page-search-submitButtons">
-              <a-button type="primary" @click="goAdd()">新建项目</a-button>
+              <a-button type="primary" @click="AddTechProject()">新建项目</a-button>
             </span>
           </a-col>
         </a-row>
@@ -42,28 +42,34 @@
       @change="handleTableChange"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="showAnnouncement(record)">审核</a>&nbsp;
-        <a @click="goAdd(record)">项目维护</a>
+        <a @click="AuditorForm(record,...arguments)">审核</a>
+        <a-divider type="vertical" />
+        <a @click="EditTechProject(record,...arguments)">项目维护</a>
       </span>
     </a-table>
 
-    <show-announcement ref="ShowAnnouncement"></show-announcement>
+    <auditor-form ref="AuditorForm"></auditor-form>
+    <add-tech-project ref="AddTechProject"></add-tech-project>
   </a-card>
 </template>
 <script>
 // import { filterObj } from '@/utils/util'
 import { getAction, putAction } from '@/api/manage'
-import ShowAnnouncement from './ShowAnnouncement'
+import AddTechProject from './modules/AddTechProject'
+import AuditorForm from './modules/AuditorFormM'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+import Dom7 from 'dom7'
+
 export default {
   name: 'UserAnnouncementList',
   mixins: [JeecgListMixin], //居然很重要
   components: {
-    ShowAnnouncement
+    AddTechProject,
+    AuditorForm
   },
   data() {
     return {
-      description: '项目登记页面（原系统通告表管理页面）',
+      description: '',
       queryParam: {},
       columns: [
         {
@@ -119,53 +125,33 @@ export default {
         }
       ],
       url: {
-        list: '/sys/sysAnnouncementSend/getMyAnnouncementSend',
-        editCementSend: 'sys/sysAnnouncementSend/editByAnntIdAndUserId'
+        list: '/park.project/mgrProjectLand/list',
+        // editCementSend: 'sys/sysAnnouncementSend/editByAnntIdAndUserId'
         // readAllMsg: 'sys/sysAnnouncementSend/readAll'
       },
       loading: false
     }
   },
-  created() {
-    this.loadData()
-  },
+  created() {},
   methods: {
-    goAdd(record) {
-      this.$router.push({ path: '/project/tech/addproject', query: { id: record } })
+    AuditorForm(row, e) {
+      row.__key = Dom7(e.currentTarget)
+        .parents('.ant-table-row')
+        .data('row-key')
+      this.$refs.AuditorForm.add(row)
     },
-    searchQuery() {
-      console.log(this.queryParam.titile)
+    AddTechProject() {
+      this.$refs.AddTechProject.add()
     },
-    searchReset() {
-      //还应包括表格重置   this.form.resetFields();
-      this.queryParam.titile = ''
-    },
-    // handleDetail: function(record) {
-    //   this.$refs.sysAnnouncementModal.detail(record)
-    //   this.$refs.sysAnnouncementModal.title = '查看'
-    // },
-    showAnnouncement(record) {
-      putAction(this.url.editCementSend, { anntId: record.anntId }).then(res => {
-        if (res.success) {
-          this.loadData()
-        }
-      })
-      this.$refs.ShowAnnouncement.detail(record)
+    EditTechProject(row, e) {
+      row.__key = Dom7(e.currentTarget)
+        .parents('.ant-table-row')
+        .data('row-key')
+      this.$refs.AddTechProject.edit(row)
     }
-    // readAll() {
-    //   var that = this
-    //   that.$confirm({
-    //     title: '确认操作',
-    //     content: '是否全部标注已读?',
-    //     onOk: function() {
-    //       putAction(that.url.readAllMsg).then(res => {
-    //         if (res.success) {
-    //           that.$message.success(res.message)
-    //           that.loadData()
-    //         }
-    //       })
-    //     }
-    //   })
+
+    // goAdd(record) {
+    //   this.$router.push({ path: '/project/tech/addproject', query: { id: record } })
     // }
   }
 }

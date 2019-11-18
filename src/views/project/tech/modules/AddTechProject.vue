@@ -457,13 +457,33 @@
                 </a-form-item>
               </a-col>
             </a-row>
+          </a-card>
 
+          <!-- 4444444 -->
+          <a-card :bordered="false" style="width:1200px;margin:auto;margin-top:20px" title="项目用地">
+            <a-row class="form-row" :gutter="16">
+              <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
+                <a-form-item label="固定资产投资（万元）">
+                  <p class="myinput">
+                    1.项目总用地面
+                    <a-input />平方米；其中：新征用地面积
+                    <a-input />平方米。项目利用企业已有土地的，土地证等证书文件编号
+                    <a-input style="width:200px;" />。租赁使用其他企业厂房的，出租房土地证等证书文件编号
+                    <a-input style="width:200px;" />。
+                    <br />2.项目原建筑面积
+                    <a-input />平方米，实施技术改造后建筑面积
+                    <a-input />平方米。新增建筑面积
+                    <a-input />平方米。实施技术改造是否涉及主体建筑结构改变
+                    <a-input />（填“是”或“否”）。
+                  </p>
+                </a-form-item>
+              </a-col>
+            </a-row>
             <!-- 富文本  projectTechnologyFlow   项目工艺流程及说明 -->
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="项目工艺流程（图示式）及说明">
-                  <j-editor v-model="editor.projectTechnologyFlow"></j-editor>
-                  <!-- <j-editor v-decorator="['projectTechnologyFlow']"></j-editor> -->
+                  <j-editor v-decorator="['projectTechnologyFlow']"></j-editor>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -495,16 +515,6 @@
                 </a-form-item>
               </a-col>
             </a-row>
-            <a-row class="form-row" :gutter="16">
-              <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="projectType test">
-                  <a-input
-                    placeholder
-                    v-decorator="['projectType', {rules: [{ required: true, message: '请输入projectType', whitespace: true}]}]"
-                  />
-                </a-form-item>
-              </a-col>
-            </a-row>
             <!-- upload  addDocFiles   附件 -->
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
@@ -520,6 +530,7 @@
               </a-col>
             </a-row>
           </a-card>
+
           <a-card
             :bordered="false"
             size="small"
@@ -553,16 +564,17 @@ export default {
   components: { PageLayout, JEditor, JDictSelectTag },
   data() {
     return {
-      title: '首页 / 拿地项目 / 项目维护',
+      //在添加与编辑时修改
+      title: '技改项目用地信息添加',
       //   form: {}
-      form: this.$form.createForm(this, { name: 'addProjectLandForm' }),
+      form: this.$form.createForm(this, { name: '' }),
       formItem: {
         label: { span: 6 },
         value: { span: 18 }
       },
       url: {
-        add: '/park.project/mgrProjectInfo/addProject',
-        edit: '/park.project/mgrProjectInfo/editProject'
+        add: '/park.project/mgrProjectLand/add',
+        edit: '/park.project/mgrProjectLand/edit'
       },
       confirmLoading: false,
       model: {},
@@ -570,20 +582,23 @@ export default {
       dateFormat: 'YYYY-MM-DD',
       // record: { id: 1191619700384071680 }
       testData: '',
-      // industrySectorValue: '',
-      // companyRegisterType: '',
+      industrySectorValue: '',
+      companyRegisterType: '',
       dict: {
         industrySectorValueExt: [{ value: '1' }],
-        companyRegisterType: [{ value: '1' }]
+        companyRegisterTypeExt: [{ value: '1' }]
       },
       record: {},
       visible: false,
-      loading: false,
-      editor:{
-        projectTechnologyFlow:''
-      }
+      loading: false
       // value:""
       // DictDataindustrySectorValue:this.form.getFieldValue('industrySectorValue')
+    }
+  },
+  //先搞定添加，回头再做这个
+  computed: {
+    getTitle() {
+      return (this.model.projectId ? '编辑' : '登记') + '园区'
     }
   },
   updated() {
@@ -617,65 +632,6 @@ export default {
       // this.record = record
       // console.log(this.record.recordId)
       this.form.resetFields()
-      //后端少的内容
-      record.totalAsset = record.mgrProjectCust.totalAsset
-      record.legalTel = record.mgrProjectCust.legalTel
-      record.companyDescription = record.mgrProjectCust.companyDescription
-      record.updateUserName = record.mgrProjectCust.updateUserName
-      record.createUserName = record.mgrProjectCust.createUserName
-      record.updateTime = record.mgrProjectCust.updateTime
-      record.fillUnit = record.mgrProjectCust.fillUnit
-      record.version = record.mgrProjectCust.version
-      record.unitAddress = record.mgrProjectCust.unitAddress
-      // record.parkId = record.mgrProjectCust.parkId
-      record.companyRegisterType = record.mgrProjectCust.companyRegisterType
-      record.createBy = record.mgrProjectCust.createBy
-      record.creditCode = record.mgrProjectCust.legalTel
-      record.createTime = record.mgrProjectCust.createTime
-      record.updateBy = record.mgrProjectCust.updateBy
-      record.legalPerson = record.mgrProjectCust.legalPerson
-      record.fixedAsset = record.mgrProjectCust.fixedAsset
-      record.registerMoney = record.mgrProjectCust.registerMoney
-      record.teamMemberDescription = record.mgrProjectCust.teamMemberDescription
-      // record.projectId = record.mgrProjectCust.projectId
-      record.setUpYear = record.mgrProjectCust.setUpYear
-      record.email = record.mgrProjectCust.email
-
-      record.isForeignCapital = record.mgrProjectInvest.isForeignCapital
-      record.fixedAssetInvest = record.mgrProjectInvest.fixedAssetInvest
-      record.newProfit = record.mgrProjectInvest.newProfit
-      record.remark = record.mgrProjectInvest.remark
-      record.createUserName = record.mgrProjectInvest.createUserName
-      // // record.parkId = record.mgrProjectInvest.parkId
-      record.projectUseInvest = record.mgrProjectInvest.projectUseInvest
-      record.newTax = record.mgrProjectInvest.newTax
-      record.freeCapital = record.mgrProjectInvest.freeCapital
-      record.addDocFiles = record.mgrProjectInvest.addDocFiles
-      record.updateBy = record.mgrProjectInvest.updateBy
-      record.civilWork = record.mgrProjectInvest.civilWork
-      record.otherCapital = record.mgrProjectInvest.otherCapital
-      record.budget = record.mgrProjectInvest.budget
-      record.bankLoan = record.mgrProjectInvest.bankLoan
-      record.sharesBond = record.mgrProjectInvest.sharesBond
-      record.updateUserName = record.mgrProjectInvest.updateUserName
-      record.updateTime = record.mgrProjectInvest.updateTime
-      record.foreignEarning = record.mgrProjectInvest.foreignEarning
-      record.version = record.mgrProjectInvest.version
-      record.createBy = record.mgrProjectInvest.createBy
-      record.registerCapital = record.mgrProjectInvest.registerCapital
-      record.install = record.mgrProjectInvest.install
-      record.projectBuilding = record.mgrProjectInvest.projectBuilding
-      record.createTime = record.mgrProjectInvest.createTime
-      record.investAmount = record.mgrProjectInvest.investAmount
-      record.bottomWorkingCapital = record.mgrProjectInvest.bottomWorkingCapital
-      record.newSale = record.mgrProjectInvest.bottomWorkingCapital
-      // record.projectId = record.mgrProjectInvest.projectId
-      record.device = record.mgrProjectInvest.device
-      record.buildingInterest = record.mgrProjectInvest.buildingInterest
-      delete record.mgrProjectCust
-      delete record.mgrProjectInvest
-      delete record.mgrProjectInvestLease
-
       this.model = Object.assign({}, record)
       this.visible = true
       // console.log(pick(this.model, ProjectAttractShowZeroForm))
@@ -703,19 +659,20 @@ export default {
     },
     handleSubmit() {
       // console.log(this.form.getFieldValue('setUpYear'))
+      //这个明明不存在
+      // console.log(this.model.projectId);
       const that = this
       // 触发表单验证
       this.form.validateFieldsAndScroll((err, values) => {
         // values.setUpYear = 1
         // console.log(values.setUpYear)
+
         if (!err) {
           that.confirmLoading = true
-          const { projectTechnologyFlow } = this.editor
-          
           let httpurl = ''
           let method = ''
-          // console.log('2222')
-          if (!this.model.projectName) {
+          
+          if (!this.model.projectId) {
             //增
             console.log('post方式')
             httpurl += this.url.add
@@ -734,10 +691,7 @@ export default {
             ? formData.buildingBeginDate.format('YYYY-MM-DD')
             : null
           formData.buildingEndDate = formData.buildingEndDate ? formData.buildingEndDate.format('YYYY-MM-DD') : null
-          formData.projectTechnologyFlow = projectTechnologyFlow
-          console.log('1111111')
-          console.log(formData.projectTechnologyFlow)
-          console.log('222222')
+
           //qs.stringify  目前看来必须转换
           formData = qs.stringify(formData)
           console.log(formData)

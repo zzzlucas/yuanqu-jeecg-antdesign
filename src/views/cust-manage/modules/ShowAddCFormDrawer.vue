@@ -29,10 +29,9 @@
         </a-form-item>
         <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="性别">
           <!-- <a-input placeholder="请输入性别" v-decorator="['sex', {}]" /> -->
-          <a-input placeholder="请输入手机" v-decorator="['sex', {}]" />
           <a-radio-group v-decorator="['sex', {initialValue:''}]">
-            <a-radio :value="1">男</a-radio>
-            <a-radio :value="2">女</a-radio>
+            <a-radio value="1">男</a-radio>
+            <a-radio value="2">女</a-radio>
           </a-radio-group>
         </a-form-item>
         <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="Email">
@@ -173,8 +172,8 @@ export default {
       const that = this
       // 触发表单验证
       this.form.validateFields((err, values) => {
-        console.log('values');
-        console.log(values);
+        // console.log('values');
+        // console.log(values);
         if (!err) {
           that.confirmLoading = true
           let httpurl = ''

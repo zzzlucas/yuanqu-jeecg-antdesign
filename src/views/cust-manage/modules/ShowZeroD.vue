@@ -390,10 +390,19 @@
                   :wrapperCol="wrapperCol.default"
                   label="注册资本"
                 >
-                  <a-input v-decorator="[ 'registeredCapital']" />
-                  <!-- <a-select defaultValue="1" style="width:100%" v-decorator="[ 'registeredCapitalUnit']">
-                <a-select-option value="1">注册资本单位</a-select-option>
-                  </a-select>-->
+                  <a-input v-decorator="[ 'registeredCapital']">
+                    <a-select
+                      slot="addonAfter"
+                      style="width: 100px;"
+                      v-decorator="['registeredCapitalUnit', {initialValue: dict.registeredCapitalUnitExt[0].value}]"
+                    >
+                      <a-select-option
+                        v-for="(item, key) in dict.registeredCapitalUnitExt"
+                        :value="item.value"
+                        :key="key"
+                      >{{ item.text }}</a-select-option>
+                    </a-select>
+                  </a-input>
                 </a-form-item>
               </a-col>
               <a-col span="8">
@@ -605,7 +614,8 @@ export default {
         organizationalExt: [{ value: '' }],
         technicalFieldExt: [{ value: '' }],
         enterpriseRatingExt: [{ value: '' }],
-        registrationTypeExt: [{ value: '' }]
+        registrationTypeExt: [{ value: '' }],
+        registeredCapitalUnitExt: [{ value: '' }]
       }
     }
   },
@@ -648,6 +658,11 @@ export default {
       initDictOptions('registration_type').then(res => {
         if (res.code === 0 && res.success) {
           this.dict.registrationTypeExt = res.result
+        }
+      }),
+      initDictOptions('registered_capital_unit').then(res => {
+        if (res.code === 0 && res.success) {
+          this.dict.registeredCapitalUnitExt = res.result
         }
       })
   },
