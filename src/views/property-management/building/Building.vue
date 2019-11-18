@@ -22,7 +22,7 @@
     <a-col span="20">
       <a-card class="yq-building-card" title="楼宇房源">
         <template slot="extra">
-          <a-button>新建区块</a-button>
+          <a-button type="primary">新建区块</a-button>
           <a-button class="margin-left">新建楼宇</a-button>
           <a-button class="margin-left">新建楼层</a-button>
           <a-button class="margin-left">新建房间</a-button>
