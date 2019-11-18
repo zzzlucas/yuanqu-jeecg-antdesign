@@ -131,7 +131,7 @@
             label="备注信息"
             :labelCol="{span: 6}"
             :wrapperCol="{span: 18}">
-            <a-textarea rows="3" placeholder="请输入备注信息" v-decorator="['description', {}]"/>
+            <a-textarea rows="3" placeholder="请输入备注信息" v-decorator="['remark', {}]"/>
           </a-form-item>
         </a-col>
       </a-row>
@@ -209,9 +209,7 @@
           </a-form-item>
         </a-col>
       </a-row>
-    </a-form>
 
-    <a-form class="drawer-form mgr-engineering-info-drawer" :form="builderForm">
       <h2>参建单位</h2>
       <a-row>
         <a-col span="12">
@@ -225,7 +223,7 @@
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
             label="代建单位">
-            <a-input v-decorator="[ 'agency_builder', {}]"/>
+            <a-input v-decorator="[ 'agencyBuilder', {}]"/>
           </a-form-item>
           <a-form-item
             :labelCol="labelCol"
@@ -291,6 +289,7 @@
   import rules from '../js/rules'
   import { promiseForm } from '@utils/util'
   import qs from 'qs'
+  import { PickMgrEngineeringInfoForm } from '@/config/pick-fields'
 
   export default {
     name: 'MgrEngineeringInfoDrawer',
@@ -307,7 +306,6 @@
           span: 18
         },
         form: this.$form.createForm(this, { name: 'engineering' }),
-        builderForm: this.$form.createForm(this, { name: 'engineeringBuilder' }),
         validatorRules: {
           projectId: { rules: [{ required: true, message: '请输入项目ID!' }] },
           parkId: { rules: [{ required: true, message: '请输入园区ID!' }] }
@@ -332,7 +330,7 @@
         this.model = Object.assign({}, record)
         this.visible = true
         this.$nextTick(() => {
-          this.form.setFieldsValue(pick(this.model, 'projectId', 'projectName', 'customerName', 'types', 'invest', 'engineeringProcess', 'setUpInvest', 'setUpSerialNum', 'approveSerialNum', 'projectTypes', 'serialNum', 'manager', 'nature', 'status', 'overGroundArea', 'underGroundArea', 'defenceArea', 'area', 'floorNumber', 'greenbeltArea', 'plotRatio', 'greeningRate', 'familyNum', 'structuralStyle', 'longLat', 'lng', 'lat', 'parkId'))
+          this.form.setFieldsValue(pick(this.model, PickMgrEngineeringInfoForm))
           //时间格式化
           this.form.setFieldsValue({ planStartDate: this.model.planStartDate ? moment(this.model.planStartDate) : null })
           this.form.setFieldsValue({ planEndDate: this.model.planEndDate ? moment(this.model.planEndDate) : null })
@@ -347,16 +345,12 @@
       handleOk() {
         // 触发表单验证
         const form = promiseForm(this.form)
-        const builderForm = promiseForm(this.builderForm)
 
-        // TODO: 工程项目：提交的数据还要改
-        Promise.all([form, builderForm]).then(([form, builderForm]) => {
+        form.then(form => {
           //时间格式化
           form.planStartDate = form.planStartDate ? form.planStartDate.format('YYYY-MM-DD') : ''
           form.planEndDate = form.planEndDate ? form.planEndDate.format('YYYY-MM-DD') : ''
           form.createrDate = form.createrDate ? form.createrDate.format('YYYY-MM-DD') : ''
-
-          form.mgrEngineeringBuilder = builderForm
 
           this.confirmLoading = true
           let httpUrl = ''

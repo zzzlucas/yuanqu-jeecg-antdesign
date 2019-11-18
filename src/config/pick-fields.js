@@ -1,4 +1,5 @@
 export const PickParksForm = ['parkName', 'totalBulidingArea', 'totalWorkstation', 'feeScale', 'feeScaleUnit', 'totalRoom', 'feeScaleRoom', 'feeScaleRoomUnit', 'address', 'lng', 'lat', 'roomRate', 'telephone', 'deviceGroupId']
+export const PickMgrEngineeringInfoForm = ['parkId', 'projectName', 'customerName', 'types', 'invest', 'engineeringProcess', 'setUpInvest', 'setUpSerialNum', 'approveSerialNum', 'projectTypes', 'serialNum', 'manager', 'nature', 'status', 'overGroundArea', 'underGroundArea', 'defenceArea', 'area', 'floorNumber', 'greenbeltArea', 'plotRatio', 'greeningRate', 'familyNum', 'structuralStyle']
 export const ProjectAttractShowZeroForm = [
     'recordId',
     'projectId',
@@ -92,7 +93,6 @@ export const AddProjectLandForm = ['projectId', //id
     //buildingEndDate
 ]
 export const AddProjectLeaseForm = []
-
 export const AddbaseCustomerForm = [
     'creditCode',
     'addDocFiles',
