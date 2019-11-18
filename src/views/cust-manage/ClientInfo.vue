@@ -81,7 +81,7 @@
         :customRow="customRow"
       >
         <span slot="action" slot-scope="text, record">
-          <a @click.stop="showConfirm(record, ...arguments)">迁出</a>
+          <a @click.stop="showConfirm(record, ...arguments)">迁动</a>
           <a-divider type="vertical" />
           <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
             <a>删除</a>

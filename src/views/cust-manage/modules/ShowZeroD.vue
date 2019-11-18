@@ -535,9 +535,9 @@
           textAlign: 'right',
         }"
       >
-        <a-button :style="{marginRight: '8px'}" @click="onClose">Cancel</a-button>
+        <a-button :style="{marginRight: '8px'}" @click="onClose">取消</a-button>
         <!-- <a-button :style="{marginRight: '8px'}" @click="onClose">Cancel</a-button> -->
-        <a-button @click="handleOk" type="primary">Submit</a-button>
+        <a-button @click="handleOk" type="primary">保存</a-button>
       </div>
     </div>
   </a-drawer>

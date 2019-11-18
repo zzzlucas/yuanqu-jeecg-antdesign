@@ -292,8 +292,8 @@
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="是否人才项目">
                 <a-radio-group v-decorator="['isTalentProject']">
-                  <a-radio :value="1">是</a-radio>
-                  <a-radio :value="2">否</a-radio>
+                  <a-radio value="1">是</a-radio>
+                  <a-radio value="2">否</a-radio>
                 </a-radio-group>
               </a-form-item>
             </a-col>
@@ -336,8 +336,8 @@
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="是否外资">
                 <a-radio-group v-decorator="['isForeignCapital']">
-                  <a-radio :value="1">是</a-radio>
-                  <a-radio :value="2">否</a-radio>
+                  <a-radio value="1">是</a-radio>
+                  <a-radio value="2">否</a-radio>
                 </a-radio-group>
               </a-form-item>
             </a-col>

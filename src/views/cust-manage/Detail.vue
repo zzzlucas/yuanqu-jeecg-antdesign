@@ -7,10 +7,10 @@
         <a-tab-pane tab="基本信息" key="1">
           <div class="div-detail-list">
             <detail-list>
-              <detail-list-item term="企业简称">{{ info.customerAbbr }}（万元）</detail-list-item>
+              <detail-list-item term="企业简称">{{ info.customerAbbr }}</detail-list-item>
               <detail-list-item term="企业编号">{{ info.customerNo }}</detail-list-item>
-              <detail-list-item term="法人">{{ info.legalPerson }}(万元)</detail-list-item>
-              <detail-list-item term="单位电话">{{ info.telephone }}(万元)</detail-list-item>
+              <detail-list-item term="法人">{{ info.legalPerson }}</detail-list-item>
+              <detail-list-item term="单位电话">{{ info.telephone }}</detail-list-item>
               <detail-list-item term="招商人员">{{ info.merchantManager }}</detail-list-item>
               <detail-list-item term="服务人员">{{ info.servicer }}</detail-list-item>
               <detail-list-item term="所属项目">{{ info.caseId }}</detail-list-item>
@@ -19,13 +19,13 @@
             </detail-list>
           </div>
           <detail-list>
-            <detail-list-item term="邮 箱">否{{ info.email }}</detail-list-item>
+            <detail-list-item term="邮 箱">{{ info.email }}</detail-list-item>
           </detail-list>
           <detail-list>
-            <detail-list-item term="网 址">公司概况{{ info.website }}</detail-list-item>
+            <detail-list-item term="网 址">{{ info.website }}</detail-list-item>
           </detail-list>
           <detail-list>
-            <detail-list-item term="关联客户">团队成员情况{{ info.relCustListId }}</detail-list-item>
+            <detail-list-item term="关联客户">{{ info.relCustListId }}</detail-list-item>
           </detail-list>
           <detail-list>
             <detail-list-item term="企业简介">{{ info.content }}</detail-list-item>
