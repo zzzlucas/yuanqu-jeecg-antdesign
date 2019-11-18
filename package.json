@@ -25,6 +25,7 @@
     "lodash.pick": "^4.4.0",
     "md5": "^2.2.1",
     "moment": "^2.24.0",
+    "node-sass": "^4.13.0",
     "nprogress": "^0.2.0",
     "numeral": "^2.0.6",
     "qs": "^6.9.1",
@@ -59,7 +60,6 @@
     "eslint-plugin-vue": "^5.1.0",
     "less": "^3.9.0",
     "less-loader": "^4.1.0",
-    "node-sass": "^4.11.0",
     "sass-loader": "^7.0.1",
     "vue-template-compiler": "^2.6.10"
   },
