@@ -288,9 +288,30 @@ export function uploadFile(request) {
     }
   }).then(res => {
     if (res.code === 0 && res.success) {
-      request.onSuccess({ url: window._CONFIG['imgDomainURL'] + res.message })
+      request.onSuccess({ url: window._CONFIG['imgDomainURL'] + res.message, old: res.message})
     } else {
       request.onError(res.message)
     }
   })
+}
+
+/**
+ * 提取 fileList 主要数据
+ * @param fileList
+ * @returns {[]}
+ */
+export function getFileListData(fileList) {
+  const data = []
+
+  for(const item of fileList){
+    const {response, name, uid} = item
+    data.push({
+      url: response.old,
+      name,
+      uid,
+      status: 'done'
+    })
+  }
+
+  return data
 }

@@ -98,7 +98,7 @@
 <script>
   import { httpAction } from '@/api/manage'
   import pick from 'lodash.pick'
-  import { promiseForm, uploadFile } from '@utils/util'
+  import { getFileListData, promiseForm, uploadFile } from '@utils/util'
   import qs from 'qs'
   import { PickBuildingBlockForm } from '@/config/pick-fields'
   import rules from '../js/rules'
@@ -155,14 +155,18 @@
         const form = promiseForm(this.form)
 
         form.then(form => {
+          console.log(form)
           this.confirmLoading = true
           let httpUrl = ''
           let method = ''
-          if (!this.model.projectId) {
+
+          form.addDocFiles = JSON.stringify(getFileListData(this.fileList))
+
+          if (!this.model.buildingProjectId) {
             httpUrl = this.url.add
             method = 'post'
           } else {
-            form.projectId = this.model.projectId
+            form.buildingProjectId = this.model.buildingProjectId
             httpUrl = this.url.edit
             method = 'put'
           }
@@ -180,7 +184,7 @@
             }
           })
         }).catch(err => {
-          console.log('工程项目新增：', err)
+          console.log('区块新增：', err)
         })
       },
       handleCancel() {
