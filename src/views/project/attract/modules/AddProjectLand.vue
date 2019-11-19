@@ -298,8 +298,8 @@
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="是否人才项目">
                   <a-radio-group v-decorator="['isTalentProject']">
-                    <a-radio :value="1">是</a-radio>
-                    <a-radio :value="2">否</a-radio>
+                    <a-radio value="1">是</a-radio>
+                    <a-radio value="2">否</a-radio>
                   </a-radio-group>
                 </a-form-item>
               </a-col>
@@ -342,8 +342,8 @@
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="是否外资">
                   <a-radio-group v-decorator="['isForeignCapital']">
-                    <a-radio :value="1">是</a-radio>
-                    <a-radio :value="2">否</a-radio>
+                    <a-radio value="1">是</a-radio>
+                    <a-radio value="2">否</a-radio>
                   </a-radio-group>
                 </a-form-item>
               </a-col>
@@ -579,8 +579,8 @@ export default {
       record: {},
       visible: false,
       loading: false,
-      editor:{
-        projectTechnologyFlow:''
+      editor: {
+        projectTechnologyFlow: ''
       }
       // value:""
       // DictDataindustrySectorValue:this.form.getFieldValue('industrySectorValue')
@@ -590,16 +590,16 @@ export default {
     // this.edit(this.record.id)
   },
   created() {
-    initDictOptions('INDUSTRY_SECTOR_VALUE').then(res => {
+    initDictOptions('industry_sector_value').then(res => {
       if (res.code === 0 && res.success) {
         this.dict.industrySectorValueExt = res.result
       }
-    }),
-      initDictOptions('mgr-attr-addpl-companyRegisterType').then(res => {
-        if (res.code === 0 && res.success) {
-          this.dict.companyRegisterTypeExt = res.result
-        }
-      })
+    })
+    initDictOptions('mgr-attr-addpl-companyRegisterType').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.companyRegisterTypeExt = res.result
+      }
+    })
   },
   methods: {
     importExcelUrl() {},
@@ -680,9 +680,17 @@ export default {
       this.visible = true
       // console.log(pick(this.model, ProjectAttractShowZeroForm))
       this.$nextTick(() => {
+        this.editor = {
+          projectTechnologyFlow: record.projectTechnologyFlow
+        }
         this.form.setFieldsValue(pick(this.model, AddProjectLandForm))
         //时间格式化
-        // this.form.setFieldsValue({ trackDate: this.model.trackDate ? moment(this.model.trackDate) : null })
+        this.form.setFieldsValue({
+          buildingEndDate: this.model.buildingEndDate ? moment(this.model.buildingEndDate) : null
+        })
+        this.form.setFieldsValue({
+          buildingBeginDate: this.model.buildingBeginDate ? moment(this.model.buildingBeginDate) : null
+        })
       })
     },
     edit(record) {
@@ -711,7 +719,7 @@ export default {
         if (!err) {
           that.confirmLoading = true
           const { projectTechnologyFlow } = this.editor
-          
+
           let httpurl = ''
           let method = ''
           // console.log('2222')
@@ -735,9 +743,9 @@ export default {
             : null
           formData.buildingEndDate = formData.buildingEndDate ? formData.buildingEndDate.format('YYYY-MM-DD') : null
           formData.projectTechnologyFlow = projectTechnologyFlow
-          console.log('1111111')
-          console.log(formData.projectTechnologyFlow)
-          console.log('222222')
+          // console.log('1111111')
+          // console.log(formData.projectTechnologyFlow)
+          // console.log('222222')
           //qs.stringify  目前看来必须转换
           formData = qs.stringify(formData)
           console.log(formData)

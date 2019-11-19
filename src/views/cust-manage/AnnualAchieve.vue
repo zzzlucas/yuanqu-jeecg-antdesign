@@ -103,7 +103,7 @@ export default {
           title: '年度',
           align: 'center',
           dataIndex: 'year',
-          width:100
+          width: 100
         },
         {
           title: '区分',
@@ -168,6 +168,7 @@ export default {
       rightShow: false
     }
   },
+
   created() {
     this.loadData()
   },
@@ -176,44 +177,69 @@ export default {
       return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`
     }
   },
+  //
+  // watch: {
+  //   typee: function(e) {}
+  // },
   methods: {
     handleChange(e) {
-      console.log('eeeeeeeeeeeeeeeeeee')
-      console.log(e)
-      console.log(typeof e)
-      this.typee = e
-      this.loadData()
+      // console.log('eeeeeeeeeeeeeeeeeee')
+      // console.log(e)
+      // console.log(typeof e)
+      // this.typee = e
+      if (e == 'YS') {
+        getAction(this.url.listN, { type: 'YS' }).then(res => {
+          if (res.success) {
+            console.log('预算筛选成功')
+            this.dataSource = res.result
+            this.ipagination.total = res.result.total
+          }
+          if (res.code === 510) {
+            this.$message.warning(res.message)
+          }
+          this.loading = false
+        })
+      }
+      if (e == 'SJ') {
+        getAction(this.url.listN, { type: 'SJ' }).then(res => {
+          if (res.success) {
+            console.log('实际筛选成功')
+            this.dataSource = res.result
+            this.ipagination.total = res.result.total
+          }
+          if (res.code === 510) {
+            this.$message.warning(res.message)
+          }
+          this.loading = false
+        })
+      }
+      if (e == '') {
+        let params = { parkId: 555 }
+        getAction(this.url.listM, params).then(res => {
+          if (res.success) {
+            console.log('不限筛选成功')
+            this.dataSource = res.result
+            this.ipagination.total = res.result.total
+          }
+          if (res.code === 510) {
+            this.$message.warning(res.message)
+          }
+          this.loading = false
+        })
+      }
+      // this.loadData()
     },
     loadData() {
+      console.log('ahhahahahah');
+      // if (this.typee == 'YS' || this.typee == 'SJ') console.log('hahahaahahh')
       // let params = { type: this.typee }
       let params = { parkId: 555 }
       //当type为不限时，走listM的api / type筛选时，走最简单的listN
       getAction(this.url.listM, params).then(res => {
         if (res.success) {
-          //111111111111   处理dataSource，为需要的格式  /遍历操作
-          // let RealDataSource = []
-          // for (const item of res.result) {
-          //   console.log('item');
-          //   console.log(item);
-          //   if (item.type == 'YS' && item.year == '2019') {
-          //     RealDataSource.push(item)
-          //     RealDataSource[0].children = []
-          //   }
-          //   function sortMonth(a, b) {
-          //     return a.month - b.month
-          //   }
-          //   // if (item.type == "SJ" && RealDataSource[0] == true) {
-          //   if (item.type == 'SJ') {
-          //     RealDataSource[0].children.push(item)
-          //     RealDataSource[0].children.sort(sortMonth)
-          //   }
-          // }
-          // res.result = RealDataSource
-          // 22222222222
-
-          this.dataSource = res.result          
+          this.dataSource = res.result
           //分页查询未在此实现
-
+          this.ipagination.total = res.result.total
         }
         if (res.code === 510) {
           this.$message.warning(res.message)
@@ -221,23 +247,6 @@ export default {
         this.loading = false
       })
     },
-    // getQueryParams() {
-    //   let sqp = {}
-    //   if (this.superQueryParams) {
-    //     sqp['superQueryParams'] = encodeURI(this.superQueryParams)
-    //   }
-    //   this.form.validateFieldsAndScroll((err, form) => {
-    //     console.log(form)
-    //     this.queryform = form
-    //   })
-    //   // console.log(this.queryform)
-    //   var param = Object.assign(sqp, this.queryParam, this.isorter, this.filters, this.queryform)
-    //   // param.field = this.getQueryField()
-    //   // param.projectId = this.record.projectId
-    //   param.pageNo = this.ipagination.current
-    //   param.pageSize = this.ipagination.pageSize
-    //   return filterObj(param)
-    // },
 
     goAnnualAchieveAddForm() {
       this.$refs.AnnualAchieveAddForm.add()
@@ -247,31 +256,6 @@ export default {
         .parents('.ant-table-row')
         .data('row-key')
       this.$refs.AnnualAchieveAddForm.edit(row)
-    },
-    //都是提交   post
-    onSubmit(data) {
-      data = qs.stringify(data)
-      postAction(this.url.add, data).then(res => {
-        if (res.code === 200) {
-          this.$message.success(res.message)
-          this.loadData()
-        } else {
-          this.$message.error(res.message)
-        }
-      })
-    },
-    //都是提交   put
-    onEdit(data) {
-      console.log(data)
-      data = qs.stringify(data)
-      putAction(this.url.edit, data).then(res => {
-        if (res.code === 200) {
-          this.$message.success(res.message)
-          this.loadData()
-        } else {
-          this.$message.error(res.message)
-        }
-      })
     },
     customRow(row) {
       return {

@@ -211,35 +211,35 @@
                   <!-- :options="plainOptions"   摘出 -->
                   <a-checkbox-group v-model="checkedList" @change="onChange">
                     <a-row>
-                      <a-col :span="8">
-                        <a-checkbox value="A">A</a-checkbox>
+                      <a-col :span="6">
+                        <a-checkbox value="A">test</a-checkbox>
                       </a-col>
-                      <a-col :span="8">
-                        <a-checkbox value="B">B</a-checkbox>
+                      <a-col :span="6">
+                        <a-checkbox value="B">test</a-checkbox>
                       </a-col>
-                      <a-col :span="8">
-                        <a-checkbox value="C">C</a-checkbox>
+                      <a-col :span="6">
+                        <a-checkbox value="C">test</a-checkbox>
                       </a-col>
-                      <a-col :span="8">
-                        <a-checkbox value="D">D</a-checkbox>
+                      <a-col :span="6">
+                        <a-checkbox value="D">test</a-checkbox>
                       </a-col>
-                      <a-col :span="8">
-                        <a-checkbox value="E">E</a-checkbox>
+                      <a-col :span="6">
+                        <a-checkbox value="E">test</a-checkbox>
                       </a-col>
-                      <a-col :span="8">
-                        <a-checkbox value="E">E</a-checkbox>
+                      <a-col :span="6">
+                        <a-checkbox value="E">test</a-checkbox>
                       </a-col>
-                      <a-col :span="8">
-                        <a-checkbox value="E">E</a-checkbox>
+                      <a-col :span="6">
+                        <a-checkbox value="E">test</a-checkbox>
                       </a-col>
-                      <a-col :span="8">
-                        <a-checkbox value="E">E</a-checkbox>
+                      <a-col :span="6">
+                        <a-checkbox value="E">test</a-checkbox>
                       </a-col>
-                      <a-col :span="8">
-                        <a-checkbox value="E">E</a-checkbox>
+                      <a-col :span="6">
+                        <a-checkbox value="E">test</a-checkbox>
                       </a-col>
-                      <a-col :span="8">
-                        <a-checkbox value="E">E</a-checkbox>
+                      <a-col :span="6">
+                        <a-checkbox value="E">test</a-checkbox>
                       </a-col>
                     </a-row>
                   </a-checkbox-group>
@@ -394,7 +394,7 @@
                     <a-select
                       slot="addonAfter"
                       style="width: 100px;"
-                      v-decorator="['registeredCapitalUnit', {initialValue: dict.registeredCapitalUnitExt[0].value}]"
+                      v-decorator="['registeredCapitalUnit', {initialValue:dict.registeredCapitalUnitExt[0].value}]"
                     >
                       <a-select-option
                         v-for="(item, key) in dict.registeredCapitalUnitExt"
@@ -535,9 +535,9 @@
           textAlign: 'right',
         }"
       >
-        <a-button :style="{marginRight: '8px'}" @click="onClose">Cancel</a-button>
+        <a-button :style="{marginRight: '8px'}" @click="onClose">取消</a-button>
         <!-- <a-button :style="{marginRight: '8px'}" @click="onClose">Cancel</a-button> -->
-        <a-button @click="handleOk" type="primary">Submit</a-button>
+        <a-button @click="handleOk" type="primary">保存</a-button>
       </div>
     </div>
   </a-drawer>
@@ -695,6 +695,7 @@ export default {
 
       record.registDate = record.baseCustomerBusiness.registDate
       record.registeredCapital = record.baseCustomerBusiness.registeredCapital
+      record.registeredCapitalUnit = record.baseCustomerBusiness.registeredCapitalUnit
       record.bussinessStatus = record.baseCustomerBusiness.bussinessStatus
       record.taxStatus = record.baseCustomerBusiness.taxStatus
       record.creditCode = record.baseCustomerBusiness.creditCode

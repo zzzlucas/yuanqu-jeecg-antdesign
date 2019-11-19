@@ -10,14 +10,14 @@
     <a-spin :spinning="confirmLoading">
       <a-form :form="form">
         <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="园区ID">
-          <a-input placeholder="请输入园区ID" v-decorator="['parkId', validatorRules.parkId ]" />
+          <a-input  placeholder="当前parkid：555" v-decorator="['parkId', validatorRules.parkId ]" />
         </a-form-item>
         <!-- <a-row>
         <a-col span="12">-->
         <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="年度">
           <a-select
             placeholder="请选择年份"
-            v-decorator="['year', validatorRules.year,{initialValue: ''}]"
+            v-decorator="['year',{initialValue: ''}]"
           >
             <a-select-option value="2018">2018</a-select-option>
             <a-select-option value="2019">2019</a-select-option>
@@ -31,7 +31,7 @@
         <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="月份">
           <a-select
             placeholder="请选择月份"
-            v-decorator="['month', validatorRules.month,{initialValue: ''}]"
+            v-decorator="['month',{initialValue: ''}]"
           >
             <a-select-option value="1">1</a-select-option>
             <a-select-option value="2">2</a-select-option>

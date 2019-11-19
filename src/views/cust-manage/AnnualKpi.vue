@@ -67,7 +67,7 @@ export default {
   mixins: [JeecgListMixin],
   data() {
     return {
-      description: '园区信息管理页面',
+      description: '',
       // 表头
       columns: [
         // {
@@ -157,9 +157,14 @@ export default {
   },
   methods: {
     loadData() {
-      getAction(this.url.list, { type: 'YS' }).then(res => {
+      let param = {}
+      // param.pageNo = this.ipagination.current
+      // param.pageSize = this.ipagination.pageSize
+      param.type = 'YS'
+      getAction(this.url.list, param).then(res => {
         if (res.success) {
           this.dataSource = res.result
+          this.ipagination.total = res.result.total
         }
         if (res.code === 510) {
           this.$message.warning(res.message)
@@ -175,31 +180,6 @@ export default {
         .parents('.ant-table-row')
         .data('row-key')
       this.$refs.AnnualKpiAddForm.edit(row)
-    },
-    //都是提交   post
-    onSubmit(data) {
-      data = qs.stringify(data)
-      postAction(this.url.add, data).then(res => {
-        if (res.code === 200) {
-          this.$message.success(res.message)
-          this.loadData()
-        } else {
-          this.$message.error(res.message)
-        }
-      })
-    },
-    //都是提交   put
-    onEdit(data) {
-      console.log(data)
-      data = qs.stringify(data)
-      putAction(this.url.edit, data).then(res => {
-        if (res.code === 200) {
-          this.$message.success(res.message)
-          this.loadData()
-        } else {
-          this.$message.error(res.message)
-        }
-      })
     },
     customRow(row) {
       return {

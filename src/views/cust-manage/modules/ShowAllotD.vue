@@ -3,14 +3,15 @@
   <a-drawer title="客户分配" width="40%" destroyOnClose :visible="visible" @close="handleCancel">
     <a-card :bordered="false">
       <a-form :form="form">
-        <a-form-item label="企业ID">
-          <a-input v-decorator="['custId',  {rules: [{required: true, message: '请输入企业ID'}]}]" />
-        </a-form-item>
-        <!-- <a-form-item label="企业名称">
+        <!-- <a-form-item label="企业ID">
+          <a-input disabled v-decorator="['custId']" />
+        </a-form-item>-->
+        <a-form-item label="企业名称">
           <a-input
+            disabled
             v-decorator="['customerName',  {rules: [{required: true, message: '请输入企业名称'}]}]"
           />
-        </a-form-item> -->
+        </a-form-item>
         <a-form-item label="服务人员" required>
           <a-input v-decorator="['servicer',  {rules: [{required: true, message: '请输入服务人员'}]}]" />
           <!-- 数据字典 -->
@@ -126,10 +127,10 @@ export default {
       // console.log('record');
       // console.log(record);
       this.form.resetFields()
-      this.model = Object.assign({},record)
+      this.model = Object.assign({}, record)
       this.visible = true
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.model, 'custId', 'servicer'))
+        this.form.setFieldsValue(pick(this.model, 'custId', 'customerName', 'servicer'))
       })
     },
     handleCancel() {

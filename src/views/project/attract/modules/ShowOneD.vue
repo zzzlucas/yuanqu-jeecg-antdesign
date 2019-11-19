@@ -6,6 +6,7 @@
         <a-form-item label="项目名称">
           <a-input
             placeholder="请输入项目名称"
+            disabled
             v-decorator="['projectName',  {rules: [{required: true, message: '请输入项目名称'}]}]"
           />
         </a-form-item>
@@ -28,7 +29,7 @@
 </template>
 
 <script>
-import { httpAction } from '@/api/manage'
+import { httpAction, getAction } from '@/api/manage'
 import pick from 'lodash.pick'
 import moment from 'moment'
 import qs from 'qs'
@@ -88,14 +89,10 @@ export default {
           let httpurl = ''
           let method = ''
           console.log(this.model)
-          // console.log(this.model.id);
-          if (!this.model.projectId) {
-            httpurl += this.url.add
-            method = 'post'
-          } else {
-            httpurl += this.url.edit
-            method = 'put'
-          }
+
+          httpurl += this.url.edit
+          method = 'put'
+
           // let formData = {}
           let formData = Object.assign(this.model, values)
           formData = qs.stringify(formData)
@@ -118,16 +115,19 @@ export default {
       // this.form.resetFields()
     },
     detail(record) {
-      this.record = record
-      // console.log(this.record.recordId)
-      this.form.resetFields()
-      this.model = Object.assign({}, this.record)
-      this.visible = true
-      // console.log(pick(this.model, ProjectAttractShowZeroForm))
-      this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.model, 'projectName','tracker'))
-        //时间格式化
-        // this.form.setFieldsValue({ trackDate: this.model.trackDate ? moment(this.model.trackDate) : null })
+      let proId = record.projectId
+      getAction('/park.project/mgrProjectTrace/getById', { projectId: proId }).then(resAAA => {
+        // console.log(resAAA.result[0].tracker);
+        if (resAAA.result[resAAA.result.length - 1]) {
+          record.tracker = resAAA.result[resAAA.result.length - 1].tracker
+        }
+        this.record = record
+        // this.form.resetFields()
+        this.model = Object.assign({}, this.record)
+        this.visible = true
+        this.$nextTick(() => {
+          this.form.setFieldsValue(pick(this.model, 'projectName', 'tracker'))
+        })
       })
     },
     handleCancel() {
