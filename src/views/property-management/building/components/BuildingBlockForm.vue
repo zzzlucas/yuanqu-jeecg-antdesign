@@ -126,11 +126,6 @@
         fileList: []
       }
     },
-    created() {
-      this.$on('success', e => {
-        console.log(e)
-      })
-    },
     methods: {
       add() {
         this.title = '新建区块'
@@ -155,7 +150,6 @@
         const form = promiseForm(this.form)
 
         form.then(form => {
-          console.log(form)
           this.confirmLoading = true
           let httpUrl = ''
           let method = ''
@@ -203,7 +197,6 @@
         window.open(e.response.url)
       },
       uploadChange({ file, fileList }) {
-        console.log(file.status)
         if (file.status === 'done') {
           const data = fileList[fileList.length - 1]
           data.url = data.response.url
