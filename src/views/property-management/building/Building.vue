@@ -13,12 +13,12 @@
           <a-button class="margin-left">新建楼层</a-button>
           <a-button class="margin-left">新建房间</a-button>
         </template>
-        <building-view :model="model" @delete="onDelete"></building-view>
+        <building-view :model="model" @delete="onDelete" @edit="onEdit"></building-view>
       </a-card>
     </a-col>
 
     <!-- 表单 -->
-    <building-block-form ref="block"></building-block-form>
+    <building-block-form ref="block" @ok="onOk"></building-block-form>
   </a-row>
 </template>
 
@@ -28,6 +28,7 @@
   import { deleteAction, getAction } from '@/api/manage'
   import { listJsonFields, listReplace } from '@utils/util'
   import pick from 'lodash.pick'
+  import _ from 'lodash'
 
   export default {
     name: 'Building',
@@ -62,13 +63,11 @@
           list
         }
 
-        this.tree = listReplace(list, {
-          projectAbbr: 'title',
-          buildingProjectId: 'key'
-        }, obj => {
-          obj = pick(obj, ['title', 'key'])
-          obj.type = 'block'
-          return obj
+        this.tree = _.map(list, obj => {
+          return {
+            title: obj.projectAbbr,
+            key: obj.buildingProjectId,
+          }
         })
       }).catch(err => {
         console.log('载入区块数据：' + err)
@@ -106,6 +105,38 @@
             })
           }
         })
+      },
+      onEdit(type, id, key, obj) {
+        const data = _.clone(obj)
+        switch (type) {
+          case 'block':
+            this.$refs.block.edit(data)
+            break
+          default:
+            this.$message.error('没有对应的修改方式')
+            break
+        }
+      },
+      onOk(type){
+        switch (type) {
+          case 'block':
+            this.loadData({ parkId: '1193719771573518336' }).then(list => {
+              this.model = {
+                status: 'block',
+                list
+              }
+
+              this.tree = _.map(list, obj => {
+                return {
+                  title: obj.projectAbbr,
+                  key: obj.buildingProjectId,
+                }
+              })
+            }).catch(err => {
+              console.log('载入区块数据：' + err)
+            })
+            break
+        }
       },
       onTreeSelect(keys, info) {
         console.log(keys, info)

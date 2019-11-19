@@ -4,7 +4,7 @@
       <header class="block">
         <div class="title" v-text="item.projectName"></div>
         <div class="header-right">
-          <a-button size="small">编辑</a-button>
+          <a-button size="small" @click="editBtn('block', item.buildingProjectId, key, item)">编辑</a-button>
           <a-button
             class="delete-btn"
             size="small"
@@ -33,6 +33,7 @@
 <script>
   import YqImage from '@comp/extend/YqImage'
   import { getOneImage } from '@utils/util'
+  import _ from 'lodash'
 
   export default {
     name: 'BlockList',
@@ -47,14 +48,17 @@
     },
     methods: {
       getImage(list){
-        if(list.length > 0){
-          return getOneImage(list[0].url)
+        let url = _.get(list, '[0].url', '')
+        if(url){
+          url = getOneImage(url)
         }
-
-        return ''
+        return url
       },
       deleteBtn() {
         this.$emit('delete', ...arguments)
+      },
+      editBtn() {
+        this.$emit('edit', ...arguments)
       }
     }
   }

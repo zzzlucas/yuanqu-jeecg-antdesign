@@ -98,7 +98,8 @@
 <script>
   import { httpAction } from '@/api/manage'
   import pick from 'lodash.pick'
-  import { getFileListData, promiseForm, uploadFile } from '@utils/util'
+  import _ from 'lodash'
+  import { getFileListData, getOneImage, listReplace, promiseForm, uploadFile } from '@utils/util'
   import qs from 'qs'
   import { PickBuildingBlockForm } from '@/config/pick-fields'
   import rules from '../../js/rules'
@@ -136,9 +137,20 @@
         this.title = '编辑区块'
         this.form.resetFields()
         this.model = Object.assign({}, record)
+
         this.visible = true
+
         this.$nextTick(() => {
           this.form.setFieldsValue(pick(this.model, PickBuildingBlockForm))
+
+          let images = _.cloneDeep(record.addDocFiles)
+          images = _.map(images, obj => {
+            obj.url = getOneImage(obj.url)
+            obj.thumbUrl = obj.url
+            return obj
+          })
+
+          this.fileList = images
         })
       },
       close() {
@@ -171,7 +183,7 @@
             this.confirmLoading = false
             if (res.success) {
               this.$message.success(res.message)
-              this.$emit('ok')
+              this.$emit('ok', 'block')
               this.close()
             } else {
               this.$message.warning(res.message)
