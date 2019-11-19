@@ -17,11 +17,12 @@
         </header>
         <main class="block">
           <div class="image-box">
-            <yq-image class="block-image" size="30"></yq-image>
+            <yq-image class="block-image" size="30" :src="getBuildImage(item.addDocFiles)"></yq-image>
           </div>
+          <!-- TODO: 接口要大改，这里全都动不了 -->
           <div class="info-box">
             <p>楼宇总数：31 栋</p>
-            <p>建筑总面积：2333 ㎡</p>
+            <p>建筑总面积：{{ item.buildingArea }} ㎡</p>
             <p>楼层：共 20 层</p>
             <p>房间：共 147 间，剩余 144 间</p>
           </div>
@@ -50,6 +51,13 @@
     methods: {
       deleteBin() {
         this.$emit('delete', ...arguments)
+      },
+      getBuildImage(list){
+        if(list.length > 0){
+          return window._CONFIG['imgDomainURL'] + list[0].url
+        }
+
+        return ''
       }
     }
   }
