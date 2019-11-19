@@ -1,81 +1,18 @@
 <template>
   <div class="yq-building-view">
     <!-- 区块显示 -->
-    <a-row class="block-row">
-      <a-col span="12" class="block-item">
+    <a-row class="block-row" v-if="model.status === 'block'">
+      <a-col span="12" class="block-item" v-for="(item, key) in model.list" :key="key">
         <header class="block">
-          <div class="title">
-            <span>A区域</span>
-          </div>
+          <div class="title" v-text="item.projectName"></div>
           <div class="header-right">
             <a-button size="small">编辑</a-button>
-            <a-button class="delete-btn" size="small" type="danger">删除</a-button>
-          </div>
-        </header>
-        <main class="block">
-          <div class="image-box">
-            <yq-image class="block-image" size="30"></yq-image>
-          </div>
-          <div class="info-box">
-            <p>楼宇总数：31 栋</p>
-            <p>建筑总面积：2333 ㎡</p>
-            <p>楼层：共 20 层</p>
-            <p>房间：共 147 间，剩余 144 间</p>
-          </div>
-        </main>
-      </a-col>
-      <a-col span="12" class="block-item">
-        <header class="block">
-          <div class="title">
-            <span>B区域</span>
-          </div>
-          <div class="header-right">
-            <a-button size="small">编辑</a-button>
-            <a-button class="delete-btn" size="small" type="danger">删除</a-button>
-          </div>
-        </header>
-        <main class="block">
-          <div class="image-box">
-            <yq-image class="block-image" size="30"></yq-image>
-          </div>
-          <div class="info-box">
-            <p>楼宇总数：31 栋</p>
-            <p>建筑总面积：2333 ㎡</p>
-            <p>楼层：共 20 层</p>
-            <p>房间：共 147 间，剩余 144 间</p>
-          </div>
-        </main>
-      </a-col>
-      <a-col span="12" class="block-item">
-        <header class="block">
-          <div class="title">
-            <span>C区域</span>
-          </div>
-          <div class="header-right">
-            <a-button size="small">编辑</a-button>
-            <a-button class="delete-btn" size="small" type="danger">删除</a-button>
-          </div>
-        </header>
-        <main class="block">
-          <div class="image-box">
-            <yq-image class="block-image" size="30"></yq-image>
-          </div>
-          <div class="info-box">
-            <p>楼宇总数：31 栋</p>
-            <p>建筑总面积：2333 ㎡</p>
-            <p>楼层：共 20 层</p>
-            <p>房间：共 147 间，剩余 144 间</p>
-          </div>
-        </main>
-      </a-col>
-      <a-col span="12" class="block-item">
-        <header class="block">
-          <div class="title">
-            <span>D区域</span>
-          </div>
-          <div class="header-right">
-            <a-button size="small">编辑</a-button>
-            <a-button class="delete-btn" size="small" type="danger">删除</a-button>
+            <a-button
+              class="delete-btn"
+              size="small"
+              type="danger"
+              @click="deleteBin('block', item.buildingProjectId, key, item.projectName)">删除
+            </a-button>
           </div>
         </header>
         <main class="block">
@@ -99,7 +36,22 @@
 
   export default {
     name: 'BuildingView',
-    components: { YqImage }
+    components: { YqImage },
+    props: {
+      model: {
+        type: Object,
+        default() {
+          return {
+            status: 'empty'
+          }
+        }
+      }
+    },
+    methods: {
+      deleteBin() {
+        this.$emit('delete', ...arguments)
+      }
+    }
   }
 </script>
 

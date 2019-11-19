@@ -342,7 +342,6 @@ export function objectJsonFields(obj, fields) {
   for(const key in obj){
     if(obj.hasOwnProperty(key)){
       if(fields.indexOf(key) !== -1){
-        console.log(key)
         obj[key] = JSON.parse(obj[key])
       }
     }
