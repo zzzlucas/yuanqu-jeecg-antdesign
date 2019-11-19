@@ -3,14 +3,14 @@
     <page-layout :title="title">
       <a-divider type="vertical" />
 
-      <a-form @submit="handleSubmit" :form="form" disabled>
-        <!-- <a-card > </a-card> -->
-        <a-card :bordered="false" style="width:1200px;margin:auto">
-          <a-tabs defaultActiveKey="1">
-            <!-- @change="callback" -->
-            <a-tab-pane tab="项目初次申请" key="1">
-              <!-- 11111111111111 -->
+      <!-- <a-card > </a-card> -->
+      <a-card :bordered="false" style="width:1200px;margin:auto">
+        <a-tabs :activeKey="activeKey">
+          <!-- @change="callback" -->
 
+          <a-tab-pane tab="项目初次申请" key="1">
+            <!-- 11111111111111 -->
+            <a-form @submit="handleSubmit" :form="form">
               <a-card :bordered="false" title="企业信息">
                 <!-- 行1 -->
                 <a-row class="form-row" :gutter="16">
@@ -524,13 +524,20 @@
                 </a-row>
               </a-card>
               <a-card :bordered="false" size="small">
-                <a-button style="float:right;" type="primary" @click="handleSubmit">保存（Test Submit）</a-button>
+                <a-button
+                  style="float:right;"
+                  type="primary"
+                  @click="handleSubmit"
+                >保存（ Test: 保存后该项目转换为落地项目状态）</a-button>
                 <!-- <a-button type="primary" html-type="submit" @click="handleSubmit">Test Submit</a-button> -->
               </a-card>
-            </a-tab-pane>
+            </a-form>
+          </a-tab-pane>
 
-            <!-- 2222222222222222222222222222222222222222222222222222222222222222 -->
-            <a-tab-pane tab="项目二次申请" key="2">
+          <!-- 2222222222222222222222222222222222222222222222222222222222222222 -->
+
+          <a-tab-pane tab="项目二次申请" key="2">
+            <a-form @submit="handleSubmitTwo" :form="formS">
               <a-card :bordered="false" title="公司注册信息">
                 <!-- 行1 -->
                 <a-row class="form-row" :gutter="16">
@@ -584,61 +591,75 @@
                   </a-col>
                 </a-row>
               </a-card>
-
               <a-card :bordered="false" title="法人股东">
+                <a slot="extra" @click.prevent="addShowOne">
+                  <a-icon type="plus-square" style="margin-right:5px;margin-top:5px" />新增
+                </a>
                 <a-table
                   ref="table"
                   size="default"
                   bordered
                   rowKey="id"
                   :columns="columns1"
-                  :dataSource="dataSource"
-                  :pagination="ipagination"
+                  :dataSource="dataSourceA"
+                  :pagination="false"
                   :loading="loading"
                 >
-                  <!-- @change="handleTableChange" -->
                   <span slot="action" slot-scope="text, record">
-                    <a @click="twoShowOne(record)">编辑</a>
+                    <a @click="ShowOne(record)">编辑</a>
+                    <a-divider type="vertical" />
+                    <a @click="handelDelete(record)">删除</a>
                   </span>
                 </a-table>
               </a-card>
-              <a-card :bordered="false" title="法人股东">
+
+              <a-card :bordered="false" title="个人股东">
+                <a slot="extra" @click.prevent="addShowTwo">
+                  <a-icon type="plus-square" style="margin-right:5px;margin-top:5px" />新增
+                </a>
                 <a-table
                   ref="table"
                   size="default"
                   bordered
                   rowKey="id"
                   :columns="columns2"
-                  :dataSource="dataSource"
-                  :pagination="ipagination"
+                  :dataSource="dataSourceB"
+                  :pagination="false"
                   :loading="loading"
                 >
                   <span slot="action" slot-scope="text, record">
-                    <a @click="twoShowOne(record)">编辑</a>
+                    <a @click="ShowOne(record)">编辑</a>
+                    <a-divider type="vertical" />
+                    <a @click="handelDelete(record)">删除</a>
                   </span>
                 </a-table>
               </a-card>
-              <a-card :bordered="false" title="法人股东">
+              <a-card :bordered="false" title="团队成员">
+                <a slot="extra" @click.prevent="addShowThree">
+                  <a-icon type="plus-square" style="margin-right:5px;margin-top:5px" />新增
+                </a>
                 <a-table
                   ref="table"
                   size="default"
                   bordered
                   rowKey="id"
                   :columns="columns3"
-                  :dataSource="dataSource"
-                  :pagination="ipagination"
+                  :dataSource="dataSourceC"
+                  :pagination="false"
                   :loading="loading"
                 >
                   <span slot="action" slot-scope="text, record">
-                    <a @click="twoShowOne(record)">编辑</a>
+                    <a @click="ShowOne(record)">编辑</a>
+                    <a-divider type="vertical" />
+                    <a @click="handelDelete(record)">删除</a>
                   </span>
                 </a-table>
               </a-card>
               <a-card :bordered="false" title="生产工艺情况">
                 <a-row class="form-row" :gutter="16">
                   <a-col>
-                    <a-form-item label="单位产品原材料消耗（吨/吨产品）">
-                      <a-input v-decorator="['unitProductMaterialCost']" />
+                    <a-form-item label="单位产品原材料消耗">
+                      <a-input addonAfter="吨/吨产品" v-decorator="['unitProductMaterialCost']" />
                     </a-form-item>
                   </a-col>
                 </a-row>
@@ -659,19 +680,20 @@
                 <a-row class="form-row" :gutter="16">
                   <a-col :xl="{span: 12}">
                     <a-form-item label="技术来源">
-                      <!-- technologySource -->
-                      <a-select defaultValue="1" style="width:100%">
-                        <a-select-option value="1">股份合作企业</a-select-option>
-                        <a-select-option value="2">联营企业</a-select-option>
-                        <a-select-option value="3">有限责任公司</a-select-option>
-                        <a-select-option value="4">股份有限公司</a-select-option>
-                        <a-select-option value="5">私营企业</a-select-option>
+                      <a-select
+                        v-decorator="['technologySource',{rules: [{ required: true, message: '请输入技术来源', whitespace: true}]}]"
+                      >
+                        <a-select-option
+                          v-for="(item, key) in dict.technologySourceExt"
+                          :value="item.value"
+                          :key="key"
+                        >{{ item.text }}</a-select-option>
                       </a-select>
                     </a-form-item>
                   </a-col>
                   <a-col :xl="{span: 12}">
                     <a-form-item label="引进" required>
-                      <a-select v-decorator="['introduce']" defaultValue="1" style="width:100%">
+                      <a-select v-decorator="['introduce']" style="width:100%">
                         <a-select-option value="1">国内</a-select-option>
                         <a-select-option value="2">国外</a-select-option>
                       </a-select>
@@ -686,7 +708,7 @@
                   </a-col>
                   <a-col :xl="{span: 12}">
                     <a-form-item label="颁证年月" required>
-                      <a-date-picker v-decorator="['issueDate']" style="width:100%" />
+                      <a-date-picker :placeholder="false" v-decorator="['issueDate']" style="width:100%" />
                     </a-form-item>
                   </a-col>
                 </a-row>
@@ -707,26 +729,30 @@
                 <a-row class="form-row" :gutter="16">
                   <a-col :xl="{span: 12}">
                     <a-form-item label="污染所属类型">
-                      <a-select defaultValue="1" style="width:100%">
-                        <!-- pollutionType -->
-                        <a-select-option value="1">股份合作企业</a-select-option>
-                        <a-select-option value="2">联营企业</a-select-option>
-                        <a-select-option value="3">有限责任公司</a-select-option>
-                        <a-select-option value="4">股份有限公司</a-select-option>
-                        <a-select-option value="5">私营企业</a-select-option>
+                      <!-- pollutionType -->
+                      <a-select
+                        v-decorator="['pollutionType']"
+                      >
+                        <a-select-option
+                          v-for="(item, key) in dict.pollutionTypeExt"
+                          :value="item.value"
+                          :key="key"
+                        >{{ item.text }}</a-select-option>
                       </a-select>
                     </a-form-item>
                   </a-col>
 
                   <a-col :xl="{span: 12}">
                     <a-form-item label="废物排放种类">
-                      <a-select defaultValue="1" style="width:100%">
-                        <!-- wasteDischargeType -->
-                        <a-select-option value="1">股份合作企业</a-select-option>
-                        <a-select-option value="2">联营企业</a-select-option>
-                        <a-select-option value="3">有限责任公司</a-select-option>
-                        <a-select-option value="4">股份有限公司</a-select-option>
-                        <a-select-option value="5">私营企业</a-select-option>
+                      <!-- wasteDischargeType -->
+                      <a-select
+                        v-decorator="['wasteDischargeType']"
+                      >
+                        <a-select-option
+                          v-for="(item, key) in dict.wasteDischargeTypeExt"
+                          :value="item.value"
+                          :key="key"
+                        >{{ item.text }}</a-select-option>
                       </a-select>
                     </a-form-item>
                   </a-col>
@@ -742,7 +768,7 @@
                   </a-col>
                   <a-col :xl="{span: 12}">
                     <a-form-item label="污水管网计划接通时间">
-                      <a-date-picker v-decorator="['planSewerLineTime']" style="width:100%" />
+                      <a-date-picker :placeholder="false"  v-decorator="['planSewerLineTime']" style="width:100%" />
                       <!-- <a-input v-decorator="['planSewerLineTime']"></a-input> -->
                     </a-form-item>
                   </a-col>
@@ -751,18 +777,20 @@
                   <a-col :xl="{span: 12}">
                     <a-form-item label="使用锅炉情况">
                       <!-- boilerUse -->
-                      <a-select defaultValue="1" style="width:100%">
-                        <a-select-option value="1">股份合作企业</a-select-option>
-                        <a-select-option value="2">联营企业</a-select-option>
-                        <a-select-option value="3">有限责任公司</a-select-option>
-                        <a-select-option value="4">股份有限公司</a-select-option>
-                        <a-select-option value="5">私营企业</a-select-option>
+                      <a-select
+                        v-decorator="['boilerUse']"
+                      >
+                        <a-select-option
+                          v-for="(item, key) in dict.boilerUseExt"
+                          :value="item.value"
+                          :key="key"
+                        >{{ item.text }}</a-select-option>
                       </a-select>
                     </a-form-item>
                   </a-col>
                   <a-col :xl="{span: 12}">
-                    <a-form-item label="项目与敏感点方位距离（米）">
-                      <a-input v-decorator="['projectToPointDistance']"></a-input>
+                    <a-form-item label="项目与敏感点方位距离">
+                      <a-input addonAfter="米" v-decorator="['projectToPointDistance']"></a-input>
                     </a-form-item>
                   </a-col>
                 </a-row>
@@ -780,43 +808,55 @@
               <a-card :bordered="false" title="能源与资源消耗情况（年消耗量）">
                 <a-row class="form-row" :gutter="16">
                   <a-col :xl="{span: 12}">
-                    <a-form-item label="水（吨）">
-                      <a-input v-decorator="['waterConsume']" />
+                    <a-form-item label="水">
+                      <a-input addonAfter="吨" v-decorator="['waterConsume']" />
                     </a-form-item>
                   </a-col>
                   <a-col :xl="{span: 12}">
-                    <a-form-item label="原煤（吨）">
-                      <a-input v-decorator="['coalConsume']" />
+                    <a-form-item label="原煤">
+                      <a-input addonAfter="吨" v-decorator="['coalConsume']" />
                     </a-form-item>
                   </a-col>
                 </a-row>
                 <a-row class="form-row" :gutter="16">
                   <a-col>
-                    <a-form-item label="电（万千瓦时）">
-                      <a-input v-decorator="['powerConsume']" />
+                    <a-form-item label="电">
+                      <a-input addonAfter="万千瓦时" v-decorator="['powerConsume']" />
                     </a-form-item>
                   </a-col>
                 </a-row>
                 <a-row class="form-row" :gutter="16">
                   <a-col>
-                    <a-form-item label="蒸汽（吨）">
-                      <a-input v-decorator="['steamConsume']" />
+                    <a-form-item label="蒸汽">
+                      <a-input addonAfter="吨" v-decorator="['steamConsume']" />
                     </a-form-item>
                   </a-col>
                 </a-row>
               </a-card>
-            </a-tab-pane>
-          </a-tabs>
-        </a-card>
-      </a-form>
+              <a-card :bordered="false" size="small">
+                <a-button style="float:right;" type="primary" @click="handleSubmitTwo">保存（Test）</a-button>
+              </a-card>
+            </a-form>
+          </a-tab-pane>
+        </a-tabs>
+      </a-card>
+      <!-- <button @click="ShowOne" value="ShowOne">ShowOne</button>
+      <button @click="ShowTwo" value="ShowTwo">ShowTwo</button>
+      <button @click="ShowThree" value="ShowThree">ShowThree</button> -->
+      <show-one ref="ShowOne" @reload="getListA"></show-one>
+      <show-two ref="ShowTwo" @reload="getListB"></show-two>
+      <show-three ref="ShowThree" @reload="getListC"></show-three>
     </page-layout>
   </div>
 </template>
 
 <script>
+import ShowOne from './LShowOne'
+import ShowTwo from './LShowTwo'
+import ShowThree from './LShowThree'
 import PageLayout from '@/components/page/PageLayout'
 import JEditor from '@/components/jeecg/JEditor'
-import { getAction, putAction } from '@/api/manage'
+import { getAction, putAction, httpAction } from '@/api/manage'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import pick from 'lodash.pick'
 import moment from 'moment'
@@ -826,41 +866,59 @@ import qs from 'qs'
 
 export default {
   mixins: [JeecgListMixin],
-  components: { PageLayout, JEditor },
+  components: { PageLayout, JEditor, ShowOne, ShowTwo, ShowThree },
 
   data() {
     return {
       title: '首页 / 技改项目/项目维护',
-      //   form: {}
-      form: this.$form.createForm(this),
+      form: this.$form.createForm(this, { name: 'first' }),
+      formS: this.$form.createForm(this, { name: 'second' }),
+
       model: {},
+      modelS: {},
+      //
+      activeKey: '2',
       dict: {
-        industrySectorValueExt: [{ value: '1' }],
-        companyRegisterType: [{ value: '1' }]
+        // industrySectorValueExt: [{ value: '1' }],
+        // companyRegisterType: [{ value: '1' }],
+        // technologySource: [{ value: '1' }],
       },
       editor: {
         projectTechnologyFlow: ''
       },
+      dataSourceA: [
+        {
+          custName: '1',
+          equrityRatio: '2',
+          inventPatentMount: '1'
+        }
+      ],
+      dataSourceB: [],
+      dataSourceC: [],
       columns1: [
         {
           title: '序号',
+          dataIndex: '',
+          width: 100,
           align: 'center',
-          dataIndex: ''
+          customRender: function(t, r, index) {
+            return parseInt(index) + 1
+          }
         },
         {
           title: '公司名称',
           align: 'center',
-          dataIndex: 'trackDate'
+          dataIndex: 'custName'
         },
         {
           title: '股权占比',
           align: 'center',
-          dataIndex: 'tracker'
+          dataIndex: 'equrityRatio'
         },
         {
           title: '已授权发明专利数',
           align: 'center',
-          dataIndex: 'content'
+          dataIndex: 'inventPatentMount'
         },
         {
           title: '操作',
@@ -927,14 +985,90 @@ export default {
       ],
       url: {
         list: '/park.project/mgrProjectInfo/addProject',
-        edit: '/park.project/mgrProjectInfo/editProject'
+        edit: '/park.project/mgrProjectInfo/editProject',
+        editS: '/park.project/mgrProjectInfo/secondApply'
       }
     }
   },
   created() {
+    initDictOptions('technology_source').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.technologySourceExt = res.result
+      }
+    })
+    initDictOptions('pollution_type').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.pollutionTypeExt = res.result
+      }
+    })
+    initDictOptions('waste_discharge_type').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.wasteDischargeTypeExt = res.result
+      }
+    })
+    initDictOptions('boiler_use').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.boilerUseExt = res.result
+      }
+    })
+
     this.detail()
   },
   methods: {
+    //获取  重载
+    getListA() {},
+    getListB() {},
+    getListC() {},
+    //新增
+    addShowOne() {
+      this.$refs.ShowOne.add()
+    },
+    addShowTwo() {
+      this.$refs.ShowTwo.add()
+    },
+    addShowThree() {
+      this.$refs.ShowThree.add()
+    },
+    //编辑
+    ShowOne() {
+      this.$refs.ShowOne.detail()
+    },
+    ShowTwo() {
+      this.$refs.ShowTwo.detail()
+    },
+    ShowThree() {
+      this.$refs.ShowThree.detail()
+    },
+    handleSubmitTwo() {
+      const that = this
+      this.formS.validateFieldsAndScroll((err, values) => {
+        if (!err) {
+          that.confirmLoading = true
+          let httpurl = ''
+          let method = ''
+          httpurl += this.url.editS
+          method = 'put'
+          //这个model不能复用
+          let formData = Object.assign(this.modelS, values)
+          if (formData.issueDate) {
+            formData.issueDate = formData.issueDate ? formData.issueDate.format('YYYY-MM-DD') : null
+          }
+          formData.projectId = this.$route.params.id
+          formData = qs.stringify(formData)
+          httpAction(httpurl, formData, method)
+            .then(res => {
+              if (res.success) {
+                that.$message.success(res.message)
+              } else {
+                that.$message.warning(res.message)
+              }
+            })
+            .finally(() => {
+              that.confirmLoading = false
+            })
+        }
+      })
+    },
     handleSubmit() {
       const that = this
       this.form.validateFieldsAndScroll((err, values) => {
@@ -957,8 +1091,21 @@ export default {
               if (res.success) {
                 // that.$message.success('项目维护编辑成功')
                 that.$message.success(res.message)
-                that.$emit('reload')
-                this.visible = false
+                //第一步：提交编辑
+                //第二步：goWorkable  项目状态转变为落地
+                let ppaarrmmss = { projectId: this.$route.params.id, status: '4' }
+                // console.log('object')
+                // console.log(ppaarrmmss)
+                ppaarrmmss = qs.stringify(ppaarrmmss)
+                putAction('/park.project/mgrProjectInfo/changeStatus', ppaarrmmss).then(res => {
+                  if (res.success) {
+                    that.$message.success('该项目已转变为落地项目')
+                    // 第三步，切换tab-pane
+                    that.activeKey = '2'
+                  } else {
+                    that.$message.warning(res.message)
+                  }
+                })
               } else {
                 that.$message.warning(res.message)
               }

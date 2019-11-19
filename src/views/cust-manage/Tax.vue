@@ -152,9 +152,10 @@ export default {
     this.loadData()
   },
   computed: {
-    importExcelUrl: function() {
-      return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`
-    }
+    // importExcelUrl: function() {
+    //   return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`
+    // }
+
   },
   methods: {
     loadData() {
@@ -170,7 +171,7 @@ export default {
       })
     },
     goTaxAddForm() {
-      this.$refs.TaxAddForm.edit()
+      this.$refs.TaxAddForm.add()
     },
     showTaxAddForm(row, e) {
       row.__key = Dom7(e.currentTarget)

@@ -26,10 +26,7 @@
           </a-col>
           <a-col span="12">
             <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="月份">
-              <a-select
-                placeholder="请选择月份"
-                v-decorator="['month', {initialValue: ''}]"
-              >
+              <a-select placeholder="请选择月份" v-decorator="['month', {initialValue: ''}]">
                 <a-select-option value="1">1</a-select-option>
                 <a-select-option value="2">2</a-select-option>
                 <a-select-option value="3">3</a-select-option>
@@ -99,7 +96,7 @@ export default {
   name: 'baseIndicatorsMsgModal',
   data() {
     return {
-      title: '新增纳税情况',
+      // title: '新增纳税情况',
       visible: false,
       model: {},
       labelCol: {
@@ -112,7 +109,7 @@ export default {
         sm: { span: 14 },
         long: { span: 19 }
       },
-
+      editBool: false,
       confirmLoading: false,
       form: this.$form.createForm(this),
       validatorRules: {
@@ -128,11 +125,18 @@ export default {
     }
   },
   created() {},
+  computed: {
+    title() {
+      return (this.editBool ? '编辑' : '新增') + '纳税情况'
+    }
+  },
   methods: {
     add() {
-      this.edit({})
+      this.editBool = false
+      this.visible = true
     },
     edit(record) {
+      this.editBool = true
       this.form.resetFields()
       this.model = Object.assign({}, record)
       this.visible = true

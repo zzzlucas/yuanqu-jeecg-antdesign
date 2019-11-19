@@ -173,7 +173,7 @@ export default {
       })
     },
     goAnnualKpiAddForm() {
-      this.$refs.AnnualKpiAddForm.edit()
+      this.$refs.AnnualKpiAddForm.add()
     },
     showAnnualKpiAddForm(row, e) {
       row.__key = Dom7(e.currentTarget)

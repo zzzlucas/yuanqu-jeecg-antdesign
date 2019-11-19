@@ -46,7 +46,7 @@
       </a-form>
     </a-spin>
     <a-button type="primary" @click="handleOk">确定</a-button>
-    <a-button type="primary" @click="handleCancel">取消</a-button>
+    <a-button type="primary" @click="close">取消</a-button>
   </a-drawer>
 </template>
 
@@ -59,7 +59,7 @@ export default {
   name: 'baseIndicatorsMsgModal',
   data() {
     return {
-      title: '新增预算指标',
+      // title: '新增预算指标',
       visible: false,
       model: {},
       labelCol: {
@@ -77,18 +77,27 @@ export default {
         parkId: { rules: [{ required: true, message: '请输入园区ID!' }] },
         year: { rules: [{ required: true, message: '请输入年度!' }] }
       },
+      editBool: false,
       url: {
         add: '/park.indicators/baseIndicatorsMsg/add',
         edit: '/park.indicators/baseIndicatorsMsg/edit'
       }
     }
   },
+  computed: {
+    title() {
+      return (this.editBool ? '编辑' : '新增') + '预算指标'
+    }
+  },
   created() {},
   methods: {
     add() {
-      this.edit({})
+      this.editBool = false
+      this.visible = true
     },
+    //每次新增都绕不过编辑
     edit(record) {
+      this.editBool = true
       this.form.resetFields()
       this.model = Object.assign({}, record)
       this.visible = true
@@ -154,9 +163,6 @@ export default {
             })
         }
       })
-    },
-    handleCancel() {
-      this.close()
     }
   }
 }

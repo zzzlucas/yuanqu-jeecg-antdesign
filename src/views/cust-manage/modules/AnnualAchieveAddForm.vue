@@ -10,15 +10,12 @@
     <a-spin :spinning="confirmLoading">
       <a-form :form="form">
         <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="园区ID">
-          <a-input  placeholder="当前parkid：555" v-decorator="['parkId', validatorRules.parkId ]" />
+          <a-input placeholder="当前parkid：555" v-decorator="['parkId', validatorRules.parkId ]" />
         </a-form-item>
         <!-- <a-row>
         <a-col span="12">-->
         <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="年度">
-          <a-select
-            placeholder="请选择年份"
-            v-decorator="['year',{initialValue: ''}]"
-          >
+          <a-select placeholder="请选择年份" v-decorator="['year',{initialValue: ''}]">
             <a-select-option value="2018">2018</a-select-option>
             <a-select-option value="2019">2019</a-select-option>
             <a-select-option value="2020">2020</a-select-option>
@@ -29,10 +26,7 @@
         <!-- </a-col>
         <a-col span="12">-->
         <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="月份">
-          <a-select
-            placeholder="请选择月份"
-            v-decorator="['month',{initialValue: ''}]"
-          >
+          <a-select placeholder="请选择月份" v-decorator="['month',{initialValue: ''}]">
             <a-select-option value="1">1</a-select-option>
             <a-select-option value="2">2</a-select-option>
             <a-select-option value="3">3</a-select-option>
@@ -86,7 +80,7 @@ export default {
   name: 'baseIndicatorsMsgModal',
   data() {
     return {
-      title: '新增完成情况',
+      // title: '新增完成情况',
       visible: false,
       model: {},
       labelCol: {
@@ -105,6 +99,7 @@ export default {
         year: { rules: [{ required: true, message: '请输入年度!' }] },
         month: { rules: [{ required: true, message: '请输入月份!' }] }
       },
+      editBool: false,
       url: {
         add: '/park.indicators/baseIndicatorsMsg/add',
         edit: '/park.indicators/baseIndicatorsMsg/edit'
@@ -112,11 +107,18 @@ export default {
     }
   },
   created() {},
+  computed: {
+    title() {
+      return (this.editBool ? '编辑' : '新增') + '完成情况'
+    }
+  },
   methods: {
     add() {
-      this.edit({})
+      this.editBool = false
+      this.visible = true
     },
     edit(record) {
+      this.editBool = true
       this.form.resetFields()
       this.model = Object.assign({}, record)
       this.visible = true
