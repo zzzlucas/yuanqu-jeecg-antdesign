@@ -9,7 +9,7 @@
             class="delete-btn"
             size="small"
             type="danger"
-            @click="deleteBin('block', item.buildingProjectId, key, item.projectName)">
+            @click="deleteBtn('block', item.buildingProjectId, key, item.projectName)">
             删除
           </a-button>
         </div>
@@ -53,7 +53,7 @@
 
         return ''
       },
-      deleteBin() {
+      deleteBtn() {
         this.$emit('delete', ...arguments)
       }
     }

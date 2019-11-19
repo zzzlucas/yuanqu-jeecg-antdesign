@@ -1,7 +1,7 @@
 <template>
   <div class="yq-building-view">
-    <!-- 区块显示 -->
-    <block-list v-if="model.status === 'block'" :list="model.list" @delete="deleteBin"></block-list>
+    <!-- 区块列表 -->
+    <block-list v-if="model.status === 'block'" :list="model.list" @delete="deleteBtn"></block-list>
   </div>
 </template>
 
@@ -23,7 +23,7 @@
       }
     },
     methods: {
-      deleteBin() {
+      deleteBtn() {
         this.$emit('delete', ...arguments)
       }
     }
