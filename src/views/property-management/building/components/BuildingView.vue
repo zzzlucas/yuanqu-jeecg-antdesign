@@ -1,43 +1,17 @@
 <template>
   <div class="yq-building-view">
     <!-- 区块显示 -->
-    <a-row class="block-row" v-if="model.status === 'block'">
-      <a-col span="12" class="block-item" v-for="(item, key) in model.list" :key="key">
-        <header class="block">
-          <div class="title" v-text="item.projectName"></div>
-          <div class="header-right">
-            <a-button size="small">编辑</a-button>
-            <a-button
-              class="delete-btn"
-              size="small"
-              type="danger"
-              @click="deleteBin('block', item.buildingProjectId, key, item.projectName)">删除
-            </a-button>
-          </div>
-        </header>
-        <main class="block">
-          <div class="image-box">
-            <yq-image class="block-image" size="30" :src="getBuildImage(item.addDocFiles)"></yq-image>
-          </div>
-          <!-- TODO: 接口要大改，这里全都动不了 -->
-          <div class="info-box">
-            <p>楼宇总数：31 栋</p>
-            <p>建筑总面积：{{ item.buildingArea }} ㎡</p>
-            <p>楼层：共 20 层</p>
-            <p>房间：共 147 间，剩余 144 间</p>
-          </div>
-        </main>
-      </a-col>
-    </a-row>
+    <block-list v-if="model.status === 'block'" :list="model.list"></block-list>
   </div>
 </template>
 
 <script>
   import YqImage from '@comp/extend/YqImage'
+  import BlockList from './list/BlockList'
 
   export default {
     name: 'BuildingView',
-    components: { YqImage },
+    components: { BlockList, YqImage },
     props: {
       model: {
         type: Object,
@@ -51,76 +25,7 @@
     methods: {
       deleteBin() {
         this.$emit('delete', ...arguments)
-      },
-      getBuildImage(list){
-        if(list.length > 0){
-          return window._CONFIG['imgDomainURL'] + list[0].url
-        }
-
-        return ''
       }
     }
   }
 </script>
-
-<style lang="less">
-  @import "../less/function";
-  @import "~@/assets/less/clearFloat";
-
-  .yq-building-view {
-    .block-row {
-      .block-item {
-        header.block {
-          width: 100%;
-          padding: 10px;
-          background-color: #d9d9d9;
-          font-size: 16px;
-
-          .title {
-            float: left;
-            height: 25px;
-            line-height: 25px;
-          }
-
-          .header-right {
-            float: right;
-
-            .delete-btn {
-              margin-left: 8px;
-            }
-          }
-
-          .clearFloat();
-        }
-
-        main.block {
-          border: 1px solid #d9d9d9;
-          padding: 8px;
-
-          .image-box {
-            width: 38%;
-            float: left;
-
-            .block-image {
-              height: 130px;
-            }
-          }
-
-          .info-box {
-            width: 62%;
-            float: left;
-            padding-left: 8px;
-
-            p:last-of-type {
-              margin-bottom: 0;
-            }
-          }
-
-          .clearFloat();
-        }
-
-        .buildBlock();
-      }
-    }
-  }
-</style>

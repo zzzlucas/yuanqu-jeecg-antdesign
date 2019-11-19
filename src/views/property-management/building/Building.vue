@@ -25,7 +25,7 @@
 <script>
   import BuildingTree from './components/BuildingTree'
   import BuildingView from './components/BuildingView'
-  import BuildingBlockForm from './components/BuildingBlockForm'
+  import BuildingBlockForm from './components/form/BuildingBlockForm'
   import { deleteAction, getAction } from '@/api/manage'
   import { listJsonFields } from '@utils/util'
 

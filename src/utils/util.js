@@ -349,3 +349,12 @@ export function objectJsonFields(obj, fields) {
 
   return obj
 }
+
+/**
+ * 获取单张图片
+ * @param url
+ * @returns {*}
+ */
+export function getOneImage(url) {
+  return window._CONFIG['imgDomainURL'] + url
+}
