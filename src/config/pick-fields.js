@@ -2,6 +2,7 @@ export const PickParksForm = ['parkName', 'totalBulidingArea', 'totalWorkstation
 export const ProjectAttractShowZeroForm = [
     'recordId',
     'projectId',
+    'projectName',
     'tracker',
     'trackMethod',
     'status',

@@ -124,6 +124,8 @@ export default {
     handleCancel() {
       this.visible = false
       this.info = {}
+      this.dictText.trackerText = ''
+      this.dictText.trackMethodText = ''
     },
     initDictConfig() {
       console.log('hello')

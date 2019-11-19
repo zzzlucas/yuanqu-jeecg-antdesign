@@ -13,17 +13,18 @@
             <detail-list-item term="重要程度">{{ info.importance }}</detail-list-item>
             <detail-list-item term="是否外资">{{ info.isForeignCapital }}</detail-list-item>
           </detail-list>
+          <!-- 这个只有租赁才有吗 v-if projectType==2 点击跳转公共平台  -->
           <detail-list>
-            <detail-list-item term="新建项目申请（租赁）">查看新建项目申请信息asdasdad</detail-list-item>
+            <detail-list-item term="新建项目申请"><a href="#">查看新建项目申请信息</a></detail-list-item>
           </detail-list>
           <detail-list>
-            <detail-list-item term="是否人才项目">否{{ info.isTalentProject }}</detail-list-item>
+            <detail-list-item term="是否人才项目">{{ info.isTalentProject=="1"?"是":"否" }}</detail-list-item>
           </detail-list>
           <detail-list>
-            <detail-list-item term="公司概况">公司概况{{ info.companyDescription }}</detail-list-item>
+            <detail-list-item term="公司概况">{{ info.companyDescription }}</detail-list-item>
           </detail-list>
           <detail-list>
-            <detail-list-item term="团队成员情况">团队成员情况{{ info.teamMemberDescription }}</detail-list-item>
+            <detail-list-item term="团队成员情况">{{ info.teamMemberDescription }}</detail-list-item>
           </detail-list>
           <detail-list>
             <detail-list-item term="备注">{{ info.remark }}</detail-list-item>

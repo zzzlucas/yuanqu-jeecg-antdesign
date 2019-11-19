@@ -72,9 +72,10 @@
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="注册资金（万元）">
+                <a-form-item label="注册资金">
                   <a-input
                     placeholder
+                    addonAfter="万元"
                     v-decorator="['registerMoney',{rules: [{ required: true, message: '请输入注册资金'}]}]"
                   />
                 </a-form-item>
@@ -83,15 +84,17 @@
             <!-- 行4 -->
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="企业总资产（万元）">
+                <a-form-item label="企业总资产">
                   <a-input
+                    addonAfter="万元"
                     v-decorator="['totalAsset',{rules: [{ required: true, message: '请输入企业总资产'}]}]"
                   />
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="固定资产净值（万元）">
+                <a-form-item label="固定资产净值">
                   <a-input
+                    addonAfter="万元"
                     v-decorator="['fixedAsset',{rules: [{ required: true, message: '请输入固定资产净值'}]}]"
                   />
                 </a-form-item>
@@ -105,7 +108,7 @@
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="联系电话（法人">
+                <a-form-item label="联系电话（法人）">
                   <a-input placeholder v-decorator="['legalTel']" />
                 </a-form-item>
               </a-col>
@@ -155,13 +158,17 @@
             <!-- 行10 -->
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="年产值（万元）">
-                  <a-input placeholder v-decorator="[    'annualProductionValue'   ]" />
+                <a-form-item label="年产值">
+                  <a-input
+                    addonAfter="万元"
+                    placeholder
+                    v-decorator="[    'annualProductionValue'   ]"
+                  />
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="年税金（万元）">
-                  <a-input placeholder v-decorator="[  'annualTaxes'  ]" />
+                <a-form-item label="年税金">
+                  <a-input addonAfter="万元" placeholder v-decorator="[  'annualTaxes'  ]" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -262,8 +269,8 @@
             </a-row>
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="租赁建设面积（平方米）">
-                  <a-input placeholder v-decorator="['rentBuildArea']" />
+                <a-form-item label="租赁建设面积">
+                  <a-input addonAfter="m²" placeholder v-decorator="['rentBuildArea']" />
                 </a-form-item>
               </a-col>
               <!-- 按要求，应该使用数据字典 -->
@@ -304,9 +311,10 @@
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="拿地面积（m²）">
+                <a-form-item label="拿地面积">
                   <a-input
                     placeholder
+                    addonAfter="m²"
                     v-decorator="['gainArea',{rules: [{ required: true, message: '请输入拿地面积'}]}]"
                   />
                 </a-form-item>
@@ -319,22 +327,24 @@
             <!-- 行1 -->
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="项目总投资（万元）">
+                <a-form-item label="项目总投资">
                   <a-input
+                    addonAfter="万元"
                     v-decorator="['investAmount',{rules: [{ required: true, message: '请输入数额'}]}]"
                   />
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="其中项目用汇（万美元）">
-                  <a-input placeholder v-decorator="['projectUseInvest']" />
+                <a-form-item label="其中项目用汇">
+                  <a-input addonAfter="万美元" placeholder v-decorator="['projectUseInvest']" />
                 </a-form-item>
               </a-col>
             </a-row>
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="注册资本（万元）">
+                <a-form-item label="注册资本">
                   <a-input
+                    addonAfter="万元"
                     v-decorator="[ 'registerCapital',{rules: [{ required: true, message: '请输入数额'}]}]"
                   />
                 </a-form-item>
@@ -351,8 +361,8 @@
 
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="固定资产投资（万元）">
-                  <a-input placeholder v-decorator="['fixedAssetInvest']" />
+                <a-form-item label="固定资产投资">
+                  <a-input addonAfter="万元" placeholder v-decorator="['fixedAssetInvest']" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -425,27 +435,27 @@
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="新增销售收入（万元）">
-                  <a-input placeholder v-decorator="[ 'newSale' ]" />
+                <a-form-item label="新增销售收入">
+                  <a-input addonAfter="万元" placeholder v-decorator="[ 'newSale' ]" />
                 </a-form-item>
               </a-col>
             </a-row>
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="新增利润（万元）">
-                  <a-input placeholder v-decorator="[ 'newProfit' ]" />
+                <a-form-item label="新增利润">
+                  <a-input addonAfter="万元" placeholder v-decorator="[ 'newProfit' ]" />
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="新增税金（万元）">
-                  <a-input placeholder v-decorator="['newTax' ]" />
+                <a-form-item label="新增税金">
+                  <a-input addonAfter="万元" placeholder v-decorator="['newTax' ]" />
                 </a-form-item>
               </a-col>
             </a-row>
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="创汇（万美元）">
-                  <a-input placeholder v-decorator="['foreignEarning' ]" />
+                <a-form-item label="创汇">
+                  <a-input addonAfter="万美元" placeholder v-decorator="['foreignEarning' ]" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -475,7 +485,7 @@
                 </a-form-item>
               </a-col>
             </a-row>
-            <a-row class="form-row" :gutter="16">
+            <!-- <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="projectId test">
                   <a-input
@@ -484,7 +494,7 @@
                   />
                 </a-form-item>
               </a-col>
-            </a-row>
+            </a-row>-->
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="parkId test">
@@ -495,7 +505,7 @@
                 </a-form-item>
               </a-col>
             </a-row>
-            <a-row class="form-row" :gutter="16">
+            <!-- <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="projectType test">
                   <a-input
@@ -504,7 +514,7 @@
                   />
                 </a-form-item>
               </a-col>
-            </a-row>
+            </a-row>-->
             <!-- upload  addDocFiles   附件 -->
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
@@ -618,60 +628,63 @@ export default {
       // console.log(this.record.recordId)
       this.form.resetFields()
       //后端少的内容
-      record.totalAsset = record.mgrProjectCust.totalAsset
-      record.legalTel = record.mgrProjectCust.legalTel
-      record.companyDescription = record.mgrProjectCust.companyDescription
-      record.updateUserName = record.mgrProjectCust.updateUserName
-      record.createUserName = record.mgrProjectCust.createUserName
-      record.updateTime = record.mgrProjectCust.updateTime
-      record.fillUnit = record.mgrProjectCust.fillUnit
-      record.version = record.mgrProjectCust.version
-      record.unitAddress = record.mgrProjectCust.unitAddress
-      // record.parkId = record.mgrProjectCust.parkId
-      record.companyRegisterType = record.mgrProjectCust.companyRegisterType
-      record.createBy = record.mgrProjectCust.createBy
-      record.creditCode = record.mgrProjectCust.legalTel
-      record.createTime = record.mgrProjectCust.createTime
-      record.updateBy = record.mgrProjectCust.updateBy
-      record.legalPerson = record.mgrProjectCust.legalPerson
-      record.fixedAsset = record.mgrProjectCust.fixedAsset
-      record.registerMoney = record.mgrProjectCust.registerMoney
-      record.teamMemberDescription = record.mgrProjectCust.teamMemberDescription
-      // record.projectId = record.mgrProjectCust.projectId
-      record.setUpYear = record.mgrProjectCust.setUpYear
-      record.email = record.mgrProjectCust.email
-
-      record.isForeignCapital = record.mgrProjectInvest.isForeignCapital
-      record.fixedAssetInvest = record.mgrProjectInvest.fixedAssetInvest
-      record.newProfit = record.mgrProjectInvest.newProfit
-      record.remark = record.mgrProjectInvest.remark
-      record.createUserName = record.mgrProjectInvest.createUserName
-      // // record.parkId = record.mgrProjectInvest.parkId
-      record.projectUseInvest = record.mgrProjectInvest.projectUseInvest
-      record.newTax = record.mgrProjectInvest.newTax
-      record.freeCapital = record.mgrProjectInvest.freeCapital
-      record.addDocFiles = record.mgrProjectInvest.addDocFiles
-      record.updateBy = record.mgrProjectInvest.updateBy
-      record.civilWork = record.mgrProjectInvest.civilWork
-      record.otherCapital = record.mgrProjectInvest.otherCapital
-      record.budget = record.mgrProjectInvest.budget
-      record.bankLoan = record.mgrProjectInvest.bankLoan
-      record.sharesBond = record.mgrProjectInvest.sharesBond
-      record.updateUserName = record.mgrProjectInvest.updateUserName
-      record.updateTime = record.mgrProjectInvest.updateTime
-      record.foreignEarning = record.mgrProjectInvest.foreignEarning
-      record.version = record.mgrProjectInvest.version
-      record.createBy = record.mgrProjectInvest.createBy
-      record.registerCapital = record.mgrProjectInvest.registerCapital
-      record.install = record.mgrProjectInvest.install
-      record.projectBuilding = record.mgrProjectInvest.projectBuilding
-      record.createTime = record.mgrProjectInvest.createTime
-      record.investAmount = record.mgrProjectInvest.investAmount
-      record.bottomWorkingCapital = record.mgrProjectInvest.bottomWorkingCapital
-      record.newSale = record.mgrProjectInvest.bottomWorkingCapital
-      // record.projectId = record.mgrProjectInvest.projectId
-      record.device = record.mgrProjectInvest.device
-      record.buildingInterest = record.mgrProjectInvest.buildingInterest
+      // console.log('record')
+      // console.log(record)
+      // console.log(record.totalAsset)
+      //大约因为当前写法，项目维护时点开后关闭，再次打开会无法获取
+      if (record.mgrProjectCust) {
+        record.totalAsset = record.mgrProjectCust.totalAsset
+        record.legalTel = record.mgrProjectCust.legalTel
+        record.companyDescription = record.mgrProjectCust.companyDescription
+        record.updateUserName = record.mgrProjectCust.updateUserName
+        record.createUserName = record.mgrProjectCust.createUserName
+        record.updateTime = record.mgrProjectCust.updateTime
+        record.fillUnit = record.mgrProjectCust.fillUnit
+        record.version = record.mgrProjectCust.version
+        record.unitAddress = record.mgrProjectCust.unitAddress
+        record.companyRegisterType = record.mgrProjectCust.companyRegisterType
+        record.createBy = record.mgrProjectCust.createBy
+        record.creditCode = record.mgrProjectCust.legalTel
+        record.createTime = record.mgrProjectCust.createTime
+        record.updateBy = record.mgrProjectCust.updateBy
+        record.legalPerson = record.mgrProjectCust.legalPerson
+        record.fixedAsset = record.mgrProjectCust.fixedAsset
+        record.registerMoney = record.mgrProjectCust.registerMoney
+        record.teamMemberDescription = record.mgrProjectCust.teamMemberDescription
+        record.setUpYear = record.mgrProjectCust.setUpYear
+        record.email = record.mgrProjectCust.email
+      }
+      if (record.mgrProjectInvest) {
+        record.isForeignCapital = record.mgrProjectInvest.isForeignCapital
+        record.fixedAssetInvest = record.mgrProjectInvest.fixedAssetInvest
+        record.newProfit = record.mgrProjectInvest.newProfit
+        record.remark = record.mgrProjectInvest.remark
+        record.createUserName = record.mgrProjectInvest.createUserName
+        record.projectUseInvest = record.mgrProjectInvest.projectUseInvest
+        record.newTax = record.mgrProjectInvest.newTax
+        record.freeCapital = record.mgrProjectInvest.freeCapital
+        record.addDocFiles = record.mgrProjectInvest.addDocFiles
+        record.updateBy = record.mgrProjectInvest.updateBy
+        record.civilWork = record.mgrProjectInvest.civilWork
+        record.otherCapital = record.mgrProjectInvest.otherCapital
+        record.budget = record.mgrProjectInvest.budget
+        record.bankLoan = record.mgrProjectInvest.bankLoan
+        record.sharesBond = record.mgrProjectInvest.sharesBond
+        record.updateUserName = record.mgrProjectInvest.updateUserName
+        record.updateTime = record.mgrProjectInvest.updateTime
+        record.foreignEarning = record.mgrProjectInvest.foreignEarning
+        record.version = record.mgrProjectInvest.version
+        record.createBy = record.mgrProjectInvest.createBy
+        record.registerCapital = record.mgrProjectInvest.registerCapital
+        record.install = record.mgrProjectInvest.install
+        record.projectBuilding = record.mgrProjectInvest.projectBuilding
+        record.createTime = record.mgrProjectInvest.createTime
+        record.investAmount = record.mgrProjectInvest.investAmount
+        record.bottomWorkingCapital = record.mgrProjectInvest.bottomWorkingCapital
+        record.newSale = record.mgrProjectInvest.bottomWorkingCapital
+        record.device = record.mgrProjectInvest.device
+        record.buildingInterest = record.mgrProjectInvest.buildingInterest
+      }
       delete record.mgrProjectCust
       delete record.mgrProjectInvest
       delete record.mgrProjectInvestLease
@@ -684,7 +697,6 @@ export default {
           projectTechnologyFlow: record.projectTechnologyFlow
         }
         this.form.setFieldsValue(pick(this.model, AddProjectLandForm))
-        //时间格式化
         this.form.setFieldsValue({
           buildingEndDate: this.model.buildingEndDate ? moment(this.model.buildingEndDate) : null
         })
@@ -693,21 +705,22 @@ export default {
         })
       })
     },
-    edit(record) {
-      console.log('edit开始了')
-      this.form.resetFields()
-      this.model = Object.assign({}, record)
-      // console.log(this.model)
-      this.visible = true
-      this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.model, AddProjectLandForm))
-        //时间格式化
-      })
-      // console.log(this.model)
-    },
+    // edit(record) {
+    //   console.log('edit开始了')
+    //   this.form.resetFields()
+    //   this.model = Object.assign({}, record)
+    //   // console.log(this.model)
+    //   this.visible = true
+    //   this.$nextTick(() => {
+    //     this.form.setFieldsValue(pick(this.model, AddProjectLandForm))
+    //     //时间格式化
+    //   })
+    //   // console.log(this.model)
+    // },
 
     handleCancel() {
       this.visible = false
+      // this.record = {}
     },
     handleSubmit() {
       // console.log(this.form.getFieldValue('setUpYear'))
@@ -723,7 +736,7 @@ export default {
           let httpurl = ''
           let method = ''
           // console.log('2222')
-          if (!this.model.projectName) {
+          if (!this.model.projectId) {
             //增
             console.log('post方式')
             httpurl += this.url.add
@@ -747,6 +760,8 @@ export default {
           // console.log(formData.projectTechnologyFlow)
           // console.log('222222')
           //qs.stringify  目前看来必须转换
+          // formData.projectType = '1'
+          formData.status = '1'
           formData = qs.stringify(formData)
           console.log(formData)
 

@@ -31,7 +31,7 @@
         rowKey="id"
         :columns="columns"
         :dataSource="dataSource"
-        :pagination="ipagination"
+        :pagination="false"
         :loading="loading"
         :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
         :customRow="customRow"

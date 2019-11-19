@@ -35,7 +35,7 @@
                 <a-form-item label="项目名称">
                   <a-input
                     placeholder
-                    v-decorator="['unitAddress',{rules: [{ required: true, message: '请输入项目名称', whitespace: true}]}]"
+                    v-decorator="['projectName',{rules: [{ required: true, message: '请输入项目名称', whitespace: true}]}]"
                   />
                 </a-form-item>
               </a-col>
@@ -51,21 +51,26 @@
             <!-- 行3 -->
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
+                <!-- importance -->
                 <a-form-item label="重要程度" required>
-                  <a-select style="width:100%" v-decorator="['companyRegisterType']">
-                    <a-select-option value="1">一级</a-select-option>
-                    <a-select-option value="2">二级</a-select-option>
-                    <a-select-option value="3">三级</a-select-option>
-                    <a-select-option value="4">四级</a-select-option>
-                    <a-select-option value="5">五级</a-select-option>
+                  <a-select v-decorator="['importance']">
+                    <a-select-option
+                      v-for="(item, key) in dict.importanceExt"
+                      :value="item.value"
+                      :key="key"
+                    >{{ item.text }}</a-select-option>
                   </a-select>
-                  <!-- 根据excel表，此处无需字典表 -->
-                  <!-- <JDictSelectTag v-model="testData" dictCode="mgr-attr-addpl-companyRegisterType"></JDictSelectTag> -->
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="跟踪人员  ">
-                  <!-- <JDictSelectTag v-model="testData" dictCode="mgr-attr-addpl-companyRegisterType"></JDictSelectTag> -->
+                  <a-select v-decorator="['projectManager']">
+                    <a-select-option
+                      v-for="(item, key) in dict.projectManagerExt"
+                      :value="item.value"
+                      :key="key"
+                    >{{ item.text }}</a-select-option>
+                  </a-select>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -80,9 +85,13 @@
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="行业类别">
-                  <a-input
-                    v-decorator="['fixedAsset',{rules: [{ required: true, message: '请输入固定资产净值', whitespace: true}]}]"
-                  />
+                  <a-select v-decorator="['industrySectorValue']">
+                    <a-select-option
+                      v-for="(item, key) in dict.industrySectorValueExt"
+                      :value="item.value"
+                      :key="key"
+                    >{{ item.text }}</a-select-option>
+                  </a-select>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -90,12 +99,12 @@
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="建设地址">
-                  <a-input placeholder v-decorator="['legalPerson']" />
+                  <a-input placeholder v-decorator="['getLandBuildingAddress']" />
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="所属主体">
-                  <a-input placeholder v-decorator="['legalTel']" />
+                  <a-input placeholder v-decorator="['belongSubject']" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -105,14 +114,14 @@
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="法人代表">
                   <a-input
-                    v-decorator="['agentPerson', {rules: [{ required: true, message: '请输入经办人姓名', whitespace: true}]} ]"
+                    v-decorator="['legalPerson', {rules: [{ required: true, message: '请输入经办人姓名', whitespace: true}]} ]"
                   />
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="联系电话（法人）">
                   <a-input
-                    v-decorator="[ 'agentTel',{rules: [{ required: true, message: '请输入经办人电话', whitespace: true}]}]"
+                    v-decorator="[ 'legalTel',{rules: [{ required: true, message: '请输入经办人电话', whitespace: true}]}]"
                   />
                 </a-form-item>
               </a-col>
@@ -138,7 +147,7 @@
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="公司概况">
-                  <a-textarea :rows="4" placeholder v-decorator="['teamMemberDescription']" />
+                  <a-textarea :rows="4" placeholder v-decorator="['companyDescription']" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -155,27 +164,31 @@
             <!-- 行10 -->
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="年产值（万元）">
-                  <a-input placeholder v-decorator="[    'annualProductionValue'   ]" />
+                <a-form-item label="年产值">
+                  <a-input
+                    addonAfter="万元"
+                    placeholder
+                    v-decorator="[    'annualProductionValue'   ]"
+                  />
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="年税金（万元）">
-                  <a-input placeholder v-decorator="[  'annualTaxes'  ]" />
+                <a-form-item label="年税金">
+                  <a-input addonAfter="万元" placeholder v-decorator="[  'annualTaxes'  ]" />
                 </a-form-item>
               </a-col>
             </a-row>
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="投资主体">
-                  <a-input placeholder v-decorator="[    'annualProductionValue'   ]" />
+                  <a-input placeholder v-decorator="[    'investorValue'   ]" />
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="是否人才项目">
                   <a-radio-group v-decorator="['isTalentProject']">
-                    <a-radio :value="1">是</a-radio>
-                    <a-radio :value="2">否</a-radio>
+                    <a-radio value="1">是</a-radio>
+                    <a-radio value="2">否</a-radio>
                   </a-radio-group>
                 </a-form-item>
               </a-col>
@@ -191,15 +204,17 @@
             <!-- 行1 -->
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="项目总投资（万元）">
+                <a-form-item label="项目总投资">
                   <a-input
+                    addonAfter="万元"
                     v-decorator="['investAmount',{rules: [{ required: true, message: '请输入数额', whitespace: true}]}]"
                   />
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="注册资本（万元）">
+                <a-form-item label="注册资本">
                   <a-input
+                    addonAfter="万元"
                     v-decorator="[ 'registerCapital',{rules: [{ required: true, message: '请输入数额', whitespace: true}]}]"
                   />
                 </a-form-item>
@@ -207,66 +222,67 @@
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="是否外资">
                   <a-radio-group v-decorator="['isForeignCapital']">
-                    <a-radio :value="1">是</a-radio>
-                    <a-radio :value="2">否</a-radio>
+                    <a-radio value="1">是</a-radio>
+                    <a-radio value="2">否</a-radio>
                   </a-radio-group>
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="租赁面积（m²）">
+                <a-form-item label="租赁面积">
                   <a-input
-                    v-decorator="['investAmount',{rules: [{ required: true, message: '请输入租赁面积', whitespace: true}]}]"
+                    addonAfter="m²"
+                    v-decorator="['rentBuildArea',{rules: [{ required: true, message: '请输入租赁面积', whitespace: true}]}]"
                   />
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="固定资产投资（万元）">
-                  <a-input placeholder v-decorator="['fixedAssetInvest']" />
+                <a-form-item label="固定资产投资">
+                  <a-input addonAfter="万元" placeholder v-decorator="['fixedAssetInvest']" />
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="单位面积固定资产投资（万元/平方米）">
-                  <a-input placeholder v-decorator="['fixedAssetInvest']" />
+                <a-form-item label="单位面积固定资产投资">
+                  <a-input addonAfter="万元/平方米" placeholder v-decorator="['areaFixedInvest']" />
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="设备投资（万元）">
-                  <a-input placeholder v-decorator="['fixedAssetInvest']" />
+                <a-form-item label="设备投资">
+                  <a-input addonAfter="万元" placeholder v-decorator="['deviceInvest']" />
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="其他（万元）">
-                  <a-input placeholder v-decorator="['fixedAssetInvest']" />
+                <a-form-item label="其他">
+                  <a-input addonAfter="万元" placeholder v-decorator="['otherInvest']" />
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="建筑占地面积（m²）">
-                  <a-input placeholder v-decorator="['fixedAssetInvest']" />
+                <a-form-item label="建筑占地面积">
+                  <a-input addonAfter="m²" placeholder v-decorator="['buildingArea']" />
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="总建筑面积（m²）">
-                  <a-input placeholder v-decorator="['fixedAssetInvest']" />
+                  <a-input addonAfter="m²" placeholder v-decorator="['allBuildingArea']" />
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="建筑密度（%）">
-                  <a-input placeholder v-decorator="['fixedAssetInvest']" />
+                <a-form-item label="建筑密度">
+                  <a-input addonAfter="%" placeholder v-decorator="['buildingDensity']" />
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="容积率">
-                  <a-input placeholder v-decorator="['fixedAssetInvest']" />
+                  <a-input addonAfter="%" placeholder v-decorator="['plotRatio']" />
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="单位面积税收（元/平米）">
-                  <a-input placeholder v-decorator="['fixedAssetInvest']" />
+                <a-form-item label="单位面积税收">
+                  <a-input addonAfter="元/平米" placeholder v-decorator="['areaTax']" />
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="单位面积产值（元/平米）">
-                  <a-input placeholder v-decorator="['fixedAssetInvest']" />
+                <a-form-item label="单位面积产值">
+                  <a-input addonAfter="元/平米" placeholder v-decorator="['areaOutput']" />
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
@@ -280,18 +296,18 @@
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="工业增加值（万元）">
-                  <a-input placeholder v-decorator="['fixedAssetInvest']" />
+                <a-form-item label="工业增加值">
+                  <a-input addonAfter="万元" placeholder v-decorator="['industryAddedValue']" />
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="全员劳动生产率">
-                  <a-input placeholder v-decorator="['fixedAssetInvest']" />
+                  <a-input addonAfter="%" placeholder v-decorator="['productionRate']" />
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="万元工业增加值能耗（吨/万元）">
-                  <a-input placeholder v-decorator="['fixedAssetInvest']" />
+                <a-form-item label="万元工业增加值能耗">
+                  <a-input addonAfter="吨/万元" placeholder v-decorator="['addedEnergy']" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -331,11 +347,21 @@
                 </a-form-item>
               </a-col>
             </a-row>
+            <!-- <a-row class="form-row" :gutter="16">
+              <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
+                <a-form-item label="projectType test">
+                  <a-input
+                    placeholder
+                    v-decorator="['projectType', {rules: [{ required: true, message: '请输入projectType', whitespace: true}]}]"
+                  />
+                </a-form-item>
+              </a-col>
+            </a-row> -->
             <!-- upload  addDocFiles   附件 -->
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="附件">
-                  <a-upload
+                  <!-- <a-upload
                     name="file"
                     :showUploadList="true"
                     :multiple="false"
@@ -344,8 +370,7 @@
                     @change="handleImportExcel"
                   >
                     <a-button type="primary" icon="import">上传附件</a-button>
-                    <!-- <span>（单个图片大小不可超过10.00M，全部图片大小不可超过30.00M）</span> -->
-                  </a-upload>
+                  </a-upload>-->
                 </a-form-item>
               </a-col>
             </a-row>
@@ -383,46 +408,55 @@ export default {
   data() {
     return {
       title: '首页 / 租赁项目 / 项目维护',
-      //   form: {}
       form: this.$form.createForm(this, { name: 'addProjectLandForm' }),
       formItem: {
         label: { span: 6 },
         value: { span: 18 }
       },
       url: {
-        add: '/park.project/mgrProjectInfo/addProject',
+        add: '/park.project/mgrProjectInfo/addProjectLease',
         edit: '/park.project/mgrProjectInfo/editProject'
       },
-      confirmLoading: false, //独立页面，其实不需要该项
+      confirmLoading: false,
       model: {},
-      // setUpYear: '',
       dateFormat: 'YYYY-MM-DD',
-      // record: { id: 1191619700384071680 }
       testData: '',
       industrySectorValue: '',
       record: {},
       visible: false,
-      loading: false
-      // value:""
+      loading: false,
+      dict: []
       // DictDataindustrySectorValue:this.form.getFieldValue('industrySectorValue')
     }
+  },
+  created(importance) {
+    initDictOptions('importance').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.importanceExt = res.result
+      }
+    })
+    initDictOptions('tracker').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.projectManagerExt = res.result
+      }
+    })
+    initDictOptions('industrySectorValue').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.industrySectorValueExt = res.result
+      }
+    })
   },
   updated() {
     // this.edit(this.record.id)
   },
   methods: {
     moment,
-        handleCancel() {
+    handleCancel() {
       this.visible = false
     },
     add() {
       this.edit({})
     },
-    // add() {
-    //   this.picUrl = ''
-    //   this.refresh()
-    //   this.edit({ activitiSync: '1' })
-    // },
     detail(record) {
       // this.record = record
       // console.log(this.record.recordId)
@@ -439,6 +473,7 @@ export default {
     edit(record) {
       console.log('edit开始了')
       this.form.resetFields()
+      // console.log('mian');
       this.model = Object.assign({}, record)
       // console.log(this.model)
       this.visible = true
@@ -448,24 +483,17 @@ export default {
       })
       // console.log(this.model)
     },
-    // close() {
-    //   this.$emit('close')
-    //   this.visible = false
-    // },
+
     handleSubmit() {
       // console.log(this.form.getFieldValue('setUpYear'))
       const that = this
       // 触发表单验证
       this.form.validateFieldsAndScroll((err, values) => {
-        // values.setUpYear = 1
-        // console.log(values.setUpYear)
-
         if (!err) {
           that.confirmLoading = true
           let httpurl = ''
           let method = ''
-          // console.log('2222')
-          if (!this.model.id) {
+          if (!this.model.projectId) {
             //增
             console.log('post方式')
             httpurl += this.url.add
@@ -483,7 +511,8 @@ export default {
           // formData.buildingBeginDate = formData.buildingBeginDate ? formData.buildingBeginDate.format() : null
           // formData.buildingEndDate = formData.buildingEndDate ? formData.buildingEndDate.format() : null
           // console.log(formData)
-
+          // formData.projectType = '2'
+          formData.status = '1'
           //qs.stringify  目前看来必须转换
           formData = qs.stringify(formData)
           console.log(formData)
@@ -495,7 +524,8 @@ export default {
             .then(res => {
               if (res.success) {
                 that.$message.success(res.message)
-                // that.$emit('ok')
+                that.$emit('reload')
+                this.visible = false
               } else {
                 that.$message.warning(res.message)
               }

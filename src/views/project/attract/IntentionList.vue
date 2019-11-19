@@ -94,7 +94,7 @@
     </a-table>
 
     <!-- 表单区域 -->
-    <show-zero ref="ShowZero" @reload="loadData()"></show-zero>
+    <show-zero ref="ShowZero" @reload="loadData()" @ok="rrreload"></show-zero>
 
     <show-two @showOneToZeroEdit="showZeroEdit" @showOneToZeroAdd="showZeroAdd" ref="ShowTwo"></show-two>
 
@@ -200,9 +200,10 @@ export default {
         },
         //why
         {
-          title: '拿地面积（m²）',
+          title: '面积（m²）',
           align: 'center',
           dataIndex: 'gainArea'
+          // rentBuildArea
         },
         {
           title: '最近跟踪纪要',
@@ -218,7 +219,7 @@ export default {
         }
       ],
       url: {
-        list: '/park.project/mgrProjectInfo/list',
+        list: '/park.project/mgrProjectInfo/list?status=1',
         // list: '/park.project/mgrProjectInfo/list?status=1',
 
         add: '/park.project/mgrProjectTrace/addMgrProjectTrace',
@@ -365,10 +366,12 @@ export default {
         .data('row-key')
       this.$refs.ShowTwo.detail(row)
     },
-
+    rrreload() {
+      this.$refs.ShowTwo.loadData()
+    },
     showZeroEdit(record) {
       this.$refs.ShowZero.detail(record)
-      console.log('showZeroEdit')
+      // console.log('showZeroEdit')
     },
     // //写法1
     // showZeroAdd(record) {
