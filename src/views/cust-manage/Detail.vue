@@ -82,8 +82,10 @@
         <a-tab-pane tab="工商/税务信息" key="5">
           <detail-list>
             <detail-list-item term="注册日期">{{info.baseCustomerBusiness.registDate}}</detail-list-item>
-            <detail-list-item term="注册资本">{{info.baseCustomerBusiness.registeredCapital}}</detail-list-item>
-            <detail-list-item term="转化为人民币">{{info.baseCustomerBusiness.rCToRMB}}</detail-list-item>
+            <detail-list-item
+              term="注册资本"
+            >{{info.baseCustomerBusiness.registeredCapital}}{{dictText.registeredCapitalUnitText}}</detail-list-item>
+            <detail-list-item term="转化为人民币">{{info.baseCustomerBusiness.rCToRMB}}万元</detail-list-item>
             <!-- 这俩用字典搞一下还怎么说 -->
             <detail-list-item term="工商状态">{{dictText.bussinessStatusText}}</detail-list-item>
             <detail-list-item term="税务状态">{{dictText.taxStatusText}}</detail-list-item>
@@ -232,7 +234,8 @@ export default {
         organizational: [],
         technicalField: [],
         enterpriseRating: [],
-        registrationType: []
+        registrationType: [],
+        registeredCapitalUnit: []
       },
       dictText: {
         bussinessStatusText: '',
@@ -242,7 +245,8 @@ export default {
         organizationalText: '',
         technicalFieldText: '',
         enterpriseRatingText: '',
-        registrationTypeText: ''
+        registrationTypeText: '',
+        registeredCapitalUnitText: ''
       }
     }
   },
@@ -395,6 +399,17 @@ export default {
             for (const item of this.dict.taxStatus) {
               if (item.value == this.info.baseCustomerBusiness.taxStatus)
                 return (this.dictText.taxStatusText = item.text)
+              // break 无需
+            }
+          }
+        }),
+        initDictOptions('registered_capital_unit').then(res => {
+          if (res.code === 0 && res.success) {
+            this.dict.registeredCapitalUnit = res.result
+            // this.dict.registrationType.forEach(this.switchFunctionR)
+            for (const item of this.dict.registeredCapitalUnit) {
+              if (item.value == this.info.baseCustomerBusiness.registeredCapitalUnit)
+                return (this.dictText.registeredCapitalUnitText = item.text)
               // break 无需
             }
           }

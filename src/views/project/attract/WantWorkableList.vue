@@ -218,7 +218,7 @@ export default {
         }
       ],
       url: {
-        list: '/park.project/mgrProjectInfo/list',
+        list: '/park.project/mgrProjectInfo/list?status=3',
         // list: '/park.project/mgrProjectInfo/list?status=1',
 
         add: '/park.project/mgrProjectTrace/addMgrProjectTrace',
@@ -284,7 +284,9 @@ export default {
           // console.log(res.result);
           this.$message.success(res.message)
           //跳转路由
+          //   /park.project/mgrProjectInfo/list?status=1
           this.$router.push({ path: '/project/attract/keyfollow' })
+          // this.$router.push({ name: 'project-attract', params: { status: 2 } })
         } else {
           // console.log('hello X-X');
           this.$message.warning(res.message)
@@ -297,7 +299,6 @@ export default {
       putAction('/park.project/mgrProjectInfo/changeStatus', params).then(res => {
         if (res.success) {
           this.$message.success(res.message)
-          this.$router.push({ path: '/project/attract/wantworkablelist' })
         } else {
           this.$message.warning(res.message)
         }
@@ -309,7 +310,6 @@ export default {
       putAction('/park.project/mgrProjectInfo/changeStatus', params).then(res => {
         if (res.success) {
           this.$message.success(res.message)
-          this.$router.push({ path: '/project/attract/remianlist' })
         } else {
           this.$message.warning(res.message)
         }

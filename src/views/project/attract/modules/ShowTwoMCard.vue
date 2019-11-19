@@ -18,10 +18,10 @@
           <detail-list-item term="项目ID">{{info.projectId}}</detail-list-item>
           <detail-list-item term="项目名称">{{info.projectName}}</detail-list-item>
           <detail-list-item term="跟踪日期">{{info.trackDate}}</detail-list-item>
-          <detail-list-item term="跟踪人">{{info.tracker}}</detail-list-item>
+          <detail-list-item term="跟踪人">{{dictText.trackerText}}</detail-list-item>
         </detail-list>
         <detail-list>
-          <detail-list-item term="跟踪方式">{{info.trackMethod}}</detail-list-item>
+          <detail-list-item term="跟踪方式">{{dictText.trackMethodText}}</detail-list-item>
         </detail-list>
         <detail-list>
           <detail-list-item term="过程纪要">{{info.content}}</detail-list-item>
@@ -41,6 +41,7 @@
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import DetailList from '@/components/tools/DetailList'
 import { getAction, putAction } from '@/api/manage'
+import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
 const DetailListItem = DetailList.Item
 
 export default {
@@ -53,6 +54,14 @@ export default {
       // form: this.$form.createForm(this),
       title: '跟踪记录',
       record: {},
+      dict: {
+        tracker: [],
+        trackMethod: []
+      },
+      dictText: {
+        trackerText: '',
+        trackMethodText: ''
+      },
       labelCol: {
         span: 5
       },
@@ -91,7 +100,16 @@ export default {
       if (this.record) {
         getAction('/park.project/mgrProjectTrace/selectById', { id: this.record.recordId }).then(res => {
           if (res.code === 200) {
-            this.info = res.result
+            let proId = res.result.projectId
+            // console.log('object')
+            // console.log(proId)
+            getAction('/park.project/mgrProjectInfo/queryProjectById', { projectId: proId }).then(resAAA => {
+              this.info = res.result
+              this.info.projectName = resAAA.result.projectName
+              this.initDictConfig()
+              // console.log(this.info.projectName)
+            })
+
             // console.log(this.info)
             // this.initDictConfig()
           } else {
@@ -106,6 +124,29 @@ export default {
     handleCancel() {
       this.visible = false
       this.info = {}
+    },
+    initDictConfig() {
+      console.log('hello')
+      initDictOptions('tracker').then(res => {
+        if (res.code === 0 && res.success) {
+          this.dict.tracker = res.result
+          for (const item of this.dict.tracker) {
+            if (item.value == this.info.tracker)
+              // console.log(item.value);
+              return (this.dictText.trackerText = item.text)
+          }
+        }
+      })
+      initDictOptions('track_method').then(res => {
+        if (res.code === 0 && res.success) {
+          this.dict.trackMethod = res.result
+          for (const item of this.dict.trackMethod) {
+            if (item.value == this.info.trackMethod)
+              // console.log(item.value);
+              return (this.dictText.trackMethodText = item.text)
+          }
+        }
+      })
     }
   }
 }

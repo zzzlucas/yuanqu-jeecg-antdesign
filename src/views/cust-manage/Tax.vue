@@ -83,13 +83,25 @@ export default {
         {
           title: '年度',
           align: 'center',
-          dataIndex: 'year'
+          dataIndex: 'year',
+          width: 150
         },
         {
-          title: '月份',
+          title: '区分',
           align: 'center',
-          dataIndex: 'month'
+          dataIndex: 'type',
+          customRender: function(t, r, index) {
+            // console.log(t);
+            if (t == 'YS') return '预算'
+            if (t == 'SJ') return '实际'
+            // return parseInt(index) + 1
+          }
         },
+        // {
+        //   title: '月份',
+        //   align: 'center',
+        //   dataIndex: 'month'
+        // },
         {
           title: '企业所得税',
           align: 'center',
@@ -128,7 +140,7 @@ export default {
         }
       ],
       url: {
-        list: '/park.indicators/baseIndicatorsTaxes/list',
+        list: '/park.indicators/baseIndicatorsTaxes/listFinish?parkId=555',
         delete: '/park.park/basePark/delete',
         deleteBatch: '/park.park/basePark/deleteBatch'
       },
@@ -149,7 +161,7 @@ export default {
       //分页参数
       getAction(this.url.list).then(res => {
         if (res.success) {
-          this.dataSource = res.result.records
+          this.dataSource = res.result
         }
         if (res.code === 510) {
           this.$message.warning(res.message)

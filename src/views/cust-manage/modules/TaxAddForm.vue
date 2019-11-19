@@ -28,7 +28,7 @@
             <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="月份">
               <a-select
                 placeholder="请选择月份"
-                v-decorator="['month', validatorRules.month,{initialValue: ''}]"
+                v-decorator="['month', {initialValue: ''}]"
               >
                 <a-select-option value="1">1</a-select-option>
                 <a-select-option value="2">2</a-select-option>

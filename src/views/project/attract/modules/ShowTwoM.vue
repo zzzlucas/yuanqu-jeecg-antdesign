@@ -143,8 +143,13 @@ export default {
       columns: [
         {
           title: '序号',
+          dataIndex: '',
+          key: 'rowIndex',
+          width: 100,
           align: 'center',
-          dataIndex: ''
+          customRender: function(t, r, index) {
+            return parseInt(index) + 1
+          }
         },
         {
           title: '跟踪日期',
@@ -194,7 +199,7 @@ export default {
       this.visible = true
       this.record = record
       //this.record.projectId 获取到了，在get请求前传入值
-      console.log(this.record.projectId);
+      console.log(this.record.projectId)
       this.loadData()
     },
     searchQuery() {
