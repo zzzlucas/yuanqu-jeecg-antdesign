@@ -96,6 +96,7 @@
 
 <script>
   import YqImage from '@comp/extend/YqImage'
+
   export default {
     name: 'BuildingView',
     components: { YqImage }

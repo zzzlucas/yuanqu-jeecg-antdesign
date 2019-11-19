@@ -1,0 +1,214 @@
+<template>
+  <a-drawer
+    width="65%"
+    placement="right"
+    :title="title"
+    :visible="visible"
+    :mask-closable="false"
+    @close="close"
+  >
+    <a-form class="drawer-form building-block-form" layout="horizontal" :form="form">
+      <a-form-item
+        :labelCol="labelCol"
+        :wrapperCol="wrapperCol"
+        label="所属园区">
+        <a-select placeholder="请选择园区" v-decorator="['parkId', {rules: rules.parkId}]">
+          <a-select-option value="1193719771573518336">园区1</a-select-option>
+          <a-select-option value="1193773294512242688">园区2</a-select-option>
+          <a-select-option value="1193775260059566080">园区3</a-select-option>
+        </a-select>
+      </a-form-item>
+      <a-form-item
+        :labelCol="labelCol"
+        :wrapperCol="wrapperCol"
+        label="区块名称">
+        <a-input placeholder="请输入区块名称" v-decorator="['projectName', {}]"/>
+      </a-form-item>
+      <a-form-item
+        :labelCol="labelCol"
+        :wrapperCol="wrapperCol"
+        label="区块简称">
+        <a-input placeholder="请输入区块简称" v-decorator="['projectAbbr', {}]"/>
+      </a-form-item>
+      <a-form-item
+        :labelCol="labelCol"
+        :wrapperCol="wrapperCol"
+        label="房源类型">
+        <a-input placeholder="请输入房源类型" v-decorator="['rentTypeValue', {}]"/>
+      </a-form-item>
+      <a-form-item
+        :labelCol="labelCol"
+        :wrapperCol="wrapperCol"
+        label="业主">
+        <a-input placeholder="请输入业主" v-decorator="['ownerName', {}]"/>
+      </a-form-item>
+      <a-form-item
+        :labelCol="labelCol"
+        :wrapperCol="wrapperCol"
+        label="物业公司">
+        <a-input placeholder="请输入物业公司" v-decorator="['propertyCompany', {}]"/>
+      </a-form-item>
+      <a-form-item
+        :labelCol="labelCol"
+        :wrapperCol="wrapperCol"
+        label="总建筑面积">
+        <a-input placeholder="请输入总建筑面积" v-decorator="['buildingArea', {}]" addonAfter="㎡"/>
+      </a-form-item>
+      <a-form-item
+        :labelCol="labelCol"
+        :wrapperCol="wrapperCol"
+        label="总计费面积">
+        <a-input placeholder="请输入总计费面积" v-decorator="['rentArea', {}]" addonAfter="㎡"/>
+      </a-form-item>
+      <a-form-item
+        :labelCol="labelCol"
+        :wrapperCol="wrapperCol"
+        label="备注">
+        <a-textarea rows="4" placeholder="请输入备注" v-decorator="['remark', {}]"/>
+      </a-form-item>
+      <a-form-item
+        label="附件"
+        help="单张图片不超过 10M"
+        :labelCol="labelCol"
+        :wrapperCol="wrapperCol">
+        <a-upload
+          ref="upload"
+          action=""
+          listType="picture-card"
+          accept="image/jpeg,image/png"
+          :fileList="fileList"
+          :customRequest="uploadRequest"
+          @preview="uploadPreview"
+          @change="uploadChange"
+        >
+          <div v-if="fileList.length < 5">
+            <a-icon type="plus"/>
+          </div>
+        </a-upload>
+      </a-form-item>
+    </a-form>
+    <div class="drawer-bottom-btn-group">
+      <a-button style="margin-right: 8px" type="primary" @click="handleOk">确定</a-button>
+      <a-button @click="handleCancel">取消</a-button>
+    </div>
+  </a-drawer>
+</template>
+
+<script>
+  import { httpAction } from '@/api/manage'
+  import { axios } from '@/utils/request'
+  import pick from 'lodash.pick'
+  import { promiseForm } from '@utils/util'
+  import qs from 'qs'
+  import { PickBuildingBlockForm } from '@/config/pick-fields'
+  import rules from '../js/rules'
+
+  export default {
+    name: 'BuildingBlockForm',
+    data() {
+      return {
+        rules,
+        title: '区块',
+        visible: false,
+        model: {},
+        labelCol: {
+          span: 4
+        },
+        wrapperCol: {
+          span: 20
+        },
+        form: this.$form.createForm(this, { name: 'buildingBlock' }),
+        url: {
+          add: '/park.architecture/baseArchitectureProject/add',
+          edit: '/park.architecture/baseArchitectureProject/edit'
+        },
+        fileList: []
+      }
+    },
+    methods: {
+      add() {
+        this.title = '新建区块'
+        this.form.resetFields()
+        this.visible = true
+      },
+      edit(record) {
+        this.title = '编辑区块'
+        this.form.resetFields()
+        this.model = Object.assign({}, record)
+        this.visible = true
+        this.$nextTick(() => {
+          this.form.setFieldsValue(pick(this.model, PickBuildingBlockForm))
+        })
+
+      },
+      close() {
+        this.$emit('close')
+        this.visible = false
+      },
+      handleOk() {
+        // 触发表单验证
+        const form = promiseForm(this.form)
+
+        form.then(form => {
+          this.confirmLoading = true
+          let httpUrl = ''
+          let method = ''
+          if (!this.model.projectId) {
+            httpUrl = this.url.add
+            method = 'post'
+          } else {
+            form.projectId = this.model.projectId
+            httpUrl = this.url.edit
+            method = 'put'
+          }
+
+          form = qs.stringify(form)
+
+          httpAction(httpUrl, form, method).then((res) => {
+            this.confirmLoading = false
+            if (res.success) {
+              this.$message.success(res.message)
+              this.$emit('ok')
+              this.close()
+            } else {
+              this.$message.warning(res.message)
+            }
+          })
+        }).catch(err => {
+          console.log('工程项目新增：', err)
+        })
+      },
+      handleCancel() {
+        this.close()
+      },
+      uploadRequest(request) {
+        const data = new FormData
+        data.append('file', request.file)
+
+        axios({
+          url: '/sys/common/upload',
+          method: 'post',
+          data,
+          onUploadProgress: e => {
+            request.onProgress(e)
+          }
+        }).then(res => {
+          if(res.code === 0 && res.success){
+            request.onSuccess({url: window._CONFIG['imgDomainURL'] + res.message})
+          } else {
+            request.onError(res.message)
+          }
+        })
+      },
+      uploadPreview(e) {
+        window.open(e.response.url)
+      },
+      uploadChange({fileList}) {
+        this.fileList = fileList
+      }
+    }
+  }
+</script>
+
+<style lang="less">
+</style>

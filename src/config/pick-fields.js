@@ -162,3 +162,4 @@ export const AddbaseCustomerForm = [
     'weChat',
     'website'
 ]
+export const PickBuildingBlockForm = []
