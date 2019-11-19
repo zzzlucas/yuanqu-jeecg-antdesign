@@ -315,3 +315,38 @@ export function getFileListData(fileList) {
 
   return data
 }
+
+/**
+ * 列表 json 解析
+ * @param list
+ * @param fields
+ * @returns {*}
+ */
+export function listJsonFields(list, fields) {
+  for(const i in list){
+    if(list.hasOwnProperty(i)){
+      list[i] = objectJsonFields(list[i], fields)
+    }
+  }
+
+  return list
+}
+
+/**
+ * 对象 json 解析
+ * @param obj
+ * @param fields
+ * @returns {*}
+ */
+export function objectJsonFields(obj, fields) {
+  for(const key in obj){
+    if(obj.hasOwnProperty(key)){
+      if(fields.indexOf(key) !== -1){
+        console.log(key)
+        obj[key] = JSON.parse(obj[key])
+      }
+    }
+  }
+
+  return obj
+}
