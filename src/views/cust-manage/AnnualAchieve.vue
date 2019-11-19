@@ -51,7 +51,7 @@
         rowKey="id"
         :columns="columns"
         :dataSource="dataSource"
-        :pagination="ipagination"
+        :pagination="false"
         :loading="loading"
         :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
         :customRow="customRow"
@@ -230,7 +230,7 @@ export default {
       // this.loadData()
     },
     loadData() {
-      console.log('ahhahahahah');
+      console.log('ahhahahahah')
       // if (this.typee == 'YS' || this.typee == 'SJ') console.log('hahahaahahh')
       // let params = { type: this.typee }
       let params = { parkId: 555 }

@@ -3,6 +3,7 @@ export const PickMgrEngineeringInfoForm = ['parkId', 'projectName', 'customerNam
 export const ProjectAttractShowZeroForm = [
     'recordId',
     'projectId',
+    'projectName',
     'tracker',
     'trackMethod',
     'status',

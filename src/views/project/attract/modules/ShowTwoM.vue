@@ -102,7 +102,7 @@ import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUt
 
 export default {
   mixins: [JeecgListMixin],
-  name: 'SysAnnouncementModal',
+  name: '',
   components: { ShowCard },
   // props: {
   //   ipaginationSTM: ''
@@ -205,6 +205,11 @@ export default {
     searchQuery() {
       this.getProjectTrace()
     },
+    searchReset() {
+      this.queryParam = {}
+      // this.form = {}
+      this.loadData(1)
+    },
     //获取查询条件
     getQueryParams() {
       let sqp = {}
@@ -226,10 +231,10 @@ export default {
     //表格跟踪记录获取  通过projectId查询
 
     //第一个获取方法  列表获取
-    loadData() {
-      // if (arg === 1) {
-      //   this.ipagination.current = 1
-      // }
+    loadData(arg = 1) {
+      if (arg === 1) {
+        this.ipagination.current = 1
+      }
       let params = { projectId: this.record.projectId }
       this.loading = true
       getAction('/park.project/mgrProjectTrace/getById', params).then(res => {
@@ -292,7 +297,7 @@ export default {
       row.__key = Dom7(e.currentTarget)
         .parents('.ant-table-row')
         .data('row-key')
-      console.log(row.__key)
+      // console.log(row.__key)
       this.$emit('showOneToZeroEdit', row)
     },
 

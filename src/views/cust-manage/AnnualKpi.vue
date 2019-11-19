@@ -31,7 +31,7 @@
         rowKey="id"
         :columns="columns"
         :dataSource="dataSource"
-        :pagination="ipagination"
+          :pagination="false"
         :loading="loading"
         :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
         :customRow="customRow"
@@ -173,7 +173,7 @@ export default {
       })
     },
     goAnnualKpiAddForm() {
-      this.$refs.AnnualKpiAddForm.edit()
+      this.$refs.AnnualKpiAddForm.add()
     },
     showAnnualKpiAddForm(row, e) {
       row.__key = Dom7(e.currentTarget)

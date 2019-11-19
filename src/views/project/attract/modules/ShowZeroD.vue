@@ -11,13 +11,24 @@
       <a-card class="daily-article" :bordered="false">
         <a-spin :spinning="confirmLoading">
           <a-form class="project-drawer-form" :form="form">
-            <a-row>
+            <!-- <a-row>
               <a-col span="24">
                 <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="项目ID">
-                  <!-- ui要求name，数据模板目前是id -->
                   <a-input
                     placeholder="请输入项目Id"
+                    disabled
                     v-decorator="['projectId',  {rules: [{required: true, message: '请输入项目Id'}]}]"
+                  />
+                </a-form-item>
+              </a-col>
+            </a-row> -->
+            <a-row>
+              <a-col span="24">
+                <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="项目名称">
+                  <a-input
+                    placeholder="请输入项目名称"
+                    disabled
+                    v-decorator="['projectName',  {rules: [{required: true, message: '请输入项目名称'}]}]"
                   />
                 </a-form-item>
               </a-col>
@@ -69,9 +80,12 @@
                 :wrapperCol="wrapperCol.default"
                 label="项目状态"
               >
-                <a-select style="width:100%">
-                  <a-select-option value="1">?</a-select-option>
-                  <a-select-option value="2">??</a-select-option>
+                <a-select disabled v-decorator="['status']">
+                  <a-select-option
+                    v-for="(item, key) in dict.statusExt"
+                    :value="item.value"
+                    :key="key"
+                  >{{ item.text }}</a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
@@ -179,8 +193,8 @@ export default {
         parkId: { rules: [{ required: true, message: '请输入园区ID!' }] }
       },
       dict: {
-        trackMethodExt: [{ value: '1' }],
-        trackerExt: [{ value: '1' }]
+        // trackMethodExt: [{ value: '1' }],
+        // trackerExt: [{ value: '1' }]
       },
       //是否开启编辑模式的标记
       editBool: false,
@@ -208,6 +222,11 @@ export default {
         this.dict.trackerExt = res.result
       }
     })
+    initDictOptions('project_status').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.statusExt = res.result
+      }
+    })
   },
   methods: {
     handleCancel() {
@@ -232,32 +251,42 @@ export default {
       //方法二：获取到record里的projectid，根据这个发起get请求获取到项目跟踪信息，写入record
       //但是，跟踪记录从逻辑上来说，应当只具备新表单能力即可，编辑旧表单反而破坏跟踪记录的意义，所以虽然后端api是put方式，当post使用即可
       //最终是否获取有待商榷
-      getAction('/park.project/mgrProjectTrace/getById', { projectId: record.projectId }).then(res => {
+
+      //11.19 用recordId查
+      let parma = { id: record.recordId }
+      console.log(record.recordId)
+      getAction('/park.project/mgrProjectTrace/selectById',parma).then(res => {
         if (res.success) {
-          this.record = res.result[res.result.length - 1]
-          console.log(res.result)
-          console.log(this.record)
+          // this.record = res.result[res.result.length - 1]
+          console.log(res)
+          this.record = res.result
           this.model = Object.assign({}, this.record)
           this.visible = true
-          // console.log(pick(this.model, ProjectAttractShowZeroForm))
           this.$nextTick(() => {
             this.form.setFieldsValue(pick(this.model, ProjectAttractShowZeroForm))
-            //时间格式化
             this.form.setFieldsValue({ trackDate: this.model.trackDate ? moment(this.model.trackDate) : null })
           })
-        }
-        if (res.code === 510) {
+        } else {
           this.$message.warning(res.message)
         }
       })
     },
-    //只获取部分对应行的属性
+    //只获取部分对应行的属性  在添加新记录时候使用
     partDetail(record) {
+      // console.log('partDetail')
       this.form.resetFields()
-      this.model = Object.assign({}, record)
-      this.visible = true
-      this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.model, 'projectId'))
+      getAction('/park.project/mgrProjectInfo/queryProjectById', { projectId: record.projectId }).then(res => {
+        if (res.success) {
+          // console.log(res.result.projectManager)
+          record.tracker = res.result.projectManager
+          this.model = Object.assign({}, record)
+          this.visible = true
+          this.$nextTick(() => {
+            this.form.setFieldsValue(pick(this.model, 'projectId', 'projectName', 'trackDate', 'tracker', 'status'))
+          })
+        } else {
+          this.$message.warning(res.message)
+        }
       })
     },
     close() {
@@ -290,6 +319,7 @@ export default {
               if (res.success) {
                 that.$message.success(res.message)
                 that.$emit('ok')
+                that.$emit('reload')
               } else {
                 that.$message.warning(res.message)
               }
