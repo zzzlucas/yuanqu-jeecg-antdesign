@@ -77,7 +77,8 @@
           listType="picture-card"
           accept="image/jpeg,image/png"
           :fileList="fileList"
-          :customRequest="uploadRequest"
+          :customRequest="uploadFile"
+          :beforeUpload="uploadBefore"
           @preview="uploadPreview"
           @change="uploadChange"
         >
@@ -96,9 +97,8 @@
 
 <script>
   import { httpAction } from '@/api/manage'
-  import { axios } from '@/utils/request'
   import pick from 'lodash.pick'
-  import { promiseForm } from '@utils/util'
+  import { promiseForm, uploadFile } from '@utils/util'
   import qs from 'qs'
   import { PickBuildingBlockForm } from '@/config/pick-fields'
   import rules from '../js/rules'
@@ -108,6 +108,7 @@
     data() {
       return {
         rules,
+        uploadFile,
         title: '区块',
         visible: false,
         model: {},
@@ -125,6 +126,11 @@
         fileList: []
       }
     },
+    created() {
+      this.$on('success', e => {
+        console.log(e)
+      })
+    },
     methods: {
       add() {
         this.title = '新建区块'
@@ -139,7 +145,6 @@
         this.$nextTick(() => {
           this.form.setFieldsValue(pick(this.model, PickBuildingBlockForm))
         })
-
       },
       close() {
         this.$emit('close')
@@ -181,30 +186,33 @@
       handleCancel() {
         this.close()
       },
-      uploadRequest(request) {
-        const data = new FormData
-        data.append('file', request.file)
+      async uploadBefore(file) {
+        if (file.size > 10485760) {
+          const errorStr = '该图片大于 10M'
+          this.$message.error(errorStr)
+          throw new Error(errorStr)
+        }
 
-        axios({
-          url: '/sys/common/upload',
-          method: 'post',
-          data,
-          onUploadProgress: e => {
-            request.onProgress(e)
-          }
-        }).then(res => {
-          if(res.code === 0 && res.success){
-            request.onSuccess({url: window._CONFIG['imgDomainURL'] + res.message})
-          } else {
-            request.onError(res.message)
-          }
-        })
+        return true
       },
       uploadPreview(e) {
         window.open(e.response.url)
       },
-      uploadChange({fileList}) {
+      uploadChange({ file, fileList }) {
+        console.log(file.status)
+        if (file.status === 'done') {
+          const data = fileList[fileList.length - 1]
+          data.url = data.response.url
+          data.thumbUrl = data.response.url
+          fileList[fileList.length - 1] = data
+        }
+
         this.fileList = fileList
+
+        if (file.status === 'error') {
+          this.$message.error(file.response.message)
+          this.$delete(this.fileList, this.fileList.length - 1)
+        }
       }
     }
   }

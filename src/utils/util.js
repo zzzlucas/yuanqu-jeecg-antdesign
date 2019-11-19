@@ -1,4 +1,5 @@
 import { isURL } from '@/utils/validate'
+import { axios } from '@utils/request'
 
 export function timeFix() {
   const time = new Date()
@@ -267,5 +268,29 @@ export function promiseForm(form) {
         reject(new Error('没有通过表单校验'))
       }
     })
+  })
+}
+
+/**
+ * 上传文件，不知道为什么进度条没出来
+ * @param request a-upload pros beforeUpload 的第一个参数
+ */
+export function uploadFile(request) {
+  const data = new FormData
+  data.append('file', request.file)
+
+  axios({
+    url: '/sys/common/upload',
+    method: 'post',
+    data,
+    onUploadProgress(e) {
+      request.onProgress(e)
+    }
+  }).then(res => {
+    if (res.code === 0 && res.success) {
+      request.onSuccess({ url: window._CONFIG['imgDomainURL'] + res.message })
+    } else {
+      request.onError(res.message)
+    }
   })
 }
