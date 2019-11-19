@@ -288,7 +288,7 @@ export function uploadFile(request) {
     }
   }).then(res => {
     if (res.code === 0 && res.success) {
-      request.onSuccess({ url: window._CONFIG['imgDomainURL'] + res.message, old: res.message})
+      request.onSuccess({ url: window._CONFIG['imgDomainURL'] + res.message, old: res.message })
     } else {
       request.onError(res.message)
     }
@@ -303,8 +303,8 @@ export function uploadFile(request) {
 export function getFileListData(fileList) {
   const data = []
 
-  for(const item of fileList){
-    const {response, name, uid} = item
+  for (const item of fileList) {
+    const { response, name, uid } = item
     data.push({
       url: response.old,
       name,
@@ -323,8 +323,8 @@ export function getFileListData(fileList) {
  * @returns {*}
  */
 export function listJsonFields(list, fields) {
-  for(const i in list){
-    if(list.hasOwnProperty(i)){
+  for (const i in list) {
+    if (list.hasOwnProperty(i)) {
       list[i] = objectJsonFields(list[i], fields)
     }
   }
@@ -339,9 +339,9 @@ export function listJsonFields(list, fields) {
  * @returns {*}
  */
 export function objectJsonFields(obj, fields) {
-  for(const key in obj){
-    if(obj.hasOwnProperty(key)){
-      if(fields.indexOf(key) !== -1){
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      if (fields.indexOf(key) !== -1) {
         obj[key] = JSON.parse(obj[key])
       }
     }
@@ -357,4 +357,44 @@ export function objectJsonFields(obj, fields) {
  */
 export function getOneImage(url) {
   return window._CONFIG['imgDomainURL'] + url
+}
+
+/**
+ * 替换列表对象的键名
+ * @param list
+ * @param fields
+ * @param callback
+ * @returns {*}
+ */
+export function listReplace(list, fields, callback) {
+  list = Object.assign([], list)
+  for (const i in list) {
+    if (list.hasOwnProperty(i)) {
+      list[i] = objectReplace(list[i], fields)
+
+      if (typeof callback === 'function') {
+        list[i] = callback(list[i])
+      }
+    }
+  }
+
+  return list
+}
+
+/**
+ * 替换对象的键名
+ * @param obj
+ * @param fields
+ * @returns {*}
+ */
+export function objectReplace(obj, fields) {
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      if (fields[key]) {
+        obj[fields[key]] = obj[key]
+      }
+    }
+  }
+
+  return obj
 }

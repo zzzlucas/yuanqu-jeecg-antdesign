@@ -2,7 +2,7 @@
   <a-row :gutter="8">
     <a-col span="4">
       <a-card>
-        <building-tree></building-tree>
+        <a-tree show-line :tree-data="tree" :load-data="loadTree" @select="onTreeSelect"></a-tree>
       </a-card>
     </a-col>
     <a-col span="20">
@@ -23,37 +23,53 @@
 </template>
 
 <script>
-  import BuildingTree from './components/BuildingTree'
   import BuildingView from './components/BuildingView'
   import BuildingBlockForm from './components/form/BuildingBlockForm'
   import { deleteAction, getAction } from '@/api/manage'
-  import { listJsonFields } from '@utils/util'
+  import { listJsonFields, listReplace } from '@utils/util'
+  import pick from 'lodash.pick'
 
   export default {
     name: 'Building',
-    components: { BuildingBlockForm, BuildingView, BuildingTree },
+    components: { BuildingBlockForm, BuildingView },
     data() {
       return {
         type: 'block',
         model: {
           status: 'empty'
         },
+        tree: [],
         url: {
           list: {
             block: '/park.architecture/baseArchitectureProject/queryByParkId'
           },
           delete: {
             block: '/park.architecture/baseArchitectureProject/delete'
+          },
+          tree: {
+            block: {
+              url: '/park.architecture/baseArchitectureBuilding/queryByProjectId',
+              id: 'projectId'
+            }
           }
         }
       }
     },
     created() {
-      this.loadData({parkId: '1193719771573518336'}).then(list => {
+      this.loadData({ parkId: '1193719771573518336' }).then(list => {
         this.model = {
           status: 'block',
           list
         }
+
+        this.tree = listReplace(list, {
+          projectAbbr: 'title',
+          buildingProjectId: 'key'
+        }, obj => {
+          obj = pick(obj, ['title', 'key'])
+          obj.type = 'block'
+          return obj
+        })
       }).catch(err => {
         console.log('载入区块数据：' + err)
       })
@@ -71,7 +87,7 @@
       addBlock() {
         this.$refs.block.add()
       },
-      onDelete(type, id, key, name){
+      onDelete(type, id, key, name) {
         const types = {
           block: '区块'
         }
@@ -81,13 +97,39 @@
           content: `是否删除${types[type]}：${name}`,
           onOk: () => {
             deleteAction(this.url.delete[type], { id }).then(res => {
-              if(res.success && res.code === 200){
+              if (res.success && res.code === 200) {
                 this.$message.success(res.message)
                 this.$delete(this.model.list, key)
               } else {
                 this.$message.error(res.message)
               }
             })
+          }
+        })
+      },
+      onTreeSelect(keys, info) {
+        console.log(keys, info)
+      },
+      async loadTree(node) {
+        const type = node.dataRef.type
+        const config = this.url.tree[type]
+        const query = {}
+
+        if (node.dataRef.children) {
+          return true
+        }
+
+        query[config.id] = node.dataRef.key
+        getAction(config.url, query).then(res => {
+          if (res.success && res.code === 200) {
+            if (res.result) {
+              node.dataRef.children = res.result
+            } else {
+              node.dataRef.isLeaf = true
+            }
+          } else {
+            this.$message.error(res.message)
+            throw new Error(res.message)
           }
         })
       }
