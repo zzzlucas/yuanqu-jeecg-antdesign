@@ -52,6 +52,9 @@
         }
 
         return ''
+      },
+      deleteBin() {
+        this.$emit('delete', ...arguments)
       }
     }
   }

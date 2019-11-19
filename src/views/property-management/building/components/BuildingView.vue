@@ -1,7 +1,7 @@
 <template>
   <div class="yq-building-view">
     <!-- 区块显示 -->
-    <block-list v-if="model.status === 'block'" :list="model.list"></block-list>
+    <block-list v-if="model.status === 'block'" :list="model.list" @delete="deleteBin"></block-list>
   </div>
 </template>
 
