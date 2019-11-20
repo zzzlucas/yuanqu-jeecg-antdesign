@@ -7,7 +7,7 @@
           <a-input disabled v-decorator="['custName']" />
         </a-form-item>
         <a-form-item v-bind="formItemLayout" label="股权占比">
-          <a-input v-decorator="['equrityRatio']" />
+          <a-input v-decorator="['equrityRatio',{rules: [{required: true, message: '请输入股权占比'}]}]" />
         </a-form-item>
         <a-form-item v-bind="formItemLayout" label="已授权发明专利数">
           <a-input v-decorator="['inventPatentMount']" />
@@ -85,8 +85,10 @@ export default {
       },
       editBool: false,
       url: {
-        // list: '/park.project/mgrProjectInfo/assignProject',
-        edit: '/park.project/mgrProjectInfo/assignProject'
+        list: '/project/mgrCustTeamMember/queryById',
+        add: '/project/mgrCustTeamMember/add',
+        edit: '/project/mgrCustTeamMember/edit',
+        delete: '/project/mgrCustTeamMember/delete'
       }
     }
   },
@@ -104,17 +106,22 @@ export default {
   },
   methods: {
     handleOk() {
+      //具备添加及编辑修改的能力
       const that = this
       this.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
           that.confirmLoading = true
           let httpurl = ''
           let method = ''
-          console.log(this.model)
-
-          httpurl += this.url.edit
-          method = 'put'
-
+          //没有股权占比，就认为是新增，对应的，该项在新增是应为必填项目
+          if (!this.model.equrityRatio) {
+            httpurl += this.url.add
+            method = 'post'
+          } else {
+            httpurl += this.url.edit
+            method = 'put'
+          }
+          //
           // let formData = {}
           let formData = Object.assign(this.model, values)
           formData = qs.stringify(formData)
@@ -157,7 +164,7 @@ export default {
       this.editBool = true
       let proId = this.$route.params.id
       //不存在record  等有了api再说
-      console.log(record);
+      console.log(record)
       getAction('/park.project/mgrProjectInfo/queryProjectById', { projectId: proId }).then(res => {
         // console.log(res.result[0].tracker);
         if (res.success) {

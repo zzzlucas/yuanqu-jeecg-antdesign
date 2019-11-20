@@ -3,64 +3,94 @@
     <!-- 应该在page-layout组件vue里写abadge -->
     <!-- <div style="width:1200px;margin:auto;"> -->
     <a-card :bordered="false">
-      <a-tabs defaultActiveKey="1" @change="callback">
+      <!-- <a slot="extra" @click.prevent="addShowTwo">
+        <a-icon type="plus-square" style="margin-right:5px;margin-top:5px" />新增
+      </a>-->
+      <a-tabs defaultActiveKey="1">
+        <!-- @change="callback" -->
         <a-tab-pane tab="企业基本信息" key="1">
           <detail-list>
-            <detail-list-item term="投资额">{{ info.investAmount }}（万元）</detail-list-item>
-            <detail-list-item term="注册投资">{{ info.registerMoney }}</detail-list-item>
+            <detail-list-item term="投资额">{{ info.mgrProjectInvest.investAmount }}（万元）</detail-list-item>
+            <detail-list-item term="注册投资">{{ info.mgrProjectCust.registerMoney }}（万元）</detail-list-item>
             <detail-list-item term="年产值">{{ info.annualProductionValue }}(万元)</detail-list-item>
             <detail-list-item term="年税金">{{ info.annualTaxes }}(万元)</detail-list-item>
-            <detail-list-item term="重要程度">{{ info.importance }}</detail-list-item>
-            <detail-list-item term="是否外资">{{ info.isForeignCapital }}</detail-list-item>
+            <!-- 这个租赁项目才有 -->
+            <!-- v-if="info.projectType == 2" -->
+            <!-- <detail-list-item term="重要程度" >{{ info.importance }}</detail-list-item> -->
+            <detail-list-item term="是否外资">{{ info.mgrProjectInvest.isForeignCapital=="1"?"是":"否" }}</detail-list-item>
           </detail-list>
           <!-- 这个只有租赁才有吗 v-if projectType==2 点击跳转公共平台  -->
           <detail-list>
-            <detail-list-item term="新建项目申请"><a href="#">查看新建项目申请信息</a></detail-list-item>
+            <detail-list-item term="新建项目申请">
+              <a href="#">查看新建项目申请信息</a>
+            </detail-list-item>
           </detail-list>
           <detail-list>
             <detail-list-item term="是否人才项目">{{ info.isTalentProject=="1"?"是":"否" }}</detail-list-item>
           </detail-list>
           <detail-list>
-            <detail-list-item term="公司概况">{{ info.companyDescription }}</detail-list-item>
+            <detail-list-item term="公司概况">{{ info.mgrProjectCust.companyDescription }}</detail-list-item>
           </detail-list>
           <detail-list>
-            <detail-list-item term="团队成员情况">{{ info.teamMemberDescription }}</detail-list-item>
+            <detail-list-item term="团队成员情况">{{ info.mgrProjectCust.teamMemberDescription }}</detail-list-item>
           </detail-list>
           <detail-list>
-            <detail-list-item term="备注">{{ info.remark }}</detail-list-item>
+            <detail-list-item term="备注">{{ info.mgrProjectInvest.remark }}</detail-list-item>
           </detail-list>
         </a-tab-pane>
+        <!-- 2222222222222222222222222 -->
         <a-tab-pane tab="跟踪记录" key="2">
-          <a-table
-            ref="table"
-            size="default"
-            bordered
-            rowKey="id"
-            :columns="columns"
-            :dataSource="dataSource"
-            :pagination="ipagination"
-            :loading="loading"
-          >
-            <!-- @change -->
-            <span slot="action" slot-scope="text, record">
-              <a @click.stop>编辑</a>&nbsp;
-              <a @click.stop>查看</a>
-            </span>
-          </a-table>
+          <detail-show-two></detail-show-two>
         </a-tab-pane>
+        <!-- 2222222222222222222222222 -->
         <a-tab-pane tab="项目需求" key="3">
           <detail-list>
-            <detail-list-item term="租赁面积">1,000.00 m²</detail-list-item>
+            <detail-list-item term="拿地面积" v-if="info.projectType == 1">{{info.gainArea}}㎡</detail-list-item>
+            <detail-list-item term="租赁面积" v-if="info.projectType == 2">{{info.rentBuildArea}}㎡</detail-list-item>
           </detail-list>
         </a-tab-pane>
-
         <a-tab-pane tab="联系人" key="4">
           <detail-list>
-            <detail-list-item term="联系人">周易</detail-list-item>
-            <detail-list-item term="电话">1234567899</detail-list-item>
+            <detail-list-item term="联系人">{{info.agentPerson}}</detail-list-item>
+            <detail-list-item term="电话">{{info.agentTel}}</detail-list-item>
           </detail-list>
         </a-tab-pane>
         <a-tab-pane tab="附件" key="5">
+          <detail-list>
+            <detail-list-item term="附件"></detail-list-item>
+          </detail-list>
+        </a-tab-pane>
+        <a-tab-pane tab="公司注册信息" key="6">
+          <detail-list>
+            <detail-list-item term="附件"></detail-list-item>
+          </detail-list>
+        </a-tab-pane>
+        <a-tab-pane tab="股权架构(法人股东）" key="7">
+          <detail-list>
+            <detail-list-item term="附件"></detail-list-item>
+          </detail-list>
+        </a-tab-pane>
+        <a-tab-pane tab="股权架构(个人股东）" key="8">
+          <detail-list>
+            <detail-list-item term="附件"></detail-list-item>
+          </detail-list>
+        </a-tab-pane>
+        <a-tab-pane tab="团队成员具体信息" key="9">
+          <detail-list>
+            <detail-list-item term="附件"></detail-list-item>
+          </detail-list>
+        </a-tab-pane>
+        <a-tab-pane tab="生产工艺情况" key="10">
+          <detail-list>
+            <detail-list-item term="附件"></detail-list-item>
+          </detail-list>
+        </a-tab-pane>
+        <a-tab-pane tab="环保、安全、卫生" key="11">
+          <detail-list>
+            <detail-list-item term="附件"></detail-list-item>
+          </detail-list>
+        </a-tab-pane>
+        <a-tab-pane tab="能源与资源消耗情况(年消耗量）" key="12">
           <detail-list>
             <detail-list-item term="附件"></detail-list-item>
           </detail-list>
@@ -81,58 +111,26 @@ import { filterObj } from '@/utils/util'
 import { getAction, putAction } from '@/api/manage'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 
+import DetailShowTwo from './modules/DetailShowTwoM'
+
 export default {
   name: 'Detail',
   components: {
     PageLayout,
     ABadge,
     DetailList,
-    DetailListItem
+    DetailListItem,
+    DetailShowTwo
   },
   data() {
     return {
-      dataSource: [],
-      ipagination: [],
+      // dataSource: [],
+      // ipagination: [],
       loading: false,
       info: {},
       url: {
         list: '/park.project/mgrProjectInfo/queryProjectById'
-      },
-      columns: [
-        {
-          title: '项目名称',
-          align: 'center',
-          dataIndex: 'projectName'
-        },
-        //用数据字典过滤，便于维护人员操作       数据字典使用步骤2
-        {
-          title: '项目类别',
-          align: 'center',
-          dataIndex: 'projectType',
-          customRender: text => {
-            return filterDictText(this.projectTypeDictOptions, text)
-          }
-        },
-        {
-          title: '行业类别',
-          align: 'center',
-          dataIndex: 'industrySectorValue',
-          customRender: text => {
-            return filterDictText(this.industrySectorValueDictOptions, text)
-          }
-        },
-        {
-          title: '总投资（万元）',
-          align: 'center',
-          dataIndex: 'sendTime'
-        },
-        {
-          title: '操作',
-          dataIndex: 'action',
-          align: 'center',
-          scopedSlots: { customRender: 'action' }
-        }
-      ]
+      }
     }
   },
 

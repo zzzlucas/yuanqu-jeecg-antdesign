@@ -264,6 +264,35 @@ export default {
   },
   created() {},
   methods: {
+    //为了修改datasource里的字段名
+    loadData(arg) {
+      if (!this.url.list) {
+        this.$message.error('请设置url.list属性!')
+        return
+      }
+      if (arg === 1) {
+        this.ipagination.current = 1
+      }
+      var params = this.getQueryParams() //查询条件
+      this.loading = true
+      getAction(this.url.list, params).then(res => {
+        if (res.success) {
+          //遍历修改增加字段名，统一为gainArea，避免字段名不吻合的情况导致租赁面积不显示
+          for (const item of res.result.records) {
+            //存在，不为null
+            if (item.rentBuildArea) {
+              item.gainArea = item.rentBuildArea
+            }
+          }
+          this.dataSource = res.result.records
+          this.ipagination.total = res.result.total
+        }
+        if (res.code === 510) {
+          this.$message.warning(res.message)
+        }
+        this.loading = false
+      })
+    },
     customRow(row) {
       return {
         on: {

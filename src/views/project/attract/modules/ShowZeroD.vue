@@ -11,7 +11,7 @@
       <a-card class="daily-article" :bordered="false">
         <a-spin :spinning="confirmLoading">
           <a-form class="project-drawer-form" :form="form">
-            <!-- <a-row>
+            <a-row>
               <a-col span="24">
                 <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="项目ID">
                   <a-input
@@ -21,7 +21,7 @@
                   />
                 </a-form-item>
               </a-col>
-            </a-row> -->
+            </a-row>
             <a-row>
               <a-col span="24">
                 <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="项目名称">
@@ -232,42 +232,73 @@ export default {
     handleCancel() {
       this.visible = false
     },
-    // handleCancel() {
-    //   this.close()
-    // },
     handleImportExcel() {},
     importExcelUrl() {},
     tokenHeader() {},
-    add() {
-      this.visible = true
-    },
-
+    //给列表页专用，列表页通过row获取projectId
     detail(record) {
-      this.record = record
-      // console.log(this.record.recordId)
-      this.form.resetFields()
+      const that = this
+      that.record = record
+      that.form.resetFields()
       //可能是record对象缺少属性，从getlist api获取到的参数中只有projectid和parkid可以在这里使用
       //方法一：需要api在传入时具备更多参数，使record具备更多参数
       //方法二：获取到record里的projectid，根据这个发起get请求获取到项目跟踪信息，写入record
       //但是，跟踪记录从逻辑上来说，应当只具备新表单能力即可，编辑旧表单反而破坏跟踪记录的意义，所以虽然后端api是put方式，当post使用即可
       //最终是否获取有待商榷
-
       //11.19 用recordId查
       let parma = { id: record.recordId }
-      console.log(record.recordId)
-      getAction('/park.project/mgrProjectTrace/selectById',parma).then(res => {
+      // console.log(record.recordId)
+      getAction('/park.project/mgrProjectTrace/selectById', parma).then(res => {
         if (res.success) {
-          // this.record = res.result[res.result.length - 1]
-          console.log(res)
-          this.record = res.result
-          this.model = Object.assign({}, this.record)
-          this.visible = true
-          this.$nextTick(() => {
-            this.form.setFieldsValue(pick(this.model, ProjectAttractShowZeroForm))
-            this.form.setFieldsValue({ trackDate: this.model.trackDate ? moment(this.model.trackDate) : null })
-          })
+          //要重发两次请求，太慢了，visible提上来一级，其实应该使用spin
+          that.visible = true
+          getAction('/park.project/mgrProjectInfo/queryProjectById', { projectId: that.record.projectId }).then(
+            resSSS => {
+              if (resSSS.success) {
+                that.record = res.result
+                that.record.projectName = resSSS.result.projectName
+                that.model = Object.assign({}, that.record)
+
+                that.$nextTick(() => {
+                  that.form.setFieldsValue(pick(that.model, ProjectAttractShowZeroForm))
+                  that.form.setFieldsValue({ trackDate: that.model.trackDate ? moment(that.model.trackDate) : null })
+                })
+              } else {
+                that.$message.warning(res.message)
+              }
+            }
+          )
         } else {
-          this.$message.warning(res.message)
+          that.$message.warning(res.message)
+        }
+      })
+    },
+    //给详情页专用，详情页具有$route.params.id获取projectId
+    detailDDD(record) {
+      const that = this
+      that.record = record
+      that.form.resetFields()
+      let parma = { id: record.recordId }
+      getAction('/park.project/mgrProjectTrace/selectById', parma).then(res => {
+        if (res.success) {
+          getAction('/park.project/mgrProjectInfo/queryProjectById', { projectId: that.$route.params.id }).then(
+            resSSS => {
+              if (resSSS.success) {
+                that.record = res.result
+                that.record.projectName = resSSS.result.projectName
+                that.model = Object.assign({}, that.record)
+                that.visible = true
+                that.$nextTick(() => {
+                  that.form.setFieldsValue(pick(that.model, ProjectAttractShowZeroForm))
+                  that.form.setFieldsValue({ trackDate: that.model.trackDate ? moment(that.model.trackDate) : null })
+                })
+              } else {
+                that.$message.warning(res.message)
+              }
+            }
+          )
+        } else {
+          that.$message.warning(res.message)
         }
       })
     },
@@ -275,6 +306,7 @@ export default {
     partDetail(record) {
       // console.log('partDetail')
       this.form.resetFields()
+      //id查询项目基本信息api
       getAction('/park.project/mgrProjectInfo/queryProjectById', { projectId: record.projectId }).then(res => {
         if (res.success) {
           // console.log(res.result.projectManager)
@@ -284,6 +316,32 @@ export default {
           this.$nextTick(() => {
             this.form.setFieldsValue(pick(this.model, 'projectId', 'projectName', 'trackDate', 'tracker', 'status'))
           })
+        } else {
+          this.$message.warning(res.message)
+        }
+      })
+    },
+    partDetailDDD() {
+      this.form.resetFields()
+      let record = {}
+      let params = { projectId: this.$route.params.id }
+      // console.log(params)
+      this.visible = true
+      // this.confirmLoading = true
+      getAction('/park.project/mgrProjectInfo/queryProjectById', params).then(res => {
+        if (res.success) {
+          // console.log('object');
+          // console.log(res.result);
+          record.tracker = res.result.projectManager
+          record.projectName = res.result.projectName
+          record.projectId = res.result.projectId
+          record.status = res.result.status
+          // record.trackDate = res.result.trackDate
+          this.model = Object.assign({}, record)
+          this.$nextTick(() => {
+            this.form.setFieldsValue(pick(this.model, 'projectId', 'projectName', 'trackDate', 'tracker', 'status'))
+          })
+          // this.confirmLoading = false
         } else {
           this.$message.warning(res.message)
         }
@@ -302,7 +360,7 @@ export default {
           let httpurl = ''
           let method = ''
           //row里传过来的id
-          if (!this.model.id) {
+          if (!this.model.trackMethod) {
             httpurl += this.url.add
             method = 'post'
           } else {
