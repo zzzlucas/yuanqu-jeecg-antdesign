@@ -1,7 +1,12 @@
 <template>
   <div class="yq-building-view">
     <!-- 区块列表 -->
-    <block-list v-if="model.status === 'block'" :list="model.list" @delete="deleteBtn" @edit="editBtn"></block-list>
+    <block-list
+      v-if="model.status === 'block'"
+      :list="model.list"
+      @delete="deleteBtn"
+      @edit="editBtn"
+      @change="onChange"></block-list>
   </div>
 </template>
 
@@ -28,6 +33,9 @@
       },
       editBtn() {
         this.$emit('edit', ...arguments)
+      },
+      onChange(){
+        this.$emit('change', ...arguments)
       }
     }
   }

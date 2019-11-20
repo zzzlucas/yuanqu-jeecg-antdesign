@@ -14,7 +14,7 @@
           </a-button>
         </div>
       </header>
-      <main class="block">
+      <main class="block" @click="goBlock(item.buildingProjectId, item)">
         <div class="image-box">
           <yq-image class="block-image" size="40" :src="getImage(item.addDocFiles)"></yq-image>
         </div>
@@ -41,15 +41,15 @@
     props: {
       list: {
         type: Array,
-        default(){
+        default() {
           return []
         }
       }
     },
     methods: {
-      getImage(list){
+      getImage(list) {
         let url = _.get(list, '[0].url', '')
-        if(url){
+        if (url) {
           url = getOneImage(url)
         }
         return url
@@ -59,6 +59,9 @@
       },
       editBtn() {
         this.$emit('edit', ...arguments)
+      },
+      goBlock() {
+        this.$emit('change', 'tower', ...arguments)
       }
     }
   }
