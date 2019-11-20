@@ -3,7 +3,7 @@ import AssetsCategory from '../components/AssetsCategory'
 export default {
   data() {
     return {
-
+      selectCategoryKey: null,
     }
   },
   components: {
@@ -11,7 +11,11 @@ export default {
   },
   methods: {
     selectCategory(keys) {
-      console.log(keys)
+      let key = null
+      if (keys[0]) {
+        key = keys[0]
+      }
+      this.selectCategoryKey = key
     },
   }
 }

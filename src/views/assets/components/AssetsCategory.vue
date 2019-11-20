@@ -1,15 +1,15 @@
 <template>
-  <div class="assets-category">
-    <a-tree
-      showLine
-      defaultExpandAll
-      :tree-data="nodes"
-      :defaultSelectedKeys="defaultSelectedKeys"
-      @select="onSelect" />
-  </div>
+  <a-tree
+    showLine
+    defaultExpandAll
+    :tree-data="nodes"
+    :defaultSelectedKeys="defaultSelectedKeys"
+    @select="onSelect" />
 </template>
 
 <script>
+  import { getAction } from '@/api/manage'
+
   export default {
     data() {
       return {
@@ -69,12 +69,20 @@
       onSelect(...ev) {
         this.$emit('select', ...ev)
       },
+      async fetchList() {
+        const res = await getAction('/park.asset/baseAssetCategory/list')
+        this.list = res.result
+      },
+      async buildNodes() {
+
+      },
+      async getList() {
+        await this.fetchList()
+        this.buildNodes()
+      },
     },
     created() {
-    }
+      this.getList()
+    },
   }
 </script>
-
-<style lang="less">
-
-</style>
