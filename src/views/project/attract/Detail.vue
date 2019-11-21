@@ -9,46 +9,48 @@
       <a-tabs defaultActiveKey="1">
         <!-- @change="callback" -->
         <a-tab-pane tab="企业基本信息" key="1">
-          <detail-list>
-            <detail-list-item
-              term="投资额"
-            >{{ info.mgrProjectInvest?info.mgrProjectInvest.investAmount:null }}（万元）</detail-list-item>
-            <detail-list-item
-              term="注册投资"
-            >{{ info.mgrProjectCust?info.mgrProjectCust.registerMoney:null }}（万元）</detail-list-item>
-            <detail-list-item term="年产值">{{ info.annualProductionValue }}(万元)</detail-list-item>
-            <detail-list-item term="年税金">{{ info.annualTaxes }}(万元)</detail-list-item>
-            <!-- 这个租赁项目才有 -->
-            <!-- v-if="info.projectType == 2" -->
-            <!-- <detail-list-item term="重要程度" >{{ info.importance }}</detail-list-item> -->
-            <detail-list-item
-              term="是否外资"
-            >{{ info.mgrProjectInvest?(info.mgrProjectInvest.isForeignCapital=="1"?"是":"否"):null }}</detail-list-item>
-          </detail-list>
-          <!-- 这个只有租赁才有吗 v-if projectType==2 点击跳转公共平台  -->
-          <detail-list>
-            <detail-list-item term="新建项目申请">
-              <a href="#">查看新建项目申请信息</a>
-            </detail-list-item>
-          </detail-list>
-          <detail-list>
-            <detail-list-item term="是否人才项目">{{ info.isTalentProject=="1"?"是":"否" }}</detail-list-item>
-          </detail-list>
-          <detail-list>
-            <detail-list-item
-              term="公司概况"
-            >{{ info.mgrProjectCust?info.mgrProjectCust.companyDescription:null }}</detail-list-item>
-          </detail-list>
-          <detail-list>
-            <detail-list-item
-              term="团队成员情况"
-            >{{ info.mgrProjectCust?info.mgrProjectCust.teamMemberDescription:null }}</detail-list-item>
-          </detail-list>
-          <detail-list>
-            <detail-list-item
-              term="备注"
-            >{{ info.mgrProjectInvest?info.mgrProjectInvest.remark:null }}</detail-list-item>
-          </detail-list>
+          <a-spin :spinning="confirmLoading">
+            <detail-list>
+              <detail-list-item
+                term="投资额"
+              >{{ info.mgrProjectInvest?info.mgrProjectInvest.investAmount:null }}万元</detail-list-item>
+              <detail-list-item
+                term="注册投资"
+              >{{ info.mgrProjectCust?info.mgrProjectCust.registerMoney:null }}万元</detail-list-item>
+              <detail-list-item term="年产值">{{ info.annualProductionValue }}万元</detail-list-item>
+              <detail-list-item term="年税金">{{ info.annualTaxes }}万元</detail-list-item>
+              <!-- 这个租赁项目才有 -->
+              <!-- v-if="info.projectType == 2" -->
+              <!-- <detail-list-item term="重要程度" >{{ info.importance }}</detail-list-item> -->
+              <detail-list-item
+                term="是否外资"
+              >{{ info.mgrProjectInvest?(info.mgrProjectInvest.isForeignCapital=="1"?"是":"否"):null }}</detail-list-item>
+            </detail-list>
+            <!-- 这个只有租赁才有吗 v-if projectType==2 点击跳转公共平台  -->
+            <detail-list>
+              <detail-list-item term="新建项目申请">
+                <a href="#">查看新建项目申请信息</a>
+              </detail-list-item>
+            </detail-list>
+            <detail-list>
+              <detail-list-item term="是否人才项目">{{ info.isTalentProject=="1"?"是":"否" }}</detail-list-item>
+            </detail-list>
+            <detail-list>
+              <detail-list-item
+                term="公司概况"
+              >{{ info.mgrProjectCust?info.mgrProjectCust.companyDescription:null }}</detail-list-item>
+            </detail-list>
+            <detail-list>
+              <detail-list-item
+                term="团队成员情况"
+              >{{ info.mgrProjectCust?info.mgrProjectCust.teamMemberDescription:null }}</detail-list-item>
+            </detail-list>
+            <detail-list>
+              <detail-list-item
+                term="备注"
+              >{{ info.mgrProjectInvest?info.mgrProjectInvest.remark:null }}</detail-list-item>
+            </detail-list>
+          </a-spin>
         </a-tab-pane>
         <!-- 2222222222222222222222222 -->
         <a-tab-pane tab="跟踪记录" key="2">
@@ -170,7 +172,7 @@ export default {
     return {
       // dataSource: [],
       // ipagination: [],
-      loading: false,
+      confirmLoading: false,
       dataSourceA: [],
       dataSourceB: [],
       dataSourceC: [],
@@ -187,9 +189,9 @@ export default {
           }
         },
         {
-          title: '公司名称',
+          title: '姓名',
           align: 'center',
-          dataIndex: 'custName'
+          dataIndex: 'memberName'
         },
         {
           title: '股权占比',
@@ -284,11 +286,12 @@ export default {
       this.$message.warning('ID不正确')
       return false
     }
+    this.confirmLoading = true
     getAction('/park.project/mgrProjectInfo/queryProjectById', { projectId: this.$route.params.id }).then(res => {
       if (res.code === 200) {
-        this.loading = false
         this.info = res.result
-        console.log(this.info)
+        this.confirmLoading = false
+        // console.log(this.info)
       } else {
         this.$router.back()
         this.$message.error(res.message)

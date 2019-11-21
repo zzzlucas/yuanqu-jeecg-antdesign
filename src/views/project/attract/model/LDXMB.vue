@@ -468,7 +468,7 @@
                   <a-row class="form-row" :gutter="16">
                     <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                       <a-form-item label="项目工艺流程（图示式）及说明">
-                        <j-editor placeholder v-model="editor.projectTechnologyFlow"></j-editor>
+                        <j-editor v-model="editor.projectTechnologyFlow"></j-editor>
                         <!-- <j-editor v-decorator="['projectTechnologyFlow']"></j-editor> -->
                       </a-form-item>
                     </a-col>
@@ -490,7 +490,7 @@
                         />
                       </a-form-item>
                     </a-col>
-                  </a-row> -->
+                  </a-row>-->
                   <a-row class="form-row" :gutter="16">
                     <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                       <a-form-item label="parkId test">
@@ -510,7 +510,7 @@
                         />
                       </a-form-item>
                     </a-col>
-                  </a-row> -->
+                  </a-row>-->
                   <!-- upload  addDocFiles   附件 -->
                   <a-row class="form-row" :gutter="16">
                     <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
@@ -566,6 +566,7 @@
                         />
                       </a-form-item>
                     </a-col>
+                    <!-- 后端应该弄错了字段名，这里就先用这个吧 -->
                     <a-col :xl="{span: 12}">
                       <a-form-item label="联系方式">
                         <a-input
@@ -657,6 +658,182 @@
                     </span>
                   </a-table>
                 </a-card>
+                <a-card :bordered="false" title="生产工艺情况">
+                  <a-row class="form-row" :gutter="16">
+                    <a-col>
+                      <a-form-item label="单位产品原材料消耗">
+                        <a-input addonAfter="吨/吨产品" v-decorator="['unitProductMaterialCost']" />
+                      </a-form-item>
+                    </a-col>
+                  </a-row>
+                  <a-row class="form-row" :gutter="16">
+                    <a-col>
+                      <a-form-item label="生产工艺流程">
+                        <a-input v-decorator="['produceFlow']" />
+                      </a-form-item>
+                    </a-col>
+                  </a-row>
+                  <a-row class="form-row" :gutter="16">
+                    <a-col>
+                      <a-form-item label="安全生产">
+                        <a-input v-decorator="['produceSafe']" />
+                      </a-form-item>
+                    </a-col>
+                  </a-row>
+                  <a-row class="form-row" :gutter="16">
+                    <a-col :xl="{span: 12}">
+                      <a-form-item label="技术来源">
+                        <a-select
+                          v-decorator="['technologySource',{rules: [{ required: true, message: '请输入技术来源', whitespace: true}]}]"
+                        >
+                          <a-select-option
+                            v-for="(item, key) in dict.technologySourceExt"
+                            :value="item.value"
+                            :key="key"
+                          >{{ item.text }}</a-select-option>
+                        </a-select>
+                      </a-form-item>
+                    </a-col>
+                    <a-col :xl="{span: 12}">
+                      <a-form-item label="引进" required>
+                        <a-select v-decorator="['introduce']" style="width:100%">
+                          <a-select-option value="1">国内</a-select-option>
+                          <a-select-option value="2">国外</a-select-option>
+                        </a-select>
+                      </a-form-item>
+                    </a-col>
+                  </a-row>
+                  <a-row class="form-row" :gutter="16">
+                    <a-col :xl="{span: 12}">
+                      <a-form-item label="专利号">
+                        <a-input v-decorator="['patentNo']" />
+                      </a-form-item>
+                    </a-col>
+                    <a-col :xl="{span: 12}">
+                      <a-form-item label="颁证年月" required>
+                        <a-date-picker placeholder v-decorator="['issueDate']" style="width:100%" />
+                      </a-form-item>
+                    </a-col>
+                  </a-row>
+                  <a-row class="form-row" :gutter="16">
+                    <a-col :xl="{span: 12}">
+                      <a-form-item label="品牌名称">
+                        <a-input v-decorator="['productName']" />
+                      </a-form-item>
+                    </a-col>
+                    <a-col :xl="{span: 12}">
+                      <a-form-item label="颁证单位" required>
+                        <a-input v-decorator="['issueAuthority']" />
+                      </a-form-item>
+                    </a-col>
+                  </a-row>
+                </a-card>
+                <a-card :bordered="false" title="环保、安全、卫生">
+                  <a-row class="form-row" :gutter="16">
+                    <a-col :xl="{span: 12}">
+                      <a-form-item label="污染所属类型">
+                        <!-- pollutionType -->
+                        <a-select v-decorator="['pollutionType']">
+                          <a-select-option
+                            v-for="(item, key) in dict.pollutionTypeExt"
+                            :value="item.value"
+                            :key="key"
+                          >{{ item.text }}</a-select-option>
+                        </a-select>
+                      </a-form-item>
+                    </a-col>
+
+                    <a-col :xl="{span: 12}">
+                      <a-form-item label="废物排放种类">
+                        <!-- wasteDischargeType -->
+                        <a-select v-decorator="['wasteDischargeType']">
+                          <a-select-option
+                            v-for="(item, key) in dict.wasteDischargeTypeExt"
+                            :value="item.value"
+                            :key="key"
+                          >{{ item.text }}</a-select-option>
+                        </a-select>
+                      </a-form-item>
+                    </a-col>
+                  </a-row>
+                  <a-row class="form-row" :gutter="16">
+                    <a-col :xl="{span: 12}">
+                      <a-form-item label="污水管网是否接通">
+                        <a-radio-group v-decorator="['isSewerLine']">
+                          <a-radio value="1">是</a-radio>
+                          <a-radio value="2">否</a-radio>
+                        </a-radio-group>
+                      </a-form-item>
+                    </a-col>
+                    <a-col :xl="{span: 12}">
+                      <a-form-item label="污水管网计划接通时间">
+                        <a-date-picker
+                          placeholder
+                          v-decorator="['planSewerLineTime']"
+                          style="width:100%"
+                        />
+                        <!-- <a-input v-decorator="['planSewerLineTime']"></a-input> -->
+                      </a-form-item>
+                    </a-col>
+                  </a-row>
+                  <a-row class="form-row" :gutter="16">
+                    <a-col :xl="{span: 12}">
+                      <a-form-item label="使用锅炉情况">
+                        <!-- boilerUse -->
+                        <a-select v-decorator="['boilerUse']">
+                          <a-select-option
+                            v-for="(item, key) in dict.boilerUseExt"
+                            :value="item.value"
+                            :key="key"
+                          >{{ item.text }}</a-select-option>
+                        </a-select>
+                      </a-form-item>
+                    </a-col>
+                    <a-col :xl="{span: 12}">
+                      <a-form-item label="项目与敏感点方位距离">
+                        <a-input addonAfter="米" v-decorator="['projectToPointDistance']"></a-input>
+                      </a-form-item>
+                    </a-col>
+                  </a-row>
+                  <a-row class="form-row" :gutter="16">
+                    <a-col :xl="{span: 12}">
+                      <a-form-item label="在一年内，环保、安全生产（消防）方面是否发生过重大事件">
+                        <a-radio-group v-decorator="['isHappenAccent']">
+                          <a-radio value="1">是</a-radio>
+                          <a-radio value="2">否</a-radio>
+                        </a-radio-group>
+                      </a-form-item>
+                    </a-col>
+                  </a-row>
+                </a-card>
+                <a-card :bordered="false" title="能源与资源消耗情况（年消耗量）">
+                  <a-row class="form-row" :gutter="16">
+                    <a-col :xl="{span: 12}">
+                      <a-form-item label="水">
+                        <a-input addonAfter="吨" v-decorator="['waterConsume']" />
+                      </a-form-item>
+                    </a-col>
+                    <a-col :xl="{span: 12}">
+                      <a-form-item label="原煤">
+                        <a-input addonAfter="吨" v-decorator="['coalConsume']" />
+                      </a-form-item>
+                    </a-col>
+                  </a-row>
+                  <a-row class="form-row" :gutter="16">
+                    <a-col>
+                      <a-form-item label="电">
+                        <a-input addonAfter="万千瓦时" v-decorator="['powerConsume']" />
+                      </a-form-item>
+                    </a-col>
+                  </a-row>
+                  <a-row class="form-row" :gutter="16">
+                    <a-col>
+                      <a-form-item label="蒸汽">
+                        <a-input addonAfter="吨" v-decorator="['steamConsume']" />
+                      </a-form-item>
+                    </a-col>
+                  </a-row>
+                </a-card>
                 <a-card :bordered="false" size="small">
                   <a-button style="float:right;" type="primary" @click="handleSubmitTwo">保存（Test）</a-button>
                 </a-card>
@@ -700,7 +877,6 @@ export default {
       // title: '首页 / 技改项目/项目维护',
       form: this.$form.createForm(this, { name: 'first' }),
       formS: this.$form.createForm(this, { name: 'second' }),
-
       model: {},
       modelS: {},
       //
@@ -713,8 +889,6 @@ export default {
       editor: {
         projectTechnologyFlow: ''
       },
-      confirmLoading:false,
-      confirmLoadingB:false,
       dataSourceA: [
         {
           // custName: '1',
@@ -736,7 +910,6 @@ export default {
         },
         {
           title: '姓名',
-          // title: '公司名称',
           align: 'center',
           dataIndex: 'memberName'
         },
@@ -821,6 +994,8 @@ export default {
           scopedSlots: { customRender: 'action' }
         }
       ],
+      confirmLoading: false,
+      confirmLoadingB: false,
       url: {
         list: '/park.project/mgrProjectInfo/addProject',
         listA: '/project/mgrCustTeamMember/queryById',
@@ -936,12 +1111,14 @@ export default {
           method = 'put'
           //这个model不能复用
           let formData = Object.assign(this.modelS, values)
-          // if (formData.issueDate) {
-          //   formData.issueDate = formData.issueDate ? formData.issueDate.format('YYYY-MM-DD') : null
-          // }
-          // if (formData.planSewerLineTime) {
-          //   formData.planSewerLineTime = formData.planSewerLineTime ? formData.planSewerLineTime.format('YYYY-MM-DD') : null
-          // }
+          if (formData.issueDate) {
+            formData.issueDate = formData.issueDate ? formData.issueDate.format('YYYY-MM-DD') : null
+          }
+          if (formData.planSewerLineTime) {
+            formData.planSewerLineTime = formData.planSewerLineTime
+              ? formData.planSewerLineTime.format('YYYY-MM-DD')
+              : null
+          }
           formData.projectId = this.$route.params.id
           formData = qs.stringify(formData)
           httpAction(httpurl, formData, method)
@@ -1049,37 +1226,40 @@ export default {
           record.setUpYear = record.mgrProjectCust.setUpYear
           record.email = record.mgrProjectCust.email
 
-          record.isForeignCapital = record.mgrProjectInvest.isForeignCapital
-          record.fixedAssetInvest = record.mgrProjectInvest.fixedAssetInvest
-          record.newProfit = record.mgrProjectInvest.newProfit
-          record.remark = record.mgrProjectInvest.remark
-          record.createUserName = record.mgrProjectInvest.createUserName
-          // // record.parkId = record.mgrProjectInvest.parkId
-          record.projectUseInvest = record.mgrProjectInvest.projectUseInvest
-          record.newTax = record.mgrProjectInvest.newTax
-          record.freeCapital = record.mgrProjectInvest.freeCapital
-          record.addDocFiles = record.mgrProjectInvest.addDocFiles
-          record.updateBy = record.mgrProjectInvest.updateBy
-          record.civilWork = record.mgrProjectInvest.civilWork
-          record.otherCapital = record.mgrProjectInvest.otherCapital
-          record.budget = record.mgrProjectInvest.budget
-          record.bankLoan = record.mgrProjectInvest.bankLoan
-          record.sharesBond = record.mgrProjectInvest.sharesBond
-          record.updateUserName = record.mgrProjectInvest.updateUserName
-          record.updateTime = record.mgrProjectInvest.updateTime
-          record.foreignEarning = record.mgrProjectInvest.foreignEarning
-          record.version = record.mgrProjectInvest.version
-          record.createBy = record.mgrProjectInvest.createBy
-          record.registerCapital = record.mgrProjectInvest.registerCapital
-          record.install = record.mgrProjectInvest.install
-          record.projectBuilding = record.mgrProjectInvest.projectBuilding
-          record.createTime = record.mgrProjectInvest.createTime
-          record.investAmount = record.mgrProjectInvest.investAmount
-          record.bottomWorkingCapital = record.mgrProjectInvest.bottomWorkingCapital
-          record.newSale = record.mgrProjectInvest.bottomWorkingCapital
-          // record.projectId = record.mgrProjectInvest.projectId
-          record.device = record.mgrProjectInvest.device
-          record.buildingInterest = record.mgrProjectInvest.buildingInterest
+          if (record.mgrProjectInvest) {
+            record.isForeignCapital = record.mgrProjectInvest.isForeignCapital
+            record.fixedAssetInvest = record.mgrProjectInvest.fixedAssetInvest
+            record.newProfit = record.mgrProjectInvest.newProfit
+            record.remark = record.mgrProjectInvest.remark
+            record.createUserName = record.mgrProjectInvest.createUserName
+            // // record.parkId = record.mgrProjectInvest.parkId
+            record.projectUseInvest = record.mgrProjectInvest.projectUseInvest
+            record.newTax = record.mgrProjectInvest.newTax
+            record.freeCapital = record.mgrProjectInvest.freeCapital
+            record.addDocFiles = record.mgrProjectInvest.addDocFiles
+            record.updateBy = record.mgrProjectInvest.updateBy
+            record.civilWork = record.mgrProjectInvest.civilWork
+            record.otherCapital = record.mgrProjectInvest.otherCapital
+            record.budget = record.mgrProjectInvest.budget
+            record.bankLoan = record.mgrProjectInvest.bankLoan
+            record.sharesBond = record.mgrProjectInvest.sharesBond
+            record.updateUserName = record.mgrProjectInvest.updateUserName
+            record.updateTime = record.mgrProjectInvest.updateTime
+            record.foreignEarning = record.mgrProjectInvest.foreignEarning
+            record.version = record.mgrProjectInvest.version
+            record.createBy = record.mgrProjectInvest.createBy
+            record.registerCapital = record.mgrProjectInvest.registerCapital
+            record.install = record.mgrProjectInvest.install
+            record.projectBuilding = record.mgrProjectInvest.projectBuilding
+            record.createTime = record.mgrProjectInvest.createTime
+            record.investAmount = record.mgrProjectInvest.investAmount
+            record.bottomWorkingCapital = record.mgrProjectInvest.bottomWorkingCapital
+            record.newSale = record.mgrProjectInvest.bottomWorkingCapital
+            // record.projectId = record.mgrProjectInvest.projectId
+            record.device = record.mgrProjectInvest.device
+            record.buildingInterest = record.mgrProjectInvest.buildingInterest
+          }
+
           delete record.mgrProjectCust
           delete record.mgrProjectInvest
           delete record.mgrProjectInvestLease

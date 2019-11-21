@@ -327,7 +327,7 @@
                 </a-form-item>
               </a-col>
             </a-row>
-            <a-row class="form-row" :gutter="16">
+            <!-- <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="projectId test">
                   <a-input
@@ -336,7 +336,7 @@
                   />
                 </a-form-item>
               </a-col>
-            </a-row>
+            </a-row> -->
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="parkId test">
@@ -407,7 +407,7 @@ export default {
   components: { PageLayout, JEditor, JDictSelectTag },
   data() {
     return {
-      title: '首页 / 租赁项目 / 项目维护',
+      // title: '首页 / 租赁项目 / 项目维护',
       form: this.$form.createForm(this, { name: 'addProjectLandForm' }),
       formItem: {
         label: { span: 6 },
@@ -417,6 +417,7 @@ export default {
         add: '/park.project/mgrProjectInfo/addProjectLease',
         edit: '/park.project/mgrProjectInfo/editProject'
       },
+      editBool: false,
       confirmLoading: false,
       model: {},
       dateFormat: 'YYYY-MM-DD',
@@ -427,6 +428,11 @@ export default {
       loading: false,
       dict: []
       // DictDataindustrySectorValue:this.form.getFieldValue('industrySectorValue')
+    }
+  },
+  computed: {
+    title() {
+      return '租赁项目' + (this.editBool ? '维护' : '新建')
     }
   },
   created(importance) {
@@ -456,9 +462,11 @@ export default {
     },
     add() {
       // this.edit({})
+      this.editBool = false
       this.visible = true
     },
     detail(record) {
+      this.editBool = true
       // this.record = record
       // console.log(this.record.recordId)
       this.form.resetFields()

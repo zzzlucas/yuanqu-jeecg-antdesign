@@ -1,5 +1,4 @@
 <template>
-
   <div>
     <a-card :bordered="false">
       <a-form :form="form">
@@ -308,7 +307,6 @@ export default {
       // console.log(this.record.projectId);
       // this.$emit('showOneToZeroAdd', this.record)
       this.$refs.ShowZero.partDetailDDD()
-      
     },
     handleCancel() {
       this.visible = false

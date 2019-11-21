@@ -1,10 +1,10 @@
 <template>
   <!-- 项目分配表单 -->
-  <a-drawer title="新增个人股东" width="40%" destroyOnClose :visible="visible" @close="handleCancel">
+  <a-drawer :title="myTitle" width="40%" destroyOnClose :visible="visible" @close="handleCancel">
     <a-card :bordered="false">
       <a-form :form="form" layout="horizontal">
         <a-form-item v-bind="formItemLayout" label="姓名">
-          <a-input v-decorator="['memberName']" />
+          <a-input v-decorator="['memberName',{rules: [{required: true, message: '请输入姓名'}]}]" />
         </a-form-item>
         <a-form-item v-bind="formItemLayout" label="股权占比">
           <a-input v-decorator="['equrityRatio',{rules: [{required: true, message: '请输入股权占比'}]}]" />
@@ -85,6 +85,7 @@ export default {
       dict: {
         trackerExt: [{ value: '1' }]
       },
+      editBool: false,
       url: {
         list: '/project/mgrCustTeamMember/queryById',
         add: '/project/mgrCustTeamMember/add',
@@ -99,6 +100,11 @@ export default {
         this.dict.trackerExt = res.result
       }
     })
+  },
+  computed: {
+    myTitle() {
+      return (this.editBool ? '编辑' : '新增') + '个人股东'
+    }
   },
   methods: {
     handleOk() {
@@ -143,6 +149,7 @@ export default {
       // this.form.resetFields()
     },
     add() {
+      this.editBool = false
       this.visible = true
     },
     detail(record) {

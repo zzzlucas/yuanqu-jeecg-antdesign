@@ -150,7 +150,7 @@ export default {
       projectTypeDictOptions: '',
       industrySectorValueDictOptions: '',
       statusDictOptions: '',
-      pagination: '',
+      // pagination: '',
       columns: [
         {
           title: '项目名称',
@@ -393,9 +393,11 @@ export default {
       this.$refs.ShowAddProjectLease.add()
     },
     goLuoDi(record) {
-      console.log('record')
-      console.log(record)
-      this.$router.push({ name: 'project-attract-reapply-@id', params: { id: record.projectId } })
+      // console.log('record')
+      // console.log(record)
+      record.projectType == 1
+        ? this.$router.push({ name: 'project-attract-reapply-@id', params: { id: record.projectId } })
+        : this.$router.push({ name: 'project-attract-reapply-b-@id', params: { id: record.projectId } })
       // this.$router.push({ path: '/project/attract/ldxm', params: { id: record.projectId } })
     },
     handleDetail: function(record) {

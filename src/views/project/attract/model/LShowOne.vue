@@ -3,8 +3,8 @@
   <a-drawer :title="myTitle" width="40%" destroyOnClose :visible="visible" @close="handleCancel">
     <a-card :bordered="false">
       <a-form :form="form">
-        <a-form-item v-bind="formItemLayout" label="公司名称">
-          <a-input disabled v-decorator="['custName']" />
+        <a-form-item v-bind="formItemLayout" label="姓名">
+          <a-input v-decorator="['memberName',{rules: [{required: true, message: '请输入姓名'}]}]" />
         </a-form-item>
         <a-form-item v-bind="formItemLayout" label="股权占比">
           <a-input v-decorator="['equrityRatio',{rules: [{required: true, message: '请输入股权占比'}]}]" />
@@ -150,20 +150,21 @@ export default {
     },
     add() {
       this.editBool = false
-      let proId = this.$route.params.id
-      getAction('/park.project/mgrProjectInfo/queryProjectById', { projectId: proId }).then(res => {
-        if (res.success) {
-          // console.log(res.result.custId)
-          this.record.custName = res.result.mgrProjectCust.fillUnit
-          //后端没生成这个custId，可能会是一个大坑
-          this.record.custId = res.result.custId
-        }
-        this.model = Object.assign({}, this.record)
-        this.visible = true
-        this.$nextTick(() => {
-          this.form.setFieldsValue(pick(this.model, 'custName'))
-        })
-      })
+      this.visible = true
+      // let proId = this.$route.params.id
+      // getAction('/park.project/mgrProjectInfo/queryProjectById', { projectId: proId }).then(res => {
+      //   if (res.success) {
+      //     // console.log(res.result.custId)
+      //     this.record.custName = res.result.mgrProjectCust.fillUnit
+      //     //后端没生成这个custId，可能会是一个大坑
+      //     this.record.custId = res.result.custId
+      //   }
+      //   this.model = Object.assign({}, this.record)
+      //   this.visible = true
+      //   this.$nextTick(() => {
+      //     this.form.setFieldsValue(pick(this.model, 'custName'))
+      //   })
+      // })
     },
     //还没自己写
     detail(record) {
@@ -177,7 +178,7 @@ export default {
       this.visible = true
       this.$nextTick(() => {
         this.form.setFieldsValue(
-          pick(this.model, 'custName', 'equrityRatio', 'inventPatentMount', 'fixedAssetInvest', 'isTechnologyCust')
+          pick(this.model, 'memberName', 'equrityRatio', 'inventPatentMount', 'fixedAssetInvest', 'isTechnologyCust')
         )
       })
     },

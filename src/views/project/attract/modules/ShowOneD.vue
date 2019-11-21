@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { httpAction, getAction } from '@/api/manage'
+import { httpAction, getAction, putAction } from '@/api/manage'
 import pick from 'lodash.pick'
 import moment from 'moment'
 import qs from 'qs'
@@ -101,7 +101,9 @@ export default {
             .then(res => {
               if (res.success) {
                 that.$message.success(res.message)
-                that.$emit('reload')
+                //在这里改变项目状态
+                that.goKeyFollow(that.record)
+                // that.$emit('reload')
               } else {
                 that.$message.warning(res.message)
               }
@@ -133,17 +135,26 @@ export default {
     handleCancel() {
       this.visible = false
     },
-    /** 切换全屏显示 */
-    handleClickToggleFullScreen() {
-      let mode = !this.modelStyle.fullScreen
-      if (mode) {
-        this.modelStyle.width = '100%'
-        this.modelStyle.style.top = '20px'
-      } else {
-        this.modelStyle.width = '60%'
-        this.modelStyle.style.top = '50px'
-      }
-      this.modelStyle.fullScreen = mode
+    goKeyFollow(record) {
+      // console.log('record')
+      // const that = this
+      let params = { projectId: record.projectId, status: '2' }
+      params = qs.stringify(params)
+      putAction('/park.project/mgrProjectInfo/changeStatus', params).then(res => {
+        if (res.success) {
+          // console.log('hello');
+          // console.log(res.result);
+          this.$message.success('该项目已成为重点跟进项目！')
+          this.$emit('reload')
+          // this.$message.success(res.message)
+
+          //跳转路由   项目分配这里，暂时就不跳转了
+          // this.$router.push({ path: '/project/attract/keyfollow' })
+        } else {
+          // console.log('hello X-X');
+          this.$message.warning(res.message)
+        }
+      })
     }
   }
 }

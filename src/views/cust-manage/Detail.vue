@@ -71,12 +71,12 @@
 
         <a-tab-pane tab="分类信息" key="4">
           <detail-list>
-            <detail-list-item term="公司性质">{{dictText.unitNatureText}}</detail-list-item>
-            <detail-list-item term="行业类型">{{dictText.industryCategoryText}}</detail-list-item>
-            <detail-list-item term="公司类型">{{dictText.organizationalText}}</detail-list-item>
-            <detail-list-item term="技术领域">{{dictText.technicalFieldText}}</detail-list-item>
-            <detail-list-item term="企业评级">{{dictText.enterpriseRatingText}}</detail-list-item>
-            <detail-list-item term="注册类型">{{dictText.registrationTypeText}}</detail-list-item>
+            <detail-list-item term="公司性质">{{dictText?dictText.unitNatureText:null}}</detail-list-item>
+            <detail-list-item term="行业类型">{{dictText?dictText.industryCategoryText:null}}</detail-list-item>
+            <detail-list-item term="公司类型">{{dictText?dictText.organizationalText:null}}</detail-list-item>
+            <detail-list-item term="技术领域">{{dictText?dictText.technicalFieldText:null}}</detail-list-item>
+            <detail-list-item term="企业评级">{{dictText?dictText.enterpriseRatingText:null}}</detail-list-item>
+            <detail-list-item term="注册类型">{{dictText?dictText.registrationTypeText:null}}</detail-list-item>
           </detail-list>
         </a-tab-pane>
         <a-tab-pane tab="工商/税务信息" key="5">

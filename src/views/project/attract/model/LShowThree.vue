@@ -1,6 +1,6 @@
 <template>
   <!-- 项目分配表单 -->
-  <a-drawer title="新增团队成员" width="40%" destroyOnClose :visible="visible" @close="handleCancel">
+  <a-drawer :title="myTitle" width="40%" destroyOnClose :visible="visible" @close="handleCancel">
     <a-card :bordered="false">
       <a-form :form="form">
         <a-form-item v-bind="formItemLayout" label="职务">
@@ -77,6 +77,7 @@ export default {
         style: { top: '20px' },
         fullScreen: false
       },
+      editBool: false,
       //常用数据初始化
       record: {},
       visible: false,
@@ -99,6 +100,11 @@ export default {
         this.dict.trackerExt = res.result
       }
     })
+  },
+  computed: {
+    myTitle() {
+      return (this.editBool ? '编辑' : '新增') + '团队成员'
+    }
   },
   methods: {
     handleOk() {
@@ -144,6 +150,7 @@ export default {
       // this.form.resetFields()
     },
     add() {
+      this.editBool = false
       this.visible = true
     },
     detail(record) {
