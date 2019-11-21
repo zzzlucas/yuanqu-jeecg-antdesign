@@ -490,7 +490,7 @@
                         />
                       </a-form-item>
                     </a-col>
-                  </a-row> -->
+                  </a-row>-->
                   <a-row class="form-row" :gutter="16">
                     <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                       <a-form-item label="parkId test">
@@ -510,7 +510,7 @@
                         />
                       </a-form-item>
                     </a-col>
-                  </a-row> -->
+                  </a-row>-->
                   <!-- upload  addDocFiles   附件 -->
                   <a-row class="form-row" :gutter="16">
                     <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
@@ -713,8 +713,8 @@ export default {
       editor: {
         projectTechnologyFlow: ''
       },
-      confirmLoading:false,
-      confirmLoadingB:false,
+      confirmLoading: false,
+      confirmLoadingB: false,
       dataSourceA: [
         {
           // custName: '1',
@@ -1026,60 +1026,65 @@ export default {
           let record = res.result
           this.form.resetFields()
           //后端少的内容
-          record.totalAsset = record.mgrProjectCust.totalAsset
-          record.legalTel = record.mgrProjectCust.legalTel
-          record.companyDescription = record.mgrProjectCust.companyDescription
-          record.updateUserName = record.mgrProjectCust.updateUserName
-          record.createUserName = record.mgrProjectCust.createUserName
-          record.updateTime = record.mgrProjectCust.updateTime
-          record.fillUnit = record.mgrProjectCust.fillUnit
-          record.version = record.mgrProjectCust.version
-          record.unitAddress = record.mgrProjectCust.unitAddress
-          // record.parkId = record.mgrProjectCust.parkId
-          record.companyRegisterType = record.mgrProjectCust.companyRegisterType
-          record.createBy = record.mgrProjectCust.createBy
-          record.creditCode = record.mgrProjectCust.legalTel
-          record.createTime = record.mgrProjectCust.createTime
-          record.updateBy = record.mgrProjectCust.updateBy
-          record.legalPerson = record.mgrProjectCust.legalPerson
-          record.fixedAsset = record.mgrProjectCust.fixedAsset
-          record.registerMoney = record.mgrProjectCust.registerMoney
-          record.teamMemberDescription = record.mgrProjectCust.teamMemberDescription
-          // record.projectId = record.mgrProjectCust.projectId
-          record.setUpYear = record.mgrProjectCust.setUpYear
-          record.email = record.mgrProjectCust.email
+          if (record.mgrProjectCust) {
+            record.totalAsset = record.mgrProjectCust.totalAsset
+            record.legalTel = record.mgrProjectCust.legalTel
+            record.companyDescription = record.mgrProjectCust.companyDescription
+            record.updateUserName = record.mgrProjectCust.updateUserName
+            record.createUserName = record.mgrProjectCust.createUserName
+            record.updateTime = record.mgrProjectCust.updateTime
+            record.fillUnit = record.mgrProjectCust.fillUnit
+            record.version = record.mgrProjectCust.version
+            record.unitAddress = record.mgrProjectCust.unitAddress
+            // record.parkId = record.mgrProjectCust.parkId
+            record.companyRegisterType = record.mgrProjectCust.companyRegisterType
+            record.createBy = record.mgrProjectCust.createBy
+            record.creditCode = record.mgrProjectCust.legalTel
+            record.createTime = record.mgrProjectCust.createTime
+            record.updateBy = record.mgrProjectCust.updateBy
+            record.legalPerson = record.mgrProjectCust.legalPerson
+            record.fixedAsset = record.mgrProjectCust.fixedAsset
+            record.registerMoney = record.mgrProjectCust.registerMoney
+            record.teamMemberDescription = record.mgrProjectCust.teamMemberDescription
+            // record.projectId = record.mgrProjectCust.projectId
+            record.setUpYear = record.mgrProjectCust.setUpYear
+            record.email = record.mgrProjectCust.email
+          }
 
-          record.isForeignCapital = record.mgrProjectInvest.isForeignCapital
-          record.fixedAssetInvest = record.mgrProjectInvest.fixedAssetInvest
-          record.newProfit = record.mgrProjectInvest.newProfit
-          record.remark = record.mgrProjectInvest.remark
-          record.createUserName = record.mgrProjectInvest.createUserName
-          // // record.parkId = record.mgrProjectInvest.parkId
-          record.projectUseInvest = record.mgrProjectInvest.projectUseInvest
-          record.newTax = record.mgrProjectInvest.newTax
-          record.freeCapital = record.mgrProjectInvest.freeCapital
-          record.addDocFiles = record.mgrProjectInvest.addDocFiles
-          record.updateBy = record.mgrProjectInvest.updateBy
-          record.civilWork = record.mgrProjectInvest.civilWork
-          record.otherCapital = record.mgrProjectInvest.otherCapital
-          record.budget = record.mgrProjectInvest.budget
-          record.bankLoan = record.mgrProjectInvest.bankLoan
-          record.sharesBond = record.mgrProjectInvest.sharesBond
-          record.updateUserName = record.mgrProjectInvest.updateUserName
-          record.updateTime = record.mgrProjectInvest.updateTime
-          record.foreignEarning = record.mgrProjectInvest.foreignEarning
-          record.version = record.mgrProjectInvest.version
-          record.createBy = record.mgrProjectInvest.createBy
-          record.registerCapital = record.mgrProjectInvest.registerCapital
-          record.install = record.mgrProjectInvest.install
-          record.projectBuilding = record.mgrProjectInvest.projectBuilding
-          record.createTime = record.mgrProjectInvest.createTime
-          record.investAmount = record.mgrProjectInvest.investAmount
-          record.bottomWorkingCapital = record.mgrProjectInvest.bottomWorkingCapital
-          record.newSale = record.mgrProjectInvest.bottomWorkingCapital
-          // record.projectId = record.mgrProjectInvest.projectId
-          record.device = record.mgrProjectInvest.device
-          record.buildingInterest = record.mgrProjectInvest.buildingInterest
+          if (record.mgrProjectInvest) {
+            record.isForeignCapital = record.mgrProjectInvest.isForeignCapital
+            record.fixedAssetInvest = record.mgrProjectInvest.fixedAssetInvest
+            record.newProfit = record.mgrProjectInvest.newProfit
+            record.remark = record.mgrProjectInvest.remark
+            record.createUserName = record.mgrProjectInvest.createUserName
+            // // record.parkId = record.mgrProjectInvest.parkId
+            record.projectUseInvest = record.mgrProjectInvest.projectUseInvest
+            record.newTax = record.mgrProjectInvest.newTax
+            record.freeCapital = record.mgrProjectInvest.freeCapital
+            record.addDocFiles = record.mgrProjectInvest.addDocFiles
+            record.updateBy = record.mgrProjectInvest.updateBy
+            record.civilWork = record.mgrProjectInvest.civilWork
+            record.otherCapital = record.mgrProjectInvest.otherCapital
+            record.budget = record.mgrProjectInvest.budget
+            record.bankLoan = record.mgrProjectInvest.bankLoan
+            record.sharesBond = record.mgrProjectInvest.sharesBond
+            record.updateUserName = record.mgrProjectInvest.updateUserName
+            record.updateTime = record.mgrProjectInvest.updateTime
+            record.foreignEarning = record.mgrProjectInvest.foreignEarning
+            record.version = record.mgrProjectInvest.version
+            record.createBy = record.mgrProjectInvest.createBy
+            record.registerCapital = record.mgrProjectInvest.registerCapital
+            record.install = record.mgrProjectInvest.install
+            record.projectBuilding = record.mgrProjectInvest.projectBuilding
+            record.createTime = record.mgrProjectInvest.createTime
+            record.investAmount = record.mgrProjectInvest.investAmount
+            record.bottomWorkingCapital = record.mgrProjectInvest.bottomWorkingCapital
+            record.newSale = record.mgrProjectInvest.bottomWorkingCapital
+            // record.projectId = record.mgrProjectInvest.projectId
+            record.device = record.mgrProjectInvest.device
+            record.buildingInterest = record.mgrProjectInvest.buildingInterest
+          }
+
           delete record.mgrProjectCust
           delete record.mgrProjectInvest
           delete record.mgrProjectInvestLease

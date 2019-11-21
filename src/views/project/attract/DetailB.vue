@@ -13,18 +13,18 @@
             <detail-list>
               <detail-list-item
                 term="投资额"
-              >{{ info.mgrProjectInvest?info.mgrProjectInvest.investAmount:null }}（万元）</detail-list-item>
-              <detail-list-item
+              >{{ info.mgrProjectInvestLease?info.mgrProjectInvestLease.investAmount:null }}万元</detail-list-item>
+              <!-- <detail-list-item
                 term="注册投资"
-              >{{ info.mgrProjectCust?info.mgrProjectCust.registerMoney:null }}（万元）</detail-list-item>
-              <detail-list-item term="年产值">{{ info.annualProductionValue }}(万元)</detail-list-item>
-              <detail-list-item term="年税金">{{ info.annualTaxes }}(万元)</detail-list-item>
+              >{{ info.mgrProjectCust?info.mgrProjectCust.registerMoney:null }}万元</detail-list-item>-->
+              <detail-list-item term="年产值">{{ info.annualProductionValue }}万元</detail-list-item>
+              <detail-list-item term="年税金">{{ info.annualTaxes }}万元</detail-list-item>
               <!-- 这个租赁项目才有 -->
               <!-- v-if="info.projectType == 2" -->
-              <!-- <detail-list-item term="重要程度" >{{ info.importance }}</detail-list-item> -->
+              <detail-list-item term="重要程度">{{ info.importance }}</detail-list-item>
               <detail-list-item
                 term="是否外资"
-              >{{ info.mgrProjectInvest?(info.mgrProjectInvest.isForeignCapital=="1"?"是":"否"):null }}</detail-list-item>
+              >{{ info.mgrProjectInvestLease?(info.mgrProjectInvestLease.isForeignCapital=="1"?"是":"否"):null }}</detail-list-item>
             </detail-list>
             <!-- 这个只有租赁才有吗 v-if projectType==2 点击跳转公共平台  -->
             <detail-list>
@@ -48,7 +48,7 @@
             <detail-list>
               <detail-list-item
                 term="备注"
-              >{{ info.mgrProjectInvest?info.mgrProjectInvest.remark:null }}</detail-list-item>
+              >{{ info.mgrProjectInvestLease ?info.mgrProjectInvestLease .remark:null }}</detail-list-item>
             </detail-list>
           </a-spin>
         </a-tab-pane>
@@ -144,11 +144,11 @@
         </a-tab-pane>
         <a-tab-pane tab="生产工艺情况" key="10">
           <detail-list>
-            <detail-list-item term="单位产品原材料消耗（吨/吨产品）">{{infoC?infoC.unitProductMaterialCost:null}}</detail-list-item>
+            <detail-list-item term="单位产品原材料消耗">{{infoC?infoC.unitProductMaterialCost:null}}吨/吨产品</detail-list-item>
             <detail-list-item term="生产工艺流程">{{infoC?infoC.produceFlow:null}}</detail-list-item>
             <detail-list-item term="安全生产">{{infoC?infoC.produceSafe:null}}</detail-list-item>
-            <detail-list-item term="技术来源">{{infoC?infoC.technologySource:null}}</detail-list-item>
-            <detail-list-item term="引进">{{infoC?infoC.introduce:null}}</detail-list-item>
+            <detail-list-item term="技术来源">{{dictText.technologySourceText}}</detail-list-item>
+            <detail-list-item term="引进">{{infoC?(infoC.introduce==1?'国内':'国外'):null}}</detail-list-item>
             <detail-list-item term="颁证年月">{{infoC?infoC.issueDate:null}}</detail-list-item>
             <detail-list-item term="品牌名称">{{infoC?infoC.productName:null}}</detail-list-item>
             <!-- 专利号放前面会有样式bug？ 内在原因是什么-->
@@ -158,24 +158,24 @@
         </a-tab-pane>
         <a-tab-pane tab="环保、安全、卫生" key="11">
           <detail-list>
-            <detail-list-item term="污染所属类型">{{infoC?infoC.pollutionType:null}}</detail-list-item>
-            <detail-list-item term="废物排放种类">{{infoC?infoC.wasteDischargeType:null}}</detail-list-item>
-            <detail-list-item term="污水管网是否接通">{{infoC?infoC.isSewerLine:null}}</detail-list-item>
-            <detail-list-item term="使用锅炉情况">{{infoC?infoC.boilerUse:null}}</detail-list-item>
+            <detail-list-item term="污染所属类型">{{dictText.pollutionTypeText}}</detail-list-item>
+            <detail-list-item term="废物排放种类">{{dictText.wasteDischargeTypeText}}</detail-list-item>
+            <detail-list-item term="污水管网是否接通">{{infoC?(infoC.isSewerLine==1?'是':'否'):null}}</detail-list-item>
+            <detail-list-item term="使用锅炉情况">{{dictText.boilerUseText}}</detail-list-item>
           </detail-list>
           <detail-list>
-            <detail-list-item term="项目与敏感点方位距离（米）">{{infoC?infoC.projectToPointDistance:null}}</detail-list-item>
+            <detail-list-item term="项目与敏感点方位距离">{{infoC?infoC.projectToPointDistance:null}}米</detail-list-item>
           </detail-list>
           <detail-list>
-            <detail-list-item term="在一年内，环保、安全生产（消防）方面是否发生过重大事件">{{infoC?infoC.isHappenAccent:null}}</detail-list-item>
+            <detail-list-item term="在一年内，环保、安全生产（消防）方面是否发生过重大事件">{{infoC?(infoC.isHappenAccent==1?'是':'否'):null}}</detail-list-item>
           </detail-list>
         </a-tab-pane>
         <a-tab-pane tab="能源与资源消耗情况(年消耗量）" key="12">
           <detail-list>
-            <detail-list-item term="水（吨）">{{infoC?infoC.waterConsume:null}}</detail-list-item>
-            <detail-list-item term="原煤（吨）">{{infoC?infoC.coalConsume:null}}</detail-list-item>
-            <detail-list-item term="电(万千瓦时)">{{infoC?infoC.powerConsume:null}}</detail-list-item>
-            <detail-list-item term="蒸汽（吨）">{{infoC?infoC.steamConsume:null}}</detail-list-item>
+            <detail-list-item term="水">{{infoC?infoC.waterConsume:null}}吨</detail-list-item>
+            <detail-list-item term="原煤">{{infoC?infoC.coalConsume:null}}吨</detail-list-item>
+            <detail-list-item term="电">{{infoC?infoC.powerConsume:null}}万千瓦时</detail-list-item>
+            <detail-list-item term="蒸汽">{{infoC?infoC.steamConsume:null}}吨</detail-list-item>
           </detail-list>
           <detail-list>
             <!-- <detail-list-item term="其他">{{}}</detail-list-item> -->
@@ -195,6 +195,7 @@ import { filterObj } from '@/utils/util'
 import { getAction, putAction } from '@/api/manage'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import DetailShowTwo from './modules/DetailShowTwoM'
+import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
 import qs from 'querystring'
 import Dom7 from 'dom7'
 
@@ -211,6 +212,7 @@ export default {
     return {
       // dataSource: [],
       // ipagination: [],
+      loading: false,
       confirmLoading: false,
       dataSourceA: [],
       dataSourceB: [],
@@ -314,6 +316,15 @@ export default {
         //   scopedSlots: { customRender: 'action' }
         // }
       ],
+      //最少有一个子元素即可，什么原因呢
+      dict: {
+        technologySource: [],
+        taxStatus: []
+      },
+      dictText: {
+        technologySourceText: '',
+        taxStatusText: ''
+      },
       url: {
         list: '/park.project/mgrProjectInfo/queryProjectById'
       }
@@ -321,6 +332,8 @@ export default {
   },
 
   async created() {
+    //一开始发动初始化一下看看，不对的话再换
+
     if (typeof this.$route.params.id !== 'string') {
       this.$router.back()
       this.$message.warning('ID不正确')
@@ -330,7 +343,9 @@ export default {
     getAction('/park.project/mgrProjectInfo/queryProjectById', { projectId: this.$route.params.id }).then(res => {
       if (res.code === 200) {
         this.info = res.result
-        // console.log(this.info)
+        console.log('object')
+        console.log(this.info.mgrProjectInvest)
+        console.log(this.info)
         this.confirmLoading = false
       } else {
         this.$router.back()
@@ -353,7 +368,7 @@ export default {
       if (res.code === 200) {
         this.loading = false
         this.infoC = res.result
-        console.log(this.infoC)
+        this.initDictConfigC()
       } else {
         this.$router.back()
         this.$message.error(res.message)
@@ -365,6 +380,40 @@ export default {
   },
 
   methods: {
+    initDictConfigC() {
+      initDictOptions('technology_source').then(res => {
+        if (res.code === 0 && res.success) {
+          this.dict.technologySource = res.result
+          for (const item of this.dict.technologySource) {
+            if (item.value == this.infoC.technologySource) return (this.dictText.technologySourceText = item.text)
+          }
+        }
+      })
+      initDictOptions('pollution_type').then(res => {
+        if (res.code === 0 && res.success) {
+          this.dict.pollutionType = res.result
+          for (const item of this.dict.pollutionType) {
+            if (item.value == this.infoC.pollutionType) return (this.dictText.pollutionTypeText = item.text)
+          }
+        }
+      })
+      initDictOptions('waste_discharge_type').then(res => {
+        if (res.code === 0 && res.success) {
+          this.dict.wasteDischargeType = res.result
+          for (const item of this.dict.wasteDischargeType) {
+            if (item.value == this.infoC.wasteDischargeType) return (this.dictText.wasteDischargeTypeText = item.text)
+          }
+        }
+      })
+      initDictOptions('boiler_use').then(res => {
+        if (res.code === 0 && res.success) {
+          this.dict.boilerUse = res.result
+          for (const item of this.dict.boilerUse) {
+            if (item.value == this.infoC.boilerUse) return (this.dictText.boilerUseText = item.text)
+          }
+        }
+      })
+    },
     getListA() {
       getAction('/project/mgrCustTeamMember/queryById', { projectId: this.$route.params.id, memberType: '1' }).then(
         res => {

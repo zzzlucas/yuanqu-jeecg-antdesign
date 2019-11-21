@@ -114,7 +114,8 @@ export default {
           let httpurl = ''
           let method = ''
           //没有股权占比，就认为是新增，对应的，该项在新增是应为必填项目
-          if (!this.model.equrityRatio) {
+          //还是看有没有走detail获得项目id吧，上面这个股权占比感觉有问题
+          if (!this.model.projectId) {
             httpurl += this.url.add
             method = 'post'
           } else {

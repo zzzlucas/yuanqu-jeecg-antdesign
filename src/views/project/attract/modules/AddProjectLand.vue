@@ -766,7 +766,9 @@ export default {
           // console.log('222222')
           //qs.stringify  目前看来必须转换
           // formData.projectType = '1'
-          formData.status = '1'
+          if (!this.model.projectId) {
+            formData.status = '1'
+          }
           formData = qs.stringify(formData)
           console.log(formData)
 

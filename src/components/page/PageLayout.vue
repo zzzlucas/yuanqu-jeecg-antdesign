@@ -9,6 +9,7 @@
         <div class="link">
           <template v-for="(link, index) in linkList">
             <a :key="index" :href="link.href">
+            <!-- <a :key="index" :href="link.href"> -->
               <a-icon :type="link.icon"/>
               <span>{{ link.title }}</span>
             </a>
