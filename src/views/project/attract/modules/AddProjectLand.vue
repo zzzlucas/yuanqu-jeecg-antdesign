@@ -628,9 +628,6 @@ export default {
       // console.log(this.record.recordId)
       this.form.resetFields()
       //后端少的内容
-      // console.log('record')
-      // console.log(record)
-      // console.log(record.totalAsset)
       //大约因为当前写法，项目维护时点开后关闭，再次打开会无法获取
       if (record.mgrProjectCust) {
         record.totalAsset = record.mgrProjectCust.totalAsset

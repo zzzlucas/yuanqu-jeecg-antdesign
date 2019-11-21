@@ -49,6 +49,7 @@
     </a-table>
 
     <auditor-form ref="AuditorForm"></auditor-form>
+    
     <add-tech-project ref="AddTechProject"></add-tech-project>
   </a-card>
 </template>

@@ -178,7 +178,7 @@ export default {
         {
           title: '总投资（万元）',
           align: 'center',
-          dataIndex: 'mgrProjectInvest.investAmount'
+          dataIndex: 'investAmount'
         },
         {
           title: '项目联系人',
@@ -283,7 +283,21 @@ export default {
             if (item.rentBuildArea) {
               item.gainArea = item.rentBuildArea
             }
+            if (item.mgrProjectInvestLease) {
+              if (item.mgrProjectInvestLease.investAmount) {
+                item.investAmount = item.mgrProjectInvestLease.investAmount
+              }
+            }
+            if (item.mgrProjectInvest) {
+              if (item.mgrProjectInvest.investAmount) {
+                item.investAmount = item.mgrProjectInvest.investAmount
+              }
+            }
           }
+          // for (const item of res.result.records) {
+          // }
+          // for (const item of res.result.records) {
+          // }
           this.dataSource = res.result.records
           this.ipagination.total = res.result.total
         }
@@ -299,7 +313,9 @@ export default {
           click: () => {
             // console.log(row.projectId)
             //拿到id
-            this.$router.push({ name: 'project-attract-detail-@id', params: { id: row.projectId } })
+            row.projectType == 1
+              ? this.$router.push({ name: 'project-attract-detail-@id', params: { id: row.projectId } })
+              : this.$router.push({ name: 'project-attract-detail-b-@id', params: { id: row.projectId } })
           }
         }
       }
@@ -374,7 +390,7 @@ export default {
 
     goAddLease() {
       // this.$router.push({ path: '/project/attract/addprojectlease' })
-      this.$refs.ShowAddProjectLease.detail()
+      this.$refs.ShowAddProjectLease.add()
     },
     goLuoDi(record) {
       console.log('record')

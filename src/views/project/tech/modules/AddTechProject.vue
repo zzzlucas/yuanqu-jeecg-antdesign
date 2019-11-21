@@ -48,8 +48,6 @@
                     placeholder
                     v-decorator="['setUpYear',{rules: [{ required: true, message: '请输入成立年份', whitespace: true}]}]"
                   />
-                  <!-- 此处不应使用时间框 -->
-                  <!-- <a-date-picker style="width:100%" v-decorator="['setUpYear']" /> -->
                 </a-form-item>
               </a-col>
             </a-row>
@@ -298,8 +296,8 @@
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="是否人才项目">
                   <a-radio-group v-decorator="['isTalentProject']">
-                    <a-radio :value="1">是</a-radio>
-                    <a-radio :value="2">否</a-radio>
+                    <a-radio value="1">是</a-radio>
+                    <a-radio value="2">否</a-radio>
                   </a-radio-group>
                 </a-form-item>
               </a-col>
@@ -342,8 +340,8 @@
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="是否外资">
                   <a-radio-group v-decorator="['isForeignCapital']">
-                    <a-radio :value="1">是</a-radio>
-                    <a-radio :value="2">否</a-radio>
+                    <a-radio value="1">是</a-radio>
+                    <a-radio value="2">否</a-radio>
                   </a-radio-group>
                 </a-form-item>
               </a-col>
@@ -466,15 +464,15 @@
                 <a-form-item label="固定资产投资（万元）">
                   <p class="myinput">
                     1.项目总用地面
-                    <a-input />平方米；其中：新征用地面积
-                    <a-input />平方米。项目利用企业已有土地的，土地证等证书文件编号
-                    <a-input style="width:200px;" />。租赁使用其他企业厂房的，出租房土地证等证书文件编号
-                    <a-input style="width:200px;" />。
+                    <a-input v-decorator="['totalUseArea']" />平方米；其中：新征用地面积
+                    <a-input v-decorator="['newUseArea']" />平方米。项目利用企业已有土地的，土地证等证书文件编号
+                    <a-input v-decorator="['ownLandNumber']" style="width:200px;" />。租赁使用其他企业厂房的，出租房土地证等证书文件编号
+                    <a-input v-decorator="['rentLandNumber']" style="width:200px;" />。
                     <br />2.项目原建筑面积
-                    <a-input />平方米，实施技术改造后建筑面积
-                    <a-input />平方米。新增建筑面积
-                    <a-input />平方米。实施技术改造是否涉及主体建筑结构改变
-                    <a-input />（填“是”或“否”）。
+                    <a-input v-decorator="['originalBuildArea']" />平方米，实施技术改造后建筑面积
+                    <a-input v-decorator="['afterChangeBuildArea']" />平方米。新增建筑面积
+                    <a-input v-decorator="['newBuildArea']" />平方米。实施技术改造是否涉及主体建筑结构改变
+                    <a-input v-decorator="['isChangeBuild']" />（填“是”或“否”）。
                   </p>
                 </a-form-item>
               </a-col>
@@ -483,7 +481,7 @@
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="项目工艺流程（图示式）及说明">
-                  <j-editor v-decorator="['projectTechnologyFlow']"></j-editor>
+                  <j-editor v-model="editor.projectTechnologyFlow"></j-editor>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -588,6 +586,9 @@ export default {
         industrySectorValueExt: [{ value: '1' }],
         companyRegisterTypeExt: [{ value: '1' }]
       },
+      editor: {
+        projectTechnologyFlow: ''
+      },
       record: {},
       visible: false,
       loading: false
@@ -664,14 +665,10 @@ export default {
       const that = this
       // 触发表单验证
       this.form.validateFieldsAndScroll((err, values) => {
-        // values.setUpYear = 1
-        // console.log(values.setUpYear)
-
         if (!err) {
           that.confirmLoading = true
           let httpurl = ''
           let method = ''
-          
           if (!this.model.projectId) {
             //增
             console.log('post方式')
@@ -683,22 +680,24 @@ export default {
             httpurl += this.url.edit
             method = 'put'
           }
-
-          // let formData = {}
           let formData = Object.assign(this.model, values)
-          // formData.setUpYear = formData.setUpYear ? formData.setUpYear.format() : null
-          formData.buildingBeginDate = formData.buildingBeginDate
-            ? formData.buildingBeginDate.format('YYYY-MM-DD')
-            : null
-          formData.buildingEndDate = formData.buildingEndDate ? formData.buildingEndDate.format('YYYY-MM-DD') : null
+          if (formData.buildingBeginDate) {
+            formData.buildingBeginDate = formData.buildingBeginDate
+              ? formData.buildingBeginDate.format('YYYY-MM-DD')
+              : null
+          }
+          if (formData.buildingEndDate) {
+            formData.buildingEndDate = formData.buildingEndDate ? formData.buildingEndDate.format('YYYY-MM-DD') : null
+          }
 
-          //qs.stringify  目前看来必须转换
+          const { projectTechnologyFlow } = this.editor
+          formData.projectTechnologyFlow = projectTechnologyFlow
+
+          formData.projectName = 'zhengjietest'
+          formData.parkId = '555'
+          formData.workFlowUseObject = 'test'
+
           formData = qs.stringify(formData)
-          console.log(formData)
-
-          // formData = JSON.stringify(formData);
-          // console.log(formData)
-
           httpAction(httpurl, formData, method)
             .then(res => {
               if (res.success) {

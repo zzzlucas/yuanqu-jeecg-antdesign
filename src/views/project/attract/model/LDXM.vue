@@ -606,7 +606,7 @@
                   :loading="loading"
                 >
                   <span slot="action" slot-scope="text, record">
-                    <a @click="ShowOne(record)">编辑</a>
+                    <a @click="ShowOne(record,...arguments)">编辑</a>
                     <a-divider type="vertical" />
                     <a @click="handelDelete(record)">删除</a>
                   </span>
@@ -628,7 +628,7 @@
                   :loading="loading"
                 >
                   <span slot="action" slot-scope="text, record">
-                    <a @click="ShowOne(record)">编辑</a>
+                    <a @click="ShowTwo(record,...arguments)">编辑</a>
                     <a-divider type="vertical" />
                     <a @click="handelDelete(record)">删除</a>
                   </span>
@@ -649,7 +649,7 @@
                   :loading="loading"
                 >
                   <span slot="action" slot-scope="text, record">
-                    <a @click="ShowOne(record)">编辑</a>
+                    <a @click="ShowThree(record,...arguments)">编辑</a>
                     <a-divider type="vertical" />
                     <a @click="handelDelete(record)">删除</a>
                   </span>
@@ -708,7 +708,11 @@
                   </a-col>
                   <a-col :xl="{span: 12}">
                     <a-form-item label="颁证年月" required>
-                      <a-date-picker :placeholder="false" v-decorator="['issueDate']" style="width:100%" />
+                      <a-date-picker
+                        :placeholder="false"
+                        v-decorator="['issueDate']"
+                        style="width:100%"
+                      />
                     </a-form-item>
                   </a-col>
                 </a-row>
@@ -730,9 +734,7 @@
                   <a-col :xl="{span: 12}">
                     <a-form-item label="污染所属类型">
                       <!-- pollutionType -->
-                      <a-select
-                        v-decorator="['pollutionType']"
-                      >
+                      <a-select v-decorator="['pollutionType']">
                         <a-select-option
                           v-for="(item, key) in dict.pollutionTypeExt"
                           :value="item.value"
@@ -745,9 +747,7 @@
                   <a-col :xl="{span: 12}">
                     <a-form-item label="废物排放种类">
                       <!-- wasteDischargeType -->
-                      <a-select
-                        v-decorator="['wasteDischargeType']"
-                      >
+                      <a-select v-decorator="['wasteDischargeType']">
                         <a-select-option
                           v-for="(item, key) in dict.wasteDischargeTypeExt"
                           :value="item.value"
@@ -768,7 +768,11 @@
                   </a-col>
                   <a-col :xl="{span: 12}">
                     <a-form-item label="污水管网计划接通时间">
-                      <a-date-picker :placeholder="false"  v-decorator="['planSewerLineTime']" style="width:100%" />
+                      <a-date-picker
+                        :placeholder="false"
+                        v-decorator="['planSewerLineTime']"
+                        style="width:100%"
+                      />
                       <!-- <a-input v-decorator="['planSewerLineTime']"></a-input> -->
                     </a-form-item>
                   </a-col>
@@ -777,9 +781,7 @@
                   <a-col :xl="{span: 12}">
                     <a-form-item label="使用锅炉情况">
                       <!-- boilerUse -->
-                      <a-select
-                        v-decorator="['boilerUse']"
-                      >
+                      <a-select v-decorator="['boilerUse']">
                         <a-select-option
                           v-for="(item, key) in dict.boilerUseExt"
                           :value="item.value"
@@ -842,7 +844,7 @@
       </a-card>
       <!-- <button @click="ShowOne" value="ShowOne">ShowOne</button>
       <button @click="ShowTwo" value="ShowTwo">ShowTwo</button>
-      <button @click="ShowThree" value="ShowThree">ShowThree</button> -->
+      <button @click="ShowThree" value="ShowThree">ShowThree</button>-->
       <show-one ref="ShowOne" @reload="getListA"></show-one>
       <show-two ref="ShowTwo" @reload="getListB"></show-two>
       <show-three ref="ShowThree" @reload="getListC"></show-three>
@@ -863,6 +865,7 @@ import moment from 'moment'
 import { AddProjectLandForm } from '@/config/pick-fields'
 import { initDictOptions } from '@/components/dict/JDictSelectUtil'
 import qs from 'qs'
+import Dom7 from 'dom7'
 
 export default {
   mixins: [JeecgListMixin],
@@ -888,9 +891,9 @@ export default {
       },
       dataSourceA: [
         {
-          custName: '1',
-          equrityRatio: '2',
-          inventPatentMount: '1'
+          // custName: '1',
+          // equrityRatio: '2',
+          // inventPatentMount: '1'
         }
       ],
       dataSourceB: [],
@@ -930,23 +933,27 @@ export default {
       columns2: [
         {
           title: '序号',
+          dataIndex: '',
+          width: 100,
           align: 'center',
-          dataIndex: ''
+          customRender: function(t, r, index) {
+            return parseInt(index) + 1
+          }
         },
         {
           title: '姓名',
           align: 'center',
-          dataIndex: 'trackDate'
+          dataIndex: 'memberName'
         },
         {
           title: '股权占比',
           align: 'center',
-          dataIndex: 'tracker'
+          dataIndex: 'equrityRatio'
         },
         {
           title: '学历',
           align: 'center',
-          dataIndex: 'content'
+          dataIndex: 'educationBackground'
         },
         {
           title: '操作',
@@ -958,23 +965,27 @@ export default {
       columns3: [
         {
           title: '序号',
+          dataIndex: '',
+          width: 100,
           align: 'center',
-          dataIndex: ''
+          customRender: function(t, r, index) {
+            return parseInt(index) + 1
+          }
         },
         {
           title: '姓名',
           align: 'center',
-          dataIndex: 'trackDate'
+          dataIndex: 'memberName'
         },
         {
           title: '职务',
           align: 'center',
-          dataIndex: 'tracker'
+          dataIndex: 'position'
         },
         {
           title: '出生年月',
           align: 'center',
-          dataIndex: 'content'
+          dataIndex: 'birthday'
         },
         {
           title: '操作',
@@ -985,6 +996,9 @@ export default {
       ],
       url: {
         list: '/park.project/mgrProjectInfo/addProject',
+        listA: '/project/mgrCustTeamMember/queryById',
+        // listB: '/project/mgrCustRegisterInfo/list',
+        // listC: '/project/mgrSecondApplyProjectInfo/list',
         edit: '/park.project/mgrProjectInfo/editProject',
         editS: '/park.project/mgrProjectInfo/secondApply'
       }
@@ -1011,14 +1025,47 @@ export default {
         this.dict.boilerUseExt = res.result
       }
     })
-
+    //加载数据项
+    this.getListA()
+    this.getListB()
+    this.getListC()
     this.detail()
   },
   methods: {
     //获取  重载
-    getListA() {},
-    getListB() {},
-    getListC() {},
+    getListA() {
+      getAction('/project/mgrCustTeamMember/queryById', { projectId: this.$route.params.id, memberType: '1' }).then(
+        res => {
+          if (res.success) {
+            this.dataSourceA = res.result
+          } else {
+            this.$message.warning(res.message)
+          }
+        }
+      )
+    },
+    getListB() {
+      getAction('/project/mgrCustTeamMember/queryById', { projectId: this.$route.params.id, memberType: '2' }).then(
+        res => {
+          if (res.success) {
+            this.dataSourceB = res.result
+          } else {
+            this.$message.warning(res.message)
+          }
+        }
+      )
+    },
+    getListC() {
+      getAction('/project/mgrCustTeamMember/queryById', { projectId: this.$route.params.id, memberType: '3' }).then(
+        res => {
+          if (res.success) {
+            this.dataSourceC = res.result
+          } else {
+            this.$message.warning(res.message)
+          }
+        }
+      )
+    },
     //新增
     addShowOne() {
       this.$refs.ShowOne.add()
@@ -1030,19 +1077,31 @@ export default {
       this.$refs.ShowThree.add()
     },
     //编辑
-    ShowOne() {
-      this.$refs.ShowOne.detail()
+    ShowOne(row, e) {
+      row.__key = Dom7(e.currentTarget)
+        .parents('.ant-table-row')
+        .data('row-key')
+      this.$refs.ShowOne.detail(row)
     },
-    ShowTwo() {
-      this.$refs.ShowTwo.detail()
+    ShowTwo(row, e) {
+      row.__key = Dom7(e.currentTarget)
+        .parents('.ant-table-row')
+        .data('row-key')
+      this.$refs.ShowTwo.detail(row)
     },
-    ShowThree() {
-      this.$refs.ShowThree.detail()
+    ShowThree(row, e) {
+      row.__key = Dom7(e.currentTarget)
+        .parents('.ant-table-row')
+        .data('row-key')
+      this.$refs.ShowThree.detail(row)
     },
+    //二次申请提交
     handleSubmitTwo() {
       const that = this
       this.formS.validateFieldsAndScroll((err, values) => {
         if (!err) {
+          console.log('values')
+          console.log(values)
           that.confirmLoading = true
           let httpurl = ''
           let method = ''
@@ -1053,12 +1112,17 @@ export default {
           if (formData.issueDate) {
             formData.issueDate = formData.issueDate ? formData.issueDate.format('YYYY-MM-DD') : null
           }
+          if (formData.planSewerLineTime) {
+            formData.planSewerLineTime = formData.planSewerLineTime ? formData.planSewerLineTime.format('YYYY-MM-DD') : null
+          }
           formData.projectId = this.$route.params.id
           formData = qs.stringify(formData)
           httpAction(httpurl, formData, method)
             .then(res => {
               if (res.success) {
                 that.$message.success(res.message)
+                //后端返回的是‘申请成功’，按照UI逻辑，第一次提交才是真正的申请、、、
+                // that.$message.success(res.message)
               } else {
                 that.$message.warning(res.message)
               }

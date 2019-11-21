@@ -35,19 +35,13 @@
             <detail-list-item term="是否人才项目">{{ info.isTalentProject=="1"?"是":"否" }}</detail-list-item>
           </detail-list>
           <detail-list>
-            <detail-list-item
-              term="公司概况"
-            >{{ info.mgrProjectCust?info.mgrProjectCust.companyDescription:null }}</detail-list-item>
+            <detail-list-item term="公司概况">{{ info.mgrProjectCust?info.mgrProjectCust.companyDescription:null }}</detail-list-item>
           </detail-list>
           <detail-list>
-            <detail-list-item
-              term="团队成员情况"
-            >{{ info.mgrProjectCust?info.mgrProjectCust.teamMemberDescription:null }}</detail-list-item>
+            <detail-list-item term="团队成员情况">{{ info.mgrProjectCust?info.mgrProjectCust.teamMemberDescription:null }}</detail-list-item>
           </detail-list>
           <detail-list>
-            <detail-list-item
-              term="备注"
-            >{{ info.mgrProjectInvest?info.mgrProjectInvest.remark:null }}</detail-list-item>
+            <detail-list-item term="备注">{{ info.mgrProjectInvest?info.mgrProjectInvest.remark:null }}</detail-list-item>
           </detail-list>
         </a-tab-pane>
         <!-- 2222222222222222222222222 -->
@@ -140,6 +134,44 @@
             </span>
           </a-table>
         </a-tab-pane>
+        <a-tab-pane tab="生产工艺情况" key="10">
+          <detail-list>
+            <detail-list-item term="单位产品原材料消耗（吨/吨产品）">{{infoC?infoC.unitProductMaterialCost:null}}</detail-list-item>
+            <detail-list-item term="生产工艺流程">{{infoC?infoC.produceFlow:null}}</detail-list-item>
+            <detail-list-item term="安全生产">{{infoC?infoC.produceSafe:null}}</detail-list-item>
+            <detail-list-item term="技术来源">{{infoC?infoC.technologySource:null}}</detail-list-item>
+            <detail-list-item term="引进">{{infoC?infoC.introduce:null}}</detail-list-item>
+            <detail-list-item term="专利号">{{infoC?infoC.patentNo:null}}</detail-list-item>
+            <detail-list-item term="颁证年月">{{infoC?infoC.issueDate:null}}</detail-list-item>
+            <detail-list-item term="品牌名称">{{infoC?infoC.productName:null}}</detail-list-item>
+            <detail-list-item term="颁证单位">{{infoC?infoC.issueAuthority:null}}</detail-list-item>
+          </detail-list>
+        </a-tab-pane>
+        <a-tab-pane tab="环保、安全、卫生" key="11">
+          <detail-list>
+            <detail-list-item term="污染所属类型">{{infoC?infoC.pollutionType:null}}</detail-list-item>
+            <detail-list-item term="废物排放种类">{{infoC?infoC.wasteDischargeType:null}}</detail-list-item>
+            <detail-list-item term="污水管网是否接通">{{infoC?infoC.isSewerLine:null}}</detail-list-item>
+            <detail-list-item term="使用锅炉情况">{{infoC?infoC.boilerUse:null}}</detail-list-item>
+          </detail-list>
+          <detail-list>
+            <detail-list-item term="项目与敏感点方位距离（米）">{{infoC?infoC.projectToPointDistance:null}}</detail-list-item>
+          </detail-list>
+          <detail-list>
+            <detail-list-item term="在一年内，环保、安全生产（消防）方面是否发生过重大事件">{{infoC?infoC.isHappenAccent:null}}</detail-list-item>
+          </detail-list>
+        </a-tab-pane>
+        <a-tab-pane tab="能源与资源消耗情况(年消耗量）" key="12">
+          <detail-list>
+            <detail-list-item term="水（吨）">{{infoC?infoC.waterConsume:null}}</detail-list-item>
+            <detail-list-item term="原煤（吨）">{{infoC?infoC.coalConsume:null}}</detail-list-item>
+            <detail-list-item term="电(万千瓦时)">{{infoC?infoC.powerConsume:null}}</detail-list-item>
+            <detail-list-item term="蒸汽（吨）">{{infoC?infoC.steamConsume:null}}</detail-list-item>
+          </detail-list>
+          <detail-list>
+            <!-- <detail-list-item term="其他">{{}}</detail-list-item> -->
+          </detail-list>
+        </a-tab-pane>
       </a-tabs>
     </a-card>
   </page-layout>
@@ -176,6 +208,7 @@ export default {
       dataSourceC: [],
       info: {},
       infoB: {},
+      infoC: {},
       columns1: [
         {
           title: '序号',
@@ -305,6 +338,17 @@ export default {
         this.$message.error(res.message)
       }
     })
+     //二次申请之前，这里也是请求为空
+    getAction('/project/mgrSecondApplyProjectInfo/queryById', { projectId: this.$route.params.id }).then(res => {
+      if (res.code === 200) {
+        this.loading = false
+        this.infoC = res.result
+        console.log(this.infoC)
+      } else {
+        this.$router.back()
+        this.$message.error(res.message)
+      }
+    })
     this.getListA()
     this.getListB()
     this.getListC()
@@ -316,8 +360,8 @@ export default {
         res => {
           if (res.success) {
             this.dataSourceA = res.result
-            console.log('this.dataSourceA')
-            console.log(this.dataSourceA)
+            // console.log('this.dataSourceA')
+            // console.log(this.dataSourceA)
           } else {
             this.$message.warning(res.message)
           }
