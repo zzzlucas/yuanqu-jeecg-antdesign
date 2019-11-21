@@ -7,16 +7,20 @@
       @delete="deleteBtn"
       @edit="editBtn"
       @change="onChange"></block-list>
+
+    <!-- 区块详细内容，楼宇列表 -->
+    <tower-list v-if="model.status === 'tower'"></tower-list>
   </div>
 </template>
 
 <script>
   import YqImage from '@comp/extend/YqImage'
   import BlockList from './list/BlockList'
+  import TowerList from './list/TowerList'
 
   export default {
     name: 'BuildingView',
-    components: { BlockList, YqImage },
+    components: { TowerList, BlockList, YqImage },
     props: {
       model: {
         type: Object,
