@@ -555,9 +555,9 @@ import { initDictOptions } from '@/components/dict/JDictSelectUtil'
 import { httpAction } from '@/api/manage'
 import pick from 'lodash.pick'
 import moment from 'moment'
-import { AddProjectLandForm } from '@/config/pick-fields'
+import { AddTechProjectForm } from '@/config/pick-fields'
 export default {
-  name: 'addProjectLandForm',
+  name: 'AddTechProjectForm',
   // mixins: [JeecgListMixin],
   components: { PageLayout, JEditor, JDictSelectTag },
   data() {
@@ -624,32 +624,30 @@ export default {
     add() {
       this.visible = true
     },
-    // add() {
-    //   this.picUrl = ''
-    //   this.refresh()
-    //   this.edit({ activitiSync: '1' })
+    // detail(record) {
+    //   // this.record = record
+    //   // console.log(this.record.recordId)
+    //   this.form.resetFields()
+    //   this.model = Object.assign({}, record)
+    //   this.visible = true
+    //   // console.log(pick(this.model, ProjectAttractShowZeroForm))
+    //   this.$nextTick(() => {
+    //     this.form.setFieldsValue(pick(this.model, AddTechProjectForm))
+    //     //时间格式化
+    //     // this.form.setFieldsValue({ trackDate: this.model.trackDate ? moment(this.model.trackDate) : null })
+    //   })
     // },
-    detail(record) {
-      // this.record = record
-      // console.log(this.record.recordId)
-      this.form.resetFields()
-      this.model = Object.assign({}, record)
-      this.visible = true
-      // console.log(pick(this.model, ProjectAttractShowZeroForm))
-      this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.model, AddProjectLandForm))
-        //时间格式化
-        // this.form.setFieldsValue({ trackDate: this.model.trackDate ? moment(this.model.trackDate) : null })
-      })
-    },
     edit(record) {
       console.log('edit开始了')
       this.form.resetFields()
+      if (record.mgrProjectCust) {
+        record.fillUnit = record.mgrProjectCust.fillUnit
+      }
       this.model = Object.assign({}, record)
       // console.log(this.model)
       this.visible = true
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.model, AddProjectLandForm))
+        this.form.setFieldsValue(pick(this.model, AddTechProjectForm))
         //时间格式化
       })
       // console.log(this.model)
