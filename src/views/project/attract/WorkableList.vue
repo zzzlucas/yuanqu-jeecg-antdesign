@@ -94,10 +94,10 @@
     </a-table>
 
     <!-- 表单区域 -->
+    <!-- <a-alert v-if="alertM" message="当前暂无跟踪记录，请先进行跟踪登记。" banner /> -->
+
     <show-zero ref="ShowZero" @reload="loadData()" @ok="rrreload"></show-zero>
-
     <show-two @showOneToZeroEdit="showZeroEdit" @showOneToZeroAdd="showZeroAdd" ref="ShowTwo"></show-two>
-
     <show-one ref="ShowOne" @reload="loadData()"></show-one>
     <show-card ref="ShowCard"></show-card>
     <add-project-land ref="ShowAddProjectLand" @reload="loadData()"></add-project-land>
@@ -150,6 +150,7 @@ export default {
       projectTypeDictOptions: '',
       industrySectorValueDictOptions: '',
       statusDictOptions: '',
+      alertM: false,
       // pagination: '',
       columns: [
         {
@@ -449,7 +450,12 @@ export default {
       getAction('/park.project/mgrProjectTrace/getById', params).then(res => {
         if (res.success) {
           row = res.result[res.result.length - 1]
-          this.$refs.ShowCard.detail(row)
+          if (row) {
+            this.$refs.ShowCard.detail(row)
+          } else {
+            this.$message.warning('当前暂无跟踪记录，请先进行跟踪登记。')
+            // this.alertM = true
+          }
         }
         if (res.code === 510) {
           this.$message.warning(res.message)

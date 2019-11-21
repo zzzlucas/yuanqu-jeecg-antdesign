@@ -14,7 +14,6 @@
   >
     <a-card :bordered="false">
       <a-spin :spinning="confirmLoading">
-        <!-- <p v-if="info">当前暂无跟踪记录，请先进行跟踪登记。</p> -->
         <detail-list v-if="info" :col="2">
           <detail-list-item term="项目ID">{{info.projectId}}</detail-list-item>
           <detail-list-item term="项目名称">{{info.projectName}}</detail-list-item>
