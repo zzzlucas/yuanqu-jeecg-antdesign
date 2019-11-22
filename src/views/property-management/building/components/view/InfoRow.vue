@@ -1,17 +1,17 @@
 <template>
-  <div class="yq-building-tower-row">
+  <div class="yq-building-info-row">
 
   </div>
 </template>
 
 <script>
   export default {
-    name: 'TowerList'
+    name: 'InfoRow'
   }
 </script>
 
 <style lang="less">
-  .yq-building-tower-row {
+  .yq-building-info-row {
 
   }
 </style>

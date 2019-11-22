@@ -8,19 +8,19 @@
       @edit="editBtn"
       @change="onChange"></block-list>
 
-    <!-- 区块详细内容，楼宇列表 -->
-    <tower-list v-if="model.status === 'tower'"></tower-list>
+    <!-- 详细内容 -->
+    <info-row v-else></info-row>
   </div>
 </template>
 
 <script>
   import YqImage from '@comp/extend/YqImage'
   import BlockList from './view/BlockList'
-  import TowerList from './view/TowerList'
+  import InfoRow from './view/InfoRow'
 
   export default {
     name: 'BuildingView',
-    components: { TowerList, BlockList, YqImage },
+    components: { InfoRow, BlockList, YqImage },
     props: {
       model: {
         type: Object,
