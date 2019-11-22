@@ -127,7 +127,11 @@
         return new Promise((resolve, reject) => {
           const config = this.url.info[this.type]
           getAction(config.url, { [config.id]: id }).then(res => {
-            resolve(res)
+            if (res.code === 200 && res.success) {
+              resolve(res.result)
+            } else {
+              this.$message.error(res.message)
+            }
           }).catch(err => {
             reject(err)
           })

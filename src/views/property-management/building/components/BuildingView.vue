@@ -9,7 +9,7 @@
       @change="onChange"></block-list>
 
     <!-- 详细内容 -->
-    <info-row v-else></info-row>
+    <info-row v-else :type="model.status" :info="model.info"></info-row>
   </div>
 </template>
 
