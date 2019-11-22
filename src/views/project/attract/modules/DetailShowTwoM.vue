@@ -1,16 +1,6 @@
 <template>
-  <!-- 跟踪记录表单  下拉1-->
 
-  <a-modal
-    :title="title"
-    :width="1300"
-    :visible="visible"
-    :confirmLoading="confirmLoading"
-    @cancel="handleCancel"
-    cancelText="关闭"
-    destroyOnClose
-    :footer="null"
-  >
+  <div>
     <a-card :bordered="false">
       <a-form :form="form">
         <a-row>
@@ -58,7 +48,7 @@
         </a-row>
         <a-row>
           <a-button
-            @click="twoShowOneAdd()"
+            @click="ShowZeroAdd()"
             type="primary"
             icon="plus"
             style="float:left;margin-left:0"
@@ -77,7 +67,7 @@
         >
           <!-- :customRow="customRow" -->
           <span slot="action" slot-scope="text, record">
-            <a @click="twoShowOne(record, ...arguments)">编辑</a>
+            <a @click="ShowZero(record, ...arguments)">编辑</a>
             <a-divider type="vertical" />
             <a @click="showCard(record, ...arguments)">查看</a>
             <a-divider type="vertical" />
@@ -87,7 +77,9 @@
       </a-form>
     </a-card>
     <show-card ref="ShowCard"></show-card>
-  </a-modal>
+    <!-- @ok="rrreload" -->
+    <show-zero ref="ShowZero" @reload="loadData"></show-zero>
+  </div>
 </template>
 
 <script>
@@ -97,13 +89,14 @@ import { getAction, putAction } from '@/api/manage'
 
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import ShowCard from '@/views/project/attract/modules/ShowTwoMCard'
+import ShowZero from './ShowZeroD'
 import Dom7 from 'dom7'
 import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
 
 export default {
   mixins: [JeecgListMixin],
   name: '',
-  components: { ShowCard },
+  components: { ShowCard, ShowZero },
   // props: {
   //   ipaginationSTM: ''
   // },
@@ -192,16 +185,20 @@ export default {
   created() {
     console.log('test start-------------')
     this.initDictConfig()
+    this.loadData()
     // this.getProjectTrace()
   },
+  //本页面相对于原modal的修改
+  //1、去掉modal，改为div
+  //2.初始数据获取上，原本detail事件触发,改为creat钩子
   methods: {
-    detail(record) {
-      this.visible = true
-      this.record = record
-      //this.record.projectId 获取到了，在get请求前传入值
-      console.log(this.record.projectId)
-      this.loadData()
-    },
+    // detail(record) {
+    //   this.visible = true
+    //   this.record = record
+    //   //this.record.projectId 获取到了，在get请求前传入值
+    //   console.log(this.record.projectId)
+    //   this.loadData()
+    // },
     searchQuery() {
       this.getProjectTrace()
     },
@@ -235,7 +232,9 @@ export default {
       if (arg === 1) {
         this.ipagination.current = 1
       }
-      let params = { projectId: this.record.projectId }
+      let params = { projectId: this.$route.params.id }
+      console.log('params')
+      console.log(params)
       this.loading = true
       getAction('/park.project/mgrProjectTrace/getById', params).then(res => {
         if (res.success) {
@@ -293,20 +292,23 @@ export default {
       this.$refs.ShowCard.detail(row)
     },
     //其实最后调用是showzero   这里需要modal内对应行的数据，ok
-    twoShowOne(row, e) {
+    ShowZero(row, e) {
       row.__key = Dom7(e.currentTarget)
         .parents('.ant-table-row')
         .data('row-key')
       // console.log(row.__key)
-      this.$emit('showOneToZeroEdit', row)
+      // this.$emit('showOneToZeroEdit', row)
+      this.$refs.ShowZero.detailDDD(row)
     },
 
     //这里需要list对应行的数据  不在这里给
-    twoShowOneAdd() {
+    ShowZeroAdd() {
       //获得当前modal的projectId
       // console.log('----------');
       // console.log(this.record.projectId);
-      this.$emit('showOneToZeroAdd', this.record)
+      // this.$emit('showOneToZeroAdd', this.record)
+      this.$refs.ShowZero.partDetailDDD()
+      
     },
     handleCancel() {
       this.visible = false
