@@ -6,7 +6,14 @@
       </a-card>
     </a-col>
     <a-col span="20">
-      <a-card class="yq-building-card" title="楼宇房源">
+      <a-card class="yq-building-card" :loading="loading">
+        <template slot="title">
+          <span>楼宇房源</span>
+          <a-button style="margin-left: 8px;" v-if="history.length > 0" @click="onBack">
+            <a-icon type="rollback"/>
+            返回
+          </a-button>
+        </template>
         <template slot="extra">
           <a-button type="primary" @click="addBlock">新建区块</a-button>
           <a-button class="margin-left">新建楼宇</a-button>
@@ -37,11 +44,7 @@
       return {
         type: '',
         history: [],
-        the: {
-          type: '',
-          id: '',
-          name: ''
-        },
+        loading: true,
         model: {
           status: 'empty'
         },
@@ -58,6 +61,10 @@
             }
           },
           info: {
+            block: {
+              url: '/park.architecture/baseArchitectureProject/queryByParkId',
+              id: 'parkId'
+            },
             tower: {
               url: '/park.architecture/baseArchitectureProject/queryById',
               id: 'id'
@@ -96,6 +103,8 @@
           })
         }).catch(err => {
           console.log('载入区块数据：' + err)
+        }).finally(() => {
+          this.loading = false
         })
       })
     },
@@ -209,6 +218,7 @@
         }
       },
       onChange(type, id) {
+        this.loading = true
         this.history.push({
           type,
           id
@@ -225,8 +235,25 @@
               info,
               list
             }
+          }).finally(() => {
+            this.loading = false
           })
         })
+      },
+      onBack() {
+        const history = _.initial(this.history)
+        const last = _.last(history)
+
+        this.history = []
+        this.$nextTick(() => {
+          this.history = history
+        })
+
+        if (last) {
+          this.onChange(last.type, last.id)
+        } else {
+          this.onChange('block', '1193719771573518336')
+        }
       }
     }
   }
