@@ -82,7 +82,7 @@
             }
           },
           tree: {
-            block: {
+            tower: {
               url: '/park.architecture/baseArchitectureBuilding/queryByProjectId',
               id: 'projectId'
             }
@@ -107,7 +107,7 @@
             return {
               title: obj.projectAbbr,
               key: obj.buildingProjectId,
-              type: 'block'
+              type: 'tower'
             }
           })
         }).catch(err => {
@@ -147,7 +147,8 @@
         })
       },
       onTreeSelect(keys, info) {
-        console.log(keys, info)
+        const data = info.node.dataRef
+        this.onChange(data.type, data.key)
       },
       async loadTree(node) {
         const type = node.dataRef.type
@@ -222,7 +223,7 @@
                 return {
                   title: obj.projectAbbr,
                   key: obj.buildingProjectId,
-                  type: 'block'
+                  type: 'tower'
                 }
               })
             }).catch(err => {
