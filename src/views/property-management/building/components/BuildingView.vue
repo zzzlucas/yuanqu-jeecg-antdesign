@@ -10,6 +10,9 @@
 
     <!-- 详细内容 -->
     <info-row v-else :type="model.status" :info="model.info"></info-row>
+
+    <!-- 表格 -->
+    <list-table v-if="['block'].indexOf(model.status) === -1" :type="model.status" :list="model.list"></list-table>
   </div>
 </template>
 
@@ -17,10 +20,11 @@
   import YqImage from '@comp/extend/YqImage'
   import BlockList from './view/BlockList'
   import InfoRow from './view/InfoRow'
+  import ListTable from './view/ListTable'
 
   export default {
     name: 'BuildingView',
-    components: { InfoRow, BlockList, YqImage },
+    components: { ListTable, InfoRow, BlockList, YqImage },
     props: {
       model: {
         type: Object,
