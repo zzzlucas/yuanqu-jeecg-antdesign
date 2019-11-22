@@ -198,7 +198,7 @@
           }
         })
       },
-      onEdit(type, id, key, obj) {
+      onEdit(type, id, obj) {
         const data = _.clone(obj)
         switch (type) {
           case 'block':

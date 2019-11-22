@@ -4,7 +4,7 @@
       <header class="block">
         <div class="title" v-text="item.projectName"></div>
         <div class="header-right">
-          <a-button size="small" @click="editBtn('block', item.buildingProjectId, key, item)">编辑</a-button>
+          <a-button size="small" @click="editBtn('block', item.buildingProjectId, item)">编辑</a-button>
           <a-button
             class="delete-btn"
             size="small"
