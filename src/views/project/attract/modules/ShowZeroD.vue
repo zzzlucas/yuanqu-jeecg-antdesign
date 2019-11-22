@@ -6,7 +6,6 @@
     :visible="visible"
     @close="close"
     destroyOnClose
-    :zIndex="999999"
   >
     <div>
       <a-card class="daily-article" :bordered="false">
@@ -147,9 +146,10 @@
 import { initDictOptions } from '@comp/dict/JDictSelectUtil'
 import { getAction, httpAction } from '@/api/manage'
 import pick from 'lodash.pick'
-import moment from 'moment'
 import qs from 'querystring'
 import { ProjectAttractShowZeroForm } from '@/config/pick-fields'
+import moment from 'moment'
+moment.locale('zh-cn')
 
 export default {
   name: 'mgrProjectTraceDrawer',
@@ -275,6 +275,7 @@ export default {
       })
     },
     //给详情页专用，详情页具有$route.params.id获取projectId
+    moment,
     detailDDD(record) {
       const that = this
       that.record = record
@@ -314,6 +315,9 @@ export default {
         if (res.success) {
           // console.log(res.result.projectManager)
           record.tracker = res.result.projectManager
+          record.trackDate = moment()
+
+          //根据recordId查最近的一条跟踪信息
           getAction('/park.project/mgrProjectTrace/getById', { projectId: record.projectId }).then(resA => {
             if (resA.success) {
               //判断如果已经存在过跟踪记录,不然不用覆写projectManager这个第一首发跟踪人
@@ -322,7 +326,9 @@ export default {
               //这里在已有跟踪记录的前提下，将最新一条的跟踪人选为默认跟踪人
               //项目分配的跟踪人应当可以再次更新为默认跟踪人，这一点后端api上或许有问题
               if (resA.result) {
-                record.tracker = resA.result[resA.result.length - 1].tracker
+                if (resA.result[0]) {
+                  record.tracker = resA.result[resA.result.length - 1].tracker
+                }
               }
               this.model = Object.assign({}, record)
               this.$nextTick(() => {
@@ -336,6 +342,7 @@ export default {
         }
       })
     },
+    //未跟进 1122
     partDetailDDD() {
       this.form.resetFields()
       let record = {}

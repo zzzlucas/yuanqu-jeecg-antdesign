@@ -6,7 +6,7 @@
       <a-tabs defaultActiveKey="1" @tabClick="getCustomerContact">
         <a-tab-pane tab="基本信息" key="1">
           <div class="div-detail-list">
-            <detail-list>
+            <detail-list :col="2">
               <detail-list-item term="企业简称">{{ info.customerAbbr }}</detail-list-item>
               <detail-list-item term="企业编号">{{ info.customerNo }}</detail-list-item>
               <detail-list-item term="法人">{{ info.legalPerson }}</detail-list-item>
@@ -18,16 +18,16 @@
               <detail-list-item term="所属楼宇">{{ info.buidling }}</detail-list-item>
             </detail-list>
           </div>
-          <detail-list>
+          <detail-list :col="1">
             <detail-list-item term="邮 箱">{{ info.email }}</detail-list-item>
           </detail-list>
-          <detail-list>
+          <detail-list :col="1">
             <detail-list-item term="网 址">{{ info.website }}</detail-list-item>
           </detail-list>
-          <detail-list>
+          <detail-list :col="1">
             <detail-list-item term="关联客户">{{ info.relCustListId }}</detail-list-item>
           </detail-list>
-          <detail-list>
+          <detail-list :col="1">
             <detail-list-item term="企业简介">{{ info.content }}</detail-list-item>
           </detail-list>
           <div
@@ -64,13 +64,13 @@
           </a-table>-->
         </a-tab-pane>
         <a-tab-pane tab="附件" key="3">
-          <detail-list>
+          <detail-list :col="1">
             <detail-list-item term="附件">ASDASD</detail-list-item>
           </detail-list>
         </a-tab-pane>
 
         <a-tab-pane tab="分类信息" key="4">
-          <detail-list>
+          <detail-list :col="2">
             <detail-list-item term="公司性质">{{dictText?dictText.unitNatureText:null}}</detail-list-item>
             <detail-list-item term="行业类型">{{dictText?dictText.industryCategoryText:null}}</detail-list-item>
             <detail-list-item term="公司类型">{{dictText?dictText.organizationalText:null}}</detail-list-item>
@@ -80,7 +80,7 @@
           </detail-list>
         </a-tab-pane>
         <a-tab-pane tab="工商/税务信息" key="5">
-          <detail-list>
+          <detail-list :col="2">
             <detail-list-item term="注册日期">{{info.baseCustomerBusiness.registDate}}</detail-list-item>
             <detail-list-item
               term="注册资本"

@@ -10,7 +10,7 @@
         <!-- @change="callback" -->
         <a-tab-pane tab="企业基本信息" key="1">
           <a-spin :spinning="confirmLoading">
-            <detail-list>
+            <detail-list :col="2">
               <detail-list-item
                 term="投资额"
               >{{ info.mgrProjectInvest?info.mgrProjectInvest.investAmount:null }}万元</detail-list-item>
@@ -27,25 +27,25 @@
               >{{ info.mgrProjectInvest?(info.mgrProjectInvest.isForeignCapital=="1"?"是":"否"):null }}</detail-list-item>
             </detail-list>
             <!-- 这个只有租赁才有吗 v-if projectType==2 点击跳转公共平台  -->
-            <detail-list>
+            <detail-list :col="1">
               <detail-list-item term="新建项目申请">
                 <a href="#">查看新建项目申请信息</a>
               </detail-list-item>
             </detail-list>
-            <detail-list>
+            <detail-list :col="1">
               <detail-list-item term="是否人才项目">{{ info.isTalentProject=="1"?"是":"否" }}</detail-list-item>
             </detail-list>
-            <detail-list>
+            <detail-list :col="1">
               <detail-list-item
                 term="公司概况"
               >{{ info.mgrProjectCust?info.mgrProjectCust.companyDescription:null }}</detail-list-item>
             </detail-list>
-            <detail-list>
+            <detail-list :col="1">
               <detail-list-item
                 term="团队成员情况"
               >{{ info.mgrProjectCust?info.mgrProjectCust.teamMemberDescription:null }}</detail-list-item>
             </detail-list>
-            <detail-list>
+            <detail-list :col="1">
               <detail-list-item
                 term="备注"
               >{{ info.mgrProjectInvest?info.mgrProjectInvest.remark:null }}</detail-list-item>
@@ -58,33 +58,33 @@
         </a-tab-pane>
         <!-- 2222222222222222222222222 -->
         <a-tab-pane tab="项目需求" key="3">
-          <detail-list>
+          <detail-list :col="2">
             <detail-list-item term="拿地面积" v-if="info.projectType == 1">{{info.gainArea}}㎡</detail-list-item>
             <detail-list-item term="租赁面积" v-if="info.projectType == 2">{{info.rentBuildArea}}㎡</detail-list-item>
           </detail-list>
         </a-tab-pane>
         <a-tab-pane tab="联系人" key="4">
-          <detail-list>
+          <detail-list :col="2">
             <detail-list-item term="联系人">{{info.agentPerson}}</detail-list-item>
             <detail-list-item term="电话">{{info.agentTel}}</detail-list-item>
           </detail-list>
         </a-tab-pane>
         <a-tab-pane tab="附件" key="5">
-          <detail-list>
+          <detail-list :col="1">
             <detail-list-item term="附件"></detail-list-item>
           </detail-list>
         </a-tab-pane>
         <a-tab-pane tab="公司注册信息" key="6">
-          <detail-list>
+          <detail-list :col="2">
             <detail-list-item term="拟注册公司名称">{{infoB?infoB.custName:null}}</detail-list-item>
             <detail-list-item term="拟注册资本">{{infoB?infoB.registerAssets:null}}</detail-list-item>
             <detail-list-item term="法人代表">{{infoB?infoB.legalPerson:null}}</detail-list-item>
             <detail-list-item term="联系方式">{{infoB?infoB.telephone:null}}</detail-list-item>
           </detail-list>
-          <detail-list>
+          <detail-list :col="1">
             <detail-list-item term="拟注册地址">{{infoB?infoB.registerAddress:null}}</detail-list-item>
           </detail-list>
-          <detail-list>
+          <detail-list :col="1">
             <detail-list-item term="经营范围">{{infoB?infoB.businessScope:null}}</detail-list-item>
           </detail-list>
         </a-tab-pane>

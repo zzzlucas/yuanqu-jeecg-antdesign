@@ -10,7 +10,7 @@
         <!-- @change="callback" -->
         <a-tab-pane tab="企业基本信息" key="1">
           <a-spin :spinning="confirmLoading">
-            <detail-list>
+            <detail-list :col="2">
               <detail-list-item
                 term="投资额"
               >{{ info.mgrProjectInvestLease?info.mgrProjectInvestLease.investAmount:null }}万元</detail-list-item>
@@ -27,25 +27,25 @@
               >{{ info.mgrProjectInvestLease?(info.mgrProjectInvestLease.isForeignCapital=="1"?"是":"否"):null }}</detail-list-item>
             </detail-list>
             <!-- 这个只有租赁才有吗 v-if projectType==2 点击跳转公共平台  -->
-            <detail-list>
+            <detail-list :col="1">
               <detail-list-item term="新建项目申请">
                 <a href="#">查看新建项目申请信息</a>
               </detail-list-item>
             </detail-list>
-            <detail-list>
+            <detail-list :col="1">
               <detail-list-item term="是否人才项目">{{ info.isTalentProject=="1"?"是":"否" }}</detail-list-item>
             </detail-list>
-            <detail-list>
+            <detail-list :col="1">
               <detail-list-item
                 term="公司概况"
               >{{ info.mgrProjectCust?info.mgrProjectCust.companyDescription:null }}</detail-list-item>
             </detail-list>
-            <detail-list>
+            <detail-list :col="1">
               <detail-list-item
                 term="团队成员情况"
               >{{ info.mgrProjectCust?info.mgrProjectCust.teamMemberDescription:null }}</detail-list-item>
             </detail-list>
-            <detail-list>
+            <detail-list :col="1">
               <detail-list-item
                 term="备注"
               >{{ info.mgrProjectInvestLease ?info.mgrProjectInvestLease .remark:null }}</detail-list-item>
@@ -58,33 +58,33 @@
         </a-tab-pane>
         <!-- 2222222222222222222222222 -->
         <a-tab-pane tab="项目需求" key="3">
-          <detail-list>
+          <detail-list :col="2">
             <detail-list-item term="拿地面积" v-if="info.projectType == 1">{{info.gainArea}}㎡</detail-list-item>
             <detail-list-item term="租赁面积" v-if="info.projectType == 2">{{info.rentBuildArea}}㎡</detail-list-item>
           </detail-list>
         </a-tab-pane>
         <a-tab-pane tab="联系人" key="4">
-          <detail-list>
+          <detail-list :col="2">
             <detail-list-item term="联系人">{{info.agentPerson}}</detail-list-item>
             <detail-list-item term="电话">{{info.agentTel}}</detail-list-item>
           </detail-list>
         </a-tab-pane>
         <a-tab-pane tab="附件" key="5">
-          <detail-list>
+          <detail-list :col="2">
             <detail-list-item term="附件"></detail-list-item>
           </detail-list>
         </a-tab-pane>
         <a-tab-pane tab="公司注册信息" key="6">
-          <detail-list>
+          <detail-list :col="2">
             <detail-list-item term="拟注册公司名称">{{infoB?infoB.custName:null}}</detail-list-item>
             <detail-list-item term="拟注册资本">{{infoB?infoB.registerAssets:null}}</detail-list-item>
             <detail-list-item term="法人代表">{{infoB?infoB.legalPerson:null}}</detail-list-item>
             <detail-list-item term="联系方式">{{infoB?infoB.telephone:null}}</detail-list-item>
           </detail-list>
-          <detail-list>
+          <detail-list :col="1">
             <detail-list-item term="拟注册地址">{{infoB?infoB.registerAddress:null}}</detail-list-item>
           </detail-list>
-          <detail-list>
+          <detail-list :col="1">
             <detail-list-item term="经营范围">{{infoB?infoB.businessScope:null}}</detail-list-item>
           </detail-list>
         </a-tab-pane>
@@ -143,7 +143,7 @@
           </a-table>
         </a-tab-pane>
         <a-tab-pane tab="生产工艺情况" key="10">
-          <detail-list>
+          <detail-list :col="2">
             <detail-list-item term="单位产品原材料消耗">{{infoC?infoC.unitProductMaterialCost:null}}吨/吨产品</detail-list-item>
             <detail-list-item term="生产工艺流程">{{infoC?infoC.produceFlow:null}}</detail-list-item>
             <detail-list-item term="安全生产">{{infoC?infoC.produceSafe:null}}</detail-list-item>
@@ -157,27 +157,29 @@
           </detail-list>
         </a-tab-pane>
         <a-tab-pane tab="环保、安全、卫生" key="11">
-          <detail-list>
+          <detail-list :col="2">
             <detail-list-item term="污染所属类型">{{dictText.pollutionTypeText}}</detail-list-item>
             <detail-list-item term="废物排放种类">{{dictText.wasteDischargeTypeText}}</detail-list-item>
             <detail-list-item term="污水管网是否接通">{{infoC?(infoC.isSewerLine==1?'是':'否'):null}}</detail-list-item>
             <detail-list-item term="使用锅炉情况">{{dictText.boilerUseText}}</detail-list-item>
           </detail-list>
-          <detail-list>
+          <detail-list :col="1">
             <detail-list-item term="项目与敏感点方位距离">{{infoC?infoC.projectToPointDistance:null}}米</detail-list-item>
           </detail-list>
-          <detail-list>
-            <detail-list-item term="在一年内，环保、安全生产（消防）方面是否发生过重大事件">{{infoC?(infoC.isHappenAccent==1?'是':'否'):null}}</detail-list-item>
+          <detail-list :col="1">
+            <detail-list-item
+              term="在一年内，环保、安全生产（消防）方面是否发生过重大事件"
+            >{{infoC?(infoC.isHappenAccent==1?'是':'否'):null}}</detail-list-item>
           </detail-list>
         </a-tab-pane>
         <a-tab-pane tab="能源与资源消耗情况(年消耗量）" key="12">
-          <detail-list>
+          <detail-list :col="2">
             <detail-list-item term="水">{{infoC?infoC.waterConsume:null}}吨</detail-list-item>
             <detail-list-item term="原煤">{{infoC?infoC.coalConsume:null}}吨</detail-list-item>
             <detail-list-item term="电">{{infoC?infoC.powerConsume:null}}万千瓦时</detail-list-item>
             <detail-list-item term="蒸汽">{{infoC?infoC.steamConsume:null}}吨</detail-list-item>
           </detail-list>
-          <detail-list>
+          <detail-list :col="1">
             <!-- <detail-list-item term="其他">{{}}</detail-list-item> -->
           </detail-list>
         </a-tab-pane>
