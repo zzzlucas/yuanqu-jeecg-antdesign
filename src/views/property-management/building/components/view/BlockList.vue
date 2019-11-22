@@ -47,12 +47,10 @@
       }
     },
     methods: {
-      getImage(list) {
+      getImage(json) {
+        const list = JSON.parse(json)
         let url = _.get(list, '[0].url', '')
-        if (url) {
-          url = getOneImage(url)
-        }
-        return url
+        return getOneImage(url)
       },
       deleteBtn() {
         this.$emit('delete', ...arguments)

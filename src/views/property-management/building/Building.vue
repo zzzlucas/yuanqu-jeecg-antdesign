@@ -129,7 +129,7 @@
           const config = this.url.list[type]
           getAction(config.url, { [config.id]: id }).then(res => {
             if (res.code === 200 && res.success) {
-              resolve(listJsonFields(res.result, ['addDocFiles']))
+              resolve(res.result)
             } else {
               this.$message.error(res.message)
             }
