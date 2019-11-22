@@ -27,9 +27,10 @@ const park = {
     },
   },
   actions: {
-    setPark: ({ commit }, info) => {
-      commit('SET_PARK_ID', info.parkId)
-      commit('SET_PARK_NAME', info.parkName)
+    setPark: ({ commit }, { parkId, parkName, }) => {
+      console.log(`Switch to park: id: ${parkId} name: ${parkName}`)
+      commit('SET_PARK_ID', parkId)
+      commit('SET_PARK_NAME', parkName)
     },
     setParkIfEmpty: ({ dispatch, state }) => {
       const map = {}
@@ -39,7 +40,7 @@ const park = {
       const storageParkId = Vue.ls.get(INDUSTRIAL_PARK_ID)
       let row = null
       // Try restore from storage
-      if (!storageParkId) {
+      if (storageParkId) {
         row = state.list[map[storageParkId]]
       }
       // If does not exist then just select the first one
@@ -57,11 +58,11 @@ const park = {
         const records = resp.result.records
         commit('SET_PARK_LIST', records)
       } catch (e) {
-        this.$message.error('获取园区列表失败！');
+        this.$message.error('获取园区列表失败！')
         throw e
       }
     },
-    setupPark: async ({ commit, dispatch }) => {
+    setupPark: async ({ dispatch }) => {
       await dispatch('fetchParkList')
       dispatch('setParkIfEmpty')
     },

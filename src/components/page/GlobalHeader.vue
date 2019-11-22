@@ -17,10 +17,7 @@
         :type="collapsed ? 'menu-unfold' : 'menu-fold'"
         @click.native="toggle" />
       <!-- 全局园区下拉菜单 -->
-      <a-select :defaultValue="industrialPark.id" style="width: 140px" @change="handleParkChange">
-        <a-select-option :value="item.parkId" v-for="item in industrialPark.list" :key="item.parkId">{{ item.parkName }}</a-select-option>
-      </a-select>
-
+      <park-menu />
       <user-menu :theme="theme"/>
     </div>
     <!-- 顶部导航栏模式 -->
@@ -48,7 +45,7 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
+  import ParkMenu from '@comp/menu/ParkMenu'
   import UserMenu from '../tools/UserMenu'
   import SMenu from '../menu/'
   import Logo from '../tools/Logo'
@@ -58,6 +55,7 @@
   export default {
     name: 'GlobalHeader',
     components: {
+      ParkMenu,
       UserMenu,
       SMenu,
       Logo
@@ -92,7 +90,6 @@
     data() {
       return {
         headerBarFixed: false,
-        //update-begin--author:sunjianlei---date:20190508------for: 顶部导航栏过长时显示更多按钮-----
         topMenuStyle: {
           headerIndexLeft: {},
           topNavHeader: {},
@@ -100,11 +97,6 @@
           topSmenuStyle: {}
         }
       }
-    },
-    computed: {
-      ...mapGetters([
-        'industrialPark'
-      ]),
     },
     watch: {
       /** 监听设备变化 */
@@ -120,17 +112,11 @@
         }
       }
     },
-    created() {
-      this.$store.dispatch('setupPark')
-    },
-    //update-end--author:sunjianlei---date:20190508------for: 顶部导航栏过长时显示更多按钮-----
     mounted() {
       window.addEventListener('scroll', this.handleScroll)
-      //update-begin--author:sunjianlei---date:20190508------for: 顶部导航栏过长时显示更多按钮-----
       if (this.mode === 'topmenu') {
         this.buildTopMenuStyle()
       }
-      //update-end--author:sunjianlei---date:20190508------for: 顶部导航栏过长时显示更多按钮-----
     },
     methods: {
       handleScroll() {
@@ -148,7 +134,6 @@
       toggle() {
         this.$emit('toggle')
       },
-      //update-begin--author:sunjianlei---date:20190508------for: 顶部导航栏过长时显示更多按钮-----
       buildTopMenuStyle() {
         if (this.mode === 'topmenu') {
           if (this.device === 'mobile') {
@@ -165,15 +150,6 @@
             this.topMenuStyle.headerIndexLeft = { 'width': `calc(100% - ${rightWidth})` }
           }
         }
-      },
-      //update-begin--author:sunjianlei---date:20190508------for: 顶部导航栏过长时显示更多按钮-----
-      handleParkChange(parkId) {
-        const map = {}
-        this.industrialPark.list.forEach((item, index) => {
-          map[item.parkId] = index
-        })
-        const { parkName } = this.industrialPark.list[map[parkId]]
-        this.$store.dispatch('setPark', { parkId, parkName })
       },
     }
   }
