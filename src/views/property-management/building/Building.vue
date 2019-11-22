@@ -30,7 +30,7 @@
           <a-button class="margin-left" v-if="['block'].indexOf(type) !== -1">新建楼层</a-button>
           <a-button class="margin-left" v-if="['block'].indexOf(type) !== -1">新建房间</a-button>
           <a-button class="margin-left" v-if="type !== 'block'" @click="cardEdit">编辑</a-button>
-          <a-button class="margin-left" v-if="type !== 'block'">删除</a-button>
+          <a-button class="margin-left" v-if="type !== 'block'" @click="cardDel">删除</a-button>
         </template>
         <building-view :model="model" @delete="onDelete" @edit="onEdit" @change="onChange"></building-view>
       </a-card>
@@ -286,6 +286,15 @@
         const types = { tower: 'block' }
         const data = _.last(this.history)
         this.onEdit(types[data.type], data.id, this.model.info)
+      },
+      cardDel() {
+        const types = { tower: 'block' }
+        const names = { block: 'projectName', tower: 'buildingName' }
+        const data = _.last(this.history)
+        const type = types[data.type]
+        this.onDelete(type, data.id, () => {
+          this.onBack()
+        }, this.model.info[names[type]])
       }
     }
   }
