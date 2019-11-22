@@ -35,7 +35,7 @@
     components: { BuildingBlockForm, BuildingView },
     data() {
       return {
-        type: 'block',
+        type: '',
         history: [],
         the: {
           type: '',
@@ -57,6 +57,12 @@
               id: 'projectId'
             }
           },
+          info: {
+            tower: {
+              url: '/park.architecture/baseArchitectureProject/queryById',
+              id: 'id'
+            }
+          },
           delete: {
             block: {
               url: '/park.architecture/baseArchitectureProject/delete',
@@ -73,27 +79,46 @@
       }
     },
     created() {
-      this.loadData({[_.get(this.url, 'list.block.id')]: '1193719771573518336'}).then(list => {
-        this.model = {
-          status: 'block',
-          list
-        }
+      this.type = 'block'
 
-        this.tree = _.map(list, obj => {
-          return {
-            title: obj.projectAbbr,
-            key: obj.buildingProjectId,
+      this.$nextTick(() => {
+        this.loadData('block', '1193719771573518336').then(list => {
+          this.model = {
+            status: 'block',
+            list
           }
+
+          this.tree = _.map(list, obj => {
+            return {
+              title: obj.projectAbbr,
+              key: obj.buildingProjectId
+            }
+          })
+        }).catch(err => {
+          console.log('载入区块数据：' + err)
         })
-      }).catch(err => {
-        console.log('载入区块数据：' + err)
       })
     },
     methods: {
-      loadData(query) {
+      loadData(type, id) {
         return new Promise((resolve, reject) => {
-          getAction(this.url.list[this.type].url, query).then(res => {
-            resolve(listJsonFields(res.result, ['addDocFiles']))
+          const config = this.url.list[type]
+          getAction(config.url, { [config.id]: id }).then(res => {
+            if (res.code === 200 && res.success) {
+              resolve(listJsonFields(res.result, ['addDocFiles']))
+            } else {
+              this.$message.error(res.message)
+            }
+          }).catch(err => {
+            reject(err)
+          })
+        })
+      },
+      getInfo(type, id) {
+        return new Promise((resolve, reject) => {
+          const config = this.url.info[this.type]
+          getAction(config.url, { [config.id]: id }).then(res => {
+            resolve(res)
           }).catch(err => {
             reject(err)
           })
@@ -161,10 +186,11 @@
             break
         }
       },
-      onOk(type){
+      onOk(type) {
         switch (type) {
           case 'block':
-            this.loadData({[_.get(this.url, 'list.block.id')]: '1193719771573518336'}).then(list => {
+            this.type = 'block'
+            this.loadData('block', '1193719771573518336').then(list => {
               this.model = {
                 status: 'block',
                 list
@@ -173,7 +199,7 @@
               this.tree = _.map(list, obj => {
                 return {
                   title: obj.projectAbbr,
-                  key: obj.buildingProjectId,
+                  key: obj.buildingProjectId
                 }
               })
             }).catch(err => {
@@ -182,13 +208,25 @@
             break
         }
       },
-      onChange(type, id, name){
+      onChange(type, id) {
         this.history.push({
           type,
-          id,
-          name
+          id
         })
         this.type = type
+
+        this.$nextTick(() => {
+          const p1 = this.getInfo(type, id)
+          const p2 = this.loadData(type, id)
+
+          Promise.all([p1, p2]).then(([info, list]) => {
+            this.model = {
+              status: type,
+              info,
+              list
+            }
+          })
+        })
       }
     }
   }

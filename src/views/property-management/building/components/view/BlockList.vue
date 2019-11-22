@@ -61,7 +61,7 @@
         this.$emit('edit', ...arguments)
       },
       onChange(id) {
-        this.$emit('change', 'tower', 'projectId', id)
+        this.$emit('change', 'tower', id)
       }
     }
   }
