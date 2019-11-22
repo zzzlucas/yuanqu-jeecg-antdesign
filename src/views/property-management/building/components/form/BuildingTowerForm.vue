@@ -13,9 +13,10 @@
         :wrapperCol="wrapperCol"
         label="归属">
         <a-select placeholder="请选择归属" v-decorator="['buildingProjectId', {rules: rules.buildingProjectId}]">
-          <a-select-option value="1193719771573518336">园区1</a-select-option>
-          <a-select-option value="1193773294512242688">园区2</a-select-option>
-          <a-select-option value="1193775260059566080">园区3</a-select-option>
+          <a-select-option
+            v-for="(item, key) in blockList"
+            :value="item.value"
+            :key="key">{{ item.label }}</a-select-option>
         </a-select>
       </a-form-item>
       <a-form-item
@@ -96,7 +97,7 @@
 </template>
 
 <script>
-  import { httpAction } from '@/api/manage'
+  import { getAction, httpAction } from '@/api/manage'
   import pick from 'lodash.pick'
   import _ from 'lodash'
   import { getFileListData, getOneImage, promiseForm, uploadFile } from '@utils/util'
@@ -122,18 +123,37 @@
         form: this.$form.createForm(this, { name: 'buildingTower' }),
         url: {
           add: '/park.architecture/baseArchitectureBuilding/add',
-          edit: '/park.architecture/baseArchitectureBuilding/edit'
+          edit: '/park.architecture/baseArchitectureBuilding/edit',
+          block: '/park.architecture/baseArchitectureProject/queryByParkId'
         },
-        fileList: []
+        fileList: [],
+        blockList: []
       }
     },
     methods: {
-      add() {
+      async init() {
+        const res = await getAction(this.url.block, { parkId: '1193719771573518336' })
+
+        if (res.success && res.code === 200) {
+          this.blockList = _.map(res.result, obj => {
+            return {
+              label: obj.projectAbbr,
+              value: obj.buildingProjectId
+            }
+          })
+        } else {
+          this.$message.error(res.message)
+          this.close()
+        }
+      },
+      async add() {
+        await this.init()
         this.title = '新建楼宇'
         this.form.resetFields()
         this.visible = true
       },
-      edit(record) {
+      async edit(record) {
+        await this.init()
         this.title = '编辑楼宇'
         this.form.resetFields()
         this.model = Object.assign({}, record)

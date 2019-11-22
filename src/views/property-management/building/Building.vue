@@ -23,9 +23,10 @@
         <template slot="extra">
           <a-button type="primary" @click="addBlock" v-if="type === 'block'">新建区块</a-button>
           <a-button
+            v-if="['block', 'tower'].indexOf(type) !== -1"
             :type="type === 'tower' ? 'primary' : 'default'"
             :class="type === 'block' ? 'margin-left' : ''"
-            v-if="['block', 'tower'].indexOf(type) !== -1">新建楼宇
+            @click="addTower">新建楼宇
           </a-button>
           <a-button class="margin-left" v-if="['block'].indexOf(type) !== -1">新建楼层</a-button>
           <a-button class="margin-left" v-if="['block'].indexOf(type) !== -1">新建房间</a-button>
@@ -201,8 +202,13 @@
           }
         })
       },
+
+      // 新建表单
       addBlock() {
         this.$refs.block.add()
+      },
+      addTower() {
+        this.$refs.tower.add()
       },
 
       // 子组件事件冒泡
