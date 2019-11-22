@@ -21,10 +21,16 @@
           </a-button>
         </template>
         <template slot="extra">
-          <a-button type="primary" @click="addBlock">新建区块</a-button>
-          <a-button class="margin-left">新建楼宇</a-button>
-          <a-button class="margin-left">新建楼层</a-button>
-          <a-button class="margin-left">新建房间</a-button>
+          <a-button type="primary" @click="addBlock" v-if="type === 'block'">新建区块</a-button>
+          <a-button
+            :type="type === 'tower' ? 'primary' : 'default'"
+            :class="type === 'block' ? 'margin-left' : ''"
+            v-if="['block', 'tower'].indexOf(type) !== -1">新建楼宇
+          </a-button>
+          <a-button class="margin-left" v-if="['block'].indexOf(type) !== -1">新建楼层</a-button>
+          <a-button class="margin-left" v-if="['block'].indexOf(type) !== -1">新建房间</a-button>
+          <a-button class="margin-left" v-if="type !== 'block'" @click="cardEdit">编辑</a-button>
+          <a-button class="margin-left" v-if="type !== 'block'">删除</a-button>
         </template>
         <building-view :model="model" @delete="onDelete" @edit="onEdit" @change="onChange"></building-view>
       </a-card>
@@ -190,7 +196,11 @@
             deleteAction(config.url, { [config.id]: id }).then(res => {
               if (res.success && res.code === 200) {
                 this.$message.success(res.message)
-                this.$delete(this.model.list, key)
+                if (typeof key === 'function') {
+                  key()
+                } else {
+                  this.$delete(this.model.list, key)
+                }
               } else {
                 this.$message.error(res.message)
               }
@@ -271,6 +281,11 @@
         } else {
           this.onChange('block', '1193719771573518336')
         }
+      },
+      cardEdit() {
+        const types = { tower: 'block' }
+        const data = _.last(this.history)
+        this.onEdit(types[data.type], data.id, this.model.info)
       }
     }
   }

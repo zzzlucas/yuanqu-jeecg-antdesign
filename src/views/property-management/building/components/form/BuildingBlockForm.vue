@@ -143,7 +143,7 @@
         this.$nextTick(() => {
           this.form.setFieldsValue(pick(this.model, PickBuildingBlockForm))
 
-          let images = _.cloneDeep(record.addDocFiles)
+          let images = JSON.parse(record.addDocFiles)
           images = _.map(images, obj => {
             obj.url = getOneImage(obj.url)
             obj.thumbUrl = obj.url
