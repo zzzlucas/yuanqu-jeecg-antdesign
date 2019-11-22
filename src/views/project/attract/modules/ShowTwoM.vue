@@ -16,12 +16,12 @@
         <a-row>
           <a-col :span="4">
             <a-form-item label="跟踪日期" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-date-picker v-decorator="['beginDate']" />
+              <a-date-picker placeholder="开始" v-decorator="['beginDate']" :format="dateFormat" />
             </a-form-item>
           </a-col>
           <a-col :span="4">
             <a-form-item label :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-date-picker v-decorator="['endDate']" />
+              <a-date-picker placeholder="结束" v-decorator="['endDate']" :format="dateFormat" />
             </a-form-item>
           </a-col>
 
@@ -94,7 +94,7 @@
 //父组件已有，子组件不需要
 import { filterObj } from '@/utils/util'
 import { getAction, putAction } from '@/api/manage'
-
+import moment from 'moment'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import ShowCard from '@/views/project/attract/modules/ShowTwoMCard'
 import Dom7 from 'dom7'
@@ -110,6 +110,7 @@ export default {
   data() {
     return {
       //
+      dateFormat: 'YYYY-MM-DD',
       confirmLoading: false,
       form: this.$form.createForm(this),
       title: '跟踪记录',
@@ -195,6 +196,7 @@ export default {
     // this.getProjectTrace()
   },
   methods: {
+    moment,
     detail(record) {
       this.visible = true
       this.record = record
@@ -207,7 +209,13 @@ export default {
     },
     searchReset() {
       this.queryParam = {}
-      // this.form = {}
+      this.form.validateFields((err, form) => {
+        form.trackMethod = ''
+        form.keyword = ''
+        form.beginDate = ''
+        form.endDate = ''
+      })
+      // this.form.trackMethod = ''
       this.loadData(1)
     },
     //获取查询条件
@@ -217,10 +225,18 @@ export default {
         sqp['superQueryParams'] = encodeURI(this.superQueryParams)
       }
       this.form.validateFieldsAndScroll((err, form) => {
-        console.log(form)
+        // console.log('form')
+        // console.log(form)
+        if (form.beginDate) {
+          form.beginDate = form.beginDate ? form.beginDate.format('YYYY-MM-DD') : null
+        }
+        if (form.endDate) {
+          form.endDate = form.endDate ? form.endDate.format('YYYY-MM-DD') : null
+        }
+        //查询数据从表单获取到，其实不该走表单，直接走一个对象即可
         this.queryform = form
       })
-      console.log(this.queryform)
+      // console.log(this.queryform)
       var param = Object.assign(this.queryform)
       // param.field = this.getQueryField()
       param.projectId = this.record.projectId
@@ -260,8 +276,8 @@ export default {
       this.loading = true
       getAction('/park.project/mgrProjectTrace/list', params).then(res => {
         if (res.success) {
-          console.log('test start getAction')
-          console.log(res.result)
+          // console.log('test start getAction')
+          // console.log(res.result)
           this.dataSourceSTM = res.result.records
           this.ipagination.total = res.result.total
         }
