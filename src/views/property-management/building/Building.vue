@@ -165,6 +165,8 @@
           })
         })
       },
+
+      // Tree 相关
       /**
        * 点击tree
        * @param keys
@@ -179,28 +181,43 @@
        * @param node
        * @returns {Promise<boolean>}
        */
-      async loadTree(node) {
-        const type = node.dataRef.type
-        const config = this.url.tree[type]
-        const query = {}
+      loadTree(node) {
+        return new Promise((resolve, reject) => {
+          const type = node.dataRef.type
+          const config = this.url.tree[type]
+          const query = {}
 
-        if (node.dataRef.children) {
-          return true
-        }
-
-        query[config.id] = node.dataRef.key
-        getAction(config.url, query).then(res => {
-          if (res.success && res.code === 200) {
-            if (res.result) {
-              node.dataRef.children = res.result
-            } else {
-              node.dataRef.isLeaf = true
-            }
-          } else {
-            this.$message.error(res.message)
-            throw new Error(res.message)
+          if (node.dataRef.children) {
+            resolve()
+            return true
           }
+
+          query[config.id] = node.dataRef.key
+          getAction(config.url, query).then(res => {
+            if (res.success && res.code === 200) {
+              if (res.result) {
+                node.dataRef.children = this.getTreeData(type, res.result)
+                this.tree = [...this.tree]
+              } else {
+                node.dataRef.isLeaf = true
+              }
+              resolve()
+            } else {
+              this.$message.error(res.message)
+              reject(res.message)
+            }
+          })
         })
+      },
+      getTreeData(type, list) {
+        switch (type) {
+          case 'tower':
+            return _.map(list, obj => {
+              return { title: obj.buildingName, key: obj.buildingId, type: 'storey' }
+            })
+          default:
+            return []
+        }
       },
 
       // 新建表单
