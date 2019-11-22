@@ -8,6 +8,7 @@ import {
 
 const park = {
   state: {
+    ready: false,
     id: '',
     name: '',
     list: [],
@@ -16,6 +17,9 @@ const park = {
     SET_PARK_ID: (state, id) => {
       state.id = id
       Vue.ls.set(INDUSTRIAL_PARK_ID, id)
+    },
+    SET_PARK_READY: (state) => {
+      state.ready = true
     },
     SET_PARK_NAME: (state, name) => {
       state.name = name
@@ -44,10 +48,16 @@ const park = {
         row = state.list[map[storageParkId]]
       }
       // If does not exist then just select the first one
-      if (!row) {
+      if (!row && state.list && state.list[0]) {
         row = state.list[0]
       }
-      dispatch('setPark', { parkId: row.parkId, parkName: row.parkName })
+      // The row and row.id must be exist, then dispatch setPark
+      if (row && row.parkId) {
+        dispatch('setPark', { parkId: row.parkId, parkName: row.parkName })
+      }
+    },
+    setParkReady: ({ commit }) => {
+      commit('SET_PARK_READY')
     },
     fetchParkList: async ({ commit }) => {
       try {
@@ -65,6 +75,7 @@ const park = {
     setupPark: async ({ dispatch }) => {
       await dispatch('fetchParkList')
       dispatch('setParkIfEmpty')
+      dispatch('setParkReady')
     },
   },
 }

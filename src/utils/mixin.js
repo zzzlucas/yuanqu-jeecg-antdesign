@@ -1,5 +1,6 @@
 // import Vue from 'vue'
 import { mapState } from "vuex";
+import store from '@/store'
 
 // const mixinsComputed = Vue.config.optionMergeStrategies.computed
 // const mixinsMethods = Vue.config.optionMergeStrategies.methods
@@ -37,4 +38,20 @@ const mixinDevice = {
   }
 }
 
-export { mixin, mixinDevice }
+const mixinList = {
+  data() {
+    const parkId = store.state.industrialPark.id
+    console.log(parkId)
+    return {
+      queryParam: {
+        parkId
+      },
+    }
+  }
+}
+
+export {
+  mixin,
+  mixinDevice,
+  mixinList,
+}

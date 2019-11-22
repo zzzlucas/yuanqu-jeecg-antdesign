@@ -21,6 +21,7 @@
         </a-col>
         <a-col :xl="24">
           <a-form-item label="上级分类" :label-col="gridOptions.formItem.label" :wrapper-col="gridOptions.formItem.value">
+<!--            <a-input disabled v-decorator="['parentId', { initialValue: '1197795677220896768' }]"></a-input>-->
             <a-tree-select
               v-decorator="['parentCategory']"
               :treeData="categoryTreeNodes" />
@@ -44,9 +45,10 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
-  import { promisify, filterObj } from '@utils/util'
-  import { listCategory, addCategory } from '../api'
+  import { filterObj, promiseForm } from '@utils/util'
+  import { treeListCategory, addCategory } from '../api'
 
   export default {
     mixins: [
@@ -71,6 +73,9 @@
       }
     },
     computed: {
+      ...mapGetters([
+        'industrialPark'
+      ]),
       categoryTreeNodes() {
         let nodes = []
         if (!this.category || !this.category.length) {
@@ -87,19 +92,24 @@
         }
       },
       async fetchCategory() {
-        const resp = await listCategory()
+        const resp = await treeListCategory()
         this.category = resp.result
       },
       async submit(ev) {
         ev.preventDefault();
+        const data = await promiseForm(this.form)
         try {
-          const values = await promisify(this.form.validateFields)
-          filterObj(values)
-          debugger
-          console.log(this.$store)
-          // await addCategory({ })
+          filterObj(data)
+          data.parkId = this.industrialPark.id
+          const resp = await addCategory(data)
+          if (!resp.success) {
+            throw new Error(resp.message)
+          }
+          this.$message.success('添加成功')
+          this.closeDrawer()
+          this.$emit('submit')
         } catch (e) {
-          // Ignore
+          this.$message.error(e.message)
         }
       },
     },

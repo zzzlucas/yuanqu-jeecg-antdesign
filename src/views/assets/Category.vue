@@ -23,7 +23,7 @@
           size="middle"
           bordered
           :columns="columns"
-          :dataSource="data"
+          :dataSource="dataSource"
           :pagination="ipagination"
           :loading="loading">
             <span slot="action" slot-scope="text, record">
@@ -37,18 +37,27 @@
       </a-layout-content>
     </a-layout>
     <!-- Add/Edit form -->
-    <assets-category-add-form :edit="edit" :edit-data="editForm" v-model="showForm" />
+    <assets-category-add-form
+      :edit="edit"
+      :edit-data="editForm"
+      v-model="showForm"
+      @submit="handleEditSubmit" />
   </a-card>
 </template>
 
 <script>
-  import './style/list.less'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+  import { mixinList } from '@/utils/mixin'
   import Mixin from './mixins'
   import AssetsCategoryEditForm from './components/AssetsCategoryEditForm'
+  import './style/list.less'
 
   export default {
-    mixins: [JeecgListMixin, Mixin],
+    mixins: [
+      JeecgListMixin,
+      mixinList,
+      Mixin
+    ],
     components: {
       AssetsCategoryAddForm: AssetsCategoryEditForm,
     },
@@ -88,17 +97,6 @@
             scopedSlots: { customRender: 'action' },
           }
         ],
-        data: [
-          { category_name: '笔记本', category_code: 'BJB', category_parent_name: 'IT设备类',  },
-          { category_name: '运输车辆类', category_code: 'YUNS', category_parent_name: '' },
-          { category_name: 'IT设备类', category_code: 'ITSBL', category_parent_name: '' },
-          { category_name: '办公设备类', category_code: 'BANG', category_parent_name: '' },
-          { category_name: '家具类', category_code: 'JIAJU', category_parent_name: '' },
-          { category_name: '运输车辆类', category_code: 'YUNS', category_parent_name: '' },
-          { category_name: 'IT设备类', category_code: 'ITSBL', category_parent_name: '' },
-          { category_name: '办公设备类', category_code: 'BANG', category_parent_name: '' },
-          { category_name: '家具类', category_code: 'JIAJU', category_parent_name: '' },
-        ],
         // Add/Edit form
         showForm: false,
         edit: false,
@@ -109,7 +107,14 @@
       openAddCategory() {
         this.showForm = true
       },
-    }
+      handleEditSubmit() {
+        this.loadData(1)
+      },
+    },
+    created() {
+      this.queryParam.parkId = this.industrialParkId
+      this.loadData()
+    },
   }
 </script>
 

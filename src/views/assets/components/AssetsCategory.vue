@@ -8,7 +8,7 @@
 </template>
 
 <script>
-  import { listCategory } from '../api'
+  import { treeListCategory } from '../api'
 
   export default {
     data() {
@@ -53,6 +53,7 @@
             ],
           }
         ],
+        list: [],
       }
     },
     computed: {
@@ -70,11 +71,16 @@
         this.$emit('select', ...ev)
       },
       async fetchList() {
-        const res = await listCategory
+        const res = await treeListCategory()
         this.list = res.result
       },
       async buildNodes() {
-
+        const catMap = {}
+        this.list.forEach(item => {
+          const catId = item.categoryId
+          catMap[catId] = item
+        })
+        // todo
       },
       async getList() {
         await this.fetchList()
