@@ -15,8 +15,8 @@
 
 <script>
   import YqImage from '@comp/extend/YqImage'
-  import BlockList from './list/BlockList'
-  import TowerList from './list/TowerList'
+  import BlockList from './view/BlockList'
+  import TowerList from './view/TowerList'
 
   export default {
     name: 'BuildingView',
