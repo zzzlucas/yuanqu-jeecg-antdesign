@@ -255,9 +255,10 @@ export function cssExpand(css, id) {
 }
 
 /**
- * 表单promise
+ * 获取表单字段promise
+ * 对表单进行验证，不通过则抛出错误
  * @param form
- * @returns {Promise<unknown>}
+ * @returns {Promise}
  */
 export function promiseForm(form) {
   return new Promise((resolve, reject) => {

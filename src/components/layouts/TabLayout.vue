@@ -15,7 +15,7 @@
         <span slot="tab" :pagekey="page.fullPath">{{ page.meta.title }}</span>
       </a-tab-pane>
     </a-tabs>
-    <div style="margin: 12px 12px 0;">
+    <div style="margin: 12px 12px 0;" v-if="show">
       <transition name="page-toggle">
         <keep-alive v-if="multipage">
           <router-view/>
@@ -27,6 +27,7 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
   import GlobalLayout from '@/components/page/GlobalLayout'
   import Contextmenu from '@/components/menu/Contextmenu'
   import { mixin, mixinDevice } from '@/utils/mixin.js'
@@ -42,6 +43,7 @@
     mixins: [mixin, mixinDevice],
     data() {
       return {
+        show: true,
         pageList: [],
         linkList: [],
         activePage: '',
@@ -61,7 +63,10 @@
         } else {
           return this.$store.state.app.multipage
         }
-      }
+      },
+      ...mapGetters([
+        'industrialParkId',
+      ])
     },
     created() {
       if (this.$route.path != indexKey) {
@@ -105,7 +110,17 @@
           this.linkList = [this.$route.fullPath]
           this.pageList = [this.$route]
         }
-      }
+      },
+      // Listen park change
+      async 'industrialParkId'(newVal, oldVal) {
+        if (!oldVal) {
+          return
+        }
+        // Reload router view by simple v-if
+        this.show = false
+        await this.$nextTick()
+        this.show = true
+      },
     },
     methods: {
       changePage(key) {
@@ -209,7 +224,7 @@
         }
       }
       //update-end-author:taoyan date:20190430 for:动态路由title显示配置的菜单title而不是其对应路由的title
-    }
+    },
   }
 </script>
 

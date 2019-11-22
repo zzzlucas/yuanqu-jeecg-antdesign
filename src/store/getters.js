@@ -13,6 +13,7 @@ const getters = {
   userInfo: state => {state.user.info = Vue.ls.get(USER_INFO); return state.user.info},
   addRouters: state => state.permission.addRouters,
   industrialPark: state => state.industrialPark,
+  industrialParkId: state => state.industrialPark.id,
 }
 
 export default getters
