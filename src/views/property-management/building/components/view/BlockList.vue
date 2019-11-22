@@ -14,7 +14,7 @@
           </a-button>
         </div>
       </header>
-      <main class="block" @click="goBlock(item.buildingProjectId, item)">
+      <main class="block" @click="onChange(item.buildingProjectId, item)">
         <div class="image-box">
           <yq-image class="block-image" size="40" :src="getImage(item.addDocFiles)"></yq-image>
         </div>
@@ -60,8 +60,8 @@
       editBtn() {
         this.$emit('edit', ...arguments)
       },
-      goBlock() {
-        this.$emit('change', 'tower', ...arguments)
+      onChange() {
+        this.$emit('change', 'tower', 'projectId', ...arguments)
       }
     }
   }
