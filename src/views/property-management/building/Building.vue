@@ -2,7 +2,13 @@
   <a-row :gutter="8">
     <a-col span="4">
       <a-card>
-        <a-tree show-line :tree-data="tree" :load-data="loadTree" @select="onTreeSelect"></a-tree>
+        <a-tree
+          show-line
+          :tree-data="tree"
+          :load-data="loadTree"
+          :selectedKeys.sync="selectKeys"
+          :expandedKeys.sync="expandedKeys"
+          @select="onTreeSelect"></a-tree>
       </a-card>
     </a-col>
     <a-col span="20">
@@ -48,7 +54,6 @@
         model: {
           status: 'empty'
         },
-        tree: [],
         url: {
           list: {
             block: {
@@ -82,7 +87,10 @@
               id: 'projectId'
             }
           }
-        }
+        },
+        tree: [],
+        selectKeys: [],
+        expandedKeys: []
       }
     },
     created() {
@@ -98,7 +106,8 @@
           this.tree = _.map(list, obj => {
             return {
               title: obj.projectAbbr,
-              key: obj.buildingProjectId
+              key: obj.buildingProjectId,
+              type: 'block'
             }
           })
         }).catch(err => {
@@ -212,7 +221,8 @@
               this.tree = _.map(list, obj => {
                 return {
                   title: obj.projectAbbr,
-                  key: obj.buildingProjectId
+                  key: obj.buildingProjectId,
+                  type: 'block'
                 }
               })
             }).catch(err => {
@@ -228,6 +238,8 @@
           id
         })
         this.type = type
+        this.selectKeys = [id]
+        this.expandedKeys = [id]
 
         this.$nextTick(() => {
           const p1 = this.getInfo(type, id)
