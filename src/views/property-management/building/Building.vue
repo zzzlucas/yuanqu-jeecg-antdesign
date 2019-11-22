@@ -182,12 +182,13 @@
             break
         }
       },
-      onChange(type, id, name, obj){
+      onChange(type, id, name){
         this.history.push({
           type,
           id,
           name
         })
+        this.type = type
       }
     }
   }
