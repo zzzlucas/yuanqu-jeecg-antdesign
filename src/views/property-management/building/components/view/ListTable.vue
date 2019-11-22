@@ -1,10 +1,12 @@
 <template>
   <div class="yq-building-list-table">
     <a-table :columns="column" :data-source="list" :pagination="false" size="middle">
-      <span slot="action" slot-scope="text, record">
+      <span slot="action" slot-scope="text, record, i">
         <a @click.stop="onchange(record[idKey])">进入</a>
         <a-divider type="vertical"/>
         <a @click.stop="onEdit(record[idKey], record)">编辑</a>
+        <a-divider type="vertical"/>
+        <a @click.stop="onDelete(record[idKey], i, record[nameKey])">删除</a>
       </span>
     </a-table>
   </div>
@@ -31,6 +33,9 @@
       },
       onEdit() {
         this.$emit('edit', this.type, ...arguments)
+      },
+      onDelete() {
+        this.$emit('delete', this.type, ...arguments)
       }
     },
     computed: {
@@ -63,6 +68,14 @@
         switch (this.type) {
           case 'tower':
             return 'buildingId'
+          default:
+            return ''
+        }
+      },
+      nameKey() {
+        switch (this.type) {
+          case 'tower':
+            return 'buildingName'
           default:
             return ''
         }

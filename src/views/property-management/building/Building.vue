@@ -86,6 +86,10 @@
             block: {
               url: '/park.architecture/baseArchitectureProject/delete',
               id: 'id'
+            },
+            tower: {
+              url: '/park.architecture/baseArchitectureBuilding/delete',
+              id: 'id'
             }
           },
           tree: {
@@ -231,7 +235,8 @@
       // 子组件事件冒泡
       onDelete(type, id, key, name) {
         const types = {
-          block: '区块'
+          block: '区块',
+          tower: '楼宇'
         }
 
         this.$confirm({
@@ -243,6 +248,9 @@
             deleteAction(config.url, { [config.id]: id }).then(res => {
               if (res.success && res.code === 200) {
                 this.$message.success(res.message)
+                const path = this.getTreeNodeOfKey(this.tree, id)
+                _.unset(this.tree, path)
+                this.tree = [...this.tree]
                 if (typeof key === 'function') {
                   key()
                 } else {
@@ -303,7 +311,7 @@
               }
 
               const path = this.getTreeNodeOfKey(this.tree, id)
-              _.set(this.tree, path, this.getTreeData('tower', list))
+              _.set(this.tree, path + '.children', this.getTreeData('tower', list))
             })
             break
           }
@@ -371,7 +379,7 @@
         let path = ''
         _.map(list, (a1, i1) => {
           if (a1.key === key) {
-            path += `[${i1}].children`
+            path += `[${i1}]`
             return a1
           }
           if (a1.children) {

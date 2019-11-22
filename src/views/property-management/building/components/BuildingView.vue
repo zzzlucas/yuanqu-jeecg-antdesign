@@ -17,6 +17,7 @@
       :type="model.status"
       :list="model.list"
       @change="onChange"
+      @delete="deleteBtn"
       @edit="editBtn"></list-table>
   </div>
 </template>
