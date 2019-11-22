@@ -164,3 +164,4 @@ export const AddbaseCustomerForm = [
   'website'
 ]
 export const PickBuildingBlockForm = ['address', 'buildingArea', 'ownerName', 'parkId', 'projectAbbr', 'projectName', 'propertyCompany', 'remark', 'rentArea', 'rentTypeValue']
+export const PickBuildingTowerForm = ['buildingProjectId', 'buildingName', 'estimateArea', 'groundFloor', 'undergroundFloor', 'isVirtual', 'remark']

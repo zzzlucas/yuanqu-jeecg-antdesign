@@ -15,51 +15,43 @@
         <a-select placeholder="请选择归属" v-decorator="['buildingProjectId', {rules: rules.buildingProjectId}]">
           <a-select-option
             v-for="(item, key) in blockList"
-            :value="item.value"
-            :key="key">{{ item.label }}</a-select-option>
+            :value="JSON.stringify(item)"
+            :key="key">{{ item.label }}
+          </a-select-option>
         </a-select>
       </a-form-item>
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="区块名称">
-        <a-input placeholder="请输入区块名称" v-decorator="['projectName', {}]"/>
+        label="楼宇名称">
+        <a-input placeholder="请输入楼宇名称" v-decorator="['buildingName', {}]"/>
       </a-form-item>
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="区块简称">
-        <a-input placeholder="请输入区块简称" v-decorator="['projectAbbr', {}]"/>
+        label="建筑面积">
+        <a-input placeholder="请输入建筑面积" v-decorator="['estimateArea', {}]" addonAfter="㎡"/>
       </a-form-item>
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="房源类型">
-        <a-input placeholder="请输入房源类型" v-decorator="['rentTypeValue', {}]"/>
+        label="地上层数">
+        <a-input placeholder="请输入地上层数" v-decorator="['groundFloor', {}]"/>
       </a-form-item>
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="业主">
-        <a-input placeholder="请输入业主" v-decorator="['ownerName', {}]"/>
+        label="地下层数">
+        <a-input placeholder="请输入地下层数" v-decorator="['undergroundFloor', {}]"/>
       </a-form-item>
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="物业公司">
-        <a-input placeholder="请输入物业公司" v-decorator="['propertyCompany', {}]"/>
-      </a-form-item>
-      <a-form-item
-        :labelCol="labelCol"
-        :wrapperCol="wrapperCol"
-        label="总建筑面积">
-        <a-input placeholder="请输入总建筑面积" v-decorator="['buildingArea', {}]" addonAfter="㎡"/>
-      </a-form-item>
-      <a-form-item
-        :labelCol="labelCol"
-        :wrapperCol="wrapperCol"
-        label="总计费面积">
-        <a-input placeholder="请输入总计费面积" v-decorator="['rentArea', {}]" addonAfter="㎡"/>
+        label="是否虚拟">
+        <a-switch
+          checkedChildren="是"
+          unCheckedChildren="否"
+          v-decorator="['isVirtual', {initialValue: false, valuePropName: 'checked'}]"/>
       </a-form-item>
       <a-form-item
         :labelCol="labelCol"
@@ -102,7 +94,7 @@
   import _ from 'lodash'
   import { getFileListData, getOneImage, promiseForm, uploadFile } from '@utils/util'
   import qs from 'qs'
-  import { PickBuildingBlockForm } from '@/config/pick-fields'
+  import { PickBuildingTowerForm } from '@/config/pick-fields'
   import { tower as rules } from '../../js/rules'
 
   export default {
@@ -138,11 +130,12 @@
           this.blockList = _.map(res.result, obj => {
             return {
               label: obj.projectAbbr,
-              value: obj.buildingProjectId
+              value: obj.buildingProjectId,
+              parkId: obj.parkId
             }
           })
         } else {
-          this.$message.error(res.message)
+          await this.$message.error(res.message)
           this.close()
         }
       },
@@ -156,14 +149,20 @@
         await this.init()
         this.title = '编辑楼宇'
         this.form.resetFields()
+
+        record.buildingProjectId = JSON.stringify({
+          label: record.buildingWorkshopId,
+          value: record.buildingProjectId,
+          parkId: record.parkId
+        })
         this.model = Object.assign({}, record)
 
         this.visible = true
 
         this.$nextTick(() => {
-          this.form.setFieldsValue(pick(this.model, PickBuildingBlockForm))
+          this.form.setFieldsValue(pick(this.model, PickBuildingTowerForm))
 
-          let images = _.cloneDeep(record.addDocFiles)
+          let images = JSON.parse(record.addDocFiles)
           images = _.map(images, obj => {
             obj.url = getOneImage(obj.url)
             obj.thumbUrl = obj.url
@@ -186,13 +185,17 @@
           let httpUrl = ''
           let method = ''
 
+          const data = JSON.parse(form.buildingProjectId)
+          form.buildingProjectId = data.value
+          form.buildingWorkshopId = data.label
+          form.parkId = data.parkId
           form.addDocFiles = JSON.stringify(getFileListData(this.fileList))
 
-          if (!this.model.buildingProjectId) {
+          if (!this.model.buildingId) {
             httpUrl = this.url.add
             method = 'post'
           } else {
-            form.buildingProjectId = this.model.buildingProjectId
+            form.buildingId = this.model.buildingId
             httpUrl = this.url.edit
             method = 'put'
           }

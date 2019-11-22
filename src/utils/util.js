@@ -301,19 +301,14 @@ export function uploadFile(request) {
  * @returns {[]}
  */
 export function getFileListData(fileList) {
-  const data = []
-
-  for (const item of fileList) {
-    const { response, name, uid } = item
-    data.push({
-      url: response.old,
-      name,
-      uid,
+  return _.map(fileList, obj => {
+    return {
+      url: obj.response.old,
+      name: obj.name,
+      uid: obj.uid,
       status: 'done'
-    })
-  }
-
-  return data
+    }
+  })
 }
 
 /**
