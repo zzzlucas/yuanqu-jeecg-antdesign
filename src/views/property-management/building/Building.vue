@@ -70,6 +70,10 @@
             tower: {
               url: '/park.architecture/baseArchitectureBuilding/queryByProjectId',
               id: 'projectId'
+            },
+            floor: {
+              url: '/park.architecture/baseArchitectureFloor/queryByBuildingId',
+              id: 'buildingId'
             }
           },
           info: {
@@ -79,6 +83,10 @@
             },
             tower: {
               url: '/park.architecture/baseArchitectureProject/queryById',
+              id: 'id'
+            },
+            floor: {
+              url: '/park.architecture/baseArchitectureBuilding/queryById',
               id: 'id'
             }
           },
@@ -96,6 +104,10 @@
             tower: {
               url: '/park.architecture/baseArchitectureBuilding/queryByProjectId',
               id: 'projectId'
+            },
+            floor: {
+              url: '/park.architecture/baseArchitectureFloor/queryByBuildingId',
+              id: 'buildingId'
             }
           }
         },
@@ -325,7 +337,16 @@
         })
         this.type = type
         this.selectKeys = [id]
-        this.expandedKeys = [id]
+
+        let history = _.cloneDeep(this.history)
+        history = _.initial(history)
+
+        let keys = []
+        _.map(history, obj => {
+          keys.push(obj.id)
+        })
+
+        this.expandedKeys = [...keys, id]
 
         this.$nextTick(() => {
           const p1 = this.getInfo(type, id)

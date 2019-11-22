@@ -29,7 +29,8 @@
     },
     methods: {
       onchange(id) {
-        this.$emit('change', this.type, id)
+        const types = {tower: 'floor'}
+        this.$emit('change', types[this.type], id)
       },
       onEdit() {
         this.$emit('edit', this.type, ...arguments)
