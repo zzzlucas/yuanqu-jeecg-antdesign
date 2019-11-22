@@ -10,15 +10,16 @@
         v-if="device==='mobile'"
         class="trigger"
         :type="collapsed ? 'menu-fold' : 'menu-unfold'"
-        @click.native="toggle"></a-icon>
+        @click.native="toggle" />
       <a-icon
         v-else
         class="trigger"
         :type="collapsed ? 'menu-unfold' : 'menu-fold'"
-        @click.native="toggle"/>
-
-      <span v-if="device === 'desktop'">欢迎进入 Jeecg-Boot 企业级快速开发平台</span>
-      <span v-else>Jeecg-Boot</span>
+        @click.native="toggle" />
+      <!-- 全局园区下拉菜单 -->
+      <a-select :defaultValue="industrialPark.id" style="width: 140px" @change="handleParkChange">
+        <a-select-option :value="item.parkId" v-for="item in industrialPark.list" :key="item.parkId">{{ item.parkName }}</a-select-option>
+      </a-select>
 
       <user-menu :theme="theme"/>
     </div>
@@ -47,6 +48,7 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
   import UserMenu from '../tools/UserMenu'
   import SMenu from '../menu/'
   import Logo from '../tools/Logo'
@@ -99,6 +101,11 @@
         }
       }
     },
+    computed: {
+      ...mapGetters([
+        'industrialPark'
+      ]),
+    },
     watch: {
       /** 监听设备变化 */
       device() {
@@ -112,6 +119,9 @@
           this.buildTopMenuStyle()
         }
       }
+    },
+    created() {
+      this.$store.dispatch('setupPark')
     },
     //update-end--author:sunjianlei---date:20190508------for: 顶部导航栏过长时显示更多按钮-----
     mounted() {
@@ -155,8 +165,16 @@
             this.topMenuStyle.headerIndexLeft = { 'width': `calc(100% - ${rightWidth})` }
           }
         }
-      }
+      },
       //update-begin--author:sunjianlei---date:20190508------for: 顶部导航栏过长时显示更多按钮-----
+      handleParkChange(parkId) {
+        const map = {}
+        this.industrialPark.list.forEach((item, index) => {
+          map[item.parkId] = index
+        })
+        const { parkName } = this.industrialPark.list[map[parkId]]
+        this.$store.dispatch('setPark', { parkId, parkName })
+      },
     }
   }
 </script>

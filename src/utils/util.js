@@ -398,3 +398,23 @@ export function objectReplace(obj, fields) {
 
   return obj
 }
+
+/**
+ * Promisify
+ * Converts NodeJS async style functions to native JS promises.
+ *
+ * @param {Function} fun
+ * @param {Array} args Optional
+ * @param {*} ctx Optional
+ * @link https://github.com/pensierinmusica/js-promisify
+ * @return Promise
+ */
+export function promisify (fun, args = [], ctx = undefined) {
+  return new Promise((resolve, reject) => {
+    args.push((err, data) => {
+      err && reject(err)
+      resolve(data)
+    })
+    fun.apply(ctx, args)
+  })
+}
