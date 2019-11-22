@@ -5,18 +5,21 @@
         <a-row>
           <a-col :span="4">
             <a-form-item label="跟踪日期" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-date-picker v-decorator="['beginDate']" />
+              <a-date-picker placeholder="开始" v-model="ff.beginDate" :format="dateFormat" />
+              <!-- <a-date-picker v-decorator="['beginDate']" /> -->
             </a-form-item>
           </a-col>
           <a-col :span="4">
             <a-form-item label :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-date-picker v-decorator="['endDate']" />
+              <a-date-picker placeholder="结束" v-model="ff.endDate" :format="dateFormat" />
+              <!-- <a-date-picker v-decorator="['endDate']" /> -->
             </a-form-item>
           </a-col>
 
           <a-col :span="5">
             <a-form-item label="跟踪人" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-select v-decorator="['keyword']">
+              <a-select v-model="ff.keyword">
+              <!-- <a-select v-decorator="['keyword']"> -->
                 <a-select-option
                   v-for="(item, key) in dict.trackerDictOptions"
                   :value="item.value"
@@ -28,7 +31,8 @@
 
           <a-col :span="5">
             <a-form-item label="跟踪方式" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-select v-decorator="['trackMethod']">
+               <a-select v-model="ff.trackMethod">
+              <!-- <a-select v-decorator="['trackMethod']"> -->
                 <a-select-option
                   v-for="(item, key) in dict.trackMethodDictOptions"
                   :value="item.value"
@@ -85,7 +89,7 @@
 //父组件已有，子组件不需要
 import { filterObj } from '@/utils/util'
 import { getAction, putAction } from '@/api/manage'
-
+import moment from 'moment'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import ShowCard from '@/views/project/attract/modules/ShowTwoMCard'
 import ShowZero from './ShowZeroD'
@@ -102,6 +106,7 @@ export default {
   data() {
     return {
       //
+        ff: {},
       confirmLoading: false,
       form: this.$form.createForm(this),
       title: '跟踪记录',
@@ -198,12 +203,13 @@ export default {
     //   console.log(this.record.projectId)
     //   this.loadData()
     // },
+    moment,
     searchQuery() {
       this.getProjectTrace()
     },
     searchReset() {
       this.queryParam = {}
-      // this.form = {}
+      this.ff = {}
       this.loadData(1)
     },
     //获取查询条件
@@ -212,11 +218,15 @@ export default {
       if (this.superQueryParams) {
         sqp['superQueryParams'] = encodeURI(this.superQueryParams)
       }
-      this.form.validateFieldsAndScroll((err, form) => {
-        console.log(form)
-        this.queryform = form
-      })
-      console.log(this.queryform)
+      if (this.ff.beginDate) {
+        this.ff.beginDate = this.ff.beginDate ? this.ff.beginDate.format('YYYY-MM-DD') : null
+      }
+      if (this.ff.endDate) {
+        this.ff.endDate = this.ff.endDate ? this.ff.endDate.format('YYYY-MM-DD') : null
+      }
+      this.queryform = this.ff
+
+      // console.log(this.queryform)
       var param = Object.assign(this.queryform)
       // param.field = this.getQueryField()
       param.projectId = this.record.projectId

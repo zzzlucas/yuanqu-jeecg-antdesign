@@ -6,6 +6,7 @@
     :visible="visible"
     @close="close"
     destroyOnClose
+    :zIndex="999999"
   >
     <div>
       <a-card class="daily-article" :bordered="false">

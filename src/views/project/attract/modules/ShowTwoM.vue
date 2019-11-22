@@ -16,18 +16,21 @@
         <a-row>
           <a-col :span="4">
             <a-form-item label="跟踪日期" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-date-picker placeholder="开始" v-decorator="['beginDate']" :format="dateFormat" />
+              <a-date-picker placeholder="开始" v-model="ff.beginDate" :format="dateFormat" />
+              <!-- <a-date-picker placeholder="开始" v-decorator="['beginDate']" :format="dateFormat" /> -->
             </a-form-item>
           </a-col>
           <a-col :span="4">
             <a-form-item label :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-date-picker placeholder="结束" v-decorator="['endDate']" :format="dateFormat" />
+              <a-date-picker placeholder="结束" v-model="ff.endDate" :format="dateFormat" />
+              <!-- <a-date-picker placeholder="结束" v-decorator="['endDate']" :format="dateFormat" /> -->
             </a-form-item>
           </a-col>
 
           <a-col :span="5">
             <a-form-item label="跟踪人" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-select v-decorator="['keyword']">
+              <a-select v-model="ff.keyword">
+                <!-- <a-select v-decorator="['keyword']"> -->
                 <a-select-option
                   v-for="(item, key) in dict.trackerDictOptions"
                   :value="item.value"
@@ -39,7 +42,8 @@
 
           <a-col :span="5">
             <a-form-item label="跟踪方式" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-select v-decorator="['trackMethod']">
+              <a-select v-model="ff.trackMethod">
+                <!-- <a-select v-decorator="['trackMethod']"> -->
                 <a-select-option
                   v-for="(item, key) in dict.trackMethodDictOptions"
                   :value="item.value"
@@ -110,6 +114,7 @@ export default {
   data() {
     return {
       //
+      ff: {},
       dateFormat: 'YYYY-MM-DD',
       confirmLoading: false,
       form: this.$form.createForm(this),
@@ -209,13 +214,7 @@ export default {
     },
     searchReset() {
       this.queryParam = {}
-      this.form.validateFields((err, form) => {
-        form.trackMethod = ''
-        form.keyword = ''
-        form.beginDate = ''
-        form.endDate = ''
-      })
-      // this.form.trackMethod = ''
+      this.ff = {}
       this.loadData(1)
     },
     //获取查询条件
@@ -224,18 +223,28 @@ export default {
       if (this.superQueryParams) {
         sqp['superQueryParams'] = encodeURI(this.superQueryParams)
       }
-      this.form.validateFieldsAndScroll((err, form) => {
-        // console.log('form')
-        // console.log(form)
-        if (form.beginDate) {
-          form.beginDate = form.beginDate ? form.beginDate.format('YYYY-MM-DD') : null
-        }
-        if (form.endDate) {
-          form.endDate = form.endDate ? form.endDate.format('YYYY-MM-DD') : null
-        }
-        //查询数据从表单获取到，其实不该走表单，直接走一个对象即可
-        this.queryform = form
-      })
+      if (this.ff.beginDate) {
+        this.ff.beginDate = this.ff.beginDate ? this.ff.beginDate.format('YYYY-MM-DD') : null
+      }
+      if (this.ff.endDate) {
+        this.ff.endDate = this.ff.endDate ? this.ff.endDate.format('YYYY-MM-DD') : null
+      }
+      //大约是因为时间的格式化   意外的是枚举复制后的老对象依旧会影响新对象
+      this.queryform = Object.assign(this.ff)
+      // this.ff.beginDate = null
+      // this.ff.endDate = null
+
+      // this.form.validateFieldsAndScroll((err, form) => {
+      //   if (form.beginDate) {
+      //     form.beginDate = form.beginDate ? form.beginDate.format('YYYY-MM-DD') : null
+      //   }
+      //   if (form.endDate) {
+      //     form.endDate = form.endDate ? form.endDate.format('YYYY-MM-DD') : null
+      //   }
+      //   //查询数据从表单获取到，其实不该走表单，直接走一个对象即可
+      //   this.queryform = form
+      // })
+
       // console.log(this.queryform)
       var param = Object.assign(this.queryform)
       // param.field = this.getQueryField()
