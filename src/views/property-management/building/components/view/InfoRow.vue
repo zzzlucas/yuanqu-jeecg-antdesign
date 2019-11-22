@@ -1,12 +1,14 @@
 <template>
   <div class="yq-building-info-row">
     <a-row>
-      <a-col span="6">
+      <a-col span="6" class="image-box">
         <yq-image :src="getImage(image)"></yq-image>
       </a-col>
-      <a-col span="18">
+      <a-col span="18" class="info-box">
         <a-row>
-          <a-col span="24">{{ title }}名称：{{ info[nameKey] }}</a-col>
+          <a-col class="title-item" span="24">{{ title }}名称：{{ info[nameKey] }}</a-col>
+          <a-col class="info-item" span="12" v-for="(txt, key) in list" :key="key" v-text="txt"></a-col>
+          <a-col class="remark-item" span="24">备注：{{ info.remark }}</a-col>
         </a-row>
       </a-col>
     </a-row>
@@ -35,15 +37,34 @@
     },
     data() {
       return {
-        image: ''
+        image: '',
+        list: []
       }
     },
     created() {
       const data = JSON.parse(this.info.addDocFiles)
       this.image = _.get(data, '[0].url', '')
+      this.list = this.getList(this.type, this.info)
     },
     methods: {
-      getImage
+      getImage,
+      getList(type, info) {
+        // TODO: 等接口好了，这里要改
+        switch (type) {
+          case 'tower':
+            return this.getTower(info)
+          default:
+            return []
+        }
+      },
+      getTower(info) {
+        return [
+          '楼宇总数：31 栋',
+          '建筑总面积：' + info.buildingArea + ' ㎡',
+          '楼层：共 20 层，剩余 20 层',
+          '房间：共 147 间，剩余 144 间'
+        ]
+      }
     },
     computed: {
       title() {
@@ -64,9 +85,13 @@
       }
     },
     watch: {
-      'info'(info){
+      'info'(info) {
         const data = JSON.parse(info.addDocFiles)
         this.image = _.get(data, '[0].url', '')
+
+        this.$nextTick(() => {
+          this.list = this.getList(this.type, info)
+        })
       }
     }
   }
@@ -74,6 +99,21 @@
 
 <style lang="less">
   .yq-building-info-row {
+    .info-box {
+      padding-left: 16px;
 
+      .title-item {
+        margin-bottom: 16px;
+      }
+
+      .info-item {
+        height: 2em;
+        line-height: 2em;
+      }
+
+      .remark-item {
+        margin-top: 16px;
+      }
+    }
   }
 </style>
