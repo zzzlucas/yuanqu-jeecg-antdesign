@@ -15,7 +15,7 @@
       <a-card class="yq-building-card" :loading="loading">
         <template slot="title">
           <span>楼宇房源</span>
-          <a-button style="margin-left: 8px;" v-if="history.length > 0" @click="onBack">
+          <a-button style="margin-left: 8px;" v-if="history.length > 0" @click="cardBack">
             <a-icon type="rollback"/>
             返回
           </a-button>
@@ -38,20 +38,20 @@
 
     <!-- 表单 -->
     <building-block-form ref="block" @ok="onOk"></building-block-form>
+    <building-tower-form ref="tower" @ok="onOk"></building-tower-form>
   </a-row>
 </template>
 
 <script>
   import BuildingView from './components/BuildingView'
-  import BuildingBlockForm from './components/form/BuildingBlockForm'
   import { deleteAction, getAction } from '@/api/manage'
-  import { listJsonFields, listReplace } from '@utils/util'
-  import pick from 'lodash.pick'
   import _ from 'lodash'
+  import BuildingBlockForm from './components/form/BuildingBlockForm'
+  import BuildingTowerForm from './components/form/BuildingTowerForm'
 
   export default {
     name: 'Building',
-    components: { BuildingBlockForm, BuildingView },
+    components: { BuildingTowerForm, BuildingBlockForm, BuildingView },
     data() {
       return {
         type: '',
@@ -124,6 +124,12 @@
       })
     },
     methods: {
+      /**
+       * 加载列表
+       * @param type
+       * @param id
+       * @returns {Promise<unknown>}
+       */
       loadData(type, id) {
         return new Promise((resolve, reject) => {
           const config = this.url.list[type]
@@ -138,6 +144,12 @@
           })
         })
       },
+      /**
+       * 加载info
+       * @param type
+       * @param id
+       * @returns {Promise<unknown>}
+       */
       getInfo(type, id) {
         return new Promise((resolve, reject) => {
           const config = this.url.info[this.type]
@@ -152,10 +164,20 @@
           })
         })
       },
+      /**
+       * 点击tree
+       * @param keys
+       * @param info
+       */
       onTreeSelect(keys, info) {
         const data = info.node.dataRef
         this.onChange(data.type, data.key)
       },
+      /**
+       * Tree 懒加载
+       * @param node
+       * @returns {Promise<boolean>}
+       */
       async loadTree(node) {
         const type = node.dataRef.type
         const config = this.url.tree[type]
@@ -182,6 +204,8 @@
       addBlock() {
         this.$refs.block.add()
       },
+
+      // 子组件事件冒泡
       onDelete(type, id, key, name) {
         const types = {
           block: '区块'
@@ -267,7 +291,9 @@
           })
         })
       },
-      onBack() {
+
+      // card 头部按钮
+      cardBack() {
         const history = _.initial(this.history)
         const last = _.last(history)
 
@@ -293,7 +319,7 @@
         const data = _.last(this.history)
         const type = types[data.type]
         this.onDelete(type, data.id, () => {
-          this.onBack()
+          this.cardBack()
         }, this.model.info[names[type]])
       }
     }
