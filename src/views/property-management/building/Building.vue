@@ -213,7 +213,7 @@
         switch (type) {
           case 'tower':
             return _.map(list, obj => {
-              return { title: obj.buildingName, key: obj.buildingId, type: 'storey' }
+              return { title: obj.buildingName, key: obj.buildingId, type: 'floor' }
             })
           default:
             return []
@@ -261,12 +261,15 @@
           case 'block':
             this.$refs.block.edit(data)
             break
+          case 'tower':
+            this.$refs.tower.edit(data)
+            break
           default:
             this.$message.error('没有对应的修改方式')
             break
         }
       },
-      onOk(type) {
+      onOk(type, id) {
         switch (type) {
           case 'block':
             this.type = 'block'
@@ -287,6 +290,23 @@
               console.log('载入区块数据：' + err)
             })
             break
+          case 'tower' : {
+            this.type = 'tower'
+            let p1 = this.getInfo(type, id)
+            let p2 = this.loadData(type, id)
+
+            Promise.all([p1, p2]).then(([info, list]) => {
+              this.model = {
+                status: type,
+                info,
+                list
+              }
+
+              const path = this.getTreeNodeOfKey(this.tree, id)
+              _.set(this.tree, path, this.getTreeData('tower', list))
+            })
+            break
+          }
         }
       },
       onChange(type, id) {
@@ -344,6 +364,23 @@
         this.onDelete(type, data.id, () => {
           this.cardBack()
         }, this.model.info[names[type]])
+      },
+
+      // 其他
+      getTreeNodeOfKey(list, key) {
+        let path = ''
+        _.map(list, (a1, i1) => {
+          if (a1.key === key) {
+            path += `[${i1}].children`
+            return a1
+          }
+          if (a1.children) {
+            path += `[${i1}].children` + this.getTreeNodeOfKey(a1.children, key)
+          }
+          return a1
+        })
+
+        return path
       }
     }
   }

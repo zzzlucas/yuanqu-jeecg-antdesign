@@ -12,7 +12,12 @@
     <info-row v-else :type="model.status" :info="model.info"></info-row>
 
     <!-- 表格 -->
-    <list-table v-if="['block'].indexOf(model.status) === -1" :type="model.status" :list="model.list"></list-table>
+    <list-table
+      v-if="['block'].indexOf(model.status) === -1"
+      :type="model.status"
+      :list="model.list"
+      @change="onChange"
+      @edit="editBtn"></list-table>
   </div>
 </template>
 

@@ -30,7 +30,7 @@
         this.$emit('change', this.type, id)
       },
       onEdit() {
-        this.$emit('edit', ...arguments)
+        this.$emit('edit', this.type, ...arguments)
       }
     },
     computed: {
@@ -41,7 +41,13 @@
               { title: '楼宇名称', dataIndex: 'buildingName' },
               { title: '总建筑面积（㎡）', dataIndex: 'estimateArea' },
               { title: '总层数', dataIndex: 'allFloor' },
-              { title: '是否虚拟', dataIndex: 'isVirtual' },
+              {
+                title: '是否虚拟',
+                dataIndex: 'isVirtual',
+                customRender: (text) => {
+                  return text === 'true' ? '是' : '否'
+                }
+              },
               {
                 title: '操作',
                 align: 'center',

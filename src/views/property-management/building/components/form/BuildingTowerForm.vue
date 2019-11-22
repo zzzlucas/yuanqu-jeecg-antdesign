@@ -155,6 +155,8 @@
           value: record.buildingProjectId,
           parkId: record.parkId
         })
+        record.isVirtual = record.isVirtual === 'true'
+
         this.model = Object.assign({}, record)
 
         this.visible = true
@@ -164,6 +166,7 @@
 
           let images = JSON.parse(record.addDocFiles)
           images = _.map(images, obj => {
+            obj.response = { old: obj.url }
             obj.url = getOneImage(obj.url)
             obj.thumbUrl = obj.url
             return obj
@@ -186,9 +189,11 @@
           let method = ''
 
           const data = JSON.parse(form.buildingProjectId)
+          const pid = data.value
           form.buildingProjectId = data.value
           form.buildingWorkshopId = data.label
           form.parkId = data.parkId
+          form.allFloor = parseInt(form.groundFloor) + parseInt(form.undergroundFloor)
           form.addDocFiles = JSON.stringify(getFileListData(this.fileList))
 
           if (!this.model.buildingId) {
@@ -206,7 +211,7 @@
             this.confirmLoading = false
             if (res.success) {
               this.$message.success(res.message)
-              this.$emit('ok', 'block')
+              this.$emit('ok', 'tower', pid)
               this.close()
             } else {
               this.$message.warning(res.message)
