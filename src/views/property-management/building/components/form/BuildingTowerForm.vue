@@ -11,8 +11,8 @@
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="所属园区">
-        <a-select placeholder="请选择园区" v-decorator="['parkId', {rules: rules.parkId}]">
+        label="归属">
+        <a-select placeholder="请选择归属" v-decorator="['buildingProjectId', {rules: rules.buildingProjectId}]">
           <a-select-option value="1193719771573518336">园区1</a-select-option>
           <a-select-option value="1193773294512242688">园区2</a-select-option>
           <a-select-option value="1193775260059566080">园区3</a-select-option>
@@ -102,7 +102,7 @@
   import { getFileListData, getOneImage, promiseForm, uploadFile } from '@utils/util'
   import qs from 'qs'
   import { PickBuildingBlockForm } from '@/config/pick-fields'
-  import rules from '../../js/rules'
+  import { tower as rules } from '../../js/rules'
 
   export default {
     name: 'BuildingTowerForm',
@@ -119,22 +119,22 @@
         wrapperCol: {
           span: 20
         },
-        form: this.$form.createForm(this, { name: 'buildingBlock' }),
+        form: this.$form.createForm(this, { name: 'buildingTower' }),
         url: {
-          add: '/park.architecture/baseArchitectureProject/add',
-          edit: '/park.architecture/baseArchitectureProject/edit'
+          add: '/park.architecture/baseArchitectureBuilding/add',
+          edit: '/park.architecture/baseArchitectureBuilding/edit'
         },
         fileList: []
       }
     },
     methods: {
       add() {
-        this.title = '新建区块'
+        this.title = '新建楼宇'
         this.form.resetFields()
         this.visible = true
       },
       edit(record) {
-        this.title = '编辑区块'
+        this.title = '编辑楼宇'
         this.form.resetFields()
         this.model = Object.assign({}, record)
 
@@ -190,7 +190,7 @@
             }
           })
         }).catch(err => {
-          console.log('区块新增：', err)
+          console.log('新建楼宇：', err)
         })
       },
       handleCancel() {

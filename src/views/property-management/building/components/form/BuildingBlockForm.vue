@@ -102,7 +102,7 @@
   import { getFileListData, getOneImage, promiseForm, uploadFile } from '@utils/util'
   import qs from 'qs'
   import { PickBuildingBlockForm } from '@/config/pick-fields'
-  import rules from '../../js/rules'
+  import { block as rules} from '../../js/rules'
 
   export default {
     name: 'BuildingBlockForm',
