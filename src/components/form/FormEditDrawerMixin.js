@@ -7,7 +7,9 @@
  * so i have to write this mixin to make this edit drawer.
  */
 
-export default function make (name) {
+import './FormEditDrawer.less'
+
+export default function make(name) {
   return {
     props: {
       show: {

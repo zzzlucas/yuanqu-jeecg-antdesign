@@ -8,7 +8,7 @@
 </template>
 
 <script>
-  import { getAction } from '@/api/manage'
+  import { listCategory } from '../api'
 
   export default {
     data() {
@@ -70,7 +70,7 @@
         this.$emit('select', ...ev)
       },
       async fetchList() {
-        const res = await getAction('/park.asset/baseAssetCategory/list')
+        const res = await listCategory
         this.list = res.result
       },
       async buildNodes() {

@@ -45,12 +45,12 @@
   import './style/list.less'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import Mixin from './mixins'
-  import AssetsCategoryAddForm from './components/AssetsCategoryAddForm'
+  import AssetsCategoryEditForm from './components/AssetsCategoryEditForm'
 
   export default {
     mixins: [JeecgListMixin, Mixin],
     components: {
-      AssetsCategoryAddForm,
+      AssetsCategoryAddForm: AssetsCategoryEditForm,
     },
     data() {
       return {
