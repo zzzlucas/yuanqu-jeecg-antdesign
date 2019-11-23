@@ -53,6 +53,8 @@
         switch (type) {
           case 'tower':
             return this.getTower(info)
+          case 'floor':
+            return this.getFloor(info)
           default:
             return []
         }
@@ -64,6 +66,16 @@
           '楼层：共 20 层，剩余 20 层',
           '房间：共 147 间，剩余 144 间'
         ]
+      },
+      getFloor(info) {
+        return [
+          '楼层总数：' + info.allFloor,
+          '地上层数：' + info.groundFloor,
+          '地下层数：' + info.undergroundFloor,
+          '建筑总面积：' + info.estimateArea + ' ㎡',
+          '是否虚拟：' + (info.isVirtual === 'true' ? '是' : '否'),
+          '房间：147 间'
+        ]
       }
     },
     computed: {
@@ -71,6 +83,8 @@
         switch (this.type) {
           case 'tower':
             return '区块'
+          case 'floor':
+            return '楼宇'
           default:
             return ''
         }
@@ -79,6 +93,8 @@
         switch (this.type) {
           case 'tower':
             return 'projectName'
+          case 'floor':
+            return 'buildingName'
           default:
             return ''
         }
