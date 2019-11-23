@@ -28,7 +28,11 @@
             :class="type === 'block' ? 'margin-left' : ''"
             @click="addTower">新建楼宇
           </a-button>
-          <a-button class="margin-left" v-if="['block'].indexOf(type) !== -1">新建楼层</a-button>
+          <a-button
+            v-if="['block', 'floor'].indexOf(type) !== -1"
+            :type="type === 'floor' ? 'primary' : 'default'"
+            :class="type === 'block' ? 'margin-left' : ''"
+            @click="addFloor">新建楼层</a-button>
           <a-button class="margin-left" v-if="['block'].indexOf(type) !== -1">新建房间</a-button>
           <a-button class="margin-left" v-if="type !== 'block'" @click="cardEdit">编辑</a-button>
           <a-button class="margin-left" v-if="type !== 'block'" @click="cardDel">删除</a-button>
@@ -40,6 +44,7 @@
     <!-- 表单 -->
     <building-block-form ref="block" @ok="onOk"></building-block-form>
     <building-tower-form ref="tower" @ok="onOk"></building-tower-form>
+    <building-floor-form ref="floor" @ok="onOk"></building-floor-form>
   </a-row>
 </template>
 
@@ -49,10 +54,11 @@
   import _ from 'lodash'
   import BuildingBlockForm from './components/form/BuildingBlockForm'
   import BuildingTowerForm from './components/form/BuildingTowerForm'
+  import BuildingFloorForm from './components/form/BuildingFloorForm'
 
   export default {
     name: 'Building',
-    components: { BuildingTowerForm, BuildingBlockForm, BuildingView },
+    components: { BuildingFloorForm, BuildingTowerForm, BuildingBlockForm, BuildingView },
     data() {
       return {
         type: '',
@@ -242,6 +248,9 @@
       },
       addTower() {
         this.$refs.tower.add()
+      },
+      addFloor() {
+        this.$refs.floor.add()
       },
 
       // 子组件事件冒泡
