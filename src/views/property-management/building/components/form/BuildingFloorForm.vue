@@ -206,7 +206,7 @@
             this.confirmLoading = false
             if (res.success) {
               this.$message.success(res.message)
-              this.$emit('ok', 'tower', pid)
+              this.$emit('ok', 'floor', pid)
               this.close()
             } else {
               this.$message.warning(res.message)

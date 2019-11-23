@@ -12,14 +12,7 @@
       </a-card>
     </a-col>
     <a-col span="20">
-      <a-card class="yq-building-card" :loading="loading">
-        <template slot="title">
-          <span>楼宇房源</span>
-          <a-button style="margin-left: 8px;" v-if="history.length > 0" @click="cardBack">
-            <a-icon type="rollback"/>
-            返回
-          </a-button>
-        </template>
+      <a-card class="yq-building-card" :loading="loading" title="楼宇房源">
         <template slot="extra">
           <a-button type="primary" @click="addBlock" v-if="type === 'block'">新建区块</a-button>
           <a-button
@@ -32,7 +25,8 @@
             v-if="['block', 'floor'].indexOf(type) !== -1"
             :type="type === 'floor' ? 'primary' : 'default'"
             :class="type === 'block' ? 'margin-left' : ''"
-            @click="addFloor">新建楼层</a-button>
+            @click="addFloor">新建楼层
+          </a-button>
           <a-button class="margin-left" v-if="['block'].indexOf(type) !== -1">新建房间</a-button>
           <a-button class="margin-left" v-if="type !== 'block'" @click="cardEdit">编辑</a-button>
           <a-button class="margin-left" v-if="type !== 'block'" @click="cardDel">删除</a-button>
@@ -62,10 +56,13 @@
     data() {
       return {
         type: '',
-        history: [],
         loading: true,
         model: {
           status: 'empty'
+        },
+        the: {
+          type: '',
+          id: ''
         },
         url: {
           list: {
@@ -340,22 +337,16 @@
       },
       onChange(type, id) {
         this.loading = true
-        this.history.push({
-          type,
-          id
-        })
         this.type = type
-        this.selectKeys = [id]
 
-        let history = _.cloneDeep(this.history)
-        history = _.initial(history)
-
-        let keys = []
-        _.map(history, obj => {
-          keys.push(obj.id)
-        })
-
-        this.expandedKeys = [...keys, id]
+        if (id) {
+          this.the = { type, id }
+          this.selectKeys = [id]
+          this.expandedKeys = [...this.expandedKeys, id]
+        } else {
+          this.the = { type: '', id: '' }
+          this.selectKeys = []
+        }
 
         this.$nextTick(() => {
           const p1 = this.getInfo(type, id)
@@ -374,34 +365,16 @@
       },
 
       // card 头部按钮
-      cardBack() {
-        const history = _.initial(this.history)
-        const last = _.last(history)
-
-        this.history = []
-        this.$nextTick(() => {
-          this.history = history
-        })
-
-        if (last) {
-          this.onChange(last.type, last.id)
-        } else {
-          this.onChange('block', '1193719771573518336')
-        }
-      },
       cardEdit() {
         const types = { tower: 'block' }
-        const data = _.last(this.history)
-        this.onEdit(types[data.type], data.id, this.model.info)
+        this.onEdit(types[this.the.type], this.the.id, this.model.info)
       },
       cardDel() {
         const types = { tower: 'block' }
         const names = { block: 'projectName', tower: 'buildingName' }
-        const data = _.last(this.history)
-        const type = types[data.type]
-        this.onDelete(type, data.id, () => {
-          this.cardBack()
-        }, this.model.info[names[type]])
+        this.onDelete(types[this.the.type], this.the.id, () => {
+          this.onChange('block')
+        }, this.model.info[names[this.the.type]])
       },
 
       // 其他
