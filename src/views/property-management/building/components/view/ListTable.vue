@@ -61,6 +61,26 @@
                 scopedSlots: { customRender: 'action' }
               }
             ]
+          case 'floor':
+            return [
+              {title: '楼层名称', dataIndex: 'floorName'},
+              {title: '楼层面积（㎡）', dataIndex: 'allarea'},
+              {title: '层高', dataIndex: 'height'},
+              {title: '承重（KN/㎡）', dataIndex: 'bearing'},
+              {
+                title: '是否虚拟',
+                dataIndex: 'isVirtual',
+                customRender: (text) => {
+                  return text === 'true' ? '是' : '否'
+                }
+              },
+              {
+                title: '操作',
+                align: 'center',
+                key: 'action',
+                scopedSlots: { customRender: 'action' }
+              }
+            ]
           default:
             return []
         }
@@ -69,6 +89,8 @@
         switch (this.type) {
           case 'tower':
             return 'buildingId'
+          case 'floor':
+            return 'floorId'
           default:
             return ''
         }
@@ -77,6 +99,8 @@
         switch (this.type) {
           case 'tower':
             return 'buildingName'
+          case 'floor':
+            return 'floorName'
           default:
             return ''
         }
