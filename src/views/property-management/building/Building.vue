@@ -101,16 +101,24 @@
             tower: {
               url: '/park.architecture/baseArchitectureBuilding/delete',
               id: 'id'
+            },
+            floor: {
+              url: '/park.architecture/baseArchitectureFloor/delete',
+              id: 'id'
             }
           },
           tree: {
-            tower: {
+            block: {
               url: '/park.architecture/baseArchitectureBuilding/queryByProjectId',
               id: 'projectId'
             },
-            floor: {
+            tower: {
               url: '/park.architecture/baseArchitectureFloor/queryByBuildingId',
               id: 'buildingId'
+            },
+            floor: {
+              url: '/park.architecture/baseArchitectureBuilding/queryByProjectId',
+              id: 'projectId'
             }
           }
         },
@@ -133,7 +141,7 @@
             return {
               title: obj.projectAbbr,
               key: obj.buildingProjectId,
-              type: 'tower'
+              type: 'block'
             }
           })
         }).catch(err => {
@@ -193,7 +201,8 @@
        */
       onTreeSelect(keys, info) {
         const data = info.node.dataRef
-        this.onChange(data.type, data.key)
+        const types = {block: 'tower', tower: 'floor', floor: 'room'}
+        this.onChange(types[data.type], data.key)
       },
       /**
        * Tree 懒加载
@@ -202,7 +211,7 @@
        */
       loadTree(node) {
         return new Promise((resolve, reject) => {
-          const type = node.dataRef.type
+          let type = node.dataRef.type
           const config = this.url.tree[type]
           const query = {}
 
@@ -230,9 +239,13 @@
       },
       getTreeData(type, list) {
         switch (type) {
+          case 'block':
+            return _.map(list, obj => {
+              return { title: obj.buildingName, key: obj.buildingId, type: 'tower' }
+            })
           case 'tower':
             return _.map(list, obj => {
-              return { title: obj.buildingName, key: obj.buildingId, type: 'floor' }
+              return { title: obj.floorName, key: obj.floorId, type: 'floor' }
             })
           default:
             return []
@@ -254,7 +267,8 @@
       onDelete(type, id, key, name) {
         const types = {
           block: '区块',
-          tower: '楼宇'
+          tower: '楼宇',
+          floor: '楼层'
         }
 
         this.$confirm({
@@ -266,9 +280,11 @@
             deleteAction(config.url, { [config.id]: id }).then(res => {
               if (res.success && res.code === 200) {
                 this.$message.success(res.message)
-                const path = this.getTreeNodeOfKey(this.tree, id)
-                _.unset(this.tree, path)
+                let path = this.getTreeNodeOfKey(this.tree, id)
+                path = _.map(path, i => `[${i}]`)
+                _.unset(this.tree, path.join('.children'))
                 this.tree = [...this.tree]
+
                 if (typeof key === 'function') {
                   key()
                 } else {
@@ -343,25 +359,38 @@
           this.the = { type, id }
           this.selectKeys = [id]
           this.expandedKeys = [...this.expandedKeys, id]
+
+          this.$nextTick(() => {
+            const p1 = this.getInfo(type, id)
+            const p2 = this.loadData(type, id)
+
+            Promise.all([p1, p2]).then(([info, list]) => {
+              this.model = {
+                status: type,
+                info,
+                list
+              }
+            }).finally(() => {
+              this.loading = false
+            })
+          })
         } else {
           this.the = { type: '', id: '' }
           this.selectKeys = []
-        }
 
-        this.$nextTick(() => {
-          const p1 = this.getInfo(type, id)
-          const p2 = this.loadData(type, id)
-
-          Promise.all([p1, p2]).then(([info, list]) => {
-            this.model = {
-              status: type,
-              info,
-              list
-            }
-          }).finally(() => {
-            this.loading = false
+          this.$nextTick(() => {
+            this.loadData('block', '1193719771573518336').then(list => {
+              this.model = {
+                status: 'block',
+                list
+              }
+            }).catch(err => {
+              console.log('载入区块数据：' + err)
+            }).finally(() => {
+              this.loading = false
+            })
           })
-        })
+        }
       },
 
       // card 头部按钮
@@ -370,23 +399,24 @@
         this.onEdit(types[this.the.type], this.the.id, this.model.info)
       },
       cardDel() {
-        const types = { tower: 'block' }
-        const names = { block: 'projectName', tower: 'buildingName' }
+        const types = { tower: 'block', floor: 'tower' }
+        const names = { tower: 'projectName', floor: 'buildingName' }
         this.onDelete(types[this.the.type], this.the.id, () => {
           this.onChange('block')
         }, this.model.info[names[this.the.type]])
       },
 
       // 其他
-      getTreeNodeOfKey(list, key) {
-        let path = ''
+      getTreeNodeOfKey(list, key, path = []) {
+        console.log('key：' + key)
         _.map(list, (a1, i1) => {
           if (a1.key === key) {
-            path += `[${i1}]`
+            path.push(i1)
             return a1
           }
           if (a1.children) {
-            path += `[${i1}].children` + this.getTreeNodeOfKey(a1.children, key)
+            path.push(i1)
+            path = this.getTreeNodeOfKey(a1.children, key, path)
           }
           return a1
         })
