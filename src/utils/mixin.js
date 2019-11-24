@@ -41,7 +41,6 @@ const mixinDevice = {
 const mixinList = {
   data() {
     const parkId = store.state.industrialPark.id
-    console.log(parkId)
     return {
       queryParam: {
         parkId

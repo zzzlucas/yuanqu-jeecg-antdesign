@@ -12,7 +12,6 @@ const getters = {
   permissionList: state => state.user.permissionList,
   userInfo: state => {state.user.info = Vue.ls.get(USER_INFO); return state.user.info},
   addRouters: state => state.permission.addRouters,
-  industrialParkReady: state => state.industrialPark.ready,
   industrialParkId: state => state.industrialPark.id,
   industrialPark: state => state.industrialPark,
 }

@@ -72,11 +72,6 @@ const park = {
         throw e
       }
     },
-    setupPark: async ({ dispatch }) => {
-      await dispatch('fetchParkList')
-      dispatch('setParkIfEmpty')
-      dispatch('setParkReady')
-    },
   },
 }
 

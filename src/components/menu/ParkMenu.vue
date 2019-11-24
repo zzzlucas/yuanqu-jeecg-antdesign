@@ -12,7 +12,7 @@
   export default {
     computed: {
       ...mapGetters([
-        'industrialPark'
+        'industrialPark',
       ]),
     },
     methods: {
@@ -24,9 +24,6 @@
         const { parkName } = this.industrialPark.list[map[parkId]]
         this.$store.dispatch('setPark', { parkId, parkName })
       },
-    },
-    mounted() {
-      this.$store.dispatch('setupPark')
     },
   }
 </script>

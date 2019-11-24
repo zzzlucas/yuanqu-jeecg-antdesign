@@ -65,7 +65,6 @@
         }
       },
       ...mapGetters([
-        // 'industrialParkReady',
         'industrialParkId',
       ])
     },
@@ -112,27 +111,6 @@
           this.pageList = [this.$route]
         }
       },
-/*      async 'industrialParkReady'(newVal) {
-        alert(2)
-        if (!newVal) {
-          return
-        }
-        const path = this.$route.path
-        const whiteList = [
-          '/dashboard',
-          '/industrial-parks/',
-          '/isystem/',
-          '/isys/',
-          '/isps/',
-        ]
-        whiteList.every(item => {
-          if (path.indexOf(item) === 0) {
-            this.show = true
-            return false
-          }
-          return true
-        })
-      },*/
       // Listen park change
       async 'industrialParkId'(newVal, oldVal) {
         if (!oldVal) {
