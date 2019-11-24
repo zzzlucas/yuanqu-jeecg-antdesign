@@ -1,4 +1,4 @@
-import AssetsCategory from '../components/AssetsCategory'
+import AssetsCategory from './components/AssetsCategory'
 
 export default {
   data() {
