@@ -32,8 +32,7 @@
           :columns="columns"
           :dataSource="dataSource"
           :pagination="ipagination"
-          :loading="loading"
-          :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}">
+          :loading="loading">
             <!-- Column slot -->
             <span slot="action" slot-scope="text, record">
               <a @click.stop="handleEdit(record, ...arguments)">归还</a>
