@@ -90,7 +90,7 @@
             dataIndex: 'action',
             align: 'center',
             scopedSlots: { customRender: 'action' },
-          }
+          },
         ],
         deleteKey: 'categoryId',
       }

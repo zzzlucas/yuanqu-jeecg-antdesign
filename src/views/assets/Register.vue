@@ -48,6 +48,13 @@
           :pagination="ipagination"
           :loading="loading"
           :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}">
+            <span slot="action" slot-scope="text, record">
+              <a @click.stop="handleEdit(record, ...arguments)">编辑</a>
+              <a-divider type="vertical" />
+              <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
+                <a>删除</a>
+              </a-popconfirm>
+            </span>
         </a-table>
       </a-layout-content>
     </a-layout>
@@ -142,6 +149,12 @@
             title: '使用状态',
             align: 'center',
             dataIndex: 'useStatus'
+          },
+          {
+            title: '操作',
+            dataIndex: 'action',
+            align: 'center',
+            scopedSlots: { customRender: 'action' },
           },
         ],
       }
