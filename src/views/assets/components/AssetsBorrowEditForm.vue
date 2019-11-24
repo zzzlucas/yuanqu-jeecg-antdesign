@@ -40,14 +40,6 @@
 
           </a-form-item>
         </a-col>
-        <!--        <a-col :xl="24">
-                  <a-form-item label="上级分类" :label-col="gridOptions.formItem.label" :wrapper-col="gridOptions.formItem.value">
-                    <a-tree-select
-                      treeDefaultExpandAll
-                      v-decorator="['parentId']"
-                      :treeData="categoryTreeData" />
-                  </a-form-item>
-                </a-col>-->
       </a-row>
       <a-row class="action-row" type="flex" justify="end">
         <a-col :xl="2">

@@ -16,13 +16,38 @@
       @submit="submit">
       <a-row>
         <a-col :xl="12">
-          <a-form-item label="领用日期">
-            <a-input v-decorator="['useDate', {rules: rules.useDate}]"></a-input>
+          <a-form-item label="资产编号">
+            <a-input v-decorator="['assetNumber']" disabled></a-input>
           </a-form-item>
         </a-col>
         <a-col :xl="12">
-          <a-form-item label="领用人">
+          <a-form-item label="资产名称">
+            <a-input v-decorator="['fixedAssetName']" disabled></a-input>
+          </a-form-item>
+        </a-col>
+        <a-col :xl="12">
+          <a-form-item label="归还人">
             <a-input v-decorator="['usePerson', {rules: rules.usePerson}]"></a-input>
+          </a-form-item>
+        </a-col>
+        <a-col :xl="12">
+          <a-form-item label="归还部门">
+            <a-input v-decorator="['useDepartment']" disabled></a-input>
+          </a-form-item>
+        </a-col>
+        <a-col :xl="12">
+          <a-form-item label="操作人">
+            <a-input v-decorator="['usePerson']" disabled></a-input>
+          </a-form-item>
+        </a-col>
+        <a-col :xl="12">
+          <a-form-item label="归还时间">
+            <a-input v-decorator="['useDate']"></a-input>
+          </a-form-item>
+        </a-col>
+        <a-col :xl="24">
+          <a-form-item label="归还原因" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
+            <a-textarea v-decorator="['reason', {rules: rules.reason}]" :rows="6" />
           </a-form-item>
         </a-col>
         <a-col :xl="24">
@@ -30,24 +55,6 @@
             <a-textarea v-decorator="['remark']" :rows="6" />
           </a-form-item>
         </a-col>
-        <a-col :xl="24">
-          <a-form-item label="领用资产" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
-            <a-button @click="openAssetModal">添加</a-button>
-          </a-form-item>
-        </a-col>
-        <a-col :xl="24">
-          <a-form-item label="附件" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
-
-          </a-form-item>
-        </a-col>
-        <!--        <a-col :xl="24">
-                  <a-form-item label="上级分类" :label-col="gridOptions.formItem.label" :wrapper-col="gridOptions.formItem.value">
-                    <a-tree-select
-                      treeDefaultExpandAll
-                      v-decorator="['parentId']"
-                      :treeData="categoryTreeData" />
-                  </a-form-item>
-                </a-col>-->
       </a-row>
       <a-row class="action-row" type="flex" justify="end">
         <a-col :xl="2">
@@ -66,26 +73,20 @@
         </a-col>
       </a-row>
     </a-form>
-    <!-- Asset modal -->
-    <assets-search-modal v-model="assetModal" />
   </a-drawer>
 </template>
 
 <script>
   import { mapGetters } from 'vuex'
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
-  import AssetsSearchModal from './AssetsSearchModal'
   import { filterObj, promiseForm } from '@utils/util'
   import { assetsRegisterEditForm } from '@/config/pick-fields'
   import { addInfo } from '../api'
 
   export default {
     mixins: [
-      FormEditDrawerMixin('assets-recipients'),
+      FormEditDrawerMixin('assets-recipients-return'),
     ],
-    components: {
-      AssetsSearchModal,
-    },
     data() {
       return {
         // Form
@@ -93,11 +94,11 @@
         fields: assetsRegisterEditForm,
         // Rules
         rules: {
-          useDate: [
-            { required: true, message: '请选择领用日期' },
-          ],
           usePerson: [
-            { required: true, message: '请输入领用人' },
+            { required: true, message: '请输入归还人' },
+          ],
+          reason: [
+            { required: true, message: '请输入归还原因' },
           ],
         },
         category: [],

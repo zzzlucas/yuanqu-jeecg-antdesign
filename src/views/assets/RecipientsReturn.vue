@@ -15,27 +15,9 @@
                 </a-form-item>
               </a-col>
               <a-col :xl="6">
-                <a-form-item label="领用部门">
-                  <a-select v-model="queryParam.department">
-                    <a-select-option
-                      :value="item.name"
-                      v-for="item in filter.department"
-                      :key="item.name">{{ item.label }}</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :xl="6">
                 <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
                   <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
                   <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
-                </span>
-              </a-col>
-            </a-row>
-            <a-row :gutter="24">
-              <a-col :xl="8">
-                <span class="table-page-search-submitButtons">
-                  <a-button type="primary" @click="handleAdd('consumables')">易耗品领用登记</a-button>
-                  <a-button type="primary" @click="handleAdd('fixedAsset')" style="margin-left: 8px">固定资产领用登记</a-button>
                 </span>
               </a-col>
             </a-row>
@@ -54,25 +36,13 @@
           :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}">
             <!-- Column slot -->
             <span slot="action" slot-scope="text, record">
-              <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
-                <a>删除</a>
-              </a-popconfirm>
+              <a @click.stop="handleEdit(record, ...arguments)">归还</a>
             </span>
-            <!-- Footer -->
-            <template slot="footer" class="table-operator">
-              <a-button
-                style="margin-left: 8px"
-                type="danger"
-                icon="delete"
-                @click="batchDel">
-                批量删除
-              </a-button>
-            </template>
         </a-table>
       </a-layout-content>
     </a-layout>
     <!-- Add/Edit form -->
-    <assets-recipients-edit-form
+    <assets-recipients-return-edit-form
       ref="modalForm"
       @submit="handleEditSubmit" />
   </a-card>
@@ -82,12 +52,12 @@
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import { mixinList } from '@/utils/mixin'
   import Mixin from './mixins'
-  import AssetsRecipientsEditForm from '@/views/assets/components/AssetsRecipientsEditForm'
+  import AssetsRecipientsReturnEditForm from '@/views/assets/components/AssetsRecipientsReturnEditForm'
   import { url } from './api'
   import './style/list.less'
 
   export default {
-    components: { AssetsRecipientsEditForm },
+    components: { AssetsRecipientsReturnEditForm },
     mixins: [
       JeecgListMixin,
       mixinList,
@@ -97,19 +67,10 @@
       return {
         // Url
         url: url.info,
-        // Filter options
-        filter: {
-          department: [
-            { name: 'all', label: '全部' },
-            { name: '1', label: '智慧办公室' },
-            { name: '2', label: '班子成员' },
-          ],
-        },
         // Filter query
         queryParam: {
           categoryId: '',
           keyword: '',
-          department: 'all',
         },
         // Table
         columns: [
@@ -122,34 +83,44 @@
             customRender: (t, r, index) => Number(index) + 1
           },
           {
-            title: '领用单号',
+            title: '资产名称',
             align: 'center',
-            dataIndex: 'opertionId'
+            dataIndex: 'assetName'
           },
           {
-            title: '领用日期',
+            title: '资产编号',
             align: 'center',
-            dataIndex: 'useDate'
+            dataIndex: 'assetNumber'
           },
           {
-            title: '领用部门',
+            title: '所属分类',
             align: 'center',
-            dataIndex: 'useDepartment'
+            dataIndex: 'assetCategory'
           },
           {
-            title: '领用人',
+            title: '规格型号',
             align: 'center',
-            dataIndex: 'usePerson'
+            dataIndex: 'assetModel'
           },
           {
-            title: '领用资产名称',
+            title: '数量',
             align: 'center',
-            dataIndex: 'location'
+            dataIndex: 'qty'
           },
           {
-            title: '备注',
+            title: '单价',
             align: 'center',
-            dataIndex: 'remark'
+            dataIndex: 'stockPrice'
+          },
+          {
+            title: '采购日期',
+            align: 'center',
+            dataIndex: 'purchaseDate'
+          },
+          {
+            title: '使用状态',
+            align: 'center',
+            dataIndex: 'useStatus'
           },
           {
             title: '操作',
@@ -164,12 +135,6 @@
       selectCategoryKey(val) {
         this.queryParam.categoryId = val
         this.loadData(1)
-      },
-      handleAdd(type) {
-        this.$refs.modalForm.add()
-        this.$refs.modalForm.title = "新增"
-        this.$refs.modalForm.type = type
-        this.$refs.modalForm.disableSubmit = false
       },
     }
   }
