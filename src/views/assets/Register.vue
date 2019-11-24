@@ -48,6 +48,7 @@
           :pagination="ipagination"
           :loading="loading"
           :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}">
+            <!-- Column slot -->
             <span slot="action" slot-scope="text, record">
               <a @click.stop="handleEdit(record, ...arguments)">编辑</a>
               <a-divider type="vertical" />
@@ -55,6 +56,16 @@
                 <a>删除</a>
               </a-popconfirm>
             </span>
+            <!-- Footer -->
+            <template slot="footer" class="table-operator">
+              <a-button
+                style="margin-left: 8px"
+                type="danger"
+                icon="delete"
+                @click="batchDel">
+                批量删除
+              </a-button>
+            </template>
         </a-table>
       </a-layout-content>
     </a-layout>
