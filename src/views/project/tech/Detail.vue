@@ -9,7 +9,11 @@
               <detail-list-item term="组织机构代码">{{ info.creditCode }}</detail-list-item>
               <detail-list-item term="单位地址">{{ info.unitAddress }}</detail-list-item>
               <detail-list-item term="成立年份">{{ info.setUpYear }}</detail-list-item>
-              <detail-list-item term="企业登记注册类型">{{ info.companyRegisterType }}</detail-list-item>
+              <detail-list-item
+                term="企业登记注册类型"
+              >{{ filterDictText(dict.companyRegisterTypeExt, info.companyRegisterType) }}</detail-list-item>
+
+              <!-- <detail-list-item term="企业登记注册类型">{{ info.companyRegisterType }}</detail-list-item> -->
               <detail-list-item term="注册资金">{{ info.registerMoney }}万元</detail-list-item>
               <detail-list-item term="企业总资产">{{ info.totalAsset }}万元</detail-list-item>
               <detail-list-item term="固定资产净值">{{ info.fixedAsset }}万元</detail-list-item>
@@ -52,7 +56,9 @@
             <detail-list-item term="消耗量或产出量  ">{{info.materialCost}}</detail-list-item>
             <detail-list-item term="主要产品">{{info.gainArea}}</detail-list-item>
             <detail-list-item term="消耗量或产出量">{{info.productOutput}}</detail-list-item>
-            <detail-list-item term="所属行业">{{info.industrySectorValue}}</detail-list-item>
+            <detail-list-item
+              term="所属行业"
+            >{{filterDictText(dict.industrySectorValueExt,info.industrySectorValue)}}</detail-list-item>
             <detail-list-item
               term="建设起止年限"
             >{{info.buildingBeginDate | formatDate }}~{{info.buildingEndDate | formatDate}}</detail-list-item>
@@ -64,7 +70,7 @@
             <detail-list-item term="项目总投资">{{info.investAmount}}万元</detail-list-item>
             <detail-list-item term="项目用汇">{{info.projectUseInvest}}万美元</detail-list-item>
             <detail-list-item term="注册资本">{{info.registerCapital}}万元</detail-list-item>
-            <detail-list-item term="是否外资">{{info.isForeignCapital}}</detail-list-item>
+            <detail-list-item term="是否外资">{{info.isForeignCapital==1?'是':'否'}}</detail-list-item>
           </detail-list>
           <detail-list :col="1">
             <detail-list-item term="固定资产投资">{{info.fixedAssetInvest}}万元</detail-list-item>
@@ -109,7 +115,7 @@
             </detail-list-item>
           </detail-list>
           <detail-list :col="1">
-            <detail-list-item term="项目工艺流程">富文本 {{info.agentTel}}</detail-list-item>
+            <detail-list-item term="项目工艺流程"><span v-html="info.projectTechnologyFlow"></span></detail-list-item>
           </detail-list>
           <detail-list :col="1">
             <detail-list-item term="备注">{{info.remark}}</detail-list-item>
@@ -131,6 +137,7 @@ import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import qs from 'querystring'
 import Dom7 from 'dom7'
 import moment from 'moment'
+import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
 
 export default {
   name: 'Detail',
@@ -145,13 +152,15 @@ export default {
       dateFormat: 'YYYY-MM-DD',
       confirmLoading: false,
       info: {},
+      dict: {},
       url: {
         list: '/park.project/mgrProjectLand/queryById'
       }
     }
   },
 
-  async created() {
+  created() {
+    console.log('aaa')
     if (typeof this.$route.params.id !== 'string') {
       this.$router.back()
       this.$message.warning('ID不正确')
@@ -168,14 +177,21 @@ export default {
         this.$message.error(res.message)
       }
     })
-    console.log('this.moment()')
-    console.log(this.moment())
-    var t11 = moment().format('YYYY-MM-DD')
-    console.log(t11)
+    initDictOptions('mgr-attr-addpl-companyRegisterType').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.companyRegisterTypeExt = res.result
+      }
+    })
+    initDictOptions('industry_sector_value').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.industrySectorValueExt = res.result
+      }
+    })
   },
-
+  mounted() {},
   methods: {
-    moment
+    moment,
+    filterDictText
   },
   filters: {
     formatDate: function(time) {

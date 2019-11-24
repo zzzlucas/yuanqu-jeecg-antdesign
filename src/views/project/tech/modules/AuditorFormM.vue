@@ -10,7 +10,7 @@
   >
     <a-spin :spinning="confirmLoading">
       <a-form :form="form" layout="inline">
-        <a-form-item label="审核人员">
+        <a-form-item label="审核人员11">
           <a-select style="width:400px" v-decorator="['userId', {initialValue:''}]">
             <a-select-option
               v-for="(item, key) in dict.userIdExt"
@@ -19,15 +19,13 @@
             >{{ item.text }}</a-select-option>
           </a-select>
         </a-form-item>
-        <!-- <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="审核阶段">
-              <a-select v-decorator="['industrySectorValue', {initialValue:''}]">
-                <a-select-option
-                  v-for="(item, key) in dict.industrySectorValueExt"
-                  :value="item.value"
-                  :key="key"
-                >{{ item.text }}</a-select-option>
-              </a-select>
-        </a-form-item>-->
+        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="审核阶段">
+          <a-select v-decorator="['industrySectorValue', {initialValue:''}]">
+            <a-select-option value="N4">部门审核</a-select-option>
+            <a-select-option value="N1">分管领导审核</a-select-option>
+            <a-select-option value="N2">主要领导审核</a-select-option>
+          </a-select>
+        </a-form-item>
       </a-form>
     </a-spin>
   </a-modal>
@@ -69,6 +67,11 @@ export default {
     }
   },
   created() {
+    getAction('/sys/user/list').then(res => {
+      console.log('res')
+      console.log(res.result.records)
+      //id  salt
+    })
     initDictOptions('tech_user_id').then(res => {
       if (res.code === 0 && res.success) {
         this.dict.userIdExt = res.result

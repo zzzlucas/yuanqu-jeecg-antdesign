@@ -9,32 +9,31 @@
     destroyOnClose
   >
     <a-spin :spinning="confirmLoading">
-      <a-form :form="form" layout="inline">
+      <a-form :form="form">
+        <!-- layout="inline" -->
         <a-form-item label="审核人员">
-          <a-select style="width:400px" v-decorator="['userId', {initialValue:''}]">
+          <a-select style="width:100%" v-decorator="['userId', {initialValue:''}]">
             <a-select-option
-              v-for="(item, key) in dict.userIdExt"
-              :value="item.value"
-              :key="key"
-            >{{ item.text }}</a-select-option>
+              v-for="(item, key) in user"
+              :value="item.id"
+              :key="item.id"
+            >{{ item.username }}</a-select-option>
           </a-select>
         </a-form-item>
-        <!-- <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="审核阶段">
-              <a-select v-decorator="['industrySectorValue', {initialValue:''}]">
-                <a-select-option
-                  v-for="(item, key) in dict.industrySectorValueExt"
-                  :value="item.value"
-                  :key="key"
-                >{{ item.text }}</a-select-option>
-              </a-select>
-        </a-form-item>-->
+        <a-form-item label="审核阶段">
+          <a-select v-decorator="['code', {initialValue:''}]">
+            <a-select-option value="N4">部门审核</a-select-option>
+            <a-select-option value="N1">分管领导审核</a-select-option>
+            <a-select-option value="N2">主要领导审核</a-select-option>
+          </a-select>
+        </a-form-item>
       </a-form>
     </a-spin>
   </a-modal>
 </template>
 
 <script>
-import { httpAction } from '@/api/manage'
+import { httpAction, getAction } from '@/api/manage'
 import pick from 'lodash.pick'
 import moment from 'moment'
 import qs from 'querystring'
@@ -44,7 +43,7 @@ export default {
   name: '',
   data() {
     return {
-      title: '审核项目',
+      title: '添加审核人员',
       visible: false,
       model: {},
       labelCol: {
@@ -62,13 +61,19 @@ export default {
       url: {
         add: '/park.workflow/baseWorkFlowProject/add'
       },
-      userId: '',
+      userId: [],
+      userName: [],
+      user: [],
       dict: {
         userIdExt: [{ value: '1' }]
       }
     }
   },
   created() {
+    getAction('/sys/user/list').then(res => {
+      console.log(res.result.records)
+      this.user = res.result.records
+    })
     initDictOptions('tech_user_id').then(res => {
       if (res.code === 0 && res.success) {
         this.dict.userIdExt = res.result
@@ -77,39 +82,35 @@ export default {
   },
   methods: {
     add() {
-      this.edit({})
-    },
-    edit(record) {
-      this.form.resetFields()
-      this.model = Object.assign({}, record)
       this.visible = true
-      this.$nextTick(() => {
-        this.form.setFieldsValue(
-          pick(
-            this.model,
-            'parkId',
-            'year',
-            'month',
-            'type',
-            'corporateIncomeTax',
-            'individualIncomeTax',
-            'cityTax',
-            'addedValueTax',
-            'otherTax',
-            'remark',
-            'sortOrder',
-            'version',
-            'createUserName',
-            'updateUserName'
-          )
-        )
-        //时间格式化
-      })
     },
-    close() {
-      this.$emit('close')
-      this.visible = false
-    },
+    // edit(record) {
+    //   this.form.resetFields()
+    //   this.model = Object.assign({}, record)
+    //   this.visible = true
+    //   this.$nextTick(() => {
+    //     this.form.setFieldsValue(
+    //       pick(
+    //         this.model,
+    //         'parkId',
+    //         'year',
+    //         'month',
+    //         'type',
+    //         'corporateIncomeTax',
+    //         'individualIncomeTax',
+    //         'cityTax',
+    //         'addedValueTax',
+    //         'otherTax',
+    //         'remark',
+    //         'sortOrder',
+    //         'version',
+    //         'createUserName',
+    //         'updateUserName'
+    //       )
+    //     )
+    //     //时间格式化
+    //   })
+    // },
     handleOk() {
       const that = this
       // 触发表单验证
@@ -118,21 +119,12 @@ export default {
           that.confirmLoading = true
           let httpurl = ''
           let method = ''
-          //根据model中是否已有某id来判断  亦或  外部传值editbool
-          //传值parkId是否合适,不合适，头部比在
-          //只要是model中edit带进来的任何必要值都可以达到效果
-          if (!this.model.year) {
-            console.log('post')
-            httpurl += this.url.add
-            method = 'post'
-          } else {
-            console.log('put')
-            httpurl += this.url.edit
-            method = 'put'
-          }
+          httpurl += this.url.add
+          method = 'post'
           let formData = Object.assign(this.model, values)
           //时间格式化
           formData = qs.stringify(formData)
+          console.log('formData')
           console.log(formData)
           httpAction(httpurl, formData, method)
             .then(res => {
@@ -151,7 +143,7 @@ export default {
       })
     },
     handleCancel() {
-      this.close()
+      // this.close()
       this.visible = false
     }
   }

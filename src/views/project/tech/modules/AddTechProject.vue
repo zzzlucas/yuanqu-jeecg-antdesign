@@ -571,7 +571,7 @@ export default {
   data() {
     return {
       //在添加与编辑时修改
-      title: '技改项目用地信息添加',
+      // title: '技改项目用地信息添加',
       //   form: {}
       form: this.$form.createForm(this, { name: '' }),
       formItem: {
@@ -606,8 +606,8 @@ export default {
   },
   //先搞定添加，回头再做这个
   computed: {
-    getTitle() {
-      return (this.model.projectId ? '编辑' : '登记') + '园区'
+    title() {
+      return '技改项目' + (this.model.projectId ? '维护' : '新建')
     }
   },
   updated() {
@@ -630,6 +630,7 @@ export default {
     handleImportExcel() {},
     moment,
     add() {
+      this.model = {}
       this.visible = true
     },
     // detail(record) {
@@ -693,7 +694,7 @@ export default {
           } else {
             //改
             console.log('put方式')
-            console.log(this.model.projectId);
+            console.log(this.model.projectId)
             httpurl += this.url.edit
             method = 'put'
           }

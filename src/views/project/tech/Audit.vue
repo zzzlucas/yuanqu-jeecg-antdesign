@@ -5,11 +5,11 @@
         <a-row :gutter="24">
           <a-col :span="6">
             <a-form-item label="关键字">
-              <a-input placeholder="输入园区名称" v-model="queryParam.titile"></a-input>
+              <a-input placeholder="输入关键字" v-model="queryParam.titile"></a-input>
             </a-form-item>
           </a-col>
 
-          <a-col :span="8">
+          <a-col :span="4">
             <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
               <a-button
@@ -20,6 +20,13 @@
               >重置</a-button>
             </span>
           </a-col>
+          <a-radio-group @change="handleChange" v-decorator="['auditStatus']">
+            <a-radio value="1">部门审核</a-radio>
+            <a-radio value="2">分管领导审核</a-radio>
+            <a-radio value="3">主要领导审核</a-radio>
+            <a-radio value="4">审核通过</a-radio>
+            <a-radio value="5">审核未通过</a-radio>
+          </a-radio-group>
 
           <a-col :span="8" style="float: right">
             <span style="float: right;overflow: hidden;" class="table-page-search-submitButtons">
@@ -43,13 +50,13 @@
       :customRow="customRow"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="AuditorForm(record,...arguments)">审核</a>
+        <a @click.stop="AuditForm(record,...arguments)">审核</a>
         <a-divider type="vertical" />
-        <a @click="EditTechProject(record,...arguments)">项目维护</a>
+        <a @click.stop="EditTechProject(record,...arguments)">项目维护</a>
       </span>
     </a-table>
 
-    <auditor-form ref="AuditorForm"></auditor-form>
+    <audit-form ref="AuditForm"></audit-form>
 
     <add-tech-project ref="AddTechProject" @reload="loadData"></add-tech-project>
   </a-card>
@@ -58,7 +65,7 @@
 // import { filterObj } from '@/utils/util'
 import { getAction, putAction } from '@/api/manage'
 import AddTechProject from './modules/AddTechProject'
-import AuditorForm from './modules/AuditorFormM'
+import AuditForm from './modules/AuditFormM'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
 import Dom7 from 'dom7'
@@ -68,7 +75,7 @@ export default {
   mixins: [JeecgListMixin], //居然很重要
   components: {
     AddTechProject,
-    AuditorForm
+    AuditForm
   },
   data() {
     return {
@@ -160,6 +167,9 @@ export default {
     })
   },
   methods: {
+    handleChange(e){
+      console.log(e);
+    },
     loadData(arg) {
       if (arg === 1) {
         this.ipagination.current = 1
@@ -186,11 +196,14 @@ export default {
         this.loading = false
       })
     },
-    AuditorForm(row, e) {
+    //走编辑
+    AuditForm(row, e) {
       row.__key = Dom7(e.currentTarget)
         .parents('.ant-table-row')
         .data('row-key')
-      this.$refs.AuditorForm.add(row)
+      this.$refs.AuditForm.edit(row)
+      // console.log('row');
+      // console.log(row);
     },
     AddTechProject() {
       this.$refs.AddTechProject.add()

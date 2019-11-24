@@ -83,22 +83,20 @@
       ></a-table>
       <!-- :customRow="customRow" -->
     </div>
+    
     <auditor-add-form @reload="loadData" ref="AuditorAddForm"></auditor-add-form>
 
-    <show-announcement ref="ShowAnnouncement"></show-announcement>
   </a-card>
 </template>
 <script>
 import { filterObj } from '@/utils/util'
 import { getAction, putAction } from '@/api/manage'
-import ShowAnnouncement from '@/components/tools/ShowAnnouncement'
 import AuditorAddForm from './modules/AuditorAddFormM'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 export default {
-  name: 'UserAnnouncementList',
+  name: '',
   mixins: [JeecgListMixin],
   components: {
-    ShowAnnouncement,
     AuditorAddForm
   },
   data() {
@@ -107,12 +105,11 @@ export default {
       queryParam: {},
       rowSelection: {},
       columns: [
-        {
-          title: '审核部门',
-          align: 'center',
-          dataIndex: 'msgCategory'
-          //不存在
-        },
+        // {
+        //   title: '审核部门',
+        //   align: 'center',
+        //   dataIndex: 'msgCategory'
+        // },
         {
           title: '审核人',
           align: 'center',
@@ -144,15 +141,6 @@ export default {
   methods: {
     AuditorAddForm() {
       this.$refs.AuditorAddForm.add()
-    },
-
-    showAnnouncement(record) {
-      putAction(this.url.editCementSend, { anntId: record.anntId }).then(res => {
-        if (res.success) {
-          this.loadData()
-        }
-      })
-      this.$refs.ShowAnnouncement.detail(record)
     }
   }
 }

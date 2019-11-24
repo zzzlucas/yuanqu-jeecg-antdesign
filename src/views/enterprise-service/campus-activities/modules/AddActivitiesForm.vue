@@ -1,27 +1,45 @@
 <template>
-  <!-- 客户分配表单 -->
-  <a-drawer title="客户分配" width="40%" destroyOnClose :visible="visible" @close="handleCancel">
+  <a-drawer :title="title" width="50%" destroyOnClose :visible="visible" @close="handleCancel">
     <a-card :bordered="false">
       <a-form :form="form">
-        <!-- <a-form-item label="企业ID">
-          <a-input disabled v-decorator="['custId']" />
-        </a-form-item>-->
-        <a-form-item label="企业名称">
-          <a-input
-            disabled
-            v-decorator="['customerName',  {rules: [{required: true, message: '请输入企业名称'}]}]"
+        <a-form-item label="活动名称">
+          <a-input v-decorator="['title',  {rules: [{required: true, message: '请输入活动名称'}]}]" />
+        </a-form-item>
+        <a-form-item label="活动时间">
+          <!-- <a-range-picker
+            v-decorator="[['begDate','endDate'], {initialValue: ['2019-11-11','2019-11-25']}]"
+          ></a-range-picker>-->
+          <a-date-picker
+            showTime
+            style="width:50%"
+            format="YYYY-MM-DD HH:mm:ss"
+            v-decorator="['begDate',  {rules: [{required: true, message: '请输入活动开始时间'}]}]"
+          />
+          <a-date-picker
+            showTime
+            format="YYYY-MM-DD HH:mm:ss"
+            style="width:50%"
+            v-decorator="['endDate',  {rules: [{required: true, message: '请输入活动结束时间'}]}]"
           />
         </a-form-item>
-        <a-form-item label="服务人员" required>
-          <a-input v-decorator="['servicer',  {rules: [{required: true, message: '请输入服务人员'}]}]" />
-          <!-- 数据字典 -->
-          <!-- <a-select v-decorator="['servicer',  {rules: [{required: true, message: '请输入服务人员'}]}]">
-            <a-select-option
-              v-for="(item, key) in dict.trackerExt"
-              :value="item.value"
-              :key="key"
-            >{{ item.text }}</a-select-option>
-          </a-select>-->
+        <a-form-item label="活动地点">
+          <a-input v-decorator="['address',  {rules: [{required: true, message: '请输入活动地点'}]}]" />
+        </a-form-item>
+        <a-form-item label="主办单位">
+          <a-input v-decorator="['hostUnit',  {rules: [{required: true, message: '请输入主办单位'}]}]" />
+        </a-form-item>
+        <a-form-item label="所属园区 （暂园区ID">
+          <a-input v-decorator="['parkId',  {rules: [{required: true, message: '请输入所属园区'}]}]" />
+        </a-form-item>
+        <a-form-item label="活动限额">
+          <a-input
+            v-decorator="['applyMembersMax',  {rules: [{required: true, message: '请输入活动限额'}]}]"
+          />
+        </a-form-item>
+
+        <a-form-item label="活动介绍">
+          <!-- <a-input v-decorator="['context', {rules: [{required: true, message: '请输入活动介绍'}]}]" /> -->
+          <j-editor v-model="editor.context"></j-editor>
         </a-form-item>
       </a-form>
 
@@ -32,6 +50,7 @@
 </template>
 
 <script>
+import JEditor from '@comp/jeecg/JEditor'
 import { httpAction } from '@/api/manage'
 import pick from 'lodash.pick'
 import moment from 'moment'
@@ -39,12 +58,12 @@ import qs from 'qs'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import { initDictOptions } from '@comp/dict/JDictSelectUtil'
 export default {
-  name: 'SysAnnouncementModal',
-  components: {},
+  name: '',
+  components: { JEditor },
   data() {
     return {
       form: this.$form.createForm(this),
-      title: '通知消息',
+      // title: '通知消息',
       labelCol: {
         xs: { span: 24 },
         sm: { span: 5 }
@@ -65,15 +84,24 @@ export default {
       },
       //常用数据初始化
       record: {},
+      editor: {},
+      model: {},
       visible: false,
       loading: false,
+      editBool: false,
       //这是跟踪人，不是服务人员，是否走字典有待考究
       dict: {
         trackerExt: [{ value: '1' }]
       },
       url: {
-        edit: '/park.customer/baseCustomer/editServicer'
+        add: '/park.service/mgrActivityInfo/add',
+        edit: '/park.service/mgrActivityInfo/edit'
       }
+    }
+  },
+  computed: {
+    title() {
+      return '活动' + (this.editBool ? '编辑' : '发布')
     }
   },
   created() {
@@ -89,21 +117,22 @@ export default {
       this.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
           that.confirmLoading = true
+          const { context } = this.editor
           let httpurl = ''
           let method = ''
-          console.log(this.model)
-          //这里其实默认走put了
-          // if (!this.model.servicer) {
-          //   httpurl += this.url.add
-          //   method = 'post'
-          // } else {
-          httpurl += this.url.edit
-          method = 'put'
-          // }
-          // let formData = {}
+          if (!this.model.activityId) {
+            httpurl += this.url.add
+            method = 'post'
+          } else {
+            httpurl += this.url.edit
+            method = 'put'
+          }
           let formData = Object.assign(this.model, values)
+          formData.begDate = formData.begDate ? formData.begDate.format('YYYY-MM-DD HH:mm:ss') : null
+          formData.endDate = formData.endDate ? formData.endDate.format('YYYY-MM-DD HH:mm:ss') : null
+          formData.context = context
           formData = qs.stringify(formData)
-          console.log(formData)
+          // console.log(formData)
           httpAction(httpurl, formData, method)
             .then(res => {
               if (res.success) {
@@ -132,6 +161,9 @@ export default {
       this.$nextTick(() => {
         this.form.setFieldsValue(pick(this.model, 'custId', 'customerName', 'servicer'))
       })
+    },
+    Add() {
+      this.visible = true
     },
     handleCancel() {
       this.visible = false

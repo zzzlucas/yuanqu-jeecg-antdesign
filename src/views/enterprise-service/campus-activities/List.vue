@@ -34,7 +34,11 @@
             </a-dropdown>
           </a-col>
           <a-col :md="8" :sm="8" style="float:right;">
-            <a-button style="float:right;margin-left: 8px" type="primary" @click="searchQuery">发布活动</a-button>
+            <a-button
+              style="float:right;margin-left: 8px"
+              type="primary"
+              @click="AddActivitiesForm"
+            >发布活动</a-button>
           </a-col>
         </a-row>
       </a-form>
@@ -61,13 +65,13 @@
         :customRow="customRow"
       >
         <span slot="action" slot-scope="text, record">
-          <a @click.stop="showAllot(record, ...arguments)">分配</a>
+          <a v-if="true" @click.stop="showAllot(record, ...arguments)">发布</a>
+          <a v-if="false" @click.stop="showAllot(record, ...arguments)">停止报名</a>
         </span>
       </a-table>
     </div>
     <!-- table区域-end -->
-
-    <show-allot ref="ShowAllot" @reload="loadData"></show-allot>
+    <add-activities-form ref="AddActivitiesForm" @reload="loadData"></add-activities-form>
   </a-card>
 </template>
 
@@ -75,14 +79,14 @@
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import Config from '@/defaultSettings'
 import { initDictOptions } from '@/components/dict/JDictSelectUtil'
-import ShowAllot from './modules/ShowAllotD'
+import AddActivitiesForm from './modules/AddActivitiesForm'
 import { getAction, putAction } from '@/api/manage'
 import qs from 'qs'
 import Dom7 from 'dom7'
 
 export default {
   name: 'IndustrialParksList',
-  components: { ShowAllot },
+  components: { AddActivitiesForm },
   mixins: [JeecgListMixin],
   data() {
     return {
@@ -100,28 +104,23 @@ export default {
       columns: [
         // {
         //   title: '序号',
+        //   dataIndex: '',
+        //   key: 'rowIndex',
+        //   width: 60,
         //   align: 'center',
-        //   dataIndex: 'custId'
+        //   customRender: function(t, r, index) {
+        //     return parseInt(index) + 1
+        //   }
         // },
-        {
-          title: '序号',
-          dataIndex: '',
-          key: 'rowIndex',
-          width: 60,
-          align: 'center',
-          customRender: function(t, r, index) {
-            return parseInt(index) + 1
-          }
-        },
         {
           title: '活动名称',
           align: 'center',
-          dataIndex: 'customerName'
+          dataIndex: 'title'
         },
         {
           title: '活动时间',
-          align: 'center'
-          // dataIndex: 'baseCustomerBusiness.registeredCapital'
+          align: 'center',
+          dataIndex: 'begDate'
         },
         {
           title: '发布时间',
@@ -131,22 +130,22 @@ export default {
         {
           title: '点击数',
           align: 'center',
-          dataIndex: 'baseCustomerBusiness.rCToRMB'
+          dataIndex: ''
         },
         {
           title: '报名数',
           align: 'center',
-          dataIndex: 'merchantDate'
+          dataIndex: ''
         },
         {
           title: '评论数',
           align: 'center',
-          dataIndex: 'servicer'
+          dataIndex: ''
         },
         {
           title: '活动状态',
           align: 'center',
-          dataIndex: 'servicer'
+          dataIndex: 'status'
         },
         {
           title: '操作',
@@ -156,7 +155,7 @@ export default {
         }
       ],
       url: {
-        list: '/park.customer/baseCustomer/list',
+        list: '/park.service/mgrActivityInfo/list',
         queryParam: '/park.customer/baseCustomer/queryById'
       },
       temprow: '',
@@ -177,15 +176,18 @@ export default {
       return {
         on: {
           click: () => {
-            console.log(row.custId)
-            this.cusId = row.custId
+            // console.log(row.custId)
+            // this.cusId = row.custId
             //拿到id
-            this.$router.push({ name: 'cust-manage-detail-@id', params: { id: row.custId } })
+            this.$router.push({ name: 'enterprise-service-campus-activities-detail-@id', params: { id: row.activityId } })
           }
         }
       }
     },
     //
+    AddActivitiesForm() {
+      this.$refs.AddActivitiesForm.Add()
+    },
     showAllot(row, e) {
       row.__key = Dom7(e.currentTarget)
         .parents('.ant-table-row')
