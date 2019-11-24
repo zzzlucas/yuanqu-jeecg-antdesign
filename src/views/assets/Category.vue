@@ -11,7 +11,7 @@
             <a-row :gutter="24" type="flex" justify="end">
               <a-col>
                 <a-form-item>
-                  <a-button type="primary" @click="openAddCategory">新增分类</a-button>
+                  <a-button type="primary" @click="handleAdd">新增分类</a-button>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -22,6 +22,7 @@
           ref="table"
           size="middle"
           bordered
+          rowKey="categoryId"
           :columns="columns"
           :dataSource="dataSource"
           :pagination="ipagination"
@@ -38,9 +39,7 @@
     </a-layout>
     <!-- Add/Edit form -->
     <assets-category-add-form
-      :edit="edit"
-      :edit-data="editForm"
-      v-model="showForm"
+      ref="modalForm"
       @submit="handleEditSubmit" />
   </a-card>
 </template>
@@ -81,11 +80,6 @@
             dataIndex: 'category_name'
           },
           {
-            title: '分类编码',
-            align: 'center',
-            dataIndex: 'category_code'
-          },
-          {
             title: '上级分类',
             align: 'center',
             dataIndex: 'category_parent_name'
@@ -97,18 +91,11 @@
             scopedSlots: { customRender: 'action' },
           }
         ],
-        // Add/Edit form
-        showForm: false,
-        edit: false,
-        editForm: {},
         // Category
         showCategory: true,
       }
     },
     methods: {
-      openAddCategory() {
-        this.showForm = true
-      },
       async reloadCategory() {
         this.showCategory = false
         await this.$nextTick()

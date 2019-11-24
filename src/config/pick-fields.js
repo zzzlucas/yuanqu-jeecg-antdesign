@@ -343,3 +343,8 @@ export const AddTechProjectForm = [
   'workFlowUseObject',
   'afterChangeBuildArea'
 ]
+
+export const assetsCategoryEditForm = [
+  'categoryName',
+  'parentId',
+]

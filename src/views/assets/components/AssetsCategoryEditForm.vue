@@ -15,11 +15,6 @@
           </a-form-item>
         </a-col>
         <a-col :xl="24">
-          <a-form-item label="分类编号" :label-col="gridOptions.formItem.label" :wrapper-col="gridOptions.formItem.value">
-            <a-input disabled v-decorator="['categoryNo']"></a-input>
-          </a-form-item>
-        </a-col>
-        <a-col :xl="24">
           <a-form-item label="上级分类" :label-col="gridOptions.formItem.label" :wrapper-col="gridOptions.formItem.value">
             <a-tree-select
               treeDefaultExpandAll
@@ -48,7 +43,8 @@
   import { mapGetters } from 'vuex'
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
   import { filterObj, promiseForm, buildTreeData } from '@utils/util'
-  import { treeListCategory, addCategory } from '../api'
+  import { assetsCategoryEditForm } from '@/config/pick-fields'
+  import { treeListCategory, addCategory, editCategory } from '../api'
 
   export default {
     mixins: [
@@ -63,6 +59,8 @@
             value: { span: 18 }
           },
         },
+        // Form
+        fields: assetsCategoryEditForm,
         // Rules
         rules: {
           categoryName: [
@@ -99,7 +97,13 @@
         try {
           filterObj(data)
           data.parkId = this.industrialParkId
-          const resp = await addCategory(data)
+          let resp
+          if (this.isEdit) {
+            data.categoryId = this.record.categoryId
+            resp = await editCategory(data)
+          } else {
+            resp = await addCategory(data)
+          }
           if (!resp.success) {
             throw new Error(resp.message)
           }
