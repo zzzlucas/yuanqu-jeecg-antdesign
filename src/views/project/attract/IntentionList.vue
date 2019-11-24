@@ -94,10 +94,10 @@
     </a-table>
 
     <!-- 表单区域 -->
+    <!-- <a-alert v-if="alertM" message="当前暂无跟踪记录，请先进行跟踪登记。" banner /> -->
+
     <show-zero ref="ShowZero" @reload="loadData()" @ok="rrreload"></show-zero>
-
     <show-two @showOneToZeroEdit="showZeroEdit" @showOneToZeroAdd="showZeroAdd" ref="ShowTwo"></show-two>
-
     <show-one ref="ShowOne" @reload="loadData()"></show-one>
     <show-card ref="ShowCard"></show-card>
     <add-project-land ref="ShowAddProjectLand" @reload="loadData()"></add-project-land>
@@ -150,7 +150,8 @@ export default {
       projectTypeDictOptions: '',
       industrySectorValueDictOptions: '',
       statusDictOptions: '',
-      pagination: '',
+      alertM: false,
+      // pagination: '',
       columns: [
         {
           title: '项目名称',
@@ -178,7 +179,7 @@ export default {
         {
           title: '总投资（万元）',
           align: 'center',
-          dataIndex: 'mgrProjectInvest.investAmount'
+          dataIndex: 'investAmount'
         },
         {
           title: '项目联系人',
@@ -264,13 +265,58 @@ export default {
   },
   created() {},
   methods: {
+    //为了修改datasource里的字段名
+    loadData(arg) {
+      if (!this.url.list) {
+        this.$message.error('请设置url.list属性!')
+        return
+      }
+      if (arg === 1) {
+        this.ipagination.current = 1
+      }
+      var params = this.getQueryParams() //查询条件
+      this.loading = true
+      getAction(this.url.list, params).then(res => {
+        if (res.success) {
+          //遍历修改增加字段名，统一为gainArea，避免字段名不吻合的情况导致租赁面积不显示
+          for (const item of res.result.records) {
+            //存在，不为null
+            if (item.rentBuildArea) {
+              item.gainArea = item.rentBuildArea
+            }
+            if (item.mgrProjectInvestLease) {
+              if (item.mgrProjectInvestLease.investAmount) {
+                item.investAmount = item.mgrProjectInvestLease.investAmount
+              }
+            }
+            if (item.mgrProjectInvest) {
+              if (item.mgrProjectInvest.investAmount) {
+                item.investAmount = item.mgrProjectInvest.investAmount
+              }
+            }
+          }
+          // for (const item of res.result.records) {
+          // }
+          // for (const item of res.result.records) {
+          // }
+          this.dataSource = res.result.records
+          this.ipagination.total = res.result.total
+        }
+        if (res.code === 510) {
+          this.$message.warning(res.message)
+        }
+        this.loading = false
+      })
+    },
     customRow(row) {
       return {
         on: {
           click: () => {
             // console.log(row.projectId)
             //拿到id
-            this.$router.push({ name: 'project-attract-detail-@id', params: { id: row.projectId } })
+            row.projectType == 1
+              ? this.$router.push({ name: 'project-attract-detail-@id', params: { id: row.projectId } })
+              : this.$router.push({ name: 'project-attract-detail-b-@id', params: { id: row.projectId } })
           }
         }
       }
@@ -345,12 +391,14 @@ export default {
 
     goAddLease() {
       // this.$router.push({ path: '/project/attract/addprojectlease' })
-      this.$refs.ShowAddProjectLease.detail()
+      this.$refs.ShowAddProjectLease.add()
     },
     goLuoDi(record) {
-      console.log('record')
-      console.log(record)
-      this.$router.push({ name: 'project-attract-reapply-@id', params: { id: record.projectId } })
+      // console.log('record')
+      // console.log(record)
+      record.projectType == 1
+        ? this.$router.push({ name: 'project-attract-reapply-@id', params: { id: record.projectId } })
+        : this.$router.push({ name: 'project-attract-reapply-b-@id', params: { id: record.projectId } })
       // this.$router.push({ path: '/project/attract/ldxm', params: { id: record.projectId } })
     },
     handleDetail: function(record) {
@@ -402,7 +450,12 @@ export default {
       getAction('/park.project/mgrProjectTrace/getById', params).then(res => {
         if (res.success) {
           row = res.result[res.result.length - 1]
-          this.$refs.ShowCard.detail(row)
+          if (row) {
+            this.$refs.ShowCard.detail(row)
+          } else {
+            this.$message.warning('当前暂无跟踪记录，请先进行跟踪登记。')
+            // this.alertM = true
+          }
         }
         if (res.code === 510) {
           this.$message.warning(res.message)

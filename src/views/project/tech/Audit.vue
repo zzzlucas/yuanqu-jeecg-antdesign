@@ -5,11 +5,11 @@
         <a-row :gutter="24">
           <a-col :span="6">
             <a-form-item label="关键字">
-              <a-input placeholder="输入园区名称" v-model="queryParam.titile"></a-input>
+              <a-input placeholder="输入关键字" v-model="queryParam.titile"></a-input>
             </a-form-item>
           </a-col>
 
-          <a-col :span="8">
+          <a-col :span="4">
             <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
               <a-button
@@ -20,6 +20,13 @@
               >重置</a-button>
             </span>
           </a-col>
+          <a-radio-group @change="handleChange" v-decorator="['auditStatus']">
+            <a-radio value="1">部门审核</a-radio>
+            <a-radio value="2">分管领导审核</a-radio>
+            <a-radio value="3">主要领导审核</a-radio>
+            <a-radio value="4">审核通过</a-radio>
+            <a-radio value="5">审核未通过</a-radio>
+          </a-radio-group>
 
           <a-col :span="8" style="float: right">
             <span style="float: right;overflow: hidden;" class="table-page-search-submitButtons">
@@ -40,24 +47,27 @@
       :pagination="ipagination"
       :loading="loading"
       @change="handleTableChange"
+      :customRow="customRow"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="AuditorForm(record,...arguments)">审核</a>
+        <a @click.stop="AuditForm(record,...arguments)">审核</a>
         <a-divider type="vertical" />
-        <a @click="EditTechProject(record,...arguments)">项目维护</a>
+        <a @click.stop="EditTechProject(record,...arguments)">项目维护</a>
       </span>
     </a-table>
 
-    <auditor-form ref="AuditorForm"></auditor-form>
-    <add-tech-project ref="AddTechProject"></add-tech-project>
+    <audit-form ref="AuditForm"></audit-form>
+
+    <add-tech-project ref="AddTechProject" @reload="loadData"></add-tech-project>
   </a-card>
 </template>
 <script>
 // import { filterObj } from '@/utils/util'
 import { getAction, putAction } from '@/api/manage'
 import AddTechProject from './modules/AddTechProject'
-import AuditorForm from './modules/AuditorFormM'
+import AuditForm from './modules/AuditFormM'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
 import Dom7 from 'dom7'
 
 export default {
@@ -65,57 +75,69 @@ export default {
   mixins: [JeecgListMixin], //居然很重要
   components: {
     AddTechProject,
-    AuditorForm
+    AuditForm
   },
   data() {
     return {
       description: '',
       queryParam: {},
+      auditStatusDictOptions: '',
+      industrySectorValue: '',
       columns: [
         {
           title: '序号',
+          dataIndex: '',
+          key: 'rowIndex',
+          width: 100,
           align: 'center',
-          dataIndex: 'titile' //数据绑定项目
+          customRender: function(t, r, index) {
+            return parseInt(index) + 1
+          }
         },
         {
           title: '项目单位',
           align: 'center',
-          dataIndex: 'msgCategory'
+          dataIndex: 'fillUnit'
         },
         {
           title: '经办人',
           align: 'center',
-          dataIndex: 'priority'
+          dataIndex: 'agentPerson'
         },
         {
           title: '联系电话',
           align: 'center',
-          dataIndex: ''
+          dataIndex: 'agentTel'
         },
         {
           title: '项目名称',
           align: 'center',
-          dataIndex: ''
+          dataIndex: 'projectName'
         },
         {
           title: '所属行业',
           align: 'center',
-          dataIndex: ''
+          dataIndex: 'industrySectorValue',
+          customRender: text => {
+            return filterDictText(this.industrySectorValueDictOptions, text)
+          }
         },
         {
           title: '项目状态',
           align: 'center',
-          dataIndex: 'readFlag',
-          customRender: function(text) {
-            if (text == '1') {
-              //返回此页的数据目前是 undefined？
-              return '已审核'
-            } else if (text == '2') {
-              return '未审核'
-            } else {
-              return '未审核'
-            }
+          dataIndex: 'auditStatus',
+          customRender: text => {
+            return filterDictText(this.auditStatusDictOptions, text)
           }
+          // customRender: function(text) {
+          //   if (text == '1') {
+          //     //返回此页的数据目前是 undefined？
+          //     return '已审核'
+          //   } else text == '2'
+          //   {
+          //     return '未审核'
+          //   }
+          // }
         },
         {
           title: '操作',
@@ -125,20 +147,63 @@ export default {
         }
       ],
       url: {
-        list: '/park.project/mgrProjectLand/list',
+        list: '/park.project/mgrProjectLand/list'
         // editCementSend: 'sys/sysAnnouncementSend/editByAnntIdAndUserId'
         // readAllMsg: 'sys/sysAnnouncementSend/readAll'
       },
       loading: false
     }
   },
-  created() {},
+  created() {
+    initDictOptions('industry_sector_value').then(res => {
+      if (res.code === 0 && res.success) {
+        this.industrySectorValueDictOptions = res.result
+      }
+    })
+    initDictOptions('audit_status').then(res => {
+      if (res.code === 0 && res.success) {
+        this.auditStatusDictOptions = res.result
+      }
+    })
+  },
   methods: {
-    AuditorForm(row, e) {
+    handleChange(e){
+      console.log(e);
+    },
+    loadData(arg) {
+      if (arg === 1) {
+        this.ipagination.current = 1
+      }
+      var params = this.getQueryParams()
+      this.loading = true
+      getAction(this.url.list, params).then(res => {
+        if (res.success) {
+          //过两天我应该还会来加判断条件，避免无对象获取情况的报错
+          for (const item of res.result.records) {
+            item.fillUnit = item.mgrProjectCust.fillUnit
+            item.agentPerson = item.mgrProjectInfo.agentPerson
+            item.agentTel = item.mgrProjectInfo.agentTel
+            item.projectName = item.mgrProjectInfo.projectName
+            item.industrySectorValue = item.mgrProjectInfo.industrySectorValue
+            item.auditStatus = item.mgrProjectInfo.auditStatus
+          }
+          this.dataSource = res.result.records
+          this.ipagination.total = res.result.total
+        }
+        if (res.code === 510) {
+          this.$message.warning(res.message)
+        }
+        this.loading = false
+      })
+    },
+    //走编辑
+    AuditForm(row, e) {
       row.__key = Dom7(e.currentTarget)
         .parents('.ant-table-row')
         .data('row-key')
-      this.$refs.AuditorForm.add(row)
+      this.$refs.AuditForm.edit(row)
+      // console.log('row');
+      // console.log(row);
     },
     AddTechProject() {
       this.$refs.AddTechProject.add()
@@ -148,6 +213,15 @@ export default {
         .parents('.ant-table-row')
         .data('row-key')
       this.$refs.AddTechProject.edit(row)
+    },
+    customRow(row) {
+      return {
+        on: {
+          click: () => {
+            this.$router.push({ name: 'project-tech-detail-@id', params: { id: row.projectId } })
+          }
+        }
+      }
     }
 
     // goAdd(record) {

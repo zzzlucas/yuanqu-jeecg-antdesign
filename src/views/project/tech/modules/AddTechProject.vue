@@ -48,8 +48,6 @@
                     placeholder
                     v-decorator="['setUpYear',{rules: [{ required: true, message: '请输入成立年份', whitespace: true}]}]"
                   />
-                  <!-- 此处不应使用时间框 -->
-                  <!-- <a-date-picker style="width:100%" v-decorator="['setUpYear']" /> -->
                 </a-form-item>
               </a-col>
             </a-row>
@@ -72,9 +70,10 @@
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="注册资金（万元）">
+                <a-form-item label="注册资金">
                   <a-input
                     placeholder
+                    addonAfter="万元"
                     v-decorator="['registerMoney',{rules: [{ required: true, message: '请输入注册资金'}]}]"
                   />
                 </a-form-item>
@@ -83,15 +82,17 @@
             <!-- 行4 -->
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="企业总资产（万元）">
+                <a-form-item label="企业总资产">
                   <a-input
+                    addonAfter="万元"
                     v-decorator="['totalAsset',{rules: [{ required: true, message: '请输入企业总资产'}]}]"
                   />
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="固定资产净值（万元）">
+                <a-form-item label="固定资产净值">
                   <a-input
+                    addonAfter="万元"
                     v-decorator="['fixedAsset',{rules: [{ required: true, message: '请输入固定资产净值'}]}]"
                   />
                 </a-form-item>
@@ -105,7 +106,7 @@
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="联系电话（法人">
+                <a-form-item label="联系电话（法人）">
                   <a-input placeholder v-decorator="['legalTel']" />
                 </a-form-item>
               </a-col>
@@ -155,13 +156,17 @@
             <!-- 行10 -->
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="年产值（万元）">
-                  <a-input placeholder v-decorator="[    'annualProductionValue'   ]" />
+                <a-form-item label="年产值">
+                  <a-input
+                    addonAfter="万元"
+                    placeholder
+                    v-decorator="[    'annualProductionValue'   ]"
+                  />
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="年税金（万元）">
-                  <a-input placeholder v-decorator="[  'annualTaxes'  ]" />
+                <a-form-item label="年税金">
+                  <a-input addonAfter="万元" placeholder v-decorator="[  'annualTaxes'  ]" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -262,8 +267,8 @@
             </a-row>
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="租赁建设面积（平方米）">
-                  <a-input placeholder v-decorator="['rentBuildArea']" />
+                <a-form-item label="租赁建设面积">
+                  <a-input addonAfter="m²" placeholder v-decorator="['rentBuildArea']" />
                 </a-form-item>
               </a-col>
               <!-- 按要求，应该使用数据字典 -->
@@ -298,14 +303,15 @@
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="是否人才项目">
                   <a-radio-group v-decorator="['isTalentProject']">
-                    <a-radio :value="1">是</a-radio>
-                    <a-radio :value="2">否</a-radio>
+                    <a-radio value="1">是</a-radio>
+                    <a-radio value="2">否</a-radio>
                   </a-radio-group>
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="拿地面积（m²）">
+                <a-form-item label="拿地面积">
                   <a-input
+                    addonAfter="m²"
                     placeholder
                     v-decorator="['gainArea',{rules: [{ required: true, message: '请输入拿地面积'}]}]"
                   />
@@ -342,8 +348,8 @@
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="是否外资">
                   <a-radio-group v-decorator="['isForeignCapital']">
-                    <a-radio :value="1">是</a-radio>
-                    <a-radio :value="2">否</a-radio>
+                    <a-radio value="1">是</a-radio>
+                    <a-radio value="2">否</a-radio>
                   </a-radio-group>
                 </a-form-item>
               </a-col>
@@ -465,16 +471,16 @@
               <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="固定资产投资（万元）">
                   <p class="myinput">
-                    1.项目总用地面
-                    <a-input />平方米；其中：新征用地面积
-                    <a-input />平方米。项目利用企业已有土地的，土地证等证书文件编号
-                    <a-input style="width:200px;" />。租赁使用其他企业厂房的，出租房土地证等证书文件编号
-                    <a-input style="width:200px;" />。
+                    1.项目总用地面积
+                    <a-input v-decorator="['totalUseArea']" />平方米；其中：新征用地面积
+                    <a-input v-decorator="['newUseArea']" />平方米。项目利用企业已有土地的，土地证等证书文件编号
+                    <a-input v-decorator="['ownLandNumber']" style="width:200px;" />。租赁使用其他企业厂房的，出租房土地证等证书文件编号
+                    <a-input v-decorator="['rentLandNumber']" style="width:200px;" />。
                     <br />2.项目原建筑面积
-                    <a-input />平方米，实施技术改造后建筑面积
-                    <a-input />平方米。新增建筑面积
-                    <a-input />平方米。实施技术改造是否涉及主体建筑结构改变
-                    <a-input />（填“是”或“否”）。
+                    <a-input v-decorator="['originalBuildArea']" />平方米，实施技术改造后建筑面积
+                    <a-input v-decorator="['afterChangeBuildArea']" />平方米。新增建筑面积
+                    <a-input v-decorator="['newBuildArea']" />平方米。实施技术改造是否涉及主体建筑结构改变
+                    <a-input v-decorator="['isChangeBuild']" />（填“是”或“否”）。
                   </p>
                 </a-form-item>
               </a-col>
@@ -483,7 +489,7 @@
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="项目工艺流程（图示式）及说明">
-                  <j-editor v-decorator="['projectTechnologyFlow']"></j-editor>
+                  <j-editor v-model="editor.projectTechnologyFlow"></j-editor>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -507,7 +513,7 @@
             </a-row>
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="parkId test">
+                <a-form-item label="parkId test getapi无此项 自填">
                   <a-input
                     placeholder
                     v-decorator="['parkId', {rules: [{ required: true, message: '请输入parkId', whitespace: true}]}]"
@@ -554,18 +560,18 @@ import PageLayout from '@/components/page/PageLayout'
 import JEditor from '@/components/jeecg/JEditor'
 import JDictSelectTag from '@/components/dict/JDictSelectTag'
 import { initDictOptions } from '@/components/dict/JDictSelectUtil'
-import { httpAction } from '@/api/manage'
+import { httpAction, getAction } from '@/api/manage'
 import pick from 'lodash.pick'
 import moment from 'moment'
-import { AddProjectLandForm } from '@/config/pick-fields'
+import { AddTechProjectForm } from '@/config/pick-fields'
 export default {
-  name: 'addProjectLandForm',
+  name: 'AddTechProjectForm',
   // mixins: [JeecgListMixin],
   components: { PageLayout, JEditor, JDictSelectTag },
   data() {
     return {
       //在添加与编辑时修改
-      title: '技改项目用地信息添加',
+      // title: '技改项目用地信息添加',
       //   form: {}
       form: this.$form.createForm(this, { name: '' }),
       formItem: {
@@ -588,6 +594,9 @@ export default {
         industrySectorValueExt: [{ value: '1' }],
         companyRegisterTypeExt: [{ value: '1' }]
       },
+      editor: {
+        projectTechnologyFlow: ''
+      },
       record: {},
       visible: false,
       loading: false
@@ -597,8 +606,8 @@ export default {
   },
   //先搞定添加，回头再做这个
   computed: {
-    getTitle() {
-      return (this.model.projectId ? '编辑' : '登记') + '园区'
+    title() {
+      return '技改项目' + (this.model.projectId ? '维护' : '新建')
     }
   },
   updated() {
@@ -609,49 +618,58 @@ export default {
       if (res.code === 0 && res.success) {
         this.dict.industrySectorValueExt = res.result
       }
-    }),
-      initDictOptions('mgr-attr-addpl-companyRegisterType').then(res => {
-        if (res.code === 0 && res.success) {
-          this.dict.companyRegisterTypeExt = res.result
-        }
-      })
+    })
+    initDictOptions('mgr-attr-addpl-companyRegisterType').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.companyRegisterTypeExt = res.result
+      }
+    })
   },
   methods: {
     importExcelUrl() {},
     handleImportExcel() {},
     moment,
     add() {
+      this.model = {}
       this.visible = true
     },
-    // add() {
-    //   this.picUrl = ''
-    //   this.refresh()
-    //   this.edit({ activitiSync: '1' })
+    // detail(record) {
+    //   // this.record = record
+    //   // console.log(this.record.recordId)
+    //   this.form.resetFields()
+    //   this.model = Object.assign({}, record)
+    //   this.visible = true
+    //   // console.log(pick(this.model, ProjectAttractShowZeroForm))
+    //   this.$nextTick(() => {
+    //     this.form.setFieldsValue(pick(this.model, AddTechProjectForm))
+    //     //时间格式化
+    //     // this.form.setFieldsValue({ trackDate: this.model.trackDate ? moment(this.model.trackDate) : null })
+    //   })
     // },
-    detail(record) {
-      // this.record = record
-      // console.log(this.record.recordId)
-      this.form.resetFields()
-      this.model = Object.assign({}, record)
-      this.visible = true
-      // console.log(pick(this.model, ProjectAttractShowZeroForm))
-      this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.model, AddProjectLandForm))
-        //时间格式化
-        // this.form.setFieldsValue({ trackDate: this.model.trackDate ? moment(this.model.trackDate) : null })
-      })
-    },
-    edit(record) {
+    edit(recordA) {
       console.log('edit开始了')
       this.form.resetFields()
-      this.model = Object.assign({}, record)
-      // console.log(this.model)
-      this.visible = true
-      this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.model, AddProjectLandForm))
-        //时间格式化
+      getAction('/park.project/mgrProjectLand/queryById', { id: recordA.projectId }).then(res => {
+        console.log('res')
+        console.log(res)
+        this.model = Object.assign({}, res.result)
+        this.visible = true
+        this.$nextTick(() => {
+          this.editor = {
+            projectTechnologyFlow: this.model.projectTechnologyFlow
+          }
+          this.form.setFieldsValue(pick(this.model, AddTechProjectForm))
+          this.form.setFieldsValue({
+            buildingBeginDate: this.model.buildingBeginDate ? moment(this.model.buildingBeginDate) : null
+          })
+          this.form.setFieldsValue({
+            buildingEndDate: this.model.buildingEndDate ? moment(this.model.buildingEndDate) : null
+          })
+        })
       })
-      // console.log(this.model)
+      // if (record.mgrProjectCust) {
+      //   record.fillUnit = record.mgrProjectCust.fillUnit
+      // }
     },
 
     handleCancel() {
@@ -664,14 +682,10 @@ export default {
       const that = this
       // 触发表单验证
       this.form.validateFieldsAndScroll((err, values) => {
-        // values.setUpYear = 1
-        // console.log(values.setUpYear)
-
         if (!err) {
           that.confirmLoading = true
           let httpurl = ''
           let method = ''
-          
           if (!this.model.projectId) {
             //增
             console.log('post方式')
@@ -680,25 +694,28 @@ export default {
           } else {
             //改
             console.log('put方式')
+            console.log(this.model.projectId)
             httpurl += this.url.edit
             method = 'put'
           }
-
-          // let formData = {}
           let formData = Object.assign(this.model, values)
-          // formData.setUpYear = formData.setUpYear ? formData.setUpYear.format() : null
-          formData.buildingBeginDate = formData.buildingBeginDate
-            ? formData.buildingBeginDate.format('YYYY-MM-DD')
-            : null
-          formData.buildingEndDate = formData.buildingEndDate ? formData.buildingEndDate.format('YYYY-MM-DD') : null
+          if (formData.buildingBeginDate) {
+            formData.buildingBeginDate = formData.buildingBeginDate
+              ? formData.buildingBeginDate.format('YYYY-MM-DD')
+              : null
+          }
+          if (formData.buildingEndDate) {
+            formData.buildingEndDate = formData.buildingEndDate ? formData.buildingEndDate.format('YYYY-MM-DD') : null
+          }
 
-          //qs.stringify  目前看来必须转换
+          const { projectTechnologyFlow } = this.editor
+          formData.projectTechnologyFlow = projectTechnologyFlow
+
+          formData.projectName = 'zhengjietest'
+          formData.parkId = '555'
+          formData.workFlowUseObject = 'test'
+
           formData = qs.stringify(formData)
-          console.log(formData)
-
-          // formData = JSON.stringify(formData);
-          // console.log(formData)
-
           httpAction(httpurl, formData, method)
             .then(res => {
               if (res.success) {

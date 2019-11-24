@@ -1,36 +1,25 @@
 <template>
-  <!-- 跟踪记录表单  下拉1-->
-
-  <a-modal
-    :title="title"
-    :width="1300"
-    :visible="visible"
-    :confirmLoading="confirmLoading"
-    @cancel="handleCancel"
-    cancelText="关闭"
-    destroyOnClose
-    :footer="null"
-  >
+  <div>
     <a-card :bordered="false">
       <a-form :form="form">
         <a-row>
           <a-col :span="4">
             <a-form-item label="跟踪日期" :labelCol="labelCol" :wrapperCol="wrapperCol">
               <a-date-picker placeholder="开始" v-model="ff.beginDate" :format="dateFormat" />
-              <!-- <a-date-picker placeholder="开始" v-decorator="['beginDate']" :format="dateFormat" /> -->
+              <!-- <a-date-picker v-decorator="['beginDate']" /> -->
             </a-form-item>
           </a-col>
           <a-col :span="4">
             <a-form-item label :labelCol="labelCol" :wrapperCol="wrapperCol">
               <a-date-picker placeholder="结束" v-model="ff.endDate" :format="dateFormat" />
-              <!-- <a-date-picker placeholder="结束" v-decorator="['endDate']" :format="dateFormat" /> -->
+              <!-- <a-date-picker v-decorator="['endDate']" /> -->
             </a-form-item>
           </a-col>
 
           <a-col :span="5">
             <a-form-item label="跟踪人" :labelCol="labelCol" :wrapperCol="wrapperCol">
               <a-select v-model="ff.keyword">
-                <!-- <a-select v-decorator="['keyword']"> -->
+              <!-- <a-select v-decorator="['keyword']"> -->
                 <a-select-option
                   v-for="(item, key) in dict.trackerDictOptions"
                   :value="item.value"
@@ -42,8 +31,8 @@
 
           <a-col :span="5">
             <a-form-item label="跟踪方式" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-select v-model="ff.trackMethod">
-                <!-- <a-select v-decorator="['trackMethod']"> -->
+               <a-select v-model="ff.trackMethod">
+              <!-- <a-select v-decorator="['trackMethod']"> -->
                 <a-select-option
                   v-for="(item, key) in dict.trackMethodDictOptions"
                   :value="item.value"
@@ -62,7 +51,7 @@
         </a-row>
         <a-row>
           <a-button
-            @click="twoShowOneAdd()"
+            @click="ShowZeroAdd()"
             type="primary"
             icon="plus"
             style="float:left;margin-left:0"
@@ -81,7 +70,7 @@
         >
           <!-- :customRow="customRow" -->
           <span slot="action" slot-scope="text, record">
-            <a @click="twoShowOne(record, ...arguments)">编辑</a>
+            <a @click="ShowZero(record, ...arguments)">编辑</a>
             <a-divider type="vertical" />
             <a @click="showCard(record, ...arguments)">查看</a>
             <a-divider type="vertical" />
@@ -91,7 +80,9 @@
       </a-form>
     </a-card>
     <show-card ref="ShowCard"></show-card>
-  </a-modal>
+    <!-- @ok="rrreload" -->
+    <show-zero ref="ShowZero" @reload="loadData"></show-zero>
+  </div>
 </template>
 
 <script>
@@ -101,21 +92,21 @@ import { getAction, putAction } from '@/api/manage'
 import moment from 'moment'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import ShowCard from '@/views/project/attract/modules/ShowTwoMCard'
+import ShowZero from './ShowZeroD'
 import Dom7 from 'dom7'
 import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
 
 export default {
   mixins: [JeecgListMixin],
   name: '',
-  components: { ShowCard },
+  components: { ShowCard, ShowZero },
   // props: {
   //   ipaginationSTM: ''
   // },
   data() {
     return {
       //
-      ff: {},
-      dateFormat: 'YYYY-MM-DD',
+        ff: {},
       confirmLoading: false,
       form: this.$form.createForm(this),
       title: '跟踪记录',
@@ -198,17 +189,21 @@ export default {
   created() {
     console.log('test start-------------')
     this.initDictConfig()
+    this.loadData()
     // this.getProjectTrace()
   },
+  //本页面相对于原modal的修改
+  //1、去掉modal，改为div
+  //2.初始数据获取上，原本detail事件触发,改为creat钩子
   methods: {
+    // detail(record) {
+    //   this.visible = true
+    //   this.record = record
+    //   //this.record.projectId 获取到了，在get请求前传入值
+    //   console.log(this.record.projectId)
+    //   this.loadData()
+    // },
     moment,
-    detail(record) {
-      this.visible = true
-      this.record = record
-      //this.record.projectId 获取到了，在get请求前传入值
-      console.log(this.record.projectId)
-      this.loadData()
-    },
     searchQuery() {
       this.getProjectTrace()
     },
@@ -229,21 +224,7 @@ export default {
       if (this.ff.endDate) {
         this.ff.endDate = this.ff.endDate ? this.ff.endDate.format('YYYY-MM-DD') : null
       }
-      //大约是因为时间的格式化   意外的是枚举复制后的老对象依旧会影响新对象
-      this.queryform = Object.assign(this.ff)
-      // this.ff.beginDate = null
-      // this.ff.endDate = null
-
-      // this.form.validateFieldsAndScroll((err, form) => {
-      //   if (form.beginDate) {
-      //     form.beginDate = form.beginDate ? form.beginDate.format('YYYY-MM-DD') : null
-      //   }
-      //   if (form.endDate) {
-      //     form.endDate = form.endDate ? form.endDate.format('YYYY-MM-DD') : null
-      //   }
-      //   //查询数据从表单获取到，其实不该走表单，直接走一个对象即可
-      //   this.queryform = form
-      // })
+      this.queryform = this.ff
 
       // console.log(this.queryform)
       var param = Object.assign(this.queryform)
@@ -260,7 +241,9 @@ export default {
       if (arg === 1) {
         this.ipagination.current = 1
       }
-      let params = { projectId: this.record.projectId }
+      let params = { projectId: this.$route.params.id }
+      console.log('params')
+      console.log(params)
       this.loading = true
       getAction('/park.project/mgrProjectTrace/getById', params).then(res => {
         if (res.success) {
@@ -285,8 +268,8 @@ export default {
       this.loading = true
       getAction('/park.project/mgrProjectTrace/list', params).then(res => {
         if (res.success) {
-          // console.log('test start getAction')
-          // console.log(res.result)
+          console.log('test start getAction')
+          console.log(res.result)
           this.dataSourceSTM = res.result.records
           this.ipagination.total = res.result.total
         }
@@ -318,20 +301,22 @@ export default {
       this.$refs.ShowCard.detail(row)
     },
     //其实最后调用是showzero   这里需要modal内对应行的数据，ok
-    twoShowOne(row, e) {
+    ShowZero(row, e) {
       row.__key = Dom7(e.currentTarget)
         .parents('.ant-table-row')
         .data('row-key')
       // console.log(row.__key)
-      this.$emit('showOneToZeroEdit', row)
+      // this.$emit('showOneToZeroEdit', row)
+      this.$refs.ShowZero.detailDDD(row)
     },
 
     //这里需要list对应行的数据  不在这里给
-    twoShowOneAdd() {
+    ShowZeroAdd() {
       //获得当前modal的projectId
       // console.log('----------');
       // console.log(this.record.projectId);
-      this.$emit('showOneToZeroAdd', this.record)
+      // this.$emit('showOneToZeroAdd', this.record)
+      this.$refs.ShowZero.partDetailDDD()
     },
     handleCancel() {
       this.visible = false

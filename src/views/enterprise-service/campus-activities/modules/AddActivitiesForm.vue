@@ -1,31 +1,45 @@
 <template>
-  <!-- 项目分配表单 -->
-  <a-drawer :title="myTitle" width="40%" destroyOnClose :visible="visible" @close="handleCancel">
+  <a-drawer :title="title" width="50%" destroyOnClose :visible="visible" @close="handleCancel">
     <a-card :bordered="false">
-      <a-form :form="form" layout="horizontal">
-        <a-form-item v-bind="formItemLayout" label="姓名">
-          <a-input v-decorator="['memberName',{rules: [{required: true, message: '请输入姓名'}]}]" />
+      <a-form :form="form">
+        <a-form-item label="活动名称">
+          <a-input v-decorator="['title',  {rules: [{required: true, message: '请输入活动名称'}]}]" />
         </a-form-item>
-        <a-form-item v-bind="formItemLayout" label="股权占比">
-          <a-input v-decorator="['equrityRatio',{rules: [{required: true, message: '请输入股权占比'}]}]" />
+        <a-form-item label="活动时间">
+          <!-- <a-range-picker
+            v-decorator="[['begDate','endDate'], {initialValue: ['2019-11-11','2019-11-25']}]"
+          ></a-range-picker>-->
+          <a-date-picker
+            showTime
+            style="width:50%"
+            format="YYYY-MM-DD HH:mm:ss"
+            v-decorator="['begDate',  {rules: [{required: true, message: '请输入活动开始时间'}]}]"
+          />
+          <a-date-picker
+            showTime
+            format="YYYY-MM-DD HH:mm:ss"
+            style="width:50%"
+            v-decorator="['endDate',  {rules: [{required: true, message: '请输入活动结束时间'}]}]"
+          />
         </a-form-item>
-        <a-form-item v-bind="formItemLayout" label="身份证号">
-          <a-input v-decorator="['idNo']" />
+        <a-form-item label="活动地点">
+          <a-input v-decorator="['address',  {rules: [{required: true, message: '请输入活动地点'}]}]" />
         </a-form-item>
-        <a-form-item v-bind="formItemLayout" label="学历">
-          <a-input v-decorator="['educationBackground']" />
+        <a-form-item label="主办单位">
+          <a-input v-decorator="['hostUnit',  {rules: [{required: true, message: '请输入主办单位'}]}]" />
         </a-form-item>
-        <a-form-item v-bind="formItemLayout" label="是否海归">
-          <a-radio-group v-decorator="['isReturnee']">
-            <a-radio value="1">是</a-radio>
-            <a-radio value="2">否</a-radio>
-          </a-radio-group>
+        <a-form-item label="所属园区 （暂园区ID">
+          <a-input v-decorator="['parkId',  {rules: [{required: true, message: '请输入所属园区'}]}]" />
         </a-form-item>
-        <a-form-item v-bind="formItemLayout" label="归国时间">
-          <a-date-picker placeholder v-decorator="['backTime']" style="width:100%" />
+        <a-form-item label="活动限额">
+          <a-input
+            v-decorator="['applyMembersMax',  {rules: [{required: true, message: '请输入活动限额'}]}]"
+          />
         </a-form-item>
-        <a-form-item v-bind="formItemLayout" label="附件">
-          <a-input />
+
+        <a-form-item label="活动介绍">
+          <!-- <a-input v-decorator="['context', {rules: [{required: true, message: '请输入活动介绍'}]}]" /> -->
+          <j-editor v-model="editor.context"></j-editor>
         </a-form-item>
       </a-form>
 
@@ -36,29 +50,20 @@
 </template>
 
 <script>
-import { httpAction, getAction } from '@/api/manage'
+import JEditor from '@comp/jeecg/JEditor'
+import { httpAction } from '@/api/manage'
 import pick from 'lodash.pick'
 import moment from 'moment'
 import qs from 'qs'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import { initDictOptions } from '@comp/dict/JDictSelectUtil'
 export default {
-  name: 'SysAnnouncementModal',
-  components: {},
+  name: '',
+  components: { JEditor },
   data() {
     return {
-      formItemLayout: {
-        labelCol: {
-          xs: { span: 24 },
-          sm: { span: 4 }
-        },
-        wrapperCol: {
-          xs: { span: 24 },
-          sm: { span: 20 }
-        }
-      },
       form: this.$form.createForm(this),
-      title: '通知消息',
+      // title: '通知消息',
       labelCol: {
         xs: { span: 24 },
         sm: { span: 5 }
@@ -67,7 +72,6 @@ export default {
         xs: { span: 24 },
         sm: { span: 16 }
       },
-      model: {},
       bodyStyle: {
         padding: '0',
         height: window.innerHeight * 0.8 + 'px',
@@ -80,18 +84,24 @@ export default {
       },
       //常用数据初始化
       record: {},
+      editor: {},
+      model: {},
       visible: false,
       loading: false,
+      editBool: false,
+      //这是跟踪人，不是服务人员，是否走字典有待考究
       dict: {
         trackerExt: [{ value: '1' }]
       },
-      editBool: false,
       url: {
-        list: '/project/mgrCustTeamMember/queryById',
-        add: '/project/mgrCustTeamMember/add',
-        edit: '/project/mgrCustTeamMember/edit',
-        delete: '/project/mgrCustTeamMember/delete'
+        add: '/park.service/mgrActivityInfo/add',
+        edit: '/park.service/mgrActivityInfo/edit'
       }
+    }
+  },
+  computed: {
+    title() {
+      return '活动' + (this.editBool ? '编辑' : '发布')
     }
   },
   created() {
@@ -101,21 +111,16 @@ export default {
       }
     })
   },
-  computed: {
-    myTitle() {
-      return (this.editBool ? '编辑' : '新增') + '个人股东'
-    }
-  },
   methods: {
     handleOk() {
       const that = this
       this.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
           that.confirmLoading = true
+          const { context } = this.editor
           let httpurl = ''
           let method = ''
-          //没有股权占比，就认为是新增，对应的，该项在新增是应为必填项目
-          if (!this.model.projectId) {
+          if (!this.model.activityId) {
             httpurl += this.url.add
             method = 'post'
           } else {
@@ -123,18 +128,16 @@ export default {
             method = 'put'
           }
           let formData = Object.assign(this.model, values)
-          formData.backTime = formData.backTime ? formData.backTime.format('YYYY-MM-DD') : null
-          //把公司id塞进数据里去
-          // formData.custId = '111'
-          formData.projectId = that.$route.params.id
-          formData.parkId = '111'
-          formData.memberType = '2'
+          formData.begDate = formData.begDate ? formData.begDate.format('YYYY-MM-DD HH:mm:ss') : null
+          formData.endDate = formData.endDate ? formData.endDate.format('YYYY-MM-DD HH:mm:ss') : null
+          formData.context = context
           formData = qs.stringify(formData)
           // console.log(formData)
           httpAction(httpurl, formData, method)
             .then(res => {
               if (res.success) {
                 that.$message.success(res.message)
+                // that.visible = false
                 that.$emit('reload')
               } else {
                 that.$message.warning(res.message)
@@ -148,42 +151,22 @@ export default {
       })
       // this.form.resetFields()
     },
-    add() {
-      this.editBool = false
-      this.visible = true
-    },
     detail(record) {
-      this.editBool = true
-      let proId = this.$route.params.id
-      //不存在record  等有了api再说   //现在有了
-      // console.log(res.result[0].tracker);
-      this.record = record
-      // this.form.resetFields()
-      this.model = Object.assign({}, this.record)
+      // this.record = record
+      // console.log('record');
+      // console.log(record);
+      this.form.resetFields()
+      this.model = Object.assign({}, record)
       this.visible = true
       this.$nextTick(() => {
-        this.form.setFieldsValue(
-          pick(this.model, 'memberName', 'equrityRatio', 'idNo', 'educationBackground', 'isReturnee', 'backTime')
-        )
-        this.form.setFieldsValue({
-          backTime: this.model.backTime ? moment(this.model.backTime) : null
-        })
+        this.form.setFieldsValue(pick(this.model, 'custId', 'customerName', 'servicer'))
       })
+    },
+    Add() {
+      this.visible = true
     },
     handleCancel() {
       this.visible = false
-    },
-    /** 切换全屏显示 */
-    handleClickToggleFullScreen() {
-      let mode = !this.modelStyle.fullScreen
-      if (mode) {
-        this.modelStyle.width = '100%'
-        this.modelStyle.style.top = '20px'
-      } else {
-        this.modelStyle.width = '60%'
-        this.modelStyle.style.top = '50px'
-      }
-      this.modelStyle.fullScreen = mode
     }
   }
 }

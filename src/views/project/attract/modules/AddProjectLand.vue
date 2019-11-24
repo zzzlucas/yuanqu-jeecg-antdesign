@@ -563,7 +563,7 @@ export default {
   components: { PageLayout, JEditor, JDictSelectTag },
   data() {
     return {
-      title: '首页 / 拿地项目 / 项目维护',
+      // title: '首页 / 拿地项目 / 项目维护',
       //   form: {}
       form: this.$form.createForm(this, { name: 'addProjectLandForm' }),
       formItem: {
@@ -576,6 +576,7 @@ export default {
       },
       confirmLoading: false,
       model: {},
+      editBool: false,
       // setUpYear: '',
       dateFormat: 'YYYY-MM-DD',
       // record: { id: 1191619700384071680 }
@@ -599,6 +600,11 @@ export default {
   updated() {
     // this.edit(this.record.id)
   },
+  computed: {
+    title() {
+      return '拿地项目' + (this.editBool ? '维护' : '新建')
+    }
+  },
   created() {
     initDictOptions('industry_sector_value').then(res => {
       if (res.code === 0 && res.success) {
@@ -616,6 +622,7 @@ export default {
     handleImportExcel() {},
     moment,
     add() {
+      this.editBool = false
       this.visible = true
     },
     // add() {
@@ -626,11 +633,9 @@ export default {
     detail(record) {
       // this.record = record
       // console.log(this.record.recordId)
+      this.editBool = true
       this.form.resetFields()
       //后端少的内容
-      // console.log('record')
-      // console.log(record)
-      // console.log(record.totalAsset)
       //大约因为当前写法，项目维护时点开后关闭，再次打开会无法获取
       if (record.mgrProjectCust) {
         record.totalAsset = record.mgrProjectCust.totalAsset
@@ -761,7 +766,9 @@ export default {
           // console.log('222222')
           //qs.stringify  目前看来必须转换
           // formData.projectType = '1'
-          formData.status = '1'
+          if (!this.model.projectId) {
+            formData.status = '1'
+          }
           formData = qs.stringify(formData)
           console.log(formData)
 
