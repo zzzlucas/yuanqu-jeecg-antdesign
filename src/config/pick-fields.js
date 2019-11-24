@@ -348,3 +348,19 @@ export const assetsCategoryEditForm = [
   'categoryName',
   'parentId',
 ]
+
+export const assetsRegisterEditForm = [
+  'categoryId',
+  'assetNumber',
+  'fixedAssetName',
+  'assetModel',
+  'stockPrice',
+  'stockAmount',
+  'purchaseDate',
+  'useStatus',
+  //'useDepartment', // Does not exist
+  'usePerson',
+  'location',
+  'remark',
+]
+

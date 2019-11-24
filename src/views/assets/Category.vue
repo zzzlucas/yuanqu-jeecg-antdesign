@@ -63,7 +63,7 @@
     },
     data() {
       return {
-        url,
+        url: url.category,
         // Table
         columns: [
           {
@@ -92,20 +92,7 @@
           }
         ],
         deleteKey: 'categoryId',
-        // Category
-        showCategory: true,
       }
-    },
-    methods: {
-      async reloadCategory() {
-        this.showCategory = false
-        await this.$nextTick()
-        this.showCategory = true
-      },
-      async handleEditSubmit() {
-        this.loadData(1)
-        this.reloadCategory()
-      },
     },
     watch: {
       selectCategoryKey(val) {

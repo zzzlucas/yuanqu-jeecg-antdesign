@@ -15,11 +15,11 @@
                 </a-form-item>
               </a-col>
               <a-col :xl="6">
-                <a-form-item label="借用部门">
-                  <a-select v-model="queryParam.department">
+                <a-form-item label="类别">
+                  <a-select v-model="queryParam.type">
                     <a-select-option
                       :value="item.name"
-                      v-for="item in filter.department"
+                      v-for="item in filter.type"
                       :key="item.name">{{ item.label }}</a-select-option>
                   </a-select>
                 </a-form-item>
@@ -31,8 +31,8 @@
                 </span>
               </a-col>
               <a-col :xl="4">
-                <a-form-item>
-                  <a-button type="primary" @click="handleAdd">新增分类</a-button>
+                <a-form-item style="float:right">
+                  <a-button type="primary" @click="handleAdd">资产登记</a-button>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -44,13 +44,17 @@
           size="middle"
           bordered
           :columns="columns"
-          :dataSource="data"
+          :dataSource="dataSource"
           :pagination="ipagination"
           :loading="loading"
           :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}">
         </a-table>
       </a-layout-content>
     </a-layout>
+    <!-- Add/Edit form -->
+    <assets-register-edit-form
+      ref="modalForm"
+      @submit="handleEditSubmit" />
   </a-card>
 </template>
 
@@ -60,27 +64,33 @@
   import Mixin from './mixins'
   import { url } from './api'
   import './style/list.less'
+  import AssetsRegisterEditForm from '@views/assets/components/AssetsRegisterEditForm'
 
   export default {
+    components: { AssetsRegisterEditForm },
     mixins: [
       JeecgListMixin,
       mixinList,
-      Mixin
+      Mixin,
     ],
     data() {
       return {
+        url: url.info,
         // Filter options
         filter: {
-          department: [
+          type: [
             { name: 'all', label: '全部' },
-            { name: '1', label: '智慧办公室' },
-            { name: '2', label: '班子成员' },
+            { name: '1', label: '闲置' },
+            { name: '2', label: '已领用' },
+            { name: '3', label: '已借用' },
+            { name: '4', label: '已处置' },
           ],
         },
         // Filter query
         queryParam: {
+          categoryId: '',
           keyword: '',
-          department: 'all',
+          type: 'all',
         },
         // Table
         columns: [
@@ -93,49 +103,53 @@
             customRender: (t, r, index) => Number(index) + 1
           },
           {
-            title: '借用单号',
+            title: '资产名称',
             align: 'center',
-            dataIndex: 'operation_id'
+            dataIndex: 'fixedAssetName'
           },
           {
-            title: '借用日期',
+            title: '资产编号',
             align: 'center',
-            dataIndex: 'use_date'
+            dataIndex: 'assetNumber'
           },
           {
-            title: '借用部门',
+            title: '所属分类',
             align: 'center',
-            dataIndex: 'use_person_department'
+            dataIndex: 'categoryId'
           },
           {
-            title: '借用人',
+            title: '规格型号',
             align: 'center',
-            dataIndex: 'use_person'
+            dataIndex: 'assetModel'
           },
           {
             title: '借用资产名称',
             align: 'center',
-            dataIndex: 'use_assets_name'
+            dataIndex: 'location'
           },
           {
-            title: '备注',
+            title: '单价',
             align: 'center',
-            dataIndex: 'remark'
+            dataIndex: 'stockPrice'
+          },
+          {
+            title: '采购日期',
+            align: 'center',
+            dataIndex: 'purchaseDate'
+          },
+          {
+            title: '使用状态',
+            align: 'center',
+            dataIndex: 'useStatus'
           },
         ],
-        data: [
-          { operation_id: '11111111111111111111', use_date: '2019-11-20 16:05:06', use_person_department: 'IT设备类', use_person: '借用人', use_assets_name: '借用资产名称', remark: 'ok' },
-          { operation_id: '11111111111111111111', use_date: '2019-11-20 16:05:06', use_person_department: 'IT设备类', use_person: '3125436435r', use_assets_name: 'dfsafsatfsavs', remark: 'ok' },
-          { operation_id: '11111111111111111111', use_date: '2019-11-20 16:05:06', use_person_department: 'IT设备类', use_person: '3125436435r', use_assets_name: 'dfsafsatfsavs', remark: 'ok' },
-          { operation_id: '11111111111111111111', use_date: '2019-11-20 16:05:06', use_person_department: 'IT设备类', use_person: '3125436435r', use_assets_name: 'dfsafsatfsavs', remark: 'ok' },
-          { operation_id: '11111111111111111111', use_date: '2019-11-20 16:05:06', use_person_department: 'IT设备类', use_person: '3125436435r', use_assets_name: 'dfsafsatfsavs', remark: 'ok' },
-          { operation_id: '11111111111111111111', use_date: '2019-11-20 16:05:06', use_person_department: 'IT设备类', use_person: '借用人', use_assets_name: '借用资产名称', remark: 'ok' },
-          { operation_id: '11111111111111111111', use_date: '2019-11-20 16:05:06', use_person_department: 'IT设备类', use_person: '3125436435r', use_assets_name: 'dfsafsatfsavs', remark: 'ok' },
-          { operation_id: '11111111111111111111', use_date: '2019-11-20 16:05:06', use_person_department: 'IT设备类', use_person: '3125436435r', use_assets_name: 'dfsafsatfsavs', remark: 'ok' },
-          { operation_id: '11111111111111111111', use_date: '2019-11-20 16:05:06', use_person_department: 'IT设备类', use_person: '3125436435r', use_assets_name: 'dfsafsatfsavs', remark: 'ok' },
-          { operation_id: '11111111111111111111', use_date: '2019-11-20 16:05:06', use_person_department: 'IT设备类', use_person: '3125436435r', use_assets_name: 'dfsafsatfsavs', remark: 'ok' },
-        ],
       }
+    },
+    watch: {
+      selectCategoryKey(val) {
+        this.queryParam.categoryId = val
+        this.loadData(1)
+      },
     }
   }
 </script>
