@@ -29,9 +29,7 @@
         if (!this.data[0]) {
           return []
         }
-        const keys = [this.data[0].key]
-        this.$emit('select', keys)
-        return keys
+        return [this.data[0].key]
       },
       ...mapGetters([
         'industrialParkId'

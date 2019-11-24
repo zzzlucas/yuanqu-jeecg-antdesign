@@ -38,7 +38,7 @@
       </a-layout-content>
     </a-layout>
     <!-- Add/Edit form -->
-    <assets-category-add-form
+    <assets-category-edit-form
       ref="modalForm"
       @submit="handleEditSubmit" />
   </a-card>
@@ -49,6 +49,7 @@
   import { mixinList } from '@/utils/mixin'
   import Mixin from './mixins'
   import AssetsCategoryEditForm from './components/AssetsCategoryEditForm'
+  import { url } from './api'
   import './style/list.less'
 
   export default {
@@ -58,13 +59,11 @@
       Mixin
     ],
     components: {
-      AssetsCategoryAddForm: AssetsCategoryEditForm,
+      AssetsCategoryEditForm,
     },
     data() {
       return {
-        url: {
-          list: '/park.asset/baseAssetCategory/list',
-        },
+        url,
         // Table
         columns: [
           {
@@ -73,16 +72,17 @@
             key: 'rowIndex',
             width: 60,
             align: 'center',
+            customRender: (t, r, index) => Number(index) + 1
           },
           {
             title: '分类名称',
             align: 'center',
-            dataIndex: 'category_name'
+            dataIndex: 'categoryName'
           },
           {
             title: '上级分类',
             align: 'center',
-            dataIndex: 'category_parent_name'
+            dataIndex: 'parentName.categoryName'
           },
           {
             title: '操作',
@@ -91,6 +91,7 @@
             scopedSlots: { customRender: 'action' },
           }
         ],
+        deleteKey: 'categoryId',
         // Category
         showCategory: true,
       }
@@ -106,6 +107,12 @@
         this.reloadCategory()
       },
     },
+    watch: {
+      selectCategoryKey(val) {
+/*        this.queryParam.parentId = val
+        this.loadData(1)*/
+      },
+    }
   }
 </script>
 
