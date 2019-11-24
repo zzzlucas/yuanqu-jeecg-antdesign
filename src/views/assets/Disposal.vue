@@ -1,0 +1,138 @@
+<template>
+  <a-card class="assets-list" :bordered="false">
+    <a-layout>
+      <a-layout-sider theme="light">
+        <assets-category @select="selectCategory" v-if="showCategory" />
+      </a-layout-sider>
+      <a-layout-content>
+        <!-- Filter/Action -->
+        <div class="table-page-search-wrapper">
+          <a-form layout="inline" @keyup.enter.native="searchQuery">
+            <a-row :gutter="24">
+              <a-col :xl="8">
+                <a-form-item label="关键字">
+                  <a-input placeholder="资产名称、资产编号、规格型号" v-model="queryParam.keyword"></a-input>
+                </a-form-item>
+              </a-col>
+              <a-col :xl="6">
+                <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
+                  <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
+                  <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
+                </span>
+              </a-col>
+              <a-col :xl="10">
+                <span style="float: left">
+                  <a-form-item >
+                    <a-button type="primary" @click="handleAdd">处置登记</a-button>
+                  </a-form-item>
+                </span>
+              </a-col>
+            </a-row>
+          </a-form>
+        </div>
+        <!-- Table -->
+        <a-table
+          ref="table"
+          size="middle"
+          rowKey="opertionId"
+          bordered
+          :columns="columns"
+          :dataSource="dataSource"
+          :pagination="ipagination"
+          :loading="loading"
+          :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}">
+            <!-- Footer -->
+            <template slot="footer" class="table-operator">
+              <a-button
+                style="margin-left: 8px"
+                type="danger"
+                icon="delete"
+                @click="batchDel">
+                批量删除
+              </a-button>
+            </template>
+        </a-table>
+      </a-layout-content>
+    </a-layout>
+    <!-- Add/Edit form -->
+    <assets-disposal-edit-form
+      ref="modalForm"
+      @submit="handleEditSubmit" />
+  </a-card>
+</template>
+
+<script>
+  import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+  import { mixinList } from '@/utils/mixin'
+  import Mixin from './mixins'
+  import { url } from './api'
+  import './style/list.less'
+  import AssetsDisposalEditForm from '@views/assets/components/AssetsDisposalEditForm'
+
+  export default {
+    components: { AssetsDisposalEditForm },
+    mixins: [
+      JeecgListMixin,
+      mixinList,
+      Mixin,
+    ],
+    data() {
+      return {
+        // Url
+        url: url.info,
+        // Filter query
+        queryParam: {
+          categoryId: '',
+          keyword: '',
+        },
+        // Table
+        columns: [
+          {
+            title: '#',
+            dataIndex: '',
+            key: 'rowIndex',
+            width: 60,
+            align: 'center',
+            customRender: (t, r, index) => Number(index) + 1
+          },
+          {
+            title: '处置单号',
+            align: 'center',
+            dataIndex: 'opertionId'
+          },
+          {
+            title: '处置日期',
+            align: 'center',
+            dataIndex: 'useDate'
+          },
+          {
+            title: '处置资产名称',
+            align: 'center',
+            dataIndex: 'useDepartment'
+          },
+          {
+            title: '处置类型',
+            align: 'center',
+            dataIndex: 'usePerson'
+          },
+          {
+            title: '处置原因',
+            align: 'center',
+            dataIndex: 'reason'
+          },
+          {
+            title: '备注',
+            align: 'center',
+            dataIndex: 'remark'
+          },
+        ],
+      }
+    },
+    watch: {
+      selectCategoryKey(val) {
+        this.queryParam.categoryId = val
+        this.loadData(1)
+      },
+    }
+  }
+</script>
