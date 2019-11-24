@@ -75,6 +75,8 @@
     ],
     data() {
       return {
+        // Url
+        //url: url.info
         // Filter options
         filter: {
           department: [

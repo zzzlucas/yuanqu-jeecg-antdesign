@@ -63,6 +63,7 @@
     },
     data() {
       return {
+        // Url
         url: url.category,
         // Table
         columns: [
