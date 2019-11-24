@@ -55,8 +55,6 @@
           :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}">
             <!-- Column slot -->
             <span slot="action" slot-scope="text, record">
-              <a @click.stop="handleEdit(record, ...arguments)">编辑</a>
-              <a-divider type="vertical" />
               <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
                 <a>删除</a>
               </a-popconfirm>
