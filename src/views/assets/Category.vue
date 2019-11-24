@@ -111,10 +111,6 @@
         this.loadData(1)
       },
     },
-    created() {
-      this.queryParam.parkId = this.industrialParkId
-      this.loadData()
-    },
   }
 </script>
 

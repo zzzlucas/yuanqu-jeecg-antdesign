@@ -1,3 +1,4 @@
+import keyBy from 'lodash/keyBy'
 import { isURL } from '@/utils/validate'
 import { axios } from '@utils/request'
 
@@ -418,4 +419,76 @@ export function promisify (fun, args = [], ctx = undefined) {
     })
     fun.apply(ctx, args)
   })
+}
+
+/**
+ * Build tree relation
+ * @param {Object[]} objectMap Can use lodash.pick(list, objectKey) generate
+ * @param {String} parentKey
+ * @return Object Relation map
+ */
+export function buildTreeRelation(objectMap, parentKey = 'parentId') {
+  const relationMap = {}
+  // Clone
+  Object.keys(objectMap).forEach(objectId => {
+    relationMap[objectId] = Object.assign({}, objectMap[objectId])
+  })
+  Object.keys(relationMap).forEach(objectId => {
+    const object = relationMap[objectId]
+    if (!object[parentKey]) {
+      return
+    }
+    const parentId = object[parentKey]
+    const parentObject = relationMap[parentId]
+    if (!parentObject) {
+      return
+    }
+    if (!parentObject.children) {
+      parentObject.children = []
+    }
+    parentObject.children.push(object)
+  })
+  return relationMap
+}
+
+/**
+ * Build tree nodes
+ * @param {Object[]} relationMap
+ * @param {String} key relationMap row key
+ * @param {String} name relationMap row name
+ * @param {String} parentKey
+ * @return Array Tree nodes
+ */
+export function buildTreeNodes(relationMap, key = 'id', name = 'name', parentKey = 'parentId') {
+  const resolveNode = function (item) {
+    const node = { key: item[key], title: item[name] }
+    if (!item.children) {
+      return node
+    }
+    node.children = item.children.map(resolveNode)
+    return node
+  }
+  let nodes = []
+  Object.keys(relationMap).forEach(relationKey => {
+    const _ = relationMap[relationKey]
+    // Only keep head relation
+    if (_[parentKey]) {
+      return
+    }
+    nodes.push(resolveNode(_))
+  })
+  return nodes
+}
+
+/**
+ * Build ant tree data
+ * @param {Object[]} list Dataset
+ * @param {String} key Dataset row key
+ * @param {String} name Dataset row name
+ * @param {String} parentKey Dataset row parent Key
+ * @return Array tree data
+ */
+export function buildTreeData(list, key = 'id', name = 'name', parentKey = 'parentId') {
+  const map = keyBy(list, key)
+  return buildTreeNodes(buildTreeRelation(map, parentKey), key, name, parentKey)
 }

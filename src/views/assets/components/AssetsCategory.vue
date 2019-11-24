@@ -8,6 +8,8 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
+  import { buildTreeData } from '@utils/util'
   import { treeListCategory } from '../api'
 
   export default {
@@ -65,22 +67,20 @@
         this.$emit('select', keys)
         return keys
       },
+      ...mapGetters([
+        'industrialParkId'
+      ]),
     },
     methods: {
       onSelect(...ev) {
         this.$emit('select', ...ev)
       },
       async fetchList() {
-        const res = await treeListCategory()
+        const res = await treeListCategory({ parkId: this.industrialParkId })
         this.list = res.result
       },
       async buildNodes() {
-        const catMap = {}
-        this.list.forEach(item => {
-          const catId = item.categoryId
-          catMap[catId] = item
-        })
-        // todo
+        this.nodes = buildTreeData(this.list, 'categoryId', 'categoryName')
       },
       async getList() {
         await this.fetchList()

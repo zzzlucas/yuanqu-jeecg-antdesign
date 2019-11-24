@@ -74,7 +74,7 @@
     },
     computed: {
       ...mapGetters([
-        'industrialPark'
+        'industrialParkId'
       ]),
       categoryTreeNodes() {
         let nodes = []
@@ -100,7 +100,7 @@
         const data = await promiseForm(this.form)
         try {
           filterObj(data)
-          data.parkId = this.industrialPark.id
+          data.parkId = this.industrialParkId
           const resp = await addCategory(data)
           if (!resp.success) {
             throw new Error(resp.message)
