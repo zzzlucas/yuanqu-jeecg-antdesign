@@ -15,15 +15,26 @@
                 </a-form-item>
               </a-col>
               <a-col :xl="6">
+                <a-form-item label="类别">
+                  <a-select v-model="queryParam.type">
+                    <a-select-option
+                      :value="item.name"
+                      v-for="item in filter.type"
+                      :key="item.name">{{ item.label }}</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :xl="6">
                 <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
                   <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
                   <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
                 </span>
               </a-col>
-              <a-col :xl="10">
+              <a-col :xl="4">
                 <span style="float: right">
                   <a-form-item >
-                    <a-button type="primary" @click="handleAdd">处置登记</a-button>
+                    <a-button type="primary" @click="handleAdd">批量登记入库</a-button>
+                    <a-button @click="handleExportXls" style="margin-left: 8px;">Excel导出</a-button>
                   </a-form-item>
                 </span>
               </a-col>
@@ -55,7 +66,7 @@
       </a-layout-content>
     </a-layout>
     <!-- Add/Edit form -->
-    <assets-disposal-edit-form
+    <assets-standing-book-edit-form
       ref="modalForm"
       @submit="handleEditSubmit" />
   </a-card>
@@ -67,10 +78,10 @@
   import Mixin from './mixins'
   import { url } from './api'
   import './style/list.less'
-  import AssetsDisposalEditForm from '@views/assets/components/AssetsDisposalEditForm'
+  import AssetsStandingBookEditForm from '@views/assets/components/AssetsStandingBookEditForm'
 
   export default {
-    components: { AssetsDisposalEditForm },
+    components: { AssetsStandingBookEditForm },
     mixins: [
       JeecgListMixin,
       mixinList,
@@ -80,10 +91,21 @@
       return {
         // Url
         url: url.info,
+        // Filter options
+        filter: {
+          type: [
+            { name: 'all', label: '全部' },
+            { name: '1', label: '闲置' },
+            { name: '2', label: '已领用' },
+            { name: '3', label: '已借用' },
+            { name: '4', label: '已处置' },
+          ],
+        },
         // Filter query
         queryParam: {
           categoryId: '',
           keyword: '',
+          type: 'all',
         },
         // Table
         columns: [
@@ -96,34 +118,39 @@
             customRender: (t, r, index) => Number(index) + 1
           },
           {
-            title: '处置单号',
+            title: '资产名称',
             align: 'center',
-            dataIndex: 'opertionId'
+            dataIndex: 'assetsName'
           },
           {
-            title: '处置日期',
+            title: '资产编号',
             align: 'center',
-            dataIndex: 'useDate'
+            dataIndex: 'assetsNumber'
           },
           {
-            title: '处置资产名称',
+            title: '所属分类',
             align: 'center',
-            dataIndex: 'useDepartment'
+            dataIndex: 'categoryName'
           },
           {
-            title: '处置类型',
+            title: '规格型号',
             align: 'center',
-            dataIndex: 'usePerson'
+            dataIndex: 'assetModel'
           },
           {
-            title: '处置原因',
+            title: '单价',
             align: 'center',
-            dataIndex: 'reason'
+            dataIndex: 'stockPrice'
           },
           {
-            title: '备注',
+            title: '采购日期',
             align: 'center',
-            dataIndex: 'remark'
+            dataIndex: 'purchaseDate'
+          },
+          {
+            title: '使用状态',
+            align: 'center',
+            dataIndex: 'useStatus'
           },
         ],
       }
