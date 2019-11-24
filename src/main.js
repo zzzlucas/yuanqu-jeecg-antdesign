@@ -57,7 +57,7 @@ Vue.use(preview)
 Vue.use(vueBus);
 Vue.use(JeecgComponents);
 
-let promise = [parkSetupPromise()]
+let promise = [parkSetupPromise(true)]
 
 Promise.all(promise)
   .then(() => {
