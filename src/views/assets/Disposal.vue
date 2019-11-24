@@ -30,6 +30,14 @@
             </a-row>
           </a-form>
         </div>
+        <!-- table区域-begin -->
+        <div class="table-operator">
+          <a-button style="margin-left: 8px" type="danger" icon="delete" @click="batchDel" v-if="selectedRowKeys.length > 0">批量删除</a-button>
+        </div>
+        <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;">
+          <i class="anticon anticon-info-circle ant-alert-icon"></i> 已选择 <a style="font-weight: 600">{{ selectedRowKeys.length }}</a>项
+          <a style="margin-left: 24px" @click="onClearSelected">清空</a>
+        </div>
         <!-- Table -->
         <a-table
           ref="table"
@@ -41,17 +49,8 @@
           :pagination="ipagination"
           :loading="loading"
           :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}">
-            <!-- Footer -->
-            <template slot="footer" class="table-operator">
-              <a-button
-                style="margin-left: 8px"
-                type="danger"
-                icon="delete"
-                @click="batchDel">
-                批量删除
-              </a-button>
-            </template>
         </a-table>
+        <!-- table区域-end -->
       </a-layout-content>
     </a-layout>
     <!-- Add/Edit form -->
