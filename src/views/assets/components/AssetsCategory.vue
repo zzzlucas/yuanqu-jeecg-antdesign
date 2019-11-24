@@ -43,11 +43,11 @@
       },
       async fetchList() {
         const res = await treeListCategory({ parkId: this.industrialParkId })
-        this.ready = true
         this.list = res.result
       },
       async buildTree() {
         this.data = buildTreeData(this.list, 'categoryId', 'categoryName')
+        this.ready = true
       },
       async getList() {
         await this.fetchList()
