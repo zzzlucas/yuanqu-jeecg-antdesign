@@ -116,14 +116,11 @@
             dataIndex: 'remark'
           },
         ],
-        data: [
-
-        ],
       }
     },
     methods: {
       done() {
-
+        this.$emit('select', this.selectedKeys)
       },
       close() {
         this.$emit('change', false)
