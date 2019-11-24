@@ -363,4 +363,3 @@ export const assetsRegisterEditForm = [
   'location',
   'remark',
 ]
-
