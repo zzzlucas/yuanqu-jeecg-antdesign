@@ -21,10 +21,10 @@
         </a-col>
         <a-col :xl="24">
           <a-form-item label="上级分类" :label-col="gridOptions.formItem.label" :wrapper-col="gridOptions.formItem.value">
-<!--            <a-input disabled v-decorator="['parentId', { initialValue: '1197795677220896768' }]"></a-input>-->
             <a-tree-select
-              v-decorator="['parentCategory']"
-              :treeData="categoryTreeNodes" />
+              treeDefaultExpandAll
+              v-decorator="['parentId']"
+              :treeData="categoryTreeData" />
           </a-form-item>
         </a-col>
       </a-row>
@@ -47,7 +47,7 @@
 <script>
   import { mapGetters } from 'vuex'
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
-  import { filterObj, promiseForm } from '@utils/util'
+  import { filterObj, promiseForm, buildTreeData } from '@utils/util'
   import { treeListCategory, addCategory } from '../api'
 
   export default {
@@ -76,13 +76,11 @@
       ...mapGetters([
         'industrialParkId'
       ]),
-      categoryTreeNodes() {
-        let nodes = []
+      categoryTreeData() {
         if (!this.category || !this.category.length) {
-          return nodes
+          return []
         }
-        // todo
-        return nodes
+        return buildTreeData(this.category, 'categoryId', 'categoryName')
       },
     },
     methods: {
@@ -92,7 +90,7 @@
         }
       },
       async fetchCategory() {
-        const resp = await treeListCategory()
+        const resp = await treeListCategory({ parkId: this.industrialParkId })
         this.category = resp.result
       },
       async submit(ev) {

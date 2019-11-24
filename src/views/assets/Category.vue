@@ -2,7 +2,7 @@
   <a-card class="assets-list" :bordered="false">
     <a-layout>
       <a-layout-sider theme="light">
-        <assets-category @select="selectCategory" />
+        <assets-category @select="selectCategory" v-if="showCategory" />
       </a-layout-sider>
       <a-layout-content>
         <!-- Filter/Action -->
@@ -101,14 +101,22 @@
         showForm: false,
         edit: false,
         editForm: {},
+        // Category
+        showCategory: true,
       }
     },
     methods: {
       openAddCategory() {
         this.showForm = true
       },
-      handleEditSubmit() {
+      async reloadCategory() {
+        this.showCategory = false
+        await this.$nextTick()
+        this.showCategory = true
+      },
+      async handleEditSubmit() {
         this.loadData(1)
+        this.reloadCategory()
       },
     },
   }

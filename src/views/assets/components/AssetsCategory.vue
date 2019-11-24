@@ -1,10 +1,14 @@
 <template>
-  <a-tree
-    showLine
-    defaultExpandAll
-    :tree-data="nodes"
-    :defaultSelectedKeys="defaultSelectedKeys"
-    @select="onSelect" />
+  <div class="assets-category-aside">
+    <a-tree
+      showLine
+      defaultExpandAll
+      :tree-data="data"
+      :defaultSelectedKeys="defaultSelectedKeys"
+      @select="onSelect"
+      v-if="ready" />
+    <a-spin v-if="!ready" size="large" />
+  </div>
 </template>
 
 <script>
@@ -15,16 +19,17 @@
   export default {
     data() {
       return {
-        nodes: [],
+        ready: false,
+        data: [],
         list: [],
       }
     },
     computed: {
       defaultSelectedKeys() {
-        if (!this.nodes[0]) {
+        if (!this.data[0]) {
           return []
         }
-        const keys = [this.nodes[0].key]
+        const keys = [this.data[0].key]
         this.$emit('select', keys)
         return keys
       },
@@ -38,14 +43,15 @@
       },
       async fetchList() {
         const res = await treeListCategory({ parkId: this.industrialParkId })
+        this.ready = true
         this.list = res.result
       },
-      async buildNodes() {
-        this.nodes = buildTreeData(this.list, 'categoryId', 'categoryName')
+      async buildTree() {
+        this.data = buildTreeData(this.list, 'categoryId', 'categoryName')
       },
       async getList() {
         await this.fetchList()
-        this.buildNodes()
+        this.buildTree()
       },
     },
     created() {

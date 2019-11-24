@@ -461,7 +461,7 @@ export function buildTreeRelation(objectMap, parentKey = 'parentId') {
  */
 export function buildTreeNodes(relationMap, key = 'id', name = 'name', parentKey = 'parentId') {
   const resolveNode = function (item) {
-    const node = { key: item[key], title: item[name] }
+    const node = { key: item[key], title: item[name], value: item[key] }
     if (!item.children) {
       return node
     }
