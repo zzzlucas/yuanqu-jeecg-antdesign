@@ -62,9 +62,9 @@
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import { mixinList } from '@/utils/mixin'
   import Mixin from './mixins'
+  import AssetsRegisterEditForm from '@views/assets/components/AssetsRegisterEditForm'
   import { url } from './api'
   import './style/list.less'
-  import AssetsRegisterEditForm from '@views/assets/components/AssetsRegisterEditForm'
 
   export default {
     components: { AssetsRegisterEditForm },

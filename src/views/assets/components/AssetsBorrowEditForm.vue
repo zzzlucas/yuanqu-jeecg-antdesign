@@ -15,19 +15,39 @@
       :wrapper-col="gridOptions.formItem.value"
       @submit="submit">
       <a-row>
-        <a-col :xl="24">
-          <a-form-item label="分类名称">
-            <a-input v-decorator="['categoryName', {rules: rules.categoryName}]"></a-input>
+        <a-col :xl="12">
+          <a-form-item label="借用日期">
+            <a-input v-decorator="['categoryId', {rules: rules.categoryId}]"></a-input>
+          </a-form-item>
+        </a-col>
+        <a-col :xl="12">
+          <a-form-item label="借用人">
+            <a-input v-decorator="['categoryId2', {rules: rules.categoryId2}]"></a-input>
           </a-form-item>
         </a-col>
         <a-col :xl="24">
-          <a-form-item label="上级分类">
-            <a-tree-select
-              treeDefaultExpandAll
-              v-decorator="['parentId']"
-              :treeData="categoryTreeData" />
+          <a-form-item label="备注" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
+            <a-textarea v-decorator="['remark']" :rows="6" />
           </a-form-item>
         </a-col>
+        <a-col :xl="24">
+          <a-form-item label="借用资产" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
+            <a-button @click="openAssetModal">添加</a-button>
+          </a-form-item>
+        </a-col>
+        <a-col :xl="24">
+          <a-form-item label="附件" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
+
+          </a-form-item>
+        </a-col>
+        <!--        <a-col :xl="24">
+                  <a-form-item label="上级分类" :label-col="gridOptions.formItem.label" :wrapper-col="gridOptions.formItem.value">
+                    <a-tree-select
+                      treeDefaultExpandAll
+                      v-decorator="['parentId']"
+                      :treeData="categoryTreeData" />
+                  </a-form-item>
+                </a-col>-->
       </a-row>
       <a-row class="action-row" type="flex" justify="end">
         <a-col>
@@ -42,38 +62,42 @@
         </a-col>
       </a-row>
     </a-form>
+    <!-- Asset modal -->
+    <assets-search-modal v-model="assetModal" />
   </a-drawer>
 </template>
 
 <script>
   import { mapGetters } from 'vuex'
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
+  import AssetsSearchModal from './AssetsSearchModal'
   import { filterObj, promiseForm, buildTreeData } from '@utils/util'
-  import { assetsCategoryEditForm } from '@/config/pick-fields'
-  import { treeListCategory, addCategory, editCategory } from '../api'
+  import { assetsRegisterEditForm } from '@/config/pick-fields'
+  import { addInfo, editInfo, treeListCategory } from '../api'
 
   export default {
     mixins: [
-      FormEditDrawerMixin('assets-category'),
+      FormEditDrawerMixin('assets-borrow'),
     ],
+    components: {
+      AssetsSearchModal,
+    },
     data() {
       return {
-        // Grid
-        gridOptions: {
-          formItem: {
-            label: { span: 6 },
-            value: { span: 18 }
-          },
-        },
         // Form
-        fields: assetsCategoryEditForm,
+        fields: assetsRegisterEditForm,
         // Rules
         rules: {
-          categoryName: [
-            { required: true, message: '请输入分类名称' }
+          categoryId: [
+            { required: true, message: '请选择借用日期' },
+          ],
+          categoryId2: [
+            { required: true, message: '请输入借用人' },
           ],
         },
         category: [],
+        // Asset modal
+        assetModal: false,
       }
     },
     computed: {
@@ -97,6 +121,9 @@
         const resp = await treeListCategory({ parkId: this.industrialParkId })
         this.category = resp.result
       },
+      openAssetModal() {
+        this.assetModal = true
+      },
       async submit(ev) {
         ev.preventDefault();
         const data = await promiseForm(this.form)
@@ -106,9 +133,9 @@
           let resp
           if (this.isEdit) {
             data.categoryId = this.record.categoryId
-            resp = await editCategory(data)
+            resp = await editInfo(data)
           } else {
-            resp = await addCategory(data)
+            resp = await addInfo(data)
           }
           if (!resp.success) {
             throw new Error(resp.message)

@@ -7,10 +7,16 @@
     :mask-closable="true"
     :visible="show"
     @close="closeDrawer">
-    <a-form class="form-edit-drawer-form" layout="horizontal" :form="form" @submit="submit">
+    <a-form
+      class="form-edit-drawer-form"
+      layout="horizontal"
+      :form="form"
+      :label-col="gridOptions.formItem.label"
+      :wrapper-col="gridOptions.formItem.value"
+      @submit="submit">
       <a-row>
         <a-col :xl="12">
-          <a-form-item label="所属分类" :label-col="gridOptions.formItem.label" :wrapper-col="gridOptions.formItem.value">
+          <a-form-item label="所属分类">
             <a-tree-select
               treeDefaultExpandAll
               v-decorator="['categoryId', {rules: rules.categoryId}]"
@@ -18,62 +24,62 @@
           </a-form-item>
         </a-col>
         <a-col :xl="12">
-          <a-form-item label="资产编号" :label-col="gridOptions.formItem.label" :wrapper-col="gridOptions.formItem.value">
+          <a-form-item label="资产编号">
             <a-input v-decorator="['assetNumber', {rules: rules.assetNumber}]"></a-input>
           </a-form-item>
         </a-col>
         <a-col :xl="12">
-          <a-form-item label="资产名称" :label-col="gridOptions.formItem.label" :wrapper-col="gridOptions.formItem.value">
+          <a-form-item label="资产名称">
             <a-input v-decorator="['fixedAssetName', {rules: rules.fixedAssetName}]"></a-input>
           </a-form-item>
         </a-col>
         <a-col :xl="12">
-          <a-form-item label="规格型号" :label-col="gridOptions.formItem.label" :wrapper-col="gridOptions.formItem.value">
+          <a-form-item label="规格型号">
             <a-input v-decorator="['assetModel']"></a-input>
           </a-form-item>
         </a-col>
         <a-col :xl="12">
-          <a-form-item label="单价" :label-col="gridOptions.formItem.label" :wrapper-col="gridOptions.formItem.value">
+          <a-form-item label="单价">
             <a-input v-decorator="['stockPrice']"></a-input>
           </a-form-item>
         </a-col>
         <a-col :xl="12">
-          <a-form-item label="总价" :label-col="gridOptions.formItem.label" :wrapper-col="gridOptions.formItem.value">
+          <a-form-item label="总价">
             <a-input v-decorator="['stockAmount']"></a-input>
           </a-form-item>
         </a-col>
         <a-col :xl="12">
-          <a-form-item label="采购日期" :label-col="gridOptions.formItem.label" :wrapper-col="gridOptions.formItem.value">
+          <a-form-item label="采购日期">
             <a-input v-decorator="['purchaseDate', {rules: rules.purchaseDate}]"></a-input>
           </a-form-item>
         </a-col>
         <a-col :xl="12">
-          <a-form-item label="使用状态" :label-col="gridOptions.formItem.label" :wrapper-col="gridOptions.formItem.value">
+          <a-form-item label="使用状态">
             <a-input v-decorator="['useStatus', {rules: rules.useStatus}]"></a-input>
           </a-form-item>
         </a-col>
         <a-col :xl="12">
-          <a-form-item label="使用部门" :label-col="gridOptions.formItem.label" :wrapper-col="gridOptions.formItem.value">
+          <a-form-item label="使用部门">
             <a-input v-decorator="['useDepartment']" disabled></a-input>
           </a-form-item>
         </a-col>
         <a-col :xl="12">
-          <a-form-item label="使用人" :label-col="gridOptions.formItem.label" :wrapper-col="gridOptions.formItem.value">
+          <a-form-item label="使用人">
             <a-input v-decorator="['usePerson']"></a-input>
           </a-form-item>
         </a-col>
         <a-col :xl="24">
-          <a-form-item label="存放地点" :label-col="{ xl: 3 }" :wrapper-col="{ xl: 21 }">
+          <a-form-item label="存放地点" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
             <a-input v-decorator="['location']"></a-input>
           </a-form-item>
         </a-col>
         <a-col :xl="24">
-          <a-form-item label="备注" :label-col="{ xl: 3 }" :wrapper-col="{ xl: 21 }">
+          <a-form-item label="备注" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
             <a-textarea v-decorator="['remark']" :rows="6" />
           </a-form-item>
         </a-col>
         <a-col :xl="24">
-          <a-form-item label="附件" :label-col="{ xl: 3 }" :wrapper-col="{ xl: 21 }">
+          <a-form-item label="附件" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
 
           </a-form-item>
         </a-col>

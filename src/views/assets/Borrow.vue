@@ -31,8 +31,8 @@
                 </span>
               </a-col>
               <a-col :xl="4">
-                <a-form-item>
-                  <a-button type="primary" @click="handleAdd">新增分类</a-button>
+                <a-form-item style="float:right">
+                  <a-button type="primary" @click="handleAdd">固定资产借用登记</a-button>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -51,6 +51,10 @@
         </a-table>
       </a-layout-content>
     </a-layout>
+    <!-- Add/Edit form -->
+    <assets-borrow-edit-form
+      ref="modalForm"
+      @submit="handleEditSubmit" />
   </a-card>
 </template>
 
@@ -58,10 +62,12 @@
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import { mixinList } from '@/utils/mixin'
   import Mixin from './mixins'
+  import AssetsBorrowEditForm from '@views/assets/components/AssetsBorrowEditForm'
   import { url } from './api'
   import './style/list.less'
 
   export default {
+    components: { AssetsBorrowEditForm },
     mixins: [
       JeecgListMixin,
       mixinList,

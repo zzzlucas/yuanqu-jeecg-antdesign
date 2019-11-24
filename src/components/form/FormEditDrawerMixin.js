@@ -14,6 +14,18 @@ export default function make(name) {
   return {
     data() {
       return {
+        // Grid
+        gridOptions: {
+          formItem: {
+            label: { xl: 6 },
+            value: { xl: 18 }
+          },
+          formItemFullRow: {
+            label: { xl: 3 },
+            value: { xl: 21 }
+          },
+        },
+        // Status
         isEdit: false,
         show: false,
         title: '',
