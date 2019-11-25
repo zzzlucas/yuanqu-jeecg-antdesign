@@ -51,6 +51,7 @@
           ref="table"
           size="middle"
           bordered
+          rowKey="assetId"
           :columns="columns"
           :dataSource="dataSource"
           :pagination="ipagination"
@@ -76,6 +77,7 @@
 </template>
 
 <script>
+  import { filterDictText } from '@/components/dict/JDictSelectUtil'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import { mixinList } from '@/utils/mixin'
   import Mixin from './mixins'
@@ -94,6 +96,8 @@
       return {
         // Url
         url: url.info,
+        // Dictes
+        dictesCreateFields: ['asset_use_status'],
         // Filter options
         filter: {
           type: [
@@ -158,7 +162,10 @@
           {
             title: '使用状态',
             align: 'center',
-            dataIndex: 'useStatus'
+            dataIndex: 'useStatus',
+            customRender: (t => {
+              return filterDictText(this.types.asset_use_status, t)
+            })
           },
           {
             title: '操作',

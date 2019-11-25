@@ -55,7 +55,10 @@
         </a-col>
         <a-col :xl="12">
           <a-form-item label="使用状态">
-            <a-input v-decorator="['useStatus', {rules: rules.useStatus}]"></a-input>
+            <j-dict-select-tag
+              v-decorator="['useStatus', {rules: rules.useStatus}]"
+              :triggerChange="true"
+              dictCode="asset_use_status" />
           </a-form-item>
         </a-col>
         <a-col :xl="12">
