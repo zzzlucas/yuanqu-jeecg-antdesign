@@ -217,9 +217,13 @@
        * @param info
        */
       onTreeSelect(keys, info) {
-        const data = info.node.dataRef
-        const types = { block: 'tower', tower: 'floor', floor: 'rooms' }
-        this.onChange(types[data.type], data.key)
+        if (keys.length > 0) {
+          const data = info.node.dataRef
+          const types = { block: 'tower', tower: 'floor', floor: 'rooms' }
+          this.onChange(types[data.type], data.key)
+        } else {
+          this.onChange('block')
+        }
       },
       /**
        * Tree 懒加载
