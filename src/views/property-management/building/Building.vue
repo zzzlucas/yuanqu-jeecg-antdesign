@@ -107,6 +107,10 @@
             rooms: {
               url: '/park.architecture/baseArchitectureFloor/queryById',
               id: 'buildingId'
+            },
+            room: {
+              url: '/park.architecture/baseArchitectureRoom/queryById',
+              id: 'id'
             }
           },
           delete: {
@@ -222,7 +226,7 @@
       onTreeSelect(keys, info) {
         if (keys.length > 0) {
           const data = info.node.dataRef
-          const types = { block: 'tower', tower: 'floor', floor: 'rooms' }
+          const types = { block: 'tower', tower: 'floor', floor: 'rooms', rooms: 'room' }
           this.onChange(types[data.type], data.key)
         } else {
           this.onChange('block')
@@ -464,20 +468,33 @@
           this.selectKeys = [id]
           this.openTree(id)
 
-          this.$nextTick(() => {
-            const p1 = this.getInfo(type, id)
-            const p2 = this.loadData(type, id)
-
-            Promise.all([p1, p2]).then(([info, list]) => {
-              this.model = {
-                status: type,
-                info,
-                list
-              }
-            }).finally(() => {
-              this.loading = false
+          if (type === 'room') {
+            this.$nextTick(() => {
+              this.getInfo('room', id).then(info => {
+                this.loading = false
+                this.model = {
+                  status: 'room',
+                  info,
+                  list: []
+                }
+              })
             })
-          })
+          } else {
+            this.$nextTick(() => {
+              const p1 = this.getInfo(type, id)
+              const p2 = this.loadData(type, id)
+
+              Promise.all([p1, p2]).then(([info, list]) => {
+                this.model = {
+                  status: type,
+                  info,
+                  list
+                }
+              }).finally(() => {
+                this.loading = false
+              })
+            })
+          }
         } else {
           this.the = { type: '', id: '' }
           this.selectKeys = []
@@ -499,12 +516,12 @@
 
       // card 头部按钮
       cardEdit() {
-        const types = { tower: 'block', floor: 'tower', rooms: 'floor' }
+        const types = { tower: 'block', floor: 'tower', rooms: 'floor', room: 'rooms' }
         this.onEdit(types[this.the.type], this.the.id, this.model.info)
       },
       cardDel() {
-        const types = { tower: 'block', floor: 'tower', rooms: 'floor' }
-        const names = { tower: 'projectName', floor: 'buildingName', rooms: 'floorName' }
+        const types = { tower: 'block', floor: 'tower', rooms: 'floor', room: 'rooms' }
+        const names = { tower: 'projectName', floor: 'buildingName', rooms: 'floorName', room: 'roomName' }
         const type = types[this.the.type]
         this.onDelete(type, this.the.id, () => {
           this.onChange('block')

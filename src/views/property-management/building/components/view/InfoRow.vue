@@ -57,6 +57,8 @@
             return this.getFloor(info)
           case 'rooms':
             return this.getRooms(info)
+          case 'room':
+            return this.getRoom(info)
           default:
             return []
         }
@@ -86,6 +88,14 @@
           '承重：' + info.bearing + ' KN/㎡',
           '是否虚拟：' + (info.isVirtual === 'true' ? '是' : '否')
         ]
+      },
+      getRoom(info) {
+        return [
+          '房间面积：' + info.actualArea + ' ㎡',
+          '是否可租：' + (info.isRented === 'true' ? '是' : '否'),
+          '是否自用：' + (info.isSelfUse === 'true' ? '是' : '否'),
+          '是否虚拟：' + (info.isVirtual === 'true' ? '是' : '否')
+        ]
       }
     },
     computed: {
@@ -97,6 +107,8 @@
             return '楼宇'
           case 'rooms':
             return '楼层'
+          case 'room':
+            return '房间'
           default:
             return ''
         }
@@ -109,6 +121,8 @@
             return 'buildingName'
           case 'rooms':
             return 'floorName'
+          case 'room':
+            return 'roomName'
           default:
             return ''
         }

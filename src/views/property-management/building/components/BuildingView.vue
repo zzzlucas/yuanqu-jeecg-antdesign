@@ -13,7 +13,7 @@
 
     <!-- 表格 -->
     <list-table
-      v-if="['block'].indexOf(model.status) === -1"
+      v-if="['block', 'room'].indexOf(model.status) === -1"
       :type="model.status"
       :list="model.list"
       @change="onChange"
