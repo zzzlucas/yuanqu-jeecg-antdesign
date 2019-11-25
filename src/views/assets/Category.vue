@@ -47,7 +47,7 @@
 <script>
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import { mixinList } from '@/utils/mixin'
-  import Mixin from './mixins'
+  import { list as AssetsListMixin } from './mixins'
   import AssetsCategoryEditForm from './components/AssetsCategoryEditForm'
   import { url } from './api'
   import './style/list.less'
@@ -56,7 +56,7 @@
     mixins: [
       JeecgListMixin,
       mixinList,
-      Mixin
+      AssetsListMixin,
     ],
     components: {
       AssetsCategoryEditForm,

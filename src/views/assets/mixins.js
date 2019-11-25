@@ -1,11 +1,14 @@
 import AssetsCategory from './components/AssetsCategory'
 
-export default {
+export const list = {
   data() {
     return {
       // Category
       selectCategoryKey: null,
       showCategory: true,
+      // View modal/aside
+      viewData: {},
+      view: false,
     }
   },
   components: {

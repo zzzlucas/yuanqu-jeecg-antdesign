@@ -70,23 +70,29 @@
     <assets-borrow-edit-form
       ref="modalForm"
       @submit="handleEditSubmit" />
+    <!-- View modal -->
+    <assets-borrow-view-modal />
   </a-card>
 </template>
 
 <script>
+  import AssetsBorrowEditForm from '@views/assets/components/AssetsBorrowEditForm'
+  import AssetsBorrowViewModal from '@views/assets/components/AssetsBorrowViewModal'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import { mixinList } from '@/utils/mixin'
-  import Mixin from './mixins'
-  import AssetsBorrowEditForm from '@views/assets/components/AssetsBorrowEditForm'
+  import { list as AssetsListMixin } from './mixins'
   import { url } from './api'
   import './style/list.less'
 
   export default {
-    components: { AssetsBorrowEditForm },
+    components: {
+      AssetsBorrowEditForm,
+      AssetsBorrowViewModal,
+    },
     mixins: [
       JeecgListMixin,
       mixinList,
-      Mixin
+      AssetsListMixin,
     ],
     data() {
       return {
