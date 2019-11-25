@@ -34,7 +34,7 @@
           :pagination="ipagination"
           :loading="loading">
             <!-- Column slot -->
-            <span slot="action" slot-scope="text, record">
+            <span slot="action" slot-scope="text, record" @click.stop>
               <a @click.stop="handleEdit(record, ...arguments)">归还</a>
             </span>
         </a-table>

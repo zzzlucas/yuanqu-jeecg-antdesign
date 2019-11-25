@@ -1,32 +1,54 @@
 <template>
-  <a-modal
-    class="assets-view-modal"
+  <a-drawer
+    class="assets-view-aside"
     :title="title"
-    v-model="modal"
-    @on-ok="close"
-    @on-cancel="close">
-      <a-row :gutter="24">
+    width="65%"
+    closable
+    :mask-closable="true"
+    :visible="show"
+    @close="close">
+    <div class="assets-view-content">
+      <a-row class="assets-view-row" :gutter="24">
         <a-col :xl="12">
-          借用单号：{{ data.usedNumber }}
-        </a-col>
-        <a-col :xl="12">
-          借用日期：{{ data.usedDate }}
-        </a-col>
-        <a-col :xl="12">
-          借用部门：{{ data.usedDepartment }}
+          所属分类：{{ data.categoryId }}
         </a-col>
         <a-col :xl="12">
-          借用人：{{ data.usedPerson }}
+          资产编号：{{ data.assetNumber }}
         </a-col>
-        <a-col :xl="24">
-          备注：
+      </a-row>
+      <a-row class="assets-view-row" :gutter="24">
+        <a-col :xl="12">
+          资产名称：{{ data.fixedAssetName }}
         </a-col>
-        <a-col :xl="24">
-          <a-table
-            :columns="columns"
-            :dataSource="data"
-            bordered />
+        <a-col :xl="12">
+          规格型号：{{ data.assetModel }}
         </a-col>
+      </a-row>
+      <a-row class="assets-view-row" :gutter="24">
+        <a-col :xl="12">
+          单价：{{ data.stockPrice }}
+        </a-col>
+        <a-col :xl="12">
+          总价：{{ data.stockAmount }}
+        </a-col>
+      </a-row>
+      <a-row class="assets-view-row" :gutter="24">
+        <a-col :xl="12">
+            采购日期：{{ data.purchaseDate }}
+        </a-col>
+        <a-col :xl="12">
+          使用部门：{{ data.USEDept }}
+        </a-col>
+      </a-row>
+      <a-row class="assets-view-row" :gutter="24">
+        <a-col :xl="12">
+          使用人：{{ data.usePerson }}
+        </a-col>
+        <a-col :xl="12">
+          备注：{{ data.remark }}
+        </a-col>
+      </a-row>
+      <a-row class="assets-view-row" :gutter="24">
         <a-col :xl="24">
           附件：
         </a-col>
@@ -34,17 +56,19 @@
           <!-- TODO -->
         </a-col>
       </a-row>
-  </a-modal>
+    </div>
+  </a-drawer>
 </template>
 
 <script>
+  import '../style/view.less'
   import { view } from '@views/assets/mixins'
 
   export default {
     mixins: [view],
     data() {
       return {
-        title: '借用详情',
+        title: '详细信息',
         columns: [
           {
             title: '#',

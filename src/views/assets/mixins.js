@@ -15,6 +15,7 @@ export const list = {
     AssetsCategory,
   },
   methods: {
+    // Category
     selectCategory(keys) {
       let key = null
       if (keys[0]) {
@@ -27,11 +28,23 @@ export const list = {
       await this.$nextTick()
       this.showCategory = true
     },
+    // Add/Edit
     async handleEditSubmit() {
       this.loadData(1)
       this.reloadCategory()
     },
-  }
+    // View
+    handleCustomRow(row) {
+      return {
+        on: {
+          click: event => {
+            this.viewData = row
+            this.view = true
+          }
+        }
+      }
+    }
+  },
 }
 
 export const view = {

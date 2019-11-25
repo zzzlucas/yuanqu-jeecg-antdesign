@@ -54,9 +54,10 @@
           :dataSource="dataSource"
           :pagination="ipagination"
           :loading="loading"
+          :customRow="handleCustomRow"
           :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}">
             <!-- Column slot -->
-            <span slot="action" slot-scope="text, record">
+            <span slot="action" slot-scope="text, record" @click.stop>
               <a @click.stop="handleEdit(record, ...arguments)">编辑</a>
               <a-divider type="vertical" />
               <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
@@ -71,20 +72,28 @@
     <assets-register-edit-form
       ref="modalForm"
       @submit="handleEditSubmit" />
+    <!-- View -->
+    <assets-register-view-aside
+      :data="viewData"
+      v-model="view" />
   </a-card>
 </template>
 
 <script>
+  import AssetsRegisterEditForm from '@views/assets/components/AssetsRegisterEditForm'
+  import AssetsRegisterViewAside from '@views/assets/components/AssetsRegisterViewAside'
   import { filterDictText } from '@/components/dict/JDictSelectUtil'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import { mixinList } from '@/utils/mixin'
   import { list as AssetsListMixin } from './mixins'
-  import AssetsRegisterEditForm from '@views/assets/components/AssetsRegisterEditForm'
   import { url } from './api'
   import './style/list.less'
 
   export default {
-    components: { AssetsRegisterEditForm },
+    components: {
+      AssetsRegisterEditForm,
+      AssetsRegisterViewAside,
+    },
     mixins: [
       JeecgListMixin,
       mixinList,

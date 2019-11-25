@@ -57,7 +57,7 @@
           :loading="loading"
           :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}">
             <!-- Column slot -->
-            <span slot="action" slot-scope="text, record">
+            <span slot="action" slot-scope="text, record" @click.stop>
               <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
                 <a>删除</a>
               </a-popconfirm>
@@ -70,8 +70,10 @@
     <assets-borrow-edit-form
       ref="modalForm"
       @submit="handleEditSubmit" />
-    <!-- View modal -->
-    <assets-borrow-view-modal />
+    <!-- View -->
+    <assets-borrow-view-modal
+      :data="viewData"
+      v-model="view" />
   </a-card>
 </template>
 

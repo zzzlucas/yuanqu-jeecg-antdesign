@@ -27,7 +27,7 @@
           :dataSource="dataSource"
           :pagination="ipagination"
           :loading="loading">
-            <span slot="action" slot-scope="text, record">
+            <span slot="action" slot-scope="text, record" @click.stop>
               <a @click.stop="handleEdit(record, ...arguments)">编辑</a>
               <a-divider type="vertical" />
               <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
