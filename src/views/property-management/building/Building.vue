@@ -30,7 +30,8 @@
           <a-button
             v-if="['block', 'rooms'].indexOf(type) !== -1"
             :type="type === 'rooms' ? 'primary' : 'default'"
-            :class="type === 'block' ? 'margin-left' : ''">新建房间
+            :class="type === 'block' ? 'margin-left' : ''"
+            @click="addRoom">新建房间
           </a-button>
           <a-button class="margin-left" v-if="type !== 'block'" @click="cardEdit">编辑</a-button>
           <a-button class="margin-left" v-if="type !== 'block'" @click="cardDel">删除</a-button>
@@ -43,6 +44,7 @@
     <building-block-form ref="block" @ok="onOk"></building-block-form>
     <building-tower-form ref="tower" @ok="onOk"></building-tower-form>
     <building-floor-form ref="floor" @ok="onOk"></building-floor-form>
+    <building-room-form ref="room" @ok="onOk"></building-room-form>
   </a-row>
 </template>
 
@@ -53,11 +55,12 @@
   import BuildingBlockForm from './components/form/BuildingBlockForm'
   import BuildingTowerForm from './components/form/BuildingTowerForm'
   import BuildingFloorForm from './components/form/BuildingFloorForm'
+  import BuildingRoomForm from './components/form/BuildingRoomForm'
   import { getTreeNodeOfKey } from '@utils/util'
 
   export default {
     name: 'Building',
-    components: { BuildingFloorForm, BuildingTowerForm, BuildingBlockForm, BuildingView },
+    components: { BuildingRoomForm, BuildingFloorForm, BuildingTowerForm, BuildingBlockForm, BuildingView },
     data() {
       return {
         type: '',
@@ -282,6 +285,9 @@
       addFloor() {
         this.$refs.floor.add()
       },
+      addRoom() {
+        this.$refs.room.add()
+      },
 
       // 子组件事件冒泡
       onDelete(type, id, key, name) {
@@ -329,6 +335,9 @@
             break
           case 'floor':
             this.$refs.floor.edit(data)
+            break
+          case 'rooms':
+            this.$refs.room.edit(data)
             break
           default:
             this.$message.error('没有对应的修改方式')

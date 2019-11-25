@@ -166,3 +166,4 @@ export const AddbaseCustomerForm = [
 export const PickBuildingBlockForm = ['address', 'buildingArea', 'ownerName', 'parkId', 'projectAbbr', 'projectName', 'propertyCompany', 'remark', 'rentArea', 'rentTypeValue']
 export const PickBuildingTowerForm = ['buildingProjectId', 'buildingName', 'estimateArea', 'groundFloor', 'undergroundFloor', 'isVirtual', 'remark']
 export const PickBuildingFloorForm = ['buildingId', 'floorName', 'allarea', 'height', 'bearing', 'isVirtual', 'remark']
+export const PickBuildingRoomForm = ['floorId', 'roomName', 'actualArea', 'isRented', 'isSelfUse', 'isVirtual', 'remark']

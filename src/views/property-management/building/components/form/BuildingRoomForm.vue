@@ -14,6 +14,7 @@
         label="归属">
         <a-tree-select
           placeholder="请选择归属"
+          dropdown-class-name="select-tree-long"
           v-decorator="['floorId', {rules: rules.floorId}]"
           :tree-data="tree"
           :treeExpandedKeys.sync="treeExpandedKeys"
@@ -99,7 +100,7 @@
   import _ from 'lodash'
   import { getFileListData, getOneImage, getTreeNodeOfKey, promiseForm, uploadFile } from '@utils/util'
   import qs from 'qs'
-  import { PickBuildingFloorForm } from '@/config/pick-fields'
+  import { PickBuildingRoomForm } from '@/config/pick-fields'
   import { room as rules } from '../../js/rules'
 
   export default {
@@ -117,10 +118,10 @@
         wrapperCol: {
           span: 20
         },
-        form: this.$form.createForm(this, { name: 'buildingFloor' }),
+        form: this.$form.createForm(this, { name: 'buildingRoom' }),
         url: {
-          add: '/park.architecture/baseArchitectureFloor/add',
-          edit: '/park.architecture/baseArchitectureFloor/edit',
+          add: '/park.architecture/baseArchitectureRoom/add',
+          edit: '/park.architecture/baseArchitectureRoom/edit',
           block: '/park.architecture/baseArchitectureProject/queryByParkId',
           tower: '/park.architecture/baseArchitectureBuilding/queryByProjectId',
           floor: '/park.architecture/baseArchitectureFloor/queryByBuildingId'
@@ -133,6 +134,9 @@
     methods: {
       async init() {
         this.fileList = []
+        this.tree = []
+        this.treeExpandedKeys = []
+
         const res = await getAction(this.url.block, { parkId: '1193719771573518336' })
 
         if (res.success && res.code === 200) {
@@ -172,7 +176,31 @@
                 title: obj.buildingName,
                 key: obj.buildingId,
                 value: obj.buildingId,
+                lvl: 2,
                 disabled: true
+              }
+            }))
+          }
+        }
+
+        const floorList = await getAction(this.url.floor, { buildingId: record.buildingID })
+        if (floorList.success && floorList.code === 200) {
+          if (floorList.result) {
+            let path = getTreeNodeOfKey(this.tree, record.buildingID, 'value')
+            path = _.map(path, i => `[${i}]`).join('.children') + 'children'
+
+            _.set(this.tree, path, _.map(floorList.result, obj => {
+              return {
+                title: obj.floorName,
+                key: obj.floorId,
+                value: JSON.stringify({
+                  parkId: obj.parkId,
+                  buildingProjectId: obj.buildingProjectId,
+                  buildingId: obj.buildingId,
+                  floorId: obj.floorId
+                }),
+                lvl: 3,
+                isLeaf: true
               }
             }))
           }
@@ -194,7 +222,7 @@
         this.visible = true
 
         this.$nextTick(() => {
-          this.form.setFieldsValue(pick(this.model, PickBuildingFloorForm))
+          this.form.setFieldsValue(pick(this.model, PickBuildingRoomForm))
 
           let images = JSON.parse(record.addDocFiles)
           images = _.map(images, obj => {
@@ -227,7 +255,7 @@
           form.floorId = data.floorId
           form.addDocFiles = JSON.stringify(getFileListData(this.fileList))
 
-          const pid = form.buildingId
+          const pid = form.floorId
 
           if (!this.model.roomId) {
             httpUrl = this.url.add
@@ -244,7 +272,7 @@
             this.confirmLoading = false
             if (res.success) {
               this.$message.success(res.message)
-              this.$emit('ok', 'rooms', pid)
+              this.$emit('ok', 'rooms', pid, [data.buildingProjectId, data.buildingId, data.floorId])
               this.close()
             } else {
               this.$message.warning(res.message)
@@ -320,7 +348,7 @@
                 if (res.result) {
                   node.dataRef.children = _.map(res.result, obj => {
                     return {
-                      title: obj.buildingName,
+                      title: obj.floorName,
                       key: obj.floorId,
                       value: JSON.stringify({
                         parkId: obj.parkId,
@@ -348,3 +376,9 @@
     }
   }
 </script>
+
+<style lang="less">
+  .select-tree-long {
+    height: 300px;
+  }
+</style>

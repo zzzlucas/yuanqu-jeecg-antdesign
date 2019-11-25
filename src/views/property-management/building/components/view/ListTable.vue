@@ -81,6 +81,38 @@
                 scopedSlots: { customRender: 'action' }
               }
             ]
+          case 'rooms':
+            return [
+              {title: '房间名称', dataIndex: 'roomName'},
+              {title: '房间面积（㎡）', dataIndex: 'actualArea'},
+              {
+                title: '是否可租',
+                dataIndex: 'isRented',
+                customRender: (text) => {
+                  return text === 'true' ? '是' : '否'
+                }
+              },
+              {
+                title: '是否自用',
+                dataIndex: 'isSelfUse',
+                customRender: (text) => {
+                  return text === 'true' ? '是' : '否'
+                }
+              },
+              {
+                title: '是否虚拟',
+                dataIndex: 'isVirtual',
+                customRender: (text) => {
+                  return text === 'true' ? '是' : '否'
+                }
+              },
+              {
+                title: '操作',
+                align: 'center',
+                key: 'action',
+                scopedSlots: { customRender: 'action' }
+              }
+            ]
           default:
             return []
         }
@@ -91,6 +123,8 @@
             return 'buildingId'
           case 'floor':
             return 'floorId'
+          case 'rooms':
+            return 'roomId'
           default:
             return ''
         }
@@ -101,6 +135,8 @@
             return 'buildingName'
           case 'floor':
             return 'floorName'
+          case 'rooms':
+            return 'roomName'
           default:
             return ''
         }
