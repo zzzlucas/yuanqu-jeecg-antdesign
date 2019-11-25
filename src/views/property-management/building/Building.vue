@@ -345,16 +345,15 @@
                 list
               }
 
-              this.tree = []
-              this.$nextTick(() => {
-                this.tree = _.map(list, obj => {
-                  return {
-                    title: obj.projectAbbr,
-                    key: obj.buildingProjectId,
-                    type: 'tower'
-                  }
-                })
+              let tree = _.map(list, obj => {
+                return {
+                  title: obj.projectAbbr,
+                  key: obj.buildingProjectId,
+                  type: 'tower'
+                }
               })
+
+              this.tree = _.merge([], this.tree, tree)
             }).catch(err => {
               console.log('载入区块数据：' + err)
             })

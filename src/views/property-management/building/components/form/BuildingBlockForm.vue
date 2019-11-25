@@ -102,7 +102,7 @@
   import { getFileListData, getOneImage, promiseForm, uploadFile } from '@utils/util'
   import qs from 'qs'
   import { PickBuildingBlockForm } from '@/config/pick-fields'
-  import { block as rules} from '../../js/rules'
+  import { block as rules } from '../../js/rules'
 
   export default {
     name: 'BuildingBlockForm',
@@ -128,12 +128,17 @@
       }
     },
     methods: {
+      init() {
+        this.fileList = []
+      },
       add() {
+        this.init()
         this.title = '新建区块'
         this.form.resetFields()
         this.visible = true
       },
       edit(record) {
+        this.init()
         this.title = '编辑区块'
         this.form.resetFields()
         this.model = Object.assign({}, record)
