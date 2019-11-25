@@ -28,7 +28,13 @@
       triggerChange: Boolean,
       disabled: Boolean,
       value: String,
-      type: String
+      type: String,
+      dict: {
+        type: Object,
+        default: () => {
+          return {}
+        },
+      },
     },
     data() {
       return {
@@ -42,8 +48,11 @@
       }else{
         this.tagType = this.type
       }
-      //获取字典数据
-      this.initDictData();
+      // 未提供字典下
+      if (!this.dict || !Object.keys(this.dict).length) {
+        //获取字典数据
+        this.initDictData();
+      }
     },
     methods: {
       initDictData() {
