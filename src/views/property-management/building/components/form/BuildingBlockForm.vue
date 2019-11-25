@@ -145,6 +145,7 @@
 
           let images = JSON.parse(record.addDocFiles)
           images = _.map(images, obj => {
+            obj.response = { old: obj.url }
             obj.url = getOneImage(obj.url)
             obj.thumbUrl = obj.url
             return obj
