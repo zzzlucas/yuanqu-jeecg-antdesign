@@ -38,7 +38,6 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
   import { filterObj, promiseForm } from '@utils/util'
   import { addInfo } from '../api'
@@ -49,19 +48,7 @@
     ],
     data() {
       return {
-        // Grid
-        gridOptions: {
-          formItem: {
-            label: { span: 6 },
-            value: { span: 18 }
-          },
-        },
       }
-    },
-    computed: {
-      ...mapGetters([
-        'industrialParkId'
-      ]),
     },
     methods: {
       async submit(ev) {

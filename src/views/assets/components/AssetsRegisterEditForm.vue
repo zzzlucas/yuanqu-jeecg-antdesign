@@ -50,7 +50,7 @@
         </a-col>
         <a-col :xl="12">
           <a-form-item label="采购日期">
-            <a-input v-decorator="['purchaseDate', {rules: rules.purchaseDate}]"></a-input>
+            <j-date :trigger-change="true" v-decorator="['purchaseDate',{rules: rules.purchaseDate}]" style="width: 100%;" />
           </a-form-item>
         </a-col>
         <a-col :xl="12">
@@ -60,7 +60,7 @@
         </a-col>
         <a-col :xl="12">
           <a-form-item label="使用部门">
-            <a-input v-decorator="['useDepartment']" disabled></a-input>
+            <a-input v-decorator="['USEDept']"></a-input>
           </a-form-item>
         </a-col>
         <a-col :xl="12">
@@ -101,25 +101,21 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
+  import JDate from '@/components/jeecg/JDate'
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
   import { filterObj, promiseForm, buildTreeData } from '@utils/util'
   import { assetsRegisterEditForm } from '@/config/pick-fields'
   import { addInfo, editInfo, treeListCategory } from '../api'
 
   export default {
+    components: {
+      JDate
+    },
     mixins: [
       FormEditDrawerMixin('assets-register'),
     ],
     data() {
       return {
-        // Grid
-        gridOptions: {
-          formItem: {
-            label: { span: 6 },
-            value: { span: 18 }
-          },
-        },
         // Form
         fields: assetsRegisterEditForm,
         // Rules
@@ -144,9 +140,6 @@
       }
     },
     computed: {
-      ...mapGetters([
-        'industrialParkId'
-      ]),
       categoryTreeData() {
         if (!this.category || !this.category.length) {
           return []
@@ -172,7 +165,7 @@
           data.parkId = this.industrialParkId
           let resp
           if (this.isEdit) {
-            data.categoryId = this.record.categoryId
+            data.assetId = this.record.assetId
             resp = await editInfo(data)
           } else {
             resp = await addInfo(data)

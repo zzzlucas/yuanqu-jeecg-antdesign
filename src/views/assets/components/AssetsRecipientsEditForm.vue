@@ -72,7 +72,6 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
   import AssetsSearchModal from './AssetsSearchModal'
   import { filterObj, promiseForm } from '@utils/util'
@@ -104,11 +103,6 @@
         // Asset modal
         assetModal: false,
       }
-    },
-    computed: {
-      ...mapGetters([
-        'industrialParkId'
-      ]),
     },
     methods: {
       openAssetModal() {

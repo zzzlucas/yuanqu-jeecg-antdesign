@@ -7,7 +7,8 @@
  * so i have to write this mixin to make this edit drawer.
  */
 
-import pick from 'lodash.pick'
+import pick from 'lodash/pick'
+import { mapGetters } from 'vuex'
 import './FormEditDrawer.less'
 
 export default function make(name) {
@@ -47,6 +48,9 @@ export default function make(name) {
         }
         return action + this.formLabel
       },
+      ...mapGetters([
+        'industrialParkId'
+      ]),
     },
     methods: {
       closeDrawer() {

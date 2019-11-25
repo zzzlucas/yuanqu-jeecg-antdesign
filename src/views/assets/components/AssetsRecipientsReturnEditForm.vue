@@ -77,7 +77,6 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
   import { filterObj, promiseForm } from '@utils/util'
   import { assetsRegisterEditForm } from '@/config/pick-fields'
@@ -105,11 +104,6 @@
         // Asset modal
         assetModal: false,
       }
-    },
-    computed: {
-      ...mapGetters([
-        'industrialParkId'
-      ]),
     },
     methods: {
       openAssetModal() {

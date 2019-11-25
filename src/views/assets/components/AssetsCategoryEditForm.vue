@@ -46,7 +46,6 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
   import { filterObj, promiseForm, buildTreeData } from '@utils/util'
   import { assetsCategoryEditForm } from '@/config/pick-fields'
@@ -77,9 +76,6 @@
       }
     },
     computed: {
-      ...mapGetters([
-        'industrialParkId'
-      ]),
       categoryTreeData() {
         if (!this.category || !this.category.length) {
           return []
