@@ -15,3 +15,9 @@ export const floor = {
     {required: true, message: '归属不能为空'}
   ]
 }
+
+export const room = {
+  floorId: [
+    {required: true, message: '归属不能为空'}
+  ]
+}
