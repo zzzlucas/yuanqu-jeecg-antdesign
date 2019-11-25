@@ -97,6 +97,7 @@
       main.block {
         border: 1px solid #d9d9d9;
         padding: 8px;
+        cursor: pointer;
 
         .image-box {
           width: 38%;

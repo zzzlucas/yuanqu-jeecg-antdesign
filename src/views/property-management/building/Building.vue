@@ -298,7 +298,8 @@
         const types = {
           block: '区块',
           tower: '楼宇',
-          floor: '楼层'
+          floor: '楼层',
+          rooms: '房间'
         }
 
         this.$confirm({
