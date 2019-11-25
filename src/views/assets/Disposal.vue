@@ -81,6 +81,7 @@
         url: url.info,
         // Filter query
         queryParam: {
+          categoryType: '4',
           categoryId: '',
           keyword: '',
         },

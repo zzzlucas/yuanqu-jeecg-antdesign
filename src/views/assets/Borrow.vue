@@ -52,7 +52,7 @@
           size="middle"
           bordered
           :columns="columns"
-          :dataSource="data"
+          :dataSource="dataSource"
           :pagination="ipagination"
           :loading="loading"
           :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}">
@@ -91,7 +91,7 @@
     data() {
       return {
         // Url
-        // url: url.info,
+        url: url.info,
         // Filter options
         filter: {
           department: [
@@ -103,6 +103,7 @@
         // Filter query
         queryParam: {
           keyword: '',
+          categoryType: '2',
           department: 'all',
         },
         // Table
@@ -151,18 +152,6 @@
             align: 'center',
             scopedSlots: { customRender: 'action' },
           },
-        ],
-        data: [
-          { operation_id: '11111111111111111111', use_date: '2019-11-20 16:05:06', use_person_department: 'IT设备类', use_person: '借用人', use_assets_name: '借用资产名称', remark: 'ok' },
-          { operation_id: '11111111111111111111', use_date: '2019-11-20 16:05:06', use_person_department: 'IT设备类', use_person: '3125436435r', use_assets_name: 'dfsafsatfsavs', remark: 'ok' },
-          { operation_id: '11111111111111111111', use_date: '2019-11-20 16:05:06', use_person_department: 'IT设备类', use_person: '3125436435r', use_assets_name: 'dfsafsatfsavs', remark: 'ok' },
-          { operation_id: '11111111111111111111', use_date: '2019-11-20 16:05:06', use_person_department: 'IT设备类', use_person: '3125436435r', use_assets_name: 'dfsafsatfsavs', remark: 'ok' },
-          { operation_id: '11111111111111111111', use_date: '2019-11-20 16:05:06', use_person_department: 'IT设备类', use_person: '3125436435r', use_assets_name: 'dfsafsatfsavs', remark: 'ok' },
-          { operation_id: '11111111111111111111', use_date: '2019-11-20 16:05:06', use_person_department: 'IT设备类', use_person: '借用人', use_assets_name: '借用资产名称', remark: 'ok' },
-          { operation_id: '11111111111111111111', use_date: '2019-11-20 16:05:06', use_person_department: 'IT设备类', use_person: '3125436435r', use_assets_name: 'dfsafsatfsavs', remark: 'ok' },
-          { operation_id: '11111111111111111111', use_date: '2019-11-20 16:05:06', use_person_department: 'IT设备类', use_person: '3125436435r', use_assets_name: 'dfsafsatfsavs', remark: 'ok' },
-          { operation_id: '11111111111111111111', use_date: '2019-11-20 16:05:06', use_person_department: 'IT设备类', use_person: '3125436435r', use_assets_name: 'dfsafsatfsavs', remark: 'ok' },
-          { operation_id: '11111111111111111111', use_date: '2019-11-20 16:05:06', use_person_department: 'IT设备类', use_person: '3125436435r', use_assets_name: 'dfsafsatfsavs', remark: 'ok' },
         ],
       }
     }

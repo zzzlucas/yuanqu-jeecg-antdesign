@@ -16,12 +16,10 @@
               </a-col>
               <a-col :xl="6">
                 <a-form-item label="类别">
-                  <a-select v-model="queryParam.type">
-                    <a-select-option
-                      :value="item.name"
-                      v-for="item in filter.type"
-                      :key="item.name">{{ item.label }}</a-select-option>
-                  </a-select>
+                  <j-dict-select-tag
+                    v-model="queryParam.categoryType"
+                    :triggerChange="true"
+                    :dict="types.category_type" />
                 </a-form-item>
               </a-col>
               <a-col :xl="6">
@@ -97,22 +95,12 @@
         // Url
         url: url.info,
         // Dictes
-        dictesCreateFields: ['asset_use_status'],
-        // Filter options
-        filter: {
-          type: [
-            { name: 'all', label: '全部' },
-            { name: '1', label: '闲置' },
-            { name: '2', label: '已领用' },
-            { name: '3', label: '已借用' },
-            { name: '4', label: '已处置' },
-          ],
-        },
+        dictesCreateFields: ['asset_use_status', 'category_type'],
         // Filter query
         queryParam: {
           categoryId: '',
+          categoryType: '',
           keyword: '',
-          type: 'all',
         },
         // Table
         columns: [

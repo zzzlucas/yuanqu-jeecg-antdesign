@@ -106,6 +106,7 @@
         },
         // Filter query
         queryParam: {
+          categoryType: '1',
           categoryId: '',
           keyword: '',
           department: 'all',
