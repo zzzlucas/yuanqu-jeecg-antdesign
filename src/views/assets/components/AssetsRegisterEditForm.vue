@@ -16,7 +16,7 @@
       @submit="submit">
       <a-row>
         <a-col :xl="12">
-          <a-form-item label="所属分类">
+          <a-form-item label="所属类别">
             <a-tree-select
               treeDefaultExpandAll
               v-decorator="['categoryId', {rules: rules.categoryId}]"
@@ -36,6 +36,19 @@
         <a-col :xl="12">
           <a-form-item label="规格型号">
             <a-input v-decorator="['assetModel']"></a-input>
+          </a-form-item>
+        </a-col>
+        <a-col :xl="12">
+          <a-form-item label="所属分类">
+            <j-dict-select-tag
+              v-decorator="['categoryType', {rules: rules.categoryType}]"
+              :triggerChange="true"
+              dictCode="category_type" />
+          </a-form-item>
+        </a-col>
+        <a-col :xl="12">
+          <a-form-item label="数量">
+            <a-input v-decorator="['qty']"></a-input>
           </a-form-item>
         </a-col>
         <a-col :xl="12">
@@ -88,11 +101,15 @@
         </a-col>
       </a-row>
       <a-row class="action-row" type="flex" justify="end">
-        <a-col>
-          <a-form-item>
-            <a-button>
+        <a-col :xl="2">
+          <a-form-item style="float: right;">
+            <a-button @click="closeDrawer">
               取消
             </a-button>
+          </a-form-item>
+        </a-col>
+        <a-col :xl="2">
+          <a-form-item style="float: right;">
             <a-button type="primary" html-type="submit">
               确认
             </a-button>
@@ -124,6 +141,9 @@
         // Rules
         rules: {
           categoryId: [
+            { required: true, message: '请选择所属类别' },
+          ],
+          categoryType: [
             { required: true, message: '请选择所属分类' },
           ],
           assetNumber: [

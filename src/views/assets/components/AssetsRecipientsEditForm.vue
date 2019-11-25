@@ -51,14 +51,14 @@
       </a-row>
       <a-row class="action-row" type="flex" justify="end">
         <a-col :xl="2">
-          <a-form-item>
-            <a-button>
+          <a-form-item style="float: right">
+            <a-button @click="closeDrawer">
               取消
             </a-button>
           </a-form-item>
         </a-col>
         <a-col :xl="2">
-          <a-form-item>
+          <a-form-item style="float: right">
             <a-button type="primary" html-type="submit">
               确认
             </a-button>
