@@ -94,7 +94,7 @@
   import { getFileListData, getOneImage, getTreeNodeOfKey, promiseForm, uploadFile } from '@utils/util'
   import qs from 'qs'
   import { PickBuildingFloorForm } from '@/config/pick-fields'
-  import { tower as rules } from '../../js/rules'
+  import { floor as rules } from '../../js/rules'
 
   export default {
     name: 'BuildingFloorForm',
