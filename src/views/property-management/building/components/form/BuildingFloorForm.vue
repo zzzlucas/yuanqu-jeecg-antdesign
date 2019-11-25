@@ -126,6 +126,8 @@
     methods: {
       async init() {
         this.fileList = []
+        this.tree = []
+        this.treeExpandedKeys = []
         const res = await getAction(this.url.block, { parkId: '1193719771573518336' })
 
         if (res.success && res.code === 200) {
