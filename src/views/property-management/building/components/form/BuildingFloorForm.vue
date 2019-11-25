@@ -7,7 +7,7 @@
     :mask-closable="false"
     @close="close"
   >
-    <a-form class="drawer-form building-block-form" layout="horizontal" :form="form">
+    <a-form class="drawer-form building-floor-form" layout="horizontal" :form="form">
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
