@@ -368,10 +368,9 @@
                   info,
                   list
                 }
+                this.selectKeys = [id]
 
                 this.openTree(id)
-                path = _.map(path, i => `[${i}]`)
-                _.set(this.tree, path.join('.children') + '.children', this.getTreeData('block', list))
               })
             }
             break
@@ -390,13 +389,11 @@
                   info,
                   list
                 }
+                this.selectKeys = [id]
 
                 _.map(pids, pid => {
                   this.openTree(pid)
                 })
-
-                path = _.map(path, i => `[${i}]`)
-                _.set(this.tree, path.join('.children') + '.children', this.getTreeData('tower', list))
               })
             }
             break
@@ -414,9 +411,11 @@
                   info,
                   list
                 }
+                this.selectKeys = [id]
 
-                path = _.map(path, i => `[${i}]`)
-                _.set(this.tree, path.join('.children') + '.children', this.getTreeData('floor', list))
+                _.map(pids, pid => {
+                  this.openTree(pid)
+                })
               })
             }
             break

@@ -238,7 +238,7 @@
             this.confirmLoading = false
             if (res.success) {
               this.$message.success(res.message)
-              this.$emit('ok', 'floor', pid, [form.buildingProjectId, form.buildingId])
+              this.$emit('ok', 'floor', pid, [data.buildingProjectId, data.buildingId])
               this.close()
             } else {
               this.$message.warning(res.message)
