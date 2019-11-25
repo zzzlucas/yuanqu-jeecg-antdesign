@@ -268,7 +268,7 @@
             })
           case 'floor':
             return _.map(list, obj => {
-              return { title: obj.roomName, key: obj.roomId, type: 'rooms' }
+              return { title: obj.roomName, key: obj.roomId, type: 'rooms', isLeaf: true }
             })
           default:
             return []
@@ -383,6 +383,13 @@
                 this.selectKeys = [id]
 
                 this.openTree(id)
+
+                path = _.map(path, i => `[${i}]`)
+                path = path.join('.children') + '.children'
+
+                let tree = _.set([], path, this.getTreeData('block', list))
+                tree = _.merge([], _.cloneDeep(this.tree), tree)
+                this.tree = tree
               })
             }
             break
@@ -406,6 +413,13 @@
                 _.map(pids, pid => {
                   this.openTree(pid)
                 })
+
+                path = _.map(path, i => `[${i}]`)
+                path = path.join('.children') + '.children'
+
+                let tree = _.set([], path, this.getTreeData('tower', list))
+                tree = _.merge([], _.cloneDeep(this.tree), tree)
+                this.tree = tree
               })
             }
             break
@@ -428,6 +442,13 @@
                 _.map(pids, pid => {
                   this.openTree(pid)
                 })
+
+                path = _.map(path, i => `[${i}]`)
+                path = path.join('.children') + '.children'
+
+                let tree = _.set([], path, this.getTreeData('floor', list))
+                tree = _.merge([], _.cloneDeep(this.tree), tree)
+                this.tree = tree
               })
             }
             break
