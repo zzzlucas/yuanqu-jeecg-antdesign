@@ -196,7 +196,7 @@
        */
       getInfo(type, id) {
         return new Promise((resolve, reject) => {
-          const config = this.url.info[this.type]
+          const config = this.url.info[type]
           getAction(config.url, { [config.id]: id }).then(res => {
             if (res.code === 200 && res.success) {
               resolve(res.result)
@@ -369,7 +369,7 @@
 
               let path = getTreeNodeOfKey(this.tree, id, 'key')
               path = _.map(path, i => `[${i}]`)
-              _.set(this.tree, path.join('.children') + '.children', this.getTreeData('tower', list))
+              _.set(this.tree, path.join('.children') + '.children', this.getTreeData('block', list))
             })
             break
           }

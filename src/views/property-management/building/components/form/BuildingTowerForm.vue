@@ -15,7 +15,7 @@
         <a-select placeholder="请选择归属" v-decorator="['buildingProjectId', {rules: rules.buildingProjectId}]">
           <a-select-option
             v-for="(item, key) in blockList"
-            :value="JSON.stringify(item)"
+            :value="item.value"
             :key="key">{{ item.label }}
           </a-select-option>
         </a-select>
@@ -130,8 +130,10 @@
           this.blockList = _.map(res.result, obj => {
             return {
               label: obj.projectAbbr,
-              value: obj.buildingProjectId,
-              parkId: obj.parkId
+              value: JSON.stringify({
+                parkId: obj.parkId,
+                buildingProjectId: obj.buildingProjectId
+              })
             }
           })
         } else {
@@ -151,9 +153,8 @@
         this.form.resetFields()
 
         record.buildingProjectId = JSON.stringify({
-          label: record.buildingWorkshopId,
-          value: record.buildingProjectId,
-          parkId: record.parkId
+          parkId: record.parkId,
+          buildingProjectId: record.buildingProjectId
         })
         record.isVirtual = record.isVirtual === 'true'
 
@@ -189,12 +190,12 @@
           let method = ''
 
           const data = JSON.parse(form.buildingProjectId)
-          const pid = data.value
-          form.buildingProjectId = data.value
-          form.buildingWorkshopId = data.label
+          form.buildingProjectId = data.buildingProjectId
           form.parkId = data.parkId
           form.allFloor = parseInt(form.groundFloor) + parseInt(form.undergroundFloor)
           form.addDocFiles = JSON.stringify(getFileListData(this.fileList))
+
+          const pid = form.buildingProjectId
 
           if (!this.model.buildingId) {
             httpUrl = this.url.add
