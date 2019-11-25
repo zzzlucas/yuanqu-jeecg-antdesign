@@ -231,11 +231,6 @@
           const config = this.url.tree[type]
           const query = {}
 
-          if (node.dataRef.children) {
-            resolve()
-            return true
-          }
-
           query[config.id] = node.dataRef.key
           getAction(config.url, query).then(res => {
             if (res.success && res.code === 200) {
@@ -302,8 +297,9 @@
                 this.$message.success(res.message)
                 let path = getTreeNodeOfKey(this.tree, id, 'key')
                 path = _.map(path, i => `[${i}]`)
-                _.unset(this.tree, path.join('.children'))
-                this.tree = [...this.tree]
+                let tree = _.cloneDeep(this.tree)
+                _.unset(tree, path.join('.children'))
+                this.tree = tree
 
                 if (typeof key === 'function') {
                   key()
@@ -461,7 +457,8 @@
       cardDel() {
         const types = { tower: 'block', floor: 'tower', rooms: 'floor' }
         const names = { tower: 'projectName', floor: 'buildingName', rooms: 'floorName' }
-        this.onDelete(types[this.the.type], this.the.id, () => {
+        const type = types[this.the.type]
+        this.onDelete(type, this.the.id, () => {
           this.onChange('block')
         }, this.model.info[names[this.the.type]])
       },
