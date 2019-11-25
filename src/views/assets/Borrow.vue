@@ -81,7 +81,7 @@
   import AssetsBorrowEditForm from '@views/assets/components/AssetsBorrowEditForm'
   import AssetsBorrowViewModal from '@views/assets/components/AssetsBorrowViewModal'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-  import { mixinList } from '@/utils/mixin'
+  import MixinList from '@/mixins/List'
   import { list as AssetsListMixin } from './mixins'
   import { url } from './api'
   import './style/list.less'
@@ -93,7 +93,7 @@
     },
     mixins: [
       JeecgListMixin,
-      mixinList,
+      MixinList,
       AssetsListMixin,
     ],
     data() {

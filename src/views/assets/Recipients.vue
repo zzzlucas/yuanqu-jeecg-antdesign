@@ -79,7 +79,7 @@
 
 <script>
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-  import { mixinList } from '@/utils/mixin'
+  import MixinList from '@/mixins/List'
   import { list as AssetsListMixin } from './mixins'
   import AssetsRecipientsEditForm from '@/views/assets/components/AssetsRecipientsEditForm'
   import { url } from './api'
@@ -89,7 +89,7 @@
     components: { AssetsRecipientsEditForm },
     mixins: [
       JeecgListMixin,
-      mixinList,
+      MixinList,
       AssetsListMixin,
     ],
     data() {

@@ -71,7 +71,7 @@
   import { filterDictText } from '@/components/dict/JDictSelectUtil'
   import TicketServiceEditForm from '@views/ticket/components/TicketServiceEditForm'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-  import { mixinList } from '@/utils/mixin'
+  import MixinList from '@/mixins/List'
   import { url } from './api'
   import '@assets/less/common.less'
 
@@ -81,7 +81,7 @@
     },
     mixins: [
       JeecgListMixin,
-      mixinList,
+      MixinList,
     ],
     data() {
       return {

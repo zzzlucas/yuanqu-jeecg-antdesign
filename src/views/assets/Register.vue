@@ -84,7 +84,7 @@
   import AssetsRegisterViewAside from '@views/assets/components/AssetsRegisterViewAside'
   import { filterDictText } from '@/components/dict/JDictSelectUtil'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-  import { mixinList } from '@/utils/mixin'
+  import MixinList from '@/mixins/List'
   import { list as AssetsListMixin } from './mixins'
   import { url } from './api'
   import './style/list.less'
@@ -96,7 +96,7 @@
     },
     mixins: [
       JeecgListMixin,
-      mixinList,
+      MixinList,
       AssetsListMixin,
     ],
     data() {

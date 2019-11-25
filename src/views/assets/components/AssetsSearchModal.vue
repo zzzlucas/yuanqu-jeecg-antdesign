@@ -44,7 +44,7 @@
 
 <script>
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-  import { mixinList } from '@/utils/mixin'
+  import MixinList from '@/mixins/List'
   import { list } from '../mixins'
   import { url } from '../api'
   import '../style/list.less'
@@ -52,7 +52,7 @@
   export default {
     mixins: [
       JeecgListMixin,
-      mixinList,
+      MixinList,
       list
     ],
     props: {
