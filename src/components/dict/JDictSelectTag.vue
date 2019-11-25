@@ -48,22 +48,20 @@
       }else{
         this.tagType = this.type
       }
-      // 未提供字典下
-      if (!this.dict) {
-        //获取字典数据
-        this.initDictData()
-      } else {
-        this.dictOptions = this.dict
-      }
+      this.initDictData();
     },
     methods: {
       initDictData() {
-        //根据字典Code, 初始化字典数组
-        ajaxGetDictItems(this.dictCode, null).then((res) => {
-          if (res.success) {
-            this.dictOptions = res.result;
-          }
-        })
+        if (this.dictCode) {
+          //根据字典Code, 初始化字典数组
+          ajaxGetDictItems(this.dictCode, null).then((res) => {
+            if (res.success) {
+              this.dictOptions = res.result;
+            }
+          })
+        } else if (this.dict) {
+          this.dictOptions = this.dict
+        }
       },
       handleInput(e) {
         let val;
@@ -84,6 +82,11 @@
       getCurrentDictOptions(){
         return this.dictOptions
       }
+    },
+    watch: {
+      dict() {
+        this.initDictData()
+      },
     }
   }
 </script>
