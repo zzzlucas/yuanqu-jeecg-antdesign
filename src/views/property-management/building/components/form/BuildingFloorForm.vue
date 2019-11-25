@@ -16,6 +16,7 @@
           placeholder="请选择归属"
           v-decorator="['buildingId', {rules: rules.buildingId}]"
           :tree-data="tree"
+          :treeExpandedKeys.sync="treeExpandedKeys"
           :load-data="loadTree"></a-tree-select>
       </a-form-item>
       <a-form-item
@@ -90,7 +91,7 @@
   import { getAction, httpAction } from '@/api/manage'
   import pick from 'lodash.pick'
   import _ from 'lodash'
-  import { getFileListData, getOneImage, promiseForm, uploadFile } from '@utils/util'
+  import { getFileListData, getOneImage, getTreeNodeOfKey, promiseForm, uploadFile } from '@utils/util'
   import qs from 'qs'
   import { PickBuildingFloorForm } from '@/config/pick-fields'
   import { tower as rules } from '../../js/rules'
@@ -117,12 +118,14 @@
           block: '/park.architecture/baseArchitectureProject/queryByParkId',
           tower: '/park.architecture/baseArchitectureBuilding/queryByProjectId'
         },
+        treeExpandedKeys: [],
         fileList: [],
         tree: []
       }
     },
     methods: {
       async init() {
+        this.fileList = []
         const res = await getAction(this.url.block, { parkId: '1193719771573518336' })
 
         if (res.success && res.code === 200) {
@@ -141,15 +144,42 @@
       },
       async add() {
         await this.init()
-        this.title = '新建楼宇'
+        this.title = '新建楼层'
         this.form.resetFields()
         this.visible = true
       },
       async edit(record) {
         await this.init()
-        this.title = '编辑楼宇'
+        this.title = '编辑楼层'
         this.form.resetFields()
 
+        const res = await getAction(this.url.tower, { projectId: record.buildingProjectId })
+        if (res.success && res.code === 200) {
+          if (res.result) {
+            let path = getTreeNodeOfKey(this.tree, record.buildingProjectId, 'value')
+            path = _.map(path, i => `[${i}]`).join('.children') + 'children'
+
+            _.set(this.tree, path, _.map(res.result, obj => {
+              return {
+                title: obj.buildingName,
+                key: obj.buildingId,
+                value: JSON.stringify({
+                  parkId: obj.parkId,
+                  buildingProjectId: obj.buildingProjectId,
+                  buildingId: obj.buildingId
+                }),
+                isLeaf: true
+              }
+            }))
+          }
+        }
+
+        this.treeExpandedKeys = [record.buildingProjectId]
+        record.buildingId = JSON.stringify({
+          parkId: record.parkId,
+          buildingProjectId: record.buildingProjectId,
+          buildingId: record.buildingId
+        })
         record.isVirtual = record.isVirtual === 'true'
 
         this.model = Object.assign({}, record)
@@ -185,11 +215,11 @@
 
           const data = JSON.parse(form.buildingId)
           form.parkId = data.parkId
-          form.buildingProjectId = data.value
+          form.buildingProjectId = data.buildingProjectId
           form.buildingId = data.buildingId
+          form.addDocFiles = JSON.stringify(getFileListData(this.fileList))
 
           const pid = form.buildingId
-          form.addDocFiles = JSON.stringify(getFileListData(this.fileList))
 
           if (!this.model.floorId) {
             httpUrl = this.url.add
@@ -213,7 +243,7 @@
             }
           })
         }).catch(err => {
-          console.log('新建楼宇：', err)
+          console.log('新建楼层：', err)
         })
       },
       handleCancel() {

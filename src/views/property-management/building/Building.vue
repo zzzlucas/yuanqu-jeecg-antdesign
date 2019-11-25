@@ -49,6 +49,7 @@
   import BuildingBlockForm from './components/form/BuildingBlockForm'
   import BuildingTowerForm from './components/form/BuildingTowerForm'
   import BuildingFloorForm from './components/form/BuildingFloorForm'
+  import { getTreeNodeOfKey } from '@utils/util'
 
   export default {
     name: 'Building',
@@ -280,7 +281,7 @@
             deleteAction(config.url, { [config.id]: id }).then(res => {
               if (res.success && res.code === 200) {
                 this.$message.success(res.message)
-                let path = this.getTreeNodeOfKey(this.tree, id)
+                let path = getTreeNodeOfKey(this.tree, id, 'key')
                 path = _.map(path, i => `[${i}]`)
                 _.unset(this.tree, path.join('.children'))
                 this.tree = [...this.tree]
@@ -305,6 +306,9 @@
             break
           case 'tower':
             this.$refs.tower.edit(data)
+            break
+          case 'floor':
+            this.$refs.floor.edit(data)
             break
           default:
             this.$message.error('没有对应的修改方式')
@@ -344,8 +348,27 @@
                 list
               }
 
-              const path = this.getTreeNodeOfKey(this.tree, id)
-              _.set(this.tree, path + '.children', this.getTreeData('tower', list))
+              let path = getTreeNodeOfKey(this.tree, id, 'key')
+              path = _.map(path, i => `[${i}]`)
+              _.set(this.tree, path.join('.children') + '.children', this.getTreeData('tower', list))
+            })
+            break
+          }
+          case 'floor' : {
+            this.type = 'floor'
+            let p1 = this.getInfo(type, id)
+            let p2 = this.loadData(type, id)
+
+            Promise.all([p1, p2]).then(([info, list]) => {
+              this.model = {
+                status: type,
+                info,
+                list
+              }
+
+              let path = getTreeNodeOfKey(this.tree, id, 'key')
+              path = _.map(path, i => `[${i}]`)
+              _.set(this.tree, path.join('.children') + '.children', this.getTreeData('tower', list))
             })
             break
           }
@@ -405,24 +428,6 @@
           this.onChange('block')
         }, this.model.info[names[this.the.type]])
       },
-
-      // 其他
-      getTreeNodeOfKey(list, key, path = []) {
-        console.log('key：' + key)
-        _.map(list, (a1, i1) => {
-          if (a1.key === key) {
-            path.push(i1)
-            return a1
-          }
-          if (a1.children) {
-            path.push(i1)
-            path = this.getTreeNodeOfKey(a1.children, key, path)
-          }
-          return a1
-        })
-
-        return path
-      }
     }
   }
 </script>
