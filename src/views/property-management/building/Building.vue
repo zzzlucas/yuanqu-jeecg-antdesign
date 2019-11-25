@@ -475,7 +475,7 @@
                 this.model = {
                   status: 'room',
                   info,
-                  list: []
+                  images: JSON.parse(info.addDocFiles)
                 }
               })
             })

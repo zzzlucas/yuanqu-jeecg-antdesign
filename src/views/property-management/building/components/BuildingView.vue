@@ -19,6 +19,9 @@
       @change="onChange"
       @delete="deleteBtn"
       @edit="editBtn"></list-table>
+
+    <!-- 图片 -->
+    <image-row v-if="model.status === 'room'" :images="model.images"></image-row>
   </div>
 </template>
 
@@ -27,10 +30,11 @@
   import BlockList from './view/BlockList'
   import InfoRow from './view/InfoRow'
   import ListTable from './view/ListTable'
+  import ImageRow from '@views/property-management/building/components/view/ImageRow'
 
   export default {
     name: 'BuildingView',
-    components: { ListTable, InfoRow, BlockList, YqImage },
+    components: { ImageRow, ListTable, InfoRow, BlockList, YqImage },
     props: {
       model: {
         type: Object,
