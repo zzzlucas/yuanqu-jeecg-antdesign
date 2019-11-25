@@ -30,7 +30,8 @@
           <a-button
             v-if="['block', 'rooms'].indexOf(type) !== -1"
             :type="type === 'rooms' ? 'primary' : 'default'"
-            :class="type === 'block' ? 'margin-left' : ''">新建房间</a-button>
+            :class="type === 'block' ? 'margin-left' : ''">新建房间
+          </a-button>
           <a-button class="margin-left" v-if="type !== 'block'" @click="cardEdit">编辑</a-button>
           <a-button class="margin-left" v-if="type !== 'block'" @click="cardDel">删除</a-button>
         </template>
@@ -217,7 +218,7 @@
        */
       onTreeSelect(keys, info) {
         const data = info.node.dataRef
-        const types = {block: 'tower', tower: 'floor', floor: 'rooms'}
+        const types = { block: 'tower', tower: 'floor', floor: 'rooms' }
         this.onChange(types[data.type], data.key)
       },
       /**
@@ -260,7 +261,7 @@
             })
           case 'floor':
             return _.map(list, obj => {
-              return { title: obj.floorName, key: obj.floorId, type: 'rooms' }
+              return { title: obj.roomName, key: obj.roomId, type: 'rooms' }
             })
           default:
             return []
@@ -330,7 +331,7 @@
             break
         }
       },
-      onOk(type, id) {
+      onOk(type, id, pids) {
         switch (type) {
           case 'block':
             this.type = 'block'
@@ -340,69 +341,84 @@
                 list
               }
 
-              this.tree = _.map(list, obj => {
-                return {
-                  title: obj.projectAbbr,
-                  key: obj.buildingProjectId,
-                  type: 'tower'
-                }
+              this.tree = []
+              this.$nextTick(() => {
+                this.tree = _.map(list, obj => {
+                  return {
+                    title: obj.projectAbbr,
+                    key: obj.buildingProjectId,
+                    type: 'tower'
+                  }
+                })
               })
             }).catch(err => {
               console.log('载入区块数据：' + err)
             })
             break
           case 'tower' : {
-            this.type = 'tower'
-            let p1 = this.getInfo(type, id)
-            let p2 = this.loadData(type, id)
+            let path = getTreeNodeOfKey(this.tree, id, 'key')
+            if (path.length > 0) {
+              this.type = 'tower'
+              let p1 = this.getInfo(type, id)
+              let p2 = this.loadData(type, id)
 
-            Promise.all([p1, p2]).then(([info, list]) => {
-              this.model = {
-                status: type,
-                info,
-                list
-              }
+              Promise.all([p1, p2]).then(([info, list]) => {
+                this.model = {
+                  status: type,
+                  info,
+                  list
+                }
 
-              let path = getTreeNodeOfKey(this.tree, id, 'key')
-              path = _.map(path, i => `[${i}]`)
-              _.set(this.tree, path.join('.children') + '.children', this.getTreeData('block', list))
-            })
+                this.openTree(id)
+                path = _.map(path, i => `[${i}]`)
+                _.set(this.tree, path.join('.children') + '.children', this.getTreeData('block', list))
+              })
+            }
             break
           }
           case 'floor' : {
-            this.type = 'floor'
-            let p1 = this.getInfo(type, id)
-            let p2 = this.loadData(type, id)
+            let path = getTreeNodeOfKey(this.tree, id, 'key')
 
-            Promise.all([p1, p2]).then(([info, list]) => {
-              this.model = {
-                status: type,
-                info,
-                list
-              }
+            if (path.length > 0) {
+              this.type = 'floor'
+              let p1 = this.getInfo(type, id)
+              let p2 = this.loadData(type, id)
 
-              let path = getTreeNodeOfKey(this.tree, id, 'key')
-              path = _.map(path, i => `[${i}]`)
-              _.set(this.tree, path.join('.children') + '.children', this.getTreeData('floor', list))
-            })
+              Promise.all([p1, p2]).then(([info, list]) => {
+                this.model = {
+                  status: type,
+                  info,
+                  list
+                }
+
+                _.map(pids, pid => {
+                  this.openTree(pid)
+                })
+
+                path = _.map(path, i => `[${i}]`)
+                _.set(this.tree, path.join('.children') + '.children', this.getTreeData('tower', list))
+              })
+            }
             break
           }
           case 'rooms' : {
-            this.type = 'rooms'
-            let p1 = this.getInfo(type, id)
-            let p2 = this.loadData(type, id)
+            let path = getTreeNodeOfKey(this.tree, id, 'key')
+            if (path.length > 0) {
+              this.type = 'rooms'
+              let p1 = this.getInfo(type, id)
+              let p2 = this.loadData(type, id)
 
-            Promise.all([p1, p2]).then(([info, list]) => {
-              this.model = {
-                status: type,
-                info,
-                list
-              }
+              Promise.all([p1, p2]).then(([info, list]) => {
+                this.model = {
+                  status: type,
+                  info,
+                  list
+                }
 
-              let path = getTreeNodeOfKey(this.tree, id, 'key')
-              path = _.map(path, i => `[${i}]`)
-              _.set(this.tree, path.join('.children') + '.children', this.getTreeData('rooms', list))
-            })
+                path = _.map(path, i => `[${i}]`)
+                _.set(this.tree, path.join('.children') + '.children', this.getTreeData('floor', list))
+              })
+            }
             break
           }
         }
@@ -414,7 +430,7 @@
         if (id) {
           this.the = { type, id }
           this.selectKeys = [id]
-          this.expandedKeys = [...this.expandedKeys, id]
+          this.openTree(id)
 
           this.$nextTick(() => {
             const p1 = this.getInfo(type, id)
@@ -462,6 +478,13 @@
           this.onChange('block')
         }, this.model.info[names[this.the.type]])
       },
+
+      // 其他
+      openTree(key) {
+        let tree = _.clone(this.expandedKeys)
+        tree.push(key)
+        this.expandedKeys = _.uniq(tree)
+      }
     }
   }
 </script>
