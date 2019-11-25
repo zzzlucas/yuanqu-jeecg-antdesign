@@ -27,7 +27,10 @@
             :class="type === 'block' ? 'margin-left' : ''"
             @click="addFloor">新建楼层
           </a-button>
-          <a-button class="margin-left" v-if="['block'].indexOf(type) !== -1">新建房间</a-button>
+          <a-button
+            v-if="['block', 'rooms'].indexOf(type) !== -1"
+            :type="type === 'rooms' ? 'primary' : 'default'"
+            :class="type === 'block' ? 'margin-left' : ''">新建房间</a-button>
           <a-button class="margin-left" v-if="type !== 'block'" @click="cardEdit">编辑</a-button>
           <a-button class="margin-left" v-if="type !== 'block'" @click="cardDel">删除</a-button>
         </template>
@@ -260,6 +263,10 @@
             return _.map(list, obj => {
               return { title: obj.floorName, key: obj.floorId, type: 'floor' }
             })
+          case 'floor':
+            return _.map(list, obj => {
+              return { title: obj.floorName, key: obj.floorId, type: 'rooms' }
+            })
           default:
             return []
         }
@@ -384,6 +391,24 @@
             })
             break
           }
+          case 'rooms' : {
+            this.type = 'rooms'
+            let p1 = this.getInfo(type, id)
+            let p2 = this.loadData(type, id)
+
+            Promise.all([p1, p2]).then(([info, list]) => {
+              this.model = {
+                status: type,
+                info,
+                list
+              }
+
+              let path = getTreeNodeOfKey(this.tree, id, 'key')
+              path = _.map(path, i => `[${i}]`)
+              _.set(this.tree, path.join('.children') + '.children', this.getTreeData('rooms', list))
+            })
+            break
+          }
         }
       },
       onChange(type, id) {
@@ -430,12 +455,12 @@
 
       // card 头部按钮
       cardEdit() {
-        const types = { tower: 'block' }
+        const types = { tower: 'block', floor: 'tower', rooms: 'floor' }
         this.onEdit(types[this.the.type], this.the.id, this.model.info)
       },
       cardDel() {
-        const types = { tower: 'block', floor: 'tower' }
-        const names = { tower: 'projectName', floor: 'buildingName' }
+        const types = { tower: 'block', floor: 'tower', rooms: 'floor' }
+        const names = { tower: 'projectName', floor: 'buildingName', rooms: 'floorName' }
         this.onDelete(types[this.the.type], this.the.id, () => {
           this.onChange('block')
         }, this.model.info[names[this.the.type]])
