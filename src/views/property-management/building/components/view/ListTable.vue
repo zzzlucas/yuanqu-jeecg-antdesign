@@ -29,7 +29,7 @@
     },
     methods: {
       onchange(id) {
-        const types = {tower: 'floor'}
+        const types = {tower: 'floor', floor: 'rooms'}
         this.$emit('change', types[this.type], id)
       },
       onEdit() {

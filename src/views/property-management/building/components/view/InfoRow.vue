@@ -55,6 +55,8 @@
             return this.getTower(info)
           case 'floor':
             return this.getFloor(info)
+          case 'rooms':
+            return this.getRooms(info)
           default:
             return []
         }
@@ -76,6 +78,14 @@
           '是否虚拟：' + (info.isVirtual === 'true' ? '是' : '否'),
           '房间：147 间'
         ]
+      },
+      getRooms(info) {
+        return [
+          '楼层面积：' + info.allarea + ' ㎡',
+          '层高：' + info.height + ' 米',
+          '承重：' + info.bearing + ' KN/㎡',
+          '是否虚拟：' + (info.isVirtual === 'true' ? '是' : '否')
+        ]
       }
     },
     computed: {
@@ -85,6 +95,8 @@
             return '区块'
           case 'floor':
             return '楼宇'
+          case 'rooms':
+            return '楼层'
           default:
             return ''
         }
@@ -95,6 +107,8 @@
             return 'projectName'
           case 'floor':
             return 'buildingName'
+          case 'rooms':
+            return 'floorName'
           default:
             return ''
         }

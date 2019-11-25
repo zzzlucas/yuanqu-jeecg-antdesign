@@ -41,7 +41,7 @@
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
         label="承重">
-        <a-input placeholder="请输入地下层数" v-decorator="['bearing', {}]" addonAfter="KN/㎡"/>
+        <a-input placeholder="请输入承重" v-decorator="['bearing', {}]" addonAfter="KN/㎡"/>
       </a-form-item>
       <a-form-item
         :labelCol="labelCol"

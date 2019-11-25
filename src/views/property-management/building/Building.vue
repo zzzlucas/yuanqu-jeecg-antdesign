@@ -78,6 +78,10 @@
             floor: {
               url: '/park.architecture/baseArchitectureFloor/queryByBuildingId',
               id: 'buildingId'
+            },
+            rooms: {
+              url: '/park.architecture/baseArchitectureRoom/queryByFloorId',
+              id: 'floorId'
             }
           },
           info: {
@@ -92,6 +96,10 @@
             floor: {
               url: '/park.architecture/baseArchitectureBuilding/queryById',
               id: 'id'
+            },
+            rooms: {
+              url: '/park.architecture/baseArchitectureFloor/queryById',
+              id: 'buildingId'
             }
           },
           delete: {
@@ -106,6 +114,10 @@
             floor: {
               url: '/park.architecture/baseArchitectureFloor/delete',
               id: 'id'
+            },
+            rooms: {
+              url: '/park.architecture/baseArchitectureRoom/delete',
+              id: 'id'
             }
           },
           tree: {
@@ -118,8 +130,8 @@
               id: 'buildingId'
             },
             floor: {
-              url: '/park.architecture/baseArchitectureBuilding/queryByProjectId',
-              id: 'projectId'
+              url: '/park.architecture/baseArchitectureRoom/queryByFloorId',
+              id: 'floorId'
             }
           }
         },
@@ -202,7 +214,7 @@
        */
       onTreeSelect(keys, info) {
         const data = info.node.dataRef
-        const types = {block: 'tower', tower: 'floor', floor: 'room'}
+        const types = {block: 'tower', tower: 'floor', floor: 'rooms'}
         this.onChange(types[data.type], data.key)
       },
       /**
@@ -368,7 +380,7 @@
 
               let path = getTreeNodeOfKey(this.tree, id, 'key')
               path = _.map(path, i => `[${i}]`)
-              _.set(this.tree, path.join('.children') + '.children', this.getTreeData('tower', list))
+              _.set(this.tree, path.join('.children') + '.children', this.getTreeData('floor', list))
             })
             break
           }
