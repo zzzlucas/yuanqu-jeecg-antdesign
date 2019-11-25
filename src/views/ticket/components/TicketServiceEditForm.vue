@@ -40,12 +40,38 @@
             <a-input v-decorator="['custName', {rules: rules.custName}]"></a-input>
           </a-form-item>
         </a-col>
-        <a-col :xl="12">
+        <!-- TODO -->
+        <a-col :xl="12" v-if="false"> <!-- TODO: depend on type -->
+          <a-form-item label="项目名称">
+            <a-input v-decorator="['title', {rules: rules.title}]"></a-input>
+          </a-form-item>
+        </a-col>
+        <a-col :xl="12" v-if="false"> <!-- TODO: depend on type -->
+          <a-form-item label="经办人">
+            <a-input v-decorator="['principalUser', {rules: rules.principalUser}]"></a-input> <!-- TODO: name? -->
+          </a-form-item>
+        </a-col>
+        <a-col :xl="12" v-if="false"> <!-- TODO: depend on type -->
+          <a-form-item label="期限开始时间">
+            <a-input v-decorator="['begDate', {rules: rules.begDate}]"></a-input>
+          </a-form-item>
+        </a-col>
+        <a-col :xl="12" v-if="false"> <!-- TODO: depend on type -->
+          <a-form-item label="期限结束时间">
+            <a-input v-decorator="['endDate', {rules: rules.endDate}]"></a-input>
+          </a-form-item>
+        </a-col>
+        <a-col :xl="24" v-if="false"> <!-- TODO: depend on type -->
+          <a-form-item label="附件" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
+
+          </a-form-item>
+        </a-col>
+        <a-col :xl="12"> <!-- TODO: depend on type -->
           <a-form-item label="所属园区">
             <a-input v-decorator="['parkId', {rules: rules.parkId}]"></a-input>
           </a-form-item>
         </a-col>
-        <a-col :xl="24">
+        <a-col :xl="24"> <!-- TODO: depend on type -->
           <a-form-item label="主题" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
             <a-input v-decorator="['title', {rules: rules.title}]"></a-input>
           </a-form-item>
