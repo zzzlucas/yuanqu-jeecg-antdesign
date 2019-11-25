@@ -30,9 +30,9 @@
       value: String,
       type: String,
       dict: {
-        type: Object,
+        type: Array,
         default: () => {
-          return {}
+          return []
         },
       },
     },
@@ -49,9 +49,11 @@
         this.tagType = this.type
       }
       // 未提供字典下
-      if (!this.dict || !Object.keys(this.dict).length) {
+      if (!this.dict) {
         //获取字典数据
-        this.initDictData();
+        this.initDictData()
+      } else {
+        this.dictOptions = this.dict
       }
     },
     methods: {
