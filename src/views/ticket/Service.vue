@@ -79,7 +79,7 @@
     </a-table>
     <!-- table区域-end -->
     <!-- Add/Edit form -->
-    <ticket-service-edit-form
+    <ticket-edit-form
       ref="modalForm"
       @submit="handleEditSubmit" />
   </a-card>
@@ -87,7 +87,7 @@
 
 <script>
   import { filterDictText } from '@/components/dict/JDictSelectUtil'
-  import TicketServiceEditForm from '@views/ticket/components/TicketServiceEditForm'
+  import TicketEditForm from '@views/ticket/components/TicketEditForm'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import MixinList from '@/mixins/List'
   import { url } from './api'
@@ -95,7 +95,7 @@
 
   export default {
     components: {
-      TicketServiceEditForm,
+      TicketEditForm,
     },
     mixins: [
       JeecgListMixin,

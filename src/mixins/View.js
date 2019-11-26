@@ -90,6 +90,16 @@ export default {
     getRouteParams() {
       return { id: this.$route.params.id }
     },
+    /**
+     * 编辑
+     * 需要设置一个ref=modalForm的组件，并且拥有edit方法，title和disableSubmit属性，
+     * 建议编辑组件使用FormEditDrawerMixin。
+     */
+    handleEdit() {
+      this.$refs.modalForm.edit(this.data);
+      this.$refs.modalForm.title = "编辑";
+      this.$refs.modalForm.disableSubmit = false;
+    },
   },
 }
 

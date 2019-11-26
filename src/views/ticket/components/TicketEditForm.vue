@@ -131,13 +131,13 @@
   import JEditor from '@/components/jeecg/JEditor'
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
   import { filterObj, promiseForm } from '@utils/util'
-  import { assetsCategoryEditForm } from '@/config/pick-fields'
+  import { ticketEditForm } from '@/config/pick-fields'
   import { addInfo, editInfo } from '../api'
   import Mixin from '../mixin'
 
   export default {
     mixins: [
-      FormEditDrawerMixin('ticket-service'),
+      FormEditDrawerMixin('ticket-edit'),
       Mixin,
     ],
     components: {
@@ -146,7 +146,7 @@
     data() {
       return {
         // Form
-        fields: assetsCategoryEditForm,
+        fields: ticketEditForm,
         orderType: '',
         // Rules
         rules: {
@@ -194,6 +194,7 @@
           data.parkId = this.industrialParkId
           let resp
           if (this.isEdit) {
+            data.orderId = this.record.orderId
             resp = await editInfo(data)
           } else {
             resp = await addInfo(this.orderType, data)

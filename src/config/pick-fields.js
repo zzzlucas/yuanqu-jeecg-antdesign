@@ -368,3 +368,16 @@ export const assetsRegisterEditForm = [
   'location',
   'remark',
 ]
+
+export const ticketEditForm = [
+  'orderType',
+  'principalUser',
+  'method',
+  'isCharge',
+  'custName',
+  'title',
+  'principalUser',
+  'begDate',
+  'endDate',
+  'content',
+]

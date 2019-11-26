@@ -45,7 +45,7 @@
               <a-button @click="handleChangeStatus('3')">删除</a-button>
             </a-button-group>
             <a-button-group>
-              <a-button type="primary">编辑</a-button>
+              <a-button type="primary" @click="handleEdit">编辑</a-button>
             </a-button-group>
           </div>
           <div class="ticket-status-container">
@@ -84,7 +84,7 @@
             title="工单处理记录"
             :bordered="false"
             :loading="loading">
-            <a-button type="primary" slot="extra" icon="plus" shape="circle" @click="addRecord" />
+            <a-button type="primary" slot="extra" icon="plus" shape="circle" @click="handleAddRecord" />
             <a-timeline>
               <a-timeline-item>
                 <p class="timeline-heading">2019-10-28 13:24:20 【演示用户】工单进展</p>
@@ -121,10 +121,15 @@
         </a-tab-pane>
       </a-tabs>
     </div>
+    <!-- Add/Edit form -->
+    <ticket-edit-form
+      ref="modalForm"
+      @submit="handleEditSubmit" />
   </div>
 </template>
 
 <script>
+  import TicketEditForm from '@views/ticket/components/TicketEditForm'
   import { filterDictText } from '@/components/dict/JDictSelectUtil'
   import ViewMixin, { lifeCycle as ViewLifeCycleMixin } from '@/mixins/View'
   import Mixin from './mixin'
@@ -136,6 +141,9 @@
       ViewLifeCycleMixin,
       Mixin,
     ],
+    components: {
+      TicketEditForm,
+    },
     data() {
       return {
         // Url
@@ -163,6 +171,7 @@
       handleAddRecord() {
 
       },
+      // Change status
       async handleChangeStatus(status) {
         try {
           const params = { status, orderId: this.data.orderId }
@@ -175,6 +184,10 @@
         } catch (e) {
           this.$message.error(e.message)
         }
+      },
+      // Edit submit
+      async handleEditSubmit() {
+        this.loadData()
       },
     }
   }
