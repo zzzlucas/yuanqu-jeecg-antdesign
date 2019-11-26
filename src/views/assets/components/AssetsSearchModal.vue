@@ -23,6 +23,7 @@
       ref="table"
       size="middle"
       bordered
+      rowKey="assetId"
       :columns="columns"
       :dataSource="dataSource"
       :pagination="ipagination"
@@ -46,6 +47,7 @@
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import MixinList from '@/mixins/List'
   import { list } from '../mixins'
+  import { filterDictText } from '@comp/dict/JDictSelectUtil'
   import { url } from '../api'
   import '../style/list.less'
 
@@ -75,6 +77,8 @@
         queryParam: {
           keyword: '',
         },
+        // Types
+        dictesCreateFields: ['asset_use_status'],
         // Table
         columns: [
           {
@@ -86,41 +90,35 @@
             customRender: (t, r, index) => Number(index) + 1
           },
           {
-            title: '借用单号',
+            title: '资产名称',
             align: 'center',
-            dataIndex: 'operation_id'
+            dataIndex: 'fixedAssetName'
           },
           {
-            title: '借用日期',
+            title: '资产编号',
             align: 'center',
-            dataIndex: 'use_date'
+            dataIndex: 'assetNumber'
           },
           {
-            title: '借用部门',
+            title: '规格型号',
             align: 'center',
-            dataIndex: 'use_person_department'
+            dataIndex: 'assetModel'
           },
           {
-            title: '借用人',
+            title: '使用状态',
             align: 'center',
-            dataIndex: 'use_person'
-          },
-          {
-            title: '借用资产名称',
-            align: 'center',
-            dataIndex: 'use_assets_name'
-          },
-          {
-            title: '备注',
-            align: 'center',
-            dataIndex: 'remark'
+            dataIndex: 'useStatus',
+            customRender: (t => {
+              return filterDictText(this.types.asset_use_status, t)
+            })
           },
         ],
       }
     },
     methods: {
       done() {
-        this.$emit('select', this.selectedKeys)
+        this.$emit('select', this.selectedRowKeys, this.selectionRows)
+        this.close()
       },
       close() {
         this.$emit('change', false)

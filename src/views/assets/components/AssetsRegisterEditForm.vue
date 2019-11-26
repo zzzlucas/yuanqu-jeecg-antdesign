@@ -129,7 +129,7 @@
 
   export default {
     components: {
-      JDate
+      JDate,
     },
     mixins: [
       FormEditDrawerMixin('assets-register'),

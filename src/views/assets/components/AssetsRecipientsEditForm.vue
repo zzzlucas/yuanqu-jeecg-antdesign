@@ -17,7 +17,7 @@
       <a-row>
         <a-col :xl="12">
           <a-form-item label="领用日期">
-            <a-input v-decorator="['useDate', {rules: rules.useDate}]"></a-input>
+            <j-date :trigger-change="true" v-decorator="['useDate',{rules: rules.useDate}]" style="width: 100%;" />
           </a-form-item>
         </a-col>
         <a-col :xl="12">
@@ -67,22 +67,24 @@
       </a-row>
     </a-form>
     <!-- Asset modal -->
-    <assets-search-modal v-model="assetModal" />
+    <assets-search-modal v-model="assetModal" @select="handleSelectAssets" />
   </a-drawer>
 </template>
 
 <script>
+  import JDate from '@/components/jeecg/JDate'
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
   import AssetsSearchModal from './AssetsSearchModal'
   import { filterObj, promiseForm } from '@utils/util'
   import { assetsRegisterEditForm } from '@/config/pick-fields'
-  import { addInfo } from '../api'
+  import { addOpertion } from '../api'
 
   export default {
     mixins: [
       FormEditDrawerMixin('assets-recipients'),
     ],
     components: {
+      JDate,
       AssetsSearchModal,
     },
     data() {
@@ -102,6 +104,8 @@
         category: [],
         // Asset modal
         assetModal: false,
+        assetSelectKeys: [],
+        assetSelectRows: [],
       }
     },
     methods: {
@@ -114,7 +118,7 @@
         try {
           filterObj(data)
           data.parkId = this.industrialParkId
-          const resp = await addInfo(data)
+          const resp = await addOpertion(data)
           if (!resp.success) {
             throw new Error(resp.message)
           }
@@ -124,6 +128,10 @@
         } catch (e) {
           this.$message.error(e.message)
         }
+      },
+      handleSelectAssets(rowKeys, rowSelection) {
+        this.assetSelectKeys = rowKeys
+        this.assetSelectRows = rowSelection
       },
     },
 
