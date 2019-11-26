@@ -27,6 +27,14 @@
               <a-button type="primary" @click="handleAdd">创建工单</a-button>
             </a-form-item>
           </a-col>
+          <a-col :xl="14">
+            <a-form-item label="状态">
+              <j-dict-select-tag
+                type="radio"
+                v-model="queryParam.status"
+                :dict="typeOrderStatus" />
+            </a-form-item>
+          </a-col>
         </a-row>
       </a-form>
     </div>
@@ -89,10 +97,10 @@
 </template>
 
 <script>
-  import { filterDictText } from '@/components/dict/JDictSelectUtil'
   import TicketEditForm from '@views/ticket/components/TicketEditForm'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import MixinList from '@/mixins/List'
+  import { filterDictText } from '@/components/dict/JDictSelectUtil'
   import { url, changeStatusInfo } from './api'
   import '@assets/less/common.less'
 
@@ -114,6 +122,7 @@
         queryParam: {
           orderType: '',
           keyword: '',
+          status: '',
         },
         // Table
         columns: [
@@ -175,6 +184,15 @@
         ],
         deleteKey: 'orderId',
       }
+    },
+    computed: {
+      typeOrderStatus() {
+        let types = this.types.order_status
+        if (types) {
+          types.unshift({ text: '全部', title: '全部', value: '' })
+        }
+        return types
+      },
     },
     methods: {
       // List
