@@ -12,7 +12,7 @@
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
         label="所属园区">
-        <a-select placeholder="请选择园区" v-decorator="['parkId', {rules: rules.parkId}]">
+        <a-select placeholder="请选择园区" v-decorator="['parkId', {rules: rules.parkId, initialValue: parkId}]">
           <a-select-option value="1193719771573518336">园区1</a-select-option>
           <a-select-option value="1193773294512242688">园区2</a-select-option>
           <a-select-option value="1193775260059566080">园区3</a-select-option>
@@ -103,6 +103,7 @@
   import qs from 'qs'
   import { PickBuildingBlockForm } from '@/config/pick-fields'
   import { block as rules } from '../../js/rules'
+  import { mapState } from 'vuex'
 
   export default {
     name: 'BuildingBlockForm',
@@ -229,6 +230,10 @@
           this.$delete(this.fileList, this.fileList.length - 1)
         }
       }
-    }
+    },
+    computed: mapState({
+      parkId: state => state.industrialPark.id,
+      parkName: state => state.industrialPark.name
+    })
   }
 </script>
