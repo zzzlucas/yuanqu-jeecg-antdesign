@@ -17,7 +17,7 @@
               <a-radio-group v-decorator="['result']">
                 <a-radio value="Y">通过</a-radio>
                 <a-radio value="N2USER">不通过</a-radio>
-                <a-radio v-if="true" value="N2PRE">驳回</a-radio>
+                <a-radio v-if="model.workFlowNextNodeIndex>=1" value="N2PRE">驳回</a-radio>
               </a-radio-group>
             </a-form-item>
           </a-col>
@@ -109,7 +109,10 @@ export default {
       record.fakerTime = moment()
       // console.log(record.fakerTime)
       this.model = Object.assign({}, record)
+      // console.log('object')
+      // console.log(this.model.workFlowNextNodeIndex)
       this.$nextTick(() => {
+        //projectWorkFlowId
         this.form.setFieldsValue(pick(this.model, 'des', 'name', 'projectWorkFlowId', 'result', 'fakerTime'))
         //时间格式化
       })
@@ -141,13 +144,16 @@ export default {
               if (res.success) {
                 that.$message.success(res.message)
                 that.$emit('reload')
+                that.model = {}
               } else {
                 that.$message.warning(res.message)
+                that.$emit('reload')
+                that.model = {}
               }
             })
             .finally(() => {
               that.confirmLoading = false
-              that.close()
+              that.handleCancel()
             })
         }
       })

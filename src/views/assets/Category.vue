@@ -47,7 +47,7 @@
 
 <script>
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-  import { mixinList } from '@/utils/mixin'
+  import { mixinList } from '@/utils/mixin'  // PARKID
   import Mixin from './mixins'
   import AssetsCategoryEditForm from './components/AssetsCategoryEditForm'
   import './style/list.less'
@@ -55,7 +55,7 @@
   export default {
     mixins: [
       JeecgListMixin,
-      mixinList,
+      mixinList,   // PARKID
       Mixin
     ],
     components: {

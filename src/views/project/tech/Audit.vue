@@ -5,7 +5,7 @@
         <a-row :gutter="24">
           <a-col :span="6">
             <a-form-item label="关键字">
-              <a-input placeholder="输入关键字" v-model="queryParam.titile"></a-input>
+              <a-input placeholder="输入关键字" v-model="queryParam.keyword"></a-input>
             </a-form-item>
           </a-col>
 
@@ -20,19 +20,22 @@
               >重置</a-button>
             </span>
           </a-col>
-          <a-radio-group @change="handleChange" v-decorator="['auditStatus']">
-            <a-radio value="1">部门审核</a-radio>
-            <a-radio value="2">分管领导审核</a-radio>
-            <a-radio value="3">主要领导审核</a-radio>
-            <a-radio value="4">审核通过</a-radio>
-            <a-radio value="5">审核未通过</a-radio>
-          </a-radio-group>
 
           <a-col :span="8" style="float: right">
             <span style="float: right;overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" @click="AddTechProject()">新建项目</a-button>
             </span>
           </a-col>
+        </a-row>
+        <a-row :gutter="24" style="margin:20px 10px">
+          <a-radio-group @change="handleChange" v-model="ff.AS">
+            <!-- <a-radio-group @change="handleChange" v-decorator="['auditStatus']"> -->
+            <a-radio-button value="1">部门审核</a-radio-button>
+            <a-radio-button value="2">分管领导审核</a-radio-button>
+            <a-radio-button value="3">主要领导审核</a-radio-button>
+            <a-radio-button value="4">审核通过</a-radio-button>
+            <a-radio-button value="5">审核未通过</a-radio-button>
+          </a-radio-group>
         </a-row>
       </a-form>
     </div>
@@ -41,7 +44,7 @@
       ref="table"
       size="default"
       bordered
-      rowKey="id"
+      rowKey="projectWorkFlowId"
       :columns="columns"
       :dataSource="dataSource"
       :pagination="ipagination"
@@ -49,16 +52,21 @@
       @change="handleTableChange"
       :customRow="customRow"
     >
+      <span slot="actionA" slot-scope="text, record">
+        <a v-if="record.auditStatus == 2" @click.stop="showRecord(record)">待审核</a>
+        <a v-if="record.auditStatus == 1" @click.stop="showRecord(record)">审核通过</a>
+        <a v-if="record.auditStatus == 3" @click.stop="showRecord(record)">审核未通过</a>
+      </span>
       <span slot="action" slot-scope="text, record">
-        <a @click.stop="AuditForm(record,...arguments)">审核</a>
-        <a-divider type="vertical" />
+        <a v-if="record.auditStatus==2" @click.stop="AuditForm(record,...arguments)">审核</a>
+        <a-divider v-if="record.auditStatus==2" type="vertical" />
         <a @click.stop="EditTechProject(record,...arguments)">项目维护</a>
       </span>
     </a-table>
 
-    <audit-form ref="AuditForm"></audit-form>
-
+    <audit-form ref="AuditForm" @reload="loadData"></audit-form>
     <add-tech-project ref="AddTechProject" @reload="loadData"></add-tech-project>
+    <audit-record ref="AuditRecord"></audit-record>
   </a-card>
 </template>
 <script>
@@ -66,16 +74,19 @@
 import { getAction, putAction } from '@/api/manage'
 import AddTechProject from './modules/AddTechProject'
 import AuditForm from './modules/AuditFormM'
+import AuditRecord from './modules/AuditRecord'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
 import Dom7 from 'dom7'
+import { filterObj } from '@/utils/util'
 
 export default {
   name: 'UserAnnouncementList',
   mixins: [JeecgListMixin], //居然很重要
   components: {
     AddTechProject,
-    AuditForm
+    AuditForm,
+    AuditRecord
   },
   data() {
     return {
@@ -83,6 +94,12 @@ export default {
       queryParam: {},
       auditStatusDictOptions: '',
       industrySectorValue: '',
+      //筛选条件
+      ff: {
+        AS: '',
+        auditStatus: '',
+        workFlowNextNodeIndex: ''
+      },
       columns: [
         {
           title: '序号',
@@ -123,20 +140,26 @@ export default {
           }
         },
         {
+          title: '进度test',
+          align: 'center',
+          dataIndex: 'workFlowNextNodeIndex',
+          customRender: function(text) {
+            if (text == '0') {
+              return '部门审核'
+            } else if (text == '1') {
+              return '分管领导审核'
+            } else {
+              return '主要领导审核'
+            }
+          }
+        },
+        {
           title: '项目状态',
           align: 'center',
           dataIndex: 'auditStatus',
-          customRender: text => {
-            return filterDictText(this.auditStatusDictOptions, text)
-          }
-          // customRender: function(text) {
-          //   if (text == '1') {
-          //     //返回此页的数据目前是 undefined？
-          //     return '已审核'
-          //   } else text == '2'
-          //   {
-          //     return '未审核'
-          //   }
+          scopedSlots: { customRender: 'actionA' }
+          // customRender: text => {
+          //   return filterDictText(this.auditStatusDictOptions, text)
           // }
         },
         {
@@ -167,8 +190,79 @@ export default {
     })
   },
   methods: {
-    handleChange(e){
-      console.log(e);
+    showRecord(record) {
+      this.$refs.AuditRecord.detail(record)
+    },
+
+    handleChange(e) {
+      if (e) {
+        switch (e.target.value) {
+          case '1':
+            this.ff.auditStatus = '2'
+            this.ff.workFlowNextNodeIndex = '0'
+            break
+          case '2':
+            this.ff.auditStatus = '2'
+            this.ff.workFlowNextNodeIndex = '1'
+            break
+          case '3':
+            this.ff.auditStatus = '2'
+            this.ff.workFlowNextNodeIndex = '2'
+            break
+          case '4':
+            this.ff.auditStatus = '1'
+            break
+          case '5':
+            this.ff.auditStatus = '3'
+            break
+        }
+      }
+      console.log('this.ff')
+      console.log(this.ff)
+      var params = this.getQueryParams()
+      this.loading = true
+      getAction(this.url.list, params).then(res => {
+        if (res.success) {
+          for (const item of res.result.records) {
+            item.fillUnit = item.mgrProjectCust.fillUnit
+            item.agentPerson = item.mgrProjectInfo.agentPerson
+            item.agentTel = item.mgrProjectInfo.agentTel
+            item.projectName = item.mgrProjectInfo.projectName
+            item.industrySectorValue = item.mgrProjectInfo.industrySectorValue
+            item.auditStatus = item.mgrProjectInfo.auditStatus
+          }
+          this.dataSource = res.result.records
+          this.ipagination.total = res.result.total
+        }
+        if (res.code === 510) {
+          this.$message.warning(res.message)
+        }
+        this.loading = false
+      })
+    },
+
+    getQueryParams() {
+      let sqp = {}
+      if (this.superQueryParams) {
+        sqp['superQueryParams'] = encodeURI(this.superQueryParams)
+      }
+      //1.往 queryform 塞进 ff
+      this.queryform = Object.assign(this.ff)
+      //2.往 param 塞进 queryform（即ff）  queryParam
+      var param = Object.assign(this.queryform, this.queryParam)
+      // console.log(this.queryParam)
+      // console.log('object----', param)
+      param.pageNo = this.ipagination.current
+      param.pageSize = this.ipagination.pageSize
+      return filterObj(param)
+    },
+    searchQuery() {
+      this.handleChange()
+    },
+    searchReset() {
+      this.queryParam = {}
+      this.ff = {}
+      this.loadData()
     },
     loadData(arg) {
       if (arg === 1) {

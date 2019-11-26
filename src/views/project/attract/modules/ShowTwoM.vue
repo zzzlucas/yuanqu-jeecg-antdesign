@@ -231,23 +231,7 @@ export default {
       }
       //大约是因为时间的格式化   意外的是枚举复制后的老对象依旧会影响新对象
       this.queryform = Object.assign(this.ff)
-      // this.ff.beginDate = null
-      // this.ff.endDate = null
-
-      // this.form.validateFieldsAndScroll((err, form) => {
-      //   if (form.beginDate) {
-      //     form.beginDate = form.beginDate ? form.beginDate.format('YYYY-MM-DD') : null
-      //   }
-      //   if (form.endDate) {
-      //     form.endDate = form.endDate ? form.endDate.format('YYYY-MM-DD') : null
-      //   }
-      //   //查询数据从表单获取到，其实不该走表单，直接走一个对象即可
-      //   this.queryform = form
-      // })
-
-      // console.log(this.queryform)
       var param = Object.assign(this.queryform)
-      // param.field = this.getQueryField()
       param.projectId = this.record.projectId
       param.pageNo = this.ipagination.current
       param.pageSize = this.ipagination.pageSize
