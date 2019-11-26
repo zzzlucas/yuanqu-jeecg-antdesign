@@ -57,14 +57,18 @@
             <a class="ant-dropdown-link">状态管理<a-icon type="down" /></a>
             <a-menu slot="overlay">
               <a-menu-item>
-                <a-popconfirm title="确定受理吗?">
+                <a-popconfirm title="确定受理吗?" @confirm="handleChangeStatus(record.orderId, '1')">
                   <a>受理</a>
                 </a-popconfirm>
-                <a-popconfirm title="确定退回吗?">
+              </a-menu-item>
+              <a-menu-item>
+                <a-popconfirm title="确定退回吗?" @confirm="handleChangeStatus(record.orderId, '2')">
                   <a>退回</a>
                 </a-popconfirm>
-                <a-popconfirm title="确定转为已完成吗?">
-                  <a>转为已完成</a>
+              </a-menu-item>
+              <a-menu-item>
+                <a-popconfirm title="确定转为已完成吗?" @confirm="handleChangeStatus(record.orderId, '3')">
+                  <a>已完成</a>
                 </a-popconfirm>
               </a-menu-item>
             </a-menu>
@@ -90,7 +94,7 @@
   import TicketEditForm from '@views/ticket/components/TicketEditForm'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import MixinList from '@/mixins/List'
-  import { url } from './api'
+  import { url, changeStatusInfo } from './api'
   import '@assets/less/common.less'
 
   export default {
@@ -174,9 +178,7 @@
       }
     },
     methods: {
-      async handleEditSubmit() {
-        this.loadData(1)
-      },
+      // List
       handleCustomRow(row) {
         return {
           on: {
@@ -185,7 +187,24 @@
             }
           }
         }
-      }
+      },
+      async handleChangeStatus(orderId, status) {
+        try {
+          const params = { status, orderId }
+          const resp = await changeStatusInfo(params)
+          if (!resp.success) {
+            throw new Error(resp.message)
+          }
+          this.$message.success('操作成功')
+          this.loadData(1)
+        } catch (e) {
+          this.$message.error(e.message)
+        }
+      },
+      // Add/Edit
+      async handleEditSubmit() {
+        this.loadData(1)
+      },
     },
   }
 </script>
