@@ -17,6 +17,13 @@ const url = {
     delete: '/park.asset/baseAssetInfo/delete',
     deleteBatch: '/park.asset/baseAssetInfo/deleteBatch',
   },
+  mgrAssetOpertion: {
+    list: '/park.asset/mgrAssetOpertion/list',
+    add: '/park.asset/mgrAssetOpertion/add',
+    edit: '/park.asset/mgrAssetOpertion/edit',
+    delete: '/park.asset/mgrAssetOpertion/delete',
+    deleteBatch: '/park.asset/mgrAssetOpertion/deleteBatch',
+  },
 }
 
 /** 资产类别-查询所有树中类别 */

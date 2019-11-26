@@ -44,7 +44,7 @@
         this.list = res.result
       },
       async buildTree() {
-        this.data = buildTreeData(this.list, 'categoryId', 'categoryName')
+        this.data = buildTreeData(this.list, 'categoryId', 'categoryName', 'parentId', true)
         this.ready = true
       },
       async getList() {

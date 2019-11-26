@@ -15,16 +15,6 @@
                 </a-form-item>
               </a-col>
               <a-col :xl="6">
-                <a-form-item label="领用部门">
-                  <a-select v-model="queryParam.department">
-                    <a-select-option
-                      :value="item.name"
-                      v-for="item in filter.department"
-                      :key="item.name">{{ item.label }}</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :xl="6">
                 <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
                   <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
                   <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
@@ -95,21 +85,11 @@
     data() {
       return {
         // Url
-        url: url.info,
-        // Filter options
-        filter: {
-          department: [
-            { name: 'all', label: '全部' },
-            { name: '1', label: '智慧办公室' },
-            { name: '2', label: '班子成员' },
-          ],
-        },
+        url: url.mgrAssetOpertion,
         // Filter query
         queryParam: {
-          categoryType: '1',
-          categoryId: '',
           keyword: '',
-          department: 'all',
+          useType: '1',
         },
         // Table
         columns: [
