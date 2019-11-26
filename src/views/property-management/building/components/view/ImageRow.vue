@@ -1,6 +1,7 @@
 <template>
   <div class="yq-building-image-row">
     <a-divider orientation="left">房间图片</a-divider>
+    <!--suppress CheckTagEmptyBody-->
     <yq-image
       v-for="(item, key) in images"
       class="image-item"
@@ -13,6 +14,7 @@
 
 <script>
   import YqImage from '@comp/extend/YqImage'
+  import { getOneImage } from '@utils/util'
 
   export default {
     name: 'ImageRow',
@@ -27,7 +29,7 @@
     },
     methods: {
       getImage(url) {
-        return window._CONFIG['imgDomainURL'] + url
+        return getOneImage(url)
       },
       openImage(url) {
         window.open(window._CONFIG['imgDomainURL'] + url)

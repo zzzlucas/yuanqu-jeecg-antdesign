@@ -2,6 +2,7 @@
   <a-row :gutter="8">
     <a-col span="4">
       <a-card>
+        <!--suppress CheckTagEmptyBody -->
         <a-tree
           show-line
           :tree-data="tree"
@@ -36,14 +37,19 @@
           <a-button class="margin-left" v-if="type !== 'block'" @click="cardEdit">编辑</a-button>
           <a-button class="margin-left" v-if="type !== 'block'" @click="cardDel">删除</a-button>
         </template>
+        <!--suppress CheckTagEmptyBody -->
         <building-view :model="model" @delete="onDelete" @edit="onEdit" @change="onChange"></building-view>
       </a-card>
     </a-col>
 
     <!-- 表单 -->
+    <!--suppress CheckTagEmptyBody -->
     <building-block-form ref="block" @ok="onOk"></building-block-form>
+    <!--suppress CheckTagEmptyBody -->
     <building-tower-form ref="tower" @ok="onOk"></building-tower-form>
+    <!--suppress CheckTagEmptyBody -->
     <building-floor-form ref="floor" @ok="onOk"></building-floor-form>
+    <!--suppress CheckTagEmptyBody -->
     <building-room-form ref="room" @ok="onOk"></building-room-form>
   </a-row>
 </template>
