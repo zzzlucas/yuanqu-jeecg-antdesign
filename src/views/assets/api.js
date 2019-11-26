@@ -17,7 +17,7 @@ const url = {
     delete: '/park.asset/baseAssetInfo/delete',
     deleteBatch: '/park.asset/baseAssetInfo/deleteBatch',
   },
-  mgrAssetOpertion: {
+  opertion: {
     list: '/park.asset/mgrAssetOpertion/list',
     add: '/park.asset/mgrAssetOpertion/add',
     edit: '/park.asset/mgrAssetOpertion/edit',
@@ -27,15 +27,19 @@ const url = {
 }
 
 /** 资产类别-查询所有树中类别 */
-const treeListCategory = params => getAction('/park.asset/baseAssetCategory/treeList', params)
+const treeListCategory = params => getAction(url.category.treeList, params)
 /** 资产类别-添加 */
-const addCategory = params => postAction('/park.asset/baseAssetCategory/add', qs.stringify(params))
+const addCategory = params => postAction(url.category.add, qs.stringify(params))
 /** 资产类别-编辑 */
-const editCategory = params => putAction('/park.asset/baseAssetCategory/edit', qs.stringify(params))
+const editCategory = params => putAction(url.category.edit, qs.stringify(params))
 /** 资产建档-添加 */
-const addInfo = params => postAction('/park.asset/baseAssetInfo/add', qs.stringify(params))
+const addInfo = params => postAction(url.info.add, qs.stringify(params))
 /** 资产建档-编辑 */
-const editInfo = params => postAction('/park.asset/baseAssetInfo/edit', qs.stringify(params))
+const editInfo = params => postAction(url.info.edit, qs.stringify(params))
+/** 资产使用基本信息--借用 领用 归还 处置 */
+const addOpertion = params => postAction(url.opertion.add, qs.stringify(params))
+/** 资产使用基本信息--编辑 */
+const editOpertion = params => postAction(url.opertion.edit, qs.stringify(params))
 
 export {
   url,
@@ -44,4 +48,6 @@ export {
   editCategory,
   addInfo,
   editInfo,
+  addOpertion,
+  editOpertion,
 }

@@ -85,7 +85,7 @@
     data() {
       return {
         // Url
-        url: url.mgrAssetOpertion,
+        url: url.opertion,
         // Filter query
         queryParam: {
           keyword: '',
