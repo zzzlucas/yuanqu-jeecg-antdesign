@@ -48,6 +48,7 @@
     display: block;
     background-color: #f2f2f2;
     overflow: hidden;
+    position: relative;
 
     .image-text {
       width: 100%;
@@ -57,6 +58,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      position: absolute;
     }
 
     .this-image {

@@ -1,6 +1,7 @@
 import keyBy from 'lodash/keyBy'
 import { isURL } from '@/utils/validate'
 import { axios } from '@utils/request'
+import _ from 'lodash'
 
 export function timeFix() {
   const time = new Date()
@@ -303,19 +304,14 @@ export function uploadFile(request) {
  * @returns {[]}
  */
 export function getFileListData(fileList) {
-  const data = []
-
-  for (const item of fileList) {
-    const { response, name, uid } = item
-    data.push({
-      url: response.old,
-      name,
-      uid,
+  return _.map(fileList, obj => {
+    return {
+      url: obj.response.old,
+      name: obj.name,
+      uid: obj.uid,
       status: 'done'
-    })
-  }
-
-  return data
+    }
+  })
 }
 
 /**
@@ -399,6 +395,30 @@ export function objectReplace(obj, fields) {
   }
 
   return obj
+}
+
+/**
+ * 获取 Tree 的路径
+ * @param list
+ * @param key
+ * @param keyName
+ * @param path
+ * @returns {Array}
+ */
+export function getTreeNodeOfKey(list, key, keyName, path = []) {
+  _.map(list, (obj, index) => {
+    if (obj[keyName] === key) {
+      path.push(index)
+      return obj
+    }
+    if (obj.children) {
+      path.push(index)
+      path = getTreeNodeOfKey(obj.children, key, keyName, path)
+    }
+    return obj
+  })
+
+  return path
 }
 
 /**

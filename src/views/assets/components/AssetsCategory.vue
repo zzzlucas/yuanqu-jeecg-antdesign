@@ -11,8 +11,8 @@
   </div>
 </template>
 
-<script>
-  import { mapGetters } from 'vuex'
+<script>  
+  import { mapGetters } from 'vuex'  // PARKID
   import { buildTreeData } from '@utils/util'
   import { treeListCategory } from '../api'
 
@@ -33,7 +33,7 @@
       },
       ...mapGetters([
         'industrialParkId'
-      ]),
+      ]),  // PARKID
     },
     methods: {
       onSelect(...ev) {
