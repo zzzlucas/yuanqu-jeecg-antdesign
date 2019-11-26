@@ -165,5 +165,10 @@
         ],
       }
     },
+    methods: {
+      async handleEditSubmit() {
+        this.loadData(1)
+      },
+    }
   }
 </script>

@@ -17,7 +17,11 @@
       <a-row>
         <a-col :xl="12">
           <a-form-item label="工单类别">
-            <a-input v-decorator="['categoryName', {rules: rules.categoryName}]"></a-input>
+            <j-dict-select-tag
+              v-decorator="['orderType', {rules: rules.orderType}]"
+              :triggerChange="true"
+              dictCode="order_type"
+              @change="changeOrderType" />
           </a-form-item>
         </a-col>
         <a-col :xl="12">
@@ -27,7 +31,10 @@
         </a-col>
         <a-col :xl="12">
           <a-form-item label="服务方式">
-            <a-input v-decorator="['method', {rules: rules.method}]"></a-input>
+            <j-dict-select-tag
+              v-decorator="['method', {rules: rules.method}]"
+              :triggerChange="true"
+              dictCode="service_type" />
           </a-form-item>
         </a-col>
         <a-col :xl="12">
@@ -40,42 +47,60 @@
             <a-input v-decorator="['custName', {rules: rules.custName}]"></a-input>
           </a-form-item>
         </a-col>
-        <!-- TODO -->
-        <a-col :xl="12" v-if="false"> <!-- TODO: depend on type -->
-          <a-form-item label="项目名称">
-            <a-input v-decorator="['title', {rules: rules.title}]"></a-input>
-          </a-form-item>
-        </a-col>
-        <a-col :xl="12" v-if="false"> <!-- TODO: depend on type -->
-          <a-form-item label="经办人">
-            <a-input v-decorator="['principalUser', {rules: rules.principalUser}]"></a-input> <!-- TODO: name? -->
-          </a-form-item>
-        </a-col>
-        <a-col :xl="12" v-if="false"> <!-- TODO: depend on type -->
-          <a-form-item label="期限开始时间">
-            <a-input v-decorator="['begDate', {rules: rules.begDate}]"></a-input>
-          </a-form-item>
-        </a-col>
-        <a-col :xl="12" v-if="false"> <!-- TODO: depend on type -->
-          <a-form-item label="期限结束时间">
-            <a-input v-decorator="['endDate', {rules: rules.endDate}]"></a-input>
-          </a-form-item>
-        </a-col>
-        <a-col :xl="24" v-if="false"> <!-- TODO: depend on type -->
-          <a-form-item label="附件" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
+        <template v-if="isCurrentTypeInProject">
+          <a-col :xl="12">
+            <a-form-item label="项目名称">
+              <a-input v-decorator="['title', {rules: rules.title}]"></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :xl="12">
+            <a-form-item label="经办人">
+              <a-input v-decorator="['principalUser', {rules: rules.principalUser}]"></a-input> <!-- TODO: name? -->
+            </a-form-item>
+            <a-col :xl="24">
+              <a-form-item label="附件" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
 
-          </a-form-item>
-        </a-col>
-        <a-col :xl="12"> <!-- TODO: depend on type -->
-          <a-form-item label="所属园区">
-            <a-input v-decorator="['parkId', {rules: rules.parkId}]"></a-input>
-          </a-form-item>
-        </a-col>
-        <a-col :xl="24"> <!-- TODO: depend on type -->
-          <a-form-item label="主题" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
-            <a-input v-decorator="['title', {rules: rules.title}]"></a-input>
-          </a-form-item>
-        </a-col>
+              </a-form-item>
+            </a-col>
+          </a-col>
+        </template>
+        <template v-if="isCurrentTypeInProjectPeriod">
+          <a-col :xl="12">
+            <a-form-item label="项目名称">
+              <a-input v-decorator="['title', {rules: rules.title}]"></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :xl="12">
+            <a-form-item label="经办人">
+              <a-input v-decorator="['principalUser', {rules: rules.principalUser}]"></a-input> <!-- TODO: name? -->
+            </a-form-item>
+          </a-col>
+          <a-col :xl="12">
+            <a-form-item label="期限开始时间">
+              <a-input v-decorator="['begDate', {rules: rules.begDate}]"></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :xl="12">
+            <a-form-item label="期限结束时间">
+              <a-input v-decorator="['endDate', {rules: rules.endDate}]"></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :xl="24">
+            <a-form-item label="附件" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
+
+            </a-form-item>
+          </a-col>
+<!--          <a-col :xl="12"> &lt;!&ndash; TODO: depend on type &ndash;&gt;
+            <a-form-item label="所属园区">
+              <a-input v-decorator="['parkId', {rules: rules.parkId}]"></a-input>
+            </a-form-item>
+          </a-col>-->
+          <a-col :xl="24">
+            <a-form-item label="主题" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
+              <a-input v-decorator="['title', {rules: rules.title}]"></a-input>
+            </a-form-item>
+          </a-col>
+        </template>
         <a-col :xl="24">
           <a-form-item label="内容" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
             <j-editor v-decorator="['content', {rules: rules.content}]"></j-editor>
@@ -107,6 +132,7 @@
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
   import { filterObj, promiseForm } from '@utils/util'
   import { assetsCategoryEditForm } from '@/config/pick-fields'
+  import { orderTypesWithSpecialFields } from '@views/ticket/types'
 
   export default {
     mixins: [
@@ -117,11 +143,16 @@
     },
     data() {
       return {
+        // Types
+        types: {
+          orderTypesWithSpecialFields,
+        },
         // Form
         fields: assetsCategoryEditForm,
+        orderType: '',
         // Rules
         rules: {
-          categoryName: [
+          orderType: [
             { required: true, message: '请输入分类名称' }
           ],
           principalUser: [
@@ -150,9 +181,23 @@
       }
     },
     computed: {
-
+      orderTypeProjectPeriod() {
+        return this.types.orderTypesWithSpecialFields.projectPeriod.types
+      },
+      orderTypeProject() {
+        return this.types.orderTypesWithSpecialFields.project.types
+      },
+      isCurrentTypeInProjectPeriod() {
+        return this.orderTypeProjectPeriod.includes(this.orderType)
+      },
+      isCurrentTypeInProject() {
+        return this.orderTypeProject.includes(this.orderType)
+      },
     },
     methods: {
+      changeOrderType(value) {
+        this.orderType = value
+      },
       async submit(ev) {
         ev.preventDefault();
         const data = await promiseForm(this.form)
