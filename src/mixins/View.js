@@ -25,9 +25,7 @@ export default {
     const parkId = store.state.industrialPark.id
     return {
       // 接口Url
-      url: {
-        info: '',
-      },
+      url: {},
       // 查询条件
       queryParam: {},
       // 园区id
@@ -35,7 +33,7 @@ export default {
       // 加载flag
       loading: true,
       // 主内容
-      info: {},
+      data: {},
     }
   },
   methods: {
@@ -55,22 +53,24 @@ export default {
      * 加载数据
      */
     async loadData() {
-      if (!this.url.info) {
-        this.$message.error("请设置url.info属性!")
+      if (!this.url.view) {
+        this.$message.error(`请设置url.view属性!`)
         return
       }
       const params = this.getQueryParams()
       this.loading = true
       try {
-        const data = getAction(this.url.info, params)
+        const data = await getAction(this.url.view, params)
         if (!data.success) {
           throw new Error(data.message)
         }
         if (data.code === 510) { // What is code 510?
           this.$message.warning(data.message)
         }
+        this.data = data.result
       } catch (e) {
         this.$message.error(e.message)
+        throw e
       }
       this.loading = false
     },
@@ -79,22 +79,31 @@ export default {
      * @return Object
      */
     getQueryParams() {
-      const params = Object.assign({}, this.queryParam)
+      const route = this.getRouteParams()
+      const params = Object.assign({}, route, this.queryParam)
       return filterObj(params)
-    }
+    },
+    /**
+     * Get路由查询条件
+     * @return Object
+     */
+    getRouteParams() {
+      return { id: this.$route.params.id }
+    },
   },
 }
 
 /**
- * 额外可混入项
+ * 生命周期混入项
  *
  * + created()
  */
-export const extra = {
-  created() {
+export const lifeCycle = {
+  async created() {
     if (!this.checkRouteConfig()) {
       return
     }
+    await this.initDictConfig()
     this.loadData()
   }
 }
