@@ -4,19 +4,25 @@
       class="ticket-header-container"
       :bordered="false"
       :loading="loading">
+      <!-- Nav (unclickable) -->
       <a-breadcrumb>
         <a-breadcrumb-item>工单管理</a-breadcrumb-item>
         <a-breadcrumb-item>TODO: INSERT CATEGORY NAME HERE</a-breadcrumb-item>
         <a-breadcrumb-item>工单详情</a-breadcrumb-item>
       </a-breadcrumb>
+      <!-- Layout Header -->
       <a-row class="ticket-header-content">
+        <!-- Header left -->
         <a-col :xl="18">
+          <!-- Content box -->
           <div class="ticket-header-content-box">
+            <!-- Icon column -->
             <div class="ticket-header-content-box-left">
               <a-avatar class="ticket-header-icon">
                 <a-icon type="mail" theme="twoTone" />
               </a-avatar>
             </div>
+            <!-- Info column -->
             <div class="ticket-header-content-box-right">
               <h1>主题：{{ info.title }}</h1>
               <a-row>
@@ -29,7 +35,9 @@
             </div>
           </div>
         </a-col>
-        <a-col class="ticket-header-action" :xl="6">
+        <!-- Header right -->
+        <a-col class="ticket-header-action-column" :xl="6">
+          <!-- Action -->
           <div class="ticket-action-container">
             <a-button-group>
               <a-button>受理</a-button>
@@ -40,11 +48,17 @@
               <a-button type="primary">编辑</a-button>
             </a-button-group>
           </div>
+          <div class="ticket-status-container">
+            状态
+            <span>待审批</span>
+          </div>
+          <!-- TODO: missing status, etc. -->
         </a-col>
       </a-row>
     </a-card>
+    <!-- Layout content -->
     <div class="ticket-content-container">
-      <a-tabs defaultActiveKey="detail" @change="callback">
+      <a-tabs defaultActiveKey="detail">
         <a-tab-pane tab="详情" key="detail">
           <a-card
             :bordered="false"
@@ -60,16 +74,42 @@
         </a-tab-pane>
         <a-tab-pane tab="处理记录" key="records">
           <a-card
+            title="工单处理记录"
             :bordered="false"
             :loading="loading">
-            test
+            <a-button type="primary" slot="extra" icon="plus" shape="circle" @click="addRecord" />
+            <a-timeline>
+              <a-timeline-item>
+                <p class="timeline-heading">2019-10-28 13:24:20 【演示用户】工单进展</p>
+                <p class="timeline-content">时间、用户名、工单进展、备注内容或操作步骤（完成、退回、）</p>
+              </a-timeline-item>
+              <a-timeline-item>
+                <p class="timeline-heading">2019-10-28 13:24:20【演示用户】完成工单</p>
+                <p class="timeline-content">点击设为完成是生成工单处理记录</p>
+              </a-timeline-item>
+              <a-timeline-item>
+                <p class="timeline-heading">2019-10-28 13:30:20【演示用户】受理工单</p>
+                <p class="timeline-content">点击受理工单生成受理工单记录</p>
+              </a-timeline-item>
+            </a-timeline>
           </a-card>
         </a-tab-pane>
         <a-tab-pane tab="反馈记录" key="feedback">
           <a-card
+            title="工单反馈记录"
             :bordered="false"
             :loading="loading">
-            test
+            <a-button type="primary" slot="extra" icon="plus" shape="circle" @click="addRecord" />
+            <a-timeline>
+              <a-timeline-item>
+                <p class="timeline-heading">2019-10-28 13:24:20 【演示用户】工单进展</p>
+                <p class="timeline-content">反馈记录要求前端也可以看到</p>
+              </a-timeline-item>
+              <a-timeline-item>
+                <p class="timeline-heading">2019-10-28 13:24:20 【演示用户】工单进展</p>
+                <p class="timeline-content">反馈记录要求前端也可以看到</p>
+              </a-timeline-item>
+            </a-timeline>
           </a-card>
         </a-tab-pane>
       </a-tabs>
@@ -89,6 +129,11 @@
         loading: false,
       }
     },
+    methods: {
+      addRecord() {
+
+      },
+    }
   }
 </script>
 
@@ -96,13 +141,12 @@
   .ticket-view {
     // Remove extra margin on parent layout
     margin: -12px -12px 0;
-    // Header
-    .ticket-header-container {
-      border-top: 0;
-    }
+
+    // --Layout Header--
     .ticket-header-content {
       margin-top: 20px;
     }
+    // Header content box
     .ticket-header-content-box {
       display: flex;
       h1 {
@@ -110,32 +154,53 @@
         font-size: 20px;
         font-weight: bold;
       }
-    }
-    .ticket-header-content-box-right {
-      padding-left: 10px;
-      .ant-row {
-        margin-top: 20px;
-        > div {
-          margin: 5px 0;
+      // Left side
+      // Icon
+      .ticket-header-icon {
+        background: rgb(24, 144, 255);
+      }
+      // Right side
+      .ticket-header-content-box-right {
+        padding-left: 10px;
+        .ant-row {
+          margin-top: 20px;
+          > div {
+            margin: 5px 0;
+          }
         }
       }
     }
-    .ticket-header-icon {
-      background: rgb(24, 144, 255);
-    }
-    .ticket-header-action {
+    // Header action column
+    .ticket-header-action-column {
       display: flex;
-      justify-content: flex-end;
+      align-items: flex-end;
+      flex-direction: column;
       // Buttons
-      .ant-btn-group {
-        + .ant-btn-group {
-          margin-left: 10px;
+      .ticket-action-container {
+        .ant-btn-group {
+          + .ant-btn-group {
+            margin-left: 10px;
+          }
+        }
+      }
+      // Status
+      .ticket-status-container {
+        margin-top: 20px;
+        display: flex;
+        align-items: flex-end;
+        flex-direction: column;
+        span {
+          margin-top: 5px;
+          color: #000000;
+          font-size: 20px;
         }
       }
     }
-    // Content
+
+    // --Layout Content--
     .ticket-content-container {
       background: #f0f2f5;
+      // Tab
       .ant-tabs-bar {
         background: #fff;
         padding-left: 32px;
@@ -144,10 +209,13 @@
           margin-top: 0;
         }
       }
+      // Tab panel
       .ant-tabs-content {
+        // Card
         .ant-card {
           margin: 20px 35px;
         }
+        // Detail
         .detail-row {
           margin: 10px 0;
         }
