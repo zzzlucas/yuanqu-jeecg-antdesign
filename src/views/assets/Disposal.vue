@@ -78,12 +78,12 @@
     data() {
       return {
         // Url
-        url: url.info,
+        url: url.opertion,
         // Filter query
         queryParam: {
-          categoryType: '4',
           categoryId: '',
           keyword: '',
+          useType: '4',
         },
         // Table
         columns: [

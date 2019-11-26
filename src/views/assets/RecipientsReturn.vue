@@ -65,7 +65,7 @@
     data() {
       return {
         // Url
-        url: url.info,
+        url: url.opertion,
         // Filter query
         queryParam: {
           categoryId: '',
@@ -84,7 +84,7 @@
           {
             title: '资产名称',
             align: 'center',
-            dataIndex: 'assetName'
+            dataIndex: 'assertName'
           },
           {
             title: '资产编号',
