@@ -39,7 +39,7 @@
         </a-col>
         <a-col :xl="12">
           <a-form-item label="是否收费">
-            <a-input v-decorator="['isCharge', {rules: rules.isCharge}]"></a-input>
+            <a-switch v-decorator="['isCharge']"></a-switch>
           </a-form-item>
         </a-col>
         <a-col :xl="12">
@@ -95,15 +95,15 @@
               <a-input v-decorator="['parkId', {rules: rules.parkId}]"></a-input>
             </a-form-item>
           </a-col>-->
-          <a-col :xl="24">
-            <a-form-item label="主题" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
-              <a-input v-decorator="['title', {rules: rules.title}]"></a-input>
-            </a-form-item>
-          </a-col>
         </template>
         <a-col :xl="24">
+          <a-form-item label="主题" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
+            <a-input v-decorator="['title', {rules: rules.title}]"></a-input>
+          </a-form-item>
+        </a-col>
+        <a-col :xl="24">
           <a-form-item label="内容" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
-            <j-editor v-decorator="['content', {rules: rules.content}]"></j-editor>
+            <j-editor v-decorator="['content', {rules: rules.content}]" triggerChange></j-editor>
           </a-form-item>
         </a-col>
       </a-row>
@@ -133,6 +133,7 @@
   import { filterObj, promiseForm } from '@utils/util'
   import { assetsCategoryEditForm } from '@/config/pick-fields'
   import { orderTypesWithSpecialFields } from '@views/ticket/types'
+  import { addInfo, editInfo } from '../api'
 
   export default {
     mixins: [
@@ -161,9 +162,6 @@
           method: [
             { required: true, message: '请选择服务方式' }
           ],
-          isCharge: [
-            { required: true, message: '请选择是否收费' }
-          ],
           custName: [
             { required: true, message: '请输入客户名称' }
           ],
@@ -177,7 +175,6 @@
             { required: true, message: '请输入内容' }
           ],
         },
-        category: [],
       }
     },
     computed: {
@@ -201,15 +198,14 @@
       async submit(ev) {
         ev.preventDefault();
         const data = await promiseForm(this.form)
-/*        try {
+        try {
           filterObj(data)
           data.parkId = this.industrialParkId
           let resp
           if (this.isEdit) {
-            data.categoryId = this.record.categoryId
-            resp = await editCategory(data)
+            resp = await editInfo(data)
           } else {
-            resp = await addCategory(data)
+            resp = await addInfo(this.orderType, data)
           }
           if (!resp.success) {
             throw new Error(resp.message)
@@ -219,7 +215,7 @@
           this.$emit('submit')
         } catch (e) {
           this.$message.error(e.message)
-        }*/
+        }
       },
     },
     watch: {

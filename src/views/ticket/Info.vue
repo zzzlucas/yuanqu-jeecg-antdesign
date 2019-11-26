@@ -24,12 +24,12 @@
             </div>
             <!-- Info column -->
             <div class="ticket-header-content-box-right">
-              <h1>主题：{{ info.title }}</h1>
+              <h1>主题：{{ data.title }}</h1>
               <a-row>
-                <a-col :xl="12">工单类别：公用部分</a-col>
-                <a-col :xl="12">工单编号：FWD20191012102601</a-col>
+                <a-col :xl="12">工单类别：{{ filterDictText(this.types.order_type, data.orderType) }}</a-col>
+                <a-col :xl="12">工单编号：{{ data.orderId }}</a-col>
                 <a-col :xl="12">负责人：胡俊琪</a-col>
-                <a-col :xl="12">提单时间：2019-10-12</a-col>
+                <a-col :xl="12">提单时间：{{ data.createTime }}</a-col>
                 <a-col :xl="12">来源渠道：手动创建</a-col>
               </a-row>
             </div>
@@ -63,7 +63,7 @@
           <a-card
             :bordered="false"
             :loading="loading">
-            <p class="detail-heading detail-row">主题：XXXX</p>
+            <p class="detail-heading detail-row">主题：{{ data.title }}</p>
             <p class="detail-row">企业名称：有限公司</p>
             <p class="detail-row">经办人：?</p>
             <p class="detail-row">联系方式：1585733333</p>
@@ -118,18 +118,31 @@
 </template>
 
 <script>
-  import View from '@/mixins/View'
+  import { filterDictText } from '@/components/dict/JDictSelectUtil'
+  import ViewMixin, { lifeCycle as ViewLifeCycleMixin } from '@/mixins/View'
+  import { url } from './api'
 
   export default {
     mixins: [
-      View,
+      ViewMixin,
+      ViewLifeCycleMixin,
     ],
     data() {
       return {
-        loading: false,
+        // Url
+        url: url.info,
+        // Types
+        dictesCreateFields: ['order_type'],
       }
     },
     methods: {
+      // Route
+      getRouteParams() {
+        return { orderId: this.$route.params.id }
+      },
+      // Filter
+      filterDictText,
+      // Action
       addRecord() {
 
       },

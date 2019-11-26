@@ -1,5 +1,5 @@
 <template>
-  <a-card class="assets-list" :bordered="false">
+  <a-card class="ticket-list" :bordered="false">
     <!-- Filter/Action -->
     <div class="table-page-search-wrapper">
       <a-form layout="inline" @keyup.enter.native="searchQuery">
@@ -44,12 +44,13 @@
       ref="table"
       size="middle"
       bordered
-      rowKey="assetId"
+      rowKey="orderId"
       :columns="columns"
       :dataSource="dataSource"
       :pagination="ipagination"
       :loading="loading"
-      :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}">
+      :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
+      :customRow="handleCustomRow">
       <!-- Column slot -->
       <span slot="action" slot-scope="text, record" @click.stop>
           <a-dropdown>
@@ -104,8 +105,8 @@
       return {
         // Url
         url: url.info,
-        // Dictes
-        dictesCreateFields: [],
+        // Types
+        dictesCreateFields: ['order_type', 'order_status'],
         // Filter query
         queryParam: {
           orderType: '',
@@ -134,7 +135,10 @@
           {
             title: '工单类别',
             align: 'center',
-            dataIndex: 'categoryId'
+            dataIndex: 'orderType',
+            customRender: t => {
+              return filterDictText(this.types.order_type, t)
+            }
           },
           {
             title: '提单客户',
@@ -154,7 +158,10 @@
           {
             title: '状态',
             align: 'center',
-            dataIndex: 'status'
+            dataIndex: 'status',
+            customRender: t => {
+              return filterDictText(this.types.order_status, t)
+            }
           },
           {
             title: '操作',
@@ -163,12 +170,30 @@
             scopedSlots: { customRender: 'action' },
           },
         ],
+        deleteKey: 'orderId',
       }
     },
     methods: {
       async handleEditSubmit() {
         this.loadData(1)
       },
-    }
+      handleCustomRow(row) {
+        return {
+          on: {
+            click: () => {
+              this.$router.push({ name: 'ticket-info-@id', params: { id: row.orderId } })
+            }
+          }
+        }
+      }
+    },
   }
 </script>
+
+<style lang="less">
+  .ticket-list {
+    .ant-table-row {
+      cursor: pointer;
+    }
+  }
+</style>
