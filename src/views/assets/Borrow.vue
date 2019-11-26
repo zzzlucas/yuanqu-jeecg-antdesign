@@ -108,27 +108,22 @@
           {
             title: '借用单号',
             align: 'center',
-            dataIndex: 'operation_id'
+            dataIndex: 'opertionId'
           },
           {
             title: '借用日期',
             align: 'center',
-            dataIndex: 'use_date'
-          },
-          {
-            title: '借用部门',
-            align: 'center',
-            dataIndex: 'use_person_department'
+            dataIndex: 'useDate'
           },
           {
             title: '借用人',
             align: 'center',
-            dataIndex: 'use_person'
+            dataIndex: 'usePerson'
           },
           {
             title: '借用资产名称',
             align: 'center',
-            dataIndex: 'use_assets_name'
+            dataIndex: 'assertName'
           },
           {
             title: '备注',

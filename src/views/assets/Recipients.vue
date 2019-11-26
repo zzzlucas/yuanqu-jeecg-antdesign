@@ -112,11 +112,6 @@
             dataIndex: 'useDate'
           },
           {
-            title: '领用部门',
-            align: 'center',
-            dataIndex: 'useDepartment'
-          },
-          {
             title: '领用人',
             align: 'center',
             dataIndex: 'usePerson'
@@ -124,7 +119,7 @@
           {
             title: '领用资产名称',
             align: 'center',
-            dataIndex: 'location'
+            dataIndex: 'assertName'
           },
           {
             title: '备注',
