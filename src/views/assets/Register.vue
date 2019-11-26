@@ -134,7 +134,7 @@
           {
             title: '所属分类',
             align: 'center',
-            dataIndex: 'categoryId'
+            dataIndex: 'categoryName'
           },
           {
             title: '规格型号',
