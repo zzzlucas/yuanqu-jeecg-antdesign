@@ -7,11 +7,10 @@
         <a-row :gutter="24">
           <a-col :span="6">
             <a-form-item label="审核阶段">
-              <a-select v-model="queryParam.sex" placeholder="全部">
-                <a-select-option value="1">全部</a-select-option>
-                <a-select-option value="2">部门审核</a-select-option>
-                <a-select-option value="3">分管领导审核</a-select-option>
-                <a-select-option value="4">主要领导审核</a-select-option>
+              <a-select v-model="queryParam.code" placeholder>
+                <a-select-option value="N4">部门审核</a-select-option>
+                <a-select-option value="N1">分管领导审核</a-select-option>
+                <a-select-option value="N2">主要领导审核</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
@@ -24,12 +23,12 @@
           <a-col>
             <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
-              <a-button
+              <!-- <a-button
                 type="primary"
                 @click="searchReset"
                 icon="reload"
                 style="margin-left: 8px"
-              >重置</a-button>
+              >重置</a-button>-->
             </span>
           </a-col>
 
@@ -83,54 +82,46 @@
       ></a-table>
       <!-- :customRow="customRow" -->
     </div>
-    <auditor-add-form @reload="loadData" ref="AuditorAddForm"></auditor-add-form>
 
-    <show-announcement ref="ShowAnnouncement"></show-announcement>
+    <auditor-add-form @reload="loadData" ref="AuditorAddForm"></auditor-add-form>
   </a-card>
 </template>
 <script>
 import { filterObj } from '@/utils/util'
 import { getAction, putAction } from '@/api/manage'
-import ShowAnnouncement from '@/components/tools/ShowAnnouncement'
 import AuditorAddForm from './modules/AuditorAddFormM'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 export default {
-  name: 'UserAnnouncementList',
+  name: '',
   mixins: [JeecgListMixin],
   components: {
-    ShowAnnouncement,
     AuditorAddForm
   },
   data() {
     return {
       description: '',
-      queryParam: {},
+      queryParam: {
+        code: 'N4'
+      },
       rowSelection: {},
+      dataSource: [],
       columns: [
-        {
-          title: '审核部门',
-          align: 'center',
-          dataIndex: 'msgCategory'
-          //不存在
-        },
+        // {
+        //   title: '审核部门',
+        //   align: 'center',
+        //   dataIndex: 'msgCategory'
+        // },
         {
           title: '审核人',
           align: 'center',
-          dataIndex: 'userId'
+          dataIndex: 'username'
         },
         {
-          //不存在，咋整
           title: ' 审核阶段',
           align: 'center',
-          dataIndex: 'readFlag',
+          dataIndex: 'code',
           customRender: function(text) {
-            if (text == '1') {
-              return '已审核'
-            } else if (text == '2') {
-              return '未审核'
-            } else {
-              return '未审核'
-            }
+            return text
           }
         }
       ],
@@ -145,14 +136,67 @@ export default {
     AuditorAddForm() {
       this.$refs.AuditorAddForm.add()
     },
-
-    showAnnouncement(record) {
-      putAction(this.url.editCementSend, { anntId: record.anntId }).then(res => {
+    loadData(arg) {
+      const that = this
+      if (arg === 1) {
+        that.ipagination.current = 1
+      }
+      var params = that.getQueryParams() //查询条件
+      console.log(params)
+      that.loading = true
+      getAction(that.url.list, params).then(res => {
         if (res.success) {
-          this.loadData()
+          for (const item of res.result.records) {
+            switch (params.code) {
+              case 'N4':
+                item.code = '部门审核'
+                break
+              case 'N1':
+                item.code = '分管领导审核'
+                break
+              case 'N2':
+                item.code = '主要领导审核'
+                break
+            }
+          }
+          that.dataSource = res.result.records
+          that.loading = false
         }
       })
-      this.$refs.ShowAnnouncement.detail(record)
+      //坑 ： 分页  parkid
+      // getAction(that.url.list, { code: 'N4' }).then(res => {
+      //   if (res.success) {
+      //     console.log('----------------')
+      //     console.log(res.result.records)
+      //     for (const item of res.result.records) {
+      //       item.code = "部门审核"
+      //       that.dataSource.push(item)
+      //     }
+      //     getAction(that.url.list, { code: 'N1' }).then(resB => {
+      //       if (resB.success) {
+      //         console.log(resB.result.records)
+      //         for (const item of resB.result.records) {
+      //           item.code = "分管领导审核"
+      //           that.dataSource.push(item)
+      //         }
+      //         getAction(that.url.list, { code: 'N2' }).then(resC => {
+      //           if (resC.success) {
+      //             console.log(resC.result.records)
+      //             for (const item of resC.result.records) {
+      //               item.code = "主要领导审核"
+      //               that.dataSource.push(item)
+      //             }
+      //             console.log(that.dataSource)
+      //             console.log('----------------')
+      //           }
+      //         })
+      //       }
+      //     })
+      //   } else {
+      //     that.$message.warning(res.message)
+      //   }
+      //   that.loading = false
+      // })
     }
   }
 }

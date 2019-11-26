@@ -14,7 +14,7 @@
   >
     <a-card :bordered="false">
       <a-spin :spinning="confirmLoading">
-        <detail-list :col="2">
+        <detail-list v-if="info" :col="2">
           <detail-list-item term="项目ID">{{info.projectId}}</detail-list-item>
           <detail-list-item term="项目名称">{{info.projectName}}</detail-list-item>
           <detail-list-item term="跟踪日期">{{info.trackDate}}</detail-list-item>

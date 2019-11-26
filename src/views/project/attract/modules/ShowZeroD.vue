@@ -105,7 +105,7 @@
                   <a-textarea :rows="4" placeholder="请输入备注" v-decorator="['remark', {}]"></a-textarea>
                 </a-form-item>
                 <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="附件组ID">
-                  <!-- <a-input placeholder="请输入附件组ID" v-decorator="['addDocFiles', {}]" /> -->
+                  <a-input placeholder="请输入附件组ID" v-decorator="['addDocFiles', {}]" />
                   <!-- <a-upload
                     name="file"
                     :showUploadList="true"
@@ -146,9 +146,10 @@
 import { initDictOptions } from '@comp/dict/JDictSelectUtil'
 import { getAction, httpAction } from '@/api/manage'
 import pick from 'lodash.pick'
-import moment from 'moment'
 import qs from 'querystring'
 import { ProjectAttractShowZeroForm } from '@/config/pick-fields'
+import moment from 'moment'
+moment.locale('zh-cn')
 
 export default {
   name: 'mgrProjectTraceDrawer',
@@ -274,6 +275,7 @@ export default {
       })
     },
     //给详情页专用，详情页具有$route.params.id获取projectId
+    moment,
     detailDDD(record) {
       const that = this
       that.record = record
@@ -307,20 +309,40 @@ export default {
       // console.log('partDetail')
       this.form.resetFields()
       //id查询项目基本信息api
+      this.visible = true
+      this.confirmLoading = true
       getAction('/park.project/mgrProjectInfo/queryProjectById', { projectId: record.projectId }).then(res => {
         if (res.success) {
           // console.log(res.result.projectManager)
           record.tracker = res.result.projectManager
-          this.model = Object.assign({}, record)
-          this.visible = true
-          this.$nextTick(() => {
-            this.form.setFieldsValue(pick(this.model, 'projectId', 'projectName', 'trackDate', 'tracker', 'status'))
+          record.trackDate = moment()
+
+          //根据recordId查最近的一条跟踪信息
+          getAction('/park.project/mgrProjectTrace/getById', { projectId: record.projectId }).then(resA => {
+            if (resA.success) {
+              //判断如果已经存在过跟踪记录,不然不用覆写projectManager这个第一首发跟踪人
+              //客户给了的跟踪人有三个不同字段 projectManager tracker keyword
+              //前两个概念需要统合
+              //这里在已有跟踪记录的前提下，将最新一条的跟踪人选为默认跟踪人
+              //项目分配的跟踪人应当可以再次更新为默认跟踪人，这一点后端api上或许有问题
+              if (resA.result) {
+                if (resA.result[0]) {
+                  record.tracker = resA.result[resA.result.length - 1].tracker
+                }
+              }
+              this.model = Object.assign({}, record)
+              this.$nextTick(() => {
+                this.form.setFieldsValue(pick(this.model, 'projectId', 'projectName', 'trackDate', 'tracker', 'status'))
+                this.confirmLoading = false
+              })
+            }
           })
         } else {
           this.$message.warning(res.message)
         }
       })
     },
+    //未跟进 1122
     partDetailDDD() {
       this.form.resetFields()
       let record = {}

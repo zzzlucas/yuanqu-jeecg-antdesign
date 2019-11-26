@@ -25,7 +25,7 @@
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="填报日期">
-                  <!-- <a-date-picker style="width:100%" v-decorator="['setUpYear']" /> -->
+                  <a-date-picker style="width:100%" v-decorator="['reportTime']" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -79,7 +79,7 @@
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="产品名称">
                   <a-input
-                    v-decorator="['totalAsset',{rules: [{ required: true, message: '请输入企业总资产', whitespace: true}]}]"
+                    v-decorator="['totalAsset',{rules: [{ required: true, message: '请输入企业总资产'}]}]"
                   />
                 </a-form-item>
               </a-col>
@@ -207,7 +207,7 @@
                 <a-form-item label="项目总投资">
                   <a-input
                     addonAfter="万元"
-                    v-decorator="['investAmount',{rules: [{ required: true, message: '请输入数额', whitespace: true}]}]"
+                    v-decorator="['investAmount',{rules: [{ required: true, message: '请输入数额'}]}]"
                   />
                 </a-form-item>
               </a-col>
@@ -215,7 +215,7 @@
                 <a-form-item label="注册资本">
                   <a-input
                     addonAfter="万元"
-                    v-decorator="[ 'registerCapital',{rules: [{ required: true, message: '请输入数额', whitespace: true}]}]"
+                    v-decorator="[ 'registerCapital',{rules: [{ required: true, message: '请输入数额'}]}]"
                   />
                 </a-form-item>
               </a-col>
@@ -231,7 +231,7 @@
                 <a-form-item label="租赁面积">
                   <a-input
                     addonAfter="m²"
-                    v-decorator="['rentBuildArea',{rules: [{ required: true, message: '请输入租赁面积', whitespace: true}]}]"
+                    v-decorator="['rentBuildArea',{rules: [{ required: true, message: '请输入租赁面积'}]}]"
                   />
                 </a-form-item>
               </a-col>
@@ -287,12 +287,12 @@
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="开工日期">
-                  <!-- <a-date-picker style="width:100%" v-decorator="['setUpYear']" /> -->
+                  <a-date-picker style="width:100%" v-decorator="['startDate']" />
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="竣工日期">
-                  <!-- <a-date-picker style="width:100%" v-decorator="['setUpYear']" /> -->
+                  <a-date-picker style="width:100%" v-decorator="['endDate']" />
                 </a-form-item>
               </a-col>
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
@@ -327,7 +327,7 @@
                 </a-form-item>
               </a-col>
             </a-row>
-            <a-row class="form-row" :gutter="16">
+            <!-- <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="projectId test">
                   <a-input
@@ -336,7 +336,7 @@
                   />
                 </a-form-item>
               </a-col>
-            </a-row>
+            </a-row>-->
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="parkId test">
@@ -356,7 +356,7 @@
                   />
                 </a-form-item>
               </a-col>
-            </a-row> -->
+            </a-row>-->
             <!-- upload  addDocFiles   附件 -->
             <a-row class="form-row" :gutter="16">
               <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
@@ -407,7 +407,7 @@ export default {
   components: { PageLayout, JEditor, JDictSelectTag },
   data() {
     return {
-      title: '首页 / 租赁项目 / 项目维护',
+      // title: '首页 / 租赁项目 / 项目维护',
       form: this.$form.createForm(this, { name: 'addProjectLandForm' }),
       formItem: {
         label: { span: 6 },
@@ -417,6 +417,7 @@ export default {
         add: '/park.project/mgrProjectInfo/addProjectLease',
         edit: '/park.project/mgrProjectInfo/editProject'
       },
+      editBool: false,
       confirmLoading: false,
       model: {},
       dateFormat: 'YYYY-MM-DD',
@@ -427,6 +428,11 @@ export default {
       loading: false,
       dict: []
       // DictDataindustrySectorValue:this.form.getFieldValue('industrySectorValue')
+    }
+  },
+  computed: {
+    title() {
+      return '租赁项目' + (this.editBool ? '维护' : '新建')
     }
   },
   created(importance) {
@@ -455,34 +461,82 @@ export default {
       this.visible = false
     },
     add() {
-      this.edit({})
+      // this.edit({})
+      this.editBool = false
+      this.visible = true
     },
     detail(record) {
+      this.editBool = true
       // this.record = record
       // console.log(this.record.recordId)
       this.form.resetFields()
+      if (record.mgrProjectCust) {
+        record.fillUnit = record.mgrProjectCust.fillUnit
+        record.setUpYear = record.mgrProjectCust.setUpYear
+        record.totalAsset = record.mgrProjectCust.totalAsset
+        record.legalPerson = record.mgrProjectCust.legalPerson
+        record.legalTel = record.mgrProjectCust.legalTel
+        record.companyDescription = record.mgrProjectCust.companyDescription
+        record.teamMemberDescription = record.mgrProjectCust.teamMemberDescription
+
+        record.reportTime = record.mgrProjectCust.reportTime
+      }
+      if (record.mgrProjectInvestLease) {
+        record.investAmount = record.mgrProjectInvestLease.investAmount
+        record.registerCapital = record.mgrProjectInvestLease.registerCapital
+        record.isForeignCapital = record.mgrProjectInvestLease.isForeignCapital
+        record.fixedAssetInvest = record.mgrProjectInvestLease.fixedAssetInvest
+        record.areaFixedInvest = record.mgrProjectInvestLease.areaFixedInvest
+        record.deviceInvest = record.mgrProjectInvestLease.deviceInvest
+        record.otherInvest = record.mgrProjectInvestLease.otherInvest
+        record.buildingArea = record.mgrProjectInvestLease.buildingArea
+        record.allBuildingArea = record.mgrProjectInvestLease.allBuildingArea
+        record.buildingDensity = record.mgrProjectInvestLease.buildingDensity
+        record.plotRatio = record.mgrProjectInvestLease.plotRatio
+        record.areaTax = record.mgrProjectInvestLease.areaTax
+        record.areaOutput = record.mgrProjectInvestLease.areaOutput
+        record.industryAddedValue = record.mgrProjectInvestLease.industryAddedValue
+        record.productionRate = record.mgrProjectInvestLease.productionRate
+        record.addedEnergy = record.mgrProjectInvestLease.addedEnergy
+        record.remark = record.mgrProjectInvestLease.remark
+
+        record.startDate = record.mgrProjectInvestLease.startDate
+        record.endDate = record.mgrProjectInvestLease.endDate
+      }
+      delete record.mgrProjectCust
+      delete record.mgrProjectInvest
+      delete record.mgrProjectInvestLease
+
       this.model = Object.assign({}, record)
+      console.log(this.model)
       this.visible = true
       // console.log(pick(this.model, ProjectAttractShowZeroForm))
       this.$nextTick(() => {
         this.form.setFieldsValue(pick(this.model, AddProjectLeaseForm))
-        //时间格式化
-        // this.form.setFieldsValue({ trackDate: this.model.trackDate ? moment(this.model.trackDate) : null })
+        this.form.setFieldsValue({
+          reportTime: this.model.reportTime ? moment(this.model.reportTime) : null
+        })
+        this.form.setFieldsValue({
+          startDate: this.model.startDate ? moment(this.model.startDate) : null
+        })
+        this.form.setFieldsValue({
+          endDate: this.model.endDate ? moment(this.model.endDate) : null
+        })
       })
     },
-    edit(record) {
-      console.log('edit开始了')
-      this.form.resetFields()
-      // console.log('mian');
-      this.model = Object.assign({}, record)
-      // console.log(this.model)
-      this.visible = true
-      this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.model, AddProjectLeaseForm))
-        //时间格式化
-      })
-      // console.log(this.model)
-    },
+    // edit(record) {
+    //   console.log('edit开始了')
+    //   this.form.resetFields()
+    //   // console.log('mian');
+    //   this.model = Object.assign({}, record)
+    //   // console.log(this.model)
+    //   this.visible = true
+    //   this.$nextTick(() => {
+    //     this.form.setFieldsValue(pick(this.model, AddProjectLeaseForm))
+    //     //时间格式化
+    //   })
+    //   // console.log(this.model)
+    // },
 
     handleSubmit() {
       // console.log(this.form.getFieldValue('setUpYear'))
@@ -494,12 +548,10 @@ export default {
           let httpurl = ''
           let method = ''
           if (!this.model.projectId) {
-            //增
             console.log('post方式')
             httpurl += this.url.add
             method = 'post'
           } else {
-            //改
             console.log('put方式')
             httpurl += this.url.edit
             method = 'put'
@@ -507,12 +559,14 @@ export default {
 
           // let formData = {}
           let formData = Object.assign(this.model, values)
-          // formData.setUpYear = formData.setUpYear ? formData.setUpYear.format() : null
-          // formData.buildingBeginDate = formData.buildingBeginDate ? formData.buildingBeginDate.format() : null
-          // formData.buildingEndDate = formData.buildingEndDate ? formData.buildingEndDate.format() : null
+          formData.reportTime = formData.reportTime ? formData.reportTime.format('YYYY-MM-DD') : null
+          formData.startDate = formData.startDate ? formData.startDate.format('YYYY-MM-DD') : null
+          formData.endDate = formData.endDate ? formData.endDate.format('YYYY-MM-DD') : null
           // console.log(formData)
           // formData.projectType = '2'
-          formData.status = '1'
+          if (!this.model.projectId) {
+            formData.status = '1'
+          }
           //qs.stringify  目前看来必须转换
           formData = qs.stringify(formData)
           console.log(formData)

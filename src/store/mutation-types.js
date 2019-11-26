@@ -1,3 +1,12 @@
+/**
+ * Vue-ls keys collection.
+ *
+ * This file is actually NOT mutation types, it's vue-ls keys collection.
+ * I think we need properly file to use mutation types.
+ *
+ * @todo Rename to mutation-ls-keys, also create mutation-types file.
+ */
+
 export const ACCESS_TOKEN = 'Access-Token'
 export const SIDEBAR_TYPE = 'SIDEBAR_TYPE'
 export const DEFAULT_THEME = 'DEFAULT_THEME'
@@ -14,6 +23,9 @@ export const USER_INFO = 'Login_Userinfo'
 export const USER_AUTH = 'LOGIN_USER_BUTTON_AUTH'
 export const SYS_BUTTON_AUTH = 'SYS_BUTTON_AUTH'
 export const ENCRYPTED_STRING = 'ENCRYPTED_STRING'
+export const INDUSTRIAL_PARK_ID = 'INDUSTRIAL_PARK_ID'
+export const INDUSTRIAL_PARK_NAME = 'INDUSTRIAL_PARK_NAME'
+export const INDUSTRIAL_PARK_LIST = 'INDUSTRIAL_PARK_LIST'
 
 export const CONTENT_WIDTH_TYPE = {
   Fluid: 'Fluid',

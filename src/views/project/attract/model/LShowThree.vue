@@ -1,13 +1,13 @@
 <template>
   <!-- 项目分配表单 -->
-  <a-drawer title="新增团队成员" width="40%" destroyOnClose :visible="visible" @close="handleCancel">
+  <a-drawer :title="myTitle" width="40%" destroyOnClose :visible="visible" @close="handleCancel">
     <a-card :bordered="false">
       <a-form :form="form">
         <a-form-item v-bind="formItemLayout" label="职务">
-          <a-input disabled v-decorator="['position']" />
+          <a-input v-decorator="['position']" />
         </a-form-item>
         <a-form-item v-bind="formItemLayout" label="姓名">
-          <a-input v-decorator="['memberName']" />
+          <a-input v-decorator="['memberName',{rules: [{required: true, message: '请输入姓名'}]}]" />
         </a-form-item>
         <a-form-item v-bind="formItemLayout" label="出生年月">
           <a-date-picker placeholder v-decorator="['birthday']" style="width:100%" />
@@ -77,6 +77,7 @@ export default {
         style: { top: '20px' },
         fullScreen: false
       },
+      editBool: false,
       //常用数据初始化
       record: {},
       visible: false,
@@ -84,9 +85,12 @@ export default {
       dict: {
         trackerExt: [{ value: '1' }]
       },
+      model: {},
       url: {
-        // list: '/park.project/mgrProjectInfo/assignProject',
-        edit: '/park.project/mgrProjectInfo/assignProject'
+        list: '/project/mgrCustTeamMember/queryById',
+        add: '/project/mgrCustTeamMember/add',
+        edit: '/project/mgrCustTeamMember/edit',
+        delete: '/project/mgrCustTeamMember/delete'
       }
     }
   },
@@ -97,6 +101,11 @@ export default {
       }
     })
   },
+  computed: {
+    myTitle() {
+      return (this.editBool ? '编辑' : '新增') + '团队成员'
+    }
+  },
   methods: {
     handleOk() {
       const that = this
@@ -105,15 +114,24 @@ export default {
           that.confirmLoading = true
           let httpurl = ''
           let method = ''
-          console.log(this.model)
-
-          httpurl += this.url.edit
-          method = 'put'
-
-          // let formData = {}
+          //没有股权占比，就认为是新增，对应的，该项在新增是应为必填项目
+          if (!this.model.projectId) {
+            httpurl += this.url.add
+            method = 'post'
+          } else {
+            httpurl += this.url.edit
+            method = 'put'
+          }
           let formData = Object.assign(this.model, values)
+          formData.backTime = formData.backTime ? formData.backTime.format('YYYY-MM-DD') : null
+          formData.birthday = formData.birthday ? formData.birthday.format('YYYY-MM-DD') : null
+          //把公司id塞进数据里去
+          // formData.custId = '111'
+          formData.projectId = that.$route.params.id
+          formData.parkId = '111'
+          formData.memberType = '3'
           formData = qs.stringify(formData)
-          console.log(formData)
+          // console.log(formData)
           httpAction(httpurl, formData, method)
             .then(res => {
               if (res.success) {
@@ -132,21 +150,27 @@ export default {
       // this.form.resetFields()
     },
     add() {
+      this.editBool = false
       this.visible = true
     },
     detail(record) {
-      let proId = record.projectId
-      getAction('/park.project/mgrProjectTrace/getById', { projectId: proId }).then(resAAA => {
-        // console.log(resAAA.result[0].tracker);
-        if (resAAA.result[resAAA.result.length - 1]) {
-          record.tracker = resAAA.result[resAAA.result.length - 1].tracker
-        }
-        this.record = record
-        // this.form.resetFields()
-        this.model = Object.assign({}, this.record)
-        this.visible = true
-        this.$nextTick(() => {
-          this.form.setFieldsValue(pick(this.model, 'projectName', 'tracker'))
+      this.editBool = true
+      let proId = this.$route.params.id
+      //不存在record  等有了api再说   //现在有了
+      // console.log(res.result[0].tracker);
+      this.record = record
+      // this.form.resetFields()
+      this.model = Object.assign({}, this.record)
+      this.visible = true
+      this.$nextTick(() => {
+        this.form.setFieldsValue(
+          pick(this.model, 'position', 'memberName', 'birthday', 'educationBackground', 'isReturnee', 'backTime')
+        )
+        this.form.setFieldsValue({
+          backTime: this.model.backTime ? moment(this.model.backTime) : null
+        })
+        this.form.setFieldsValue({
+          birthday: this.model.birthday ? moment(this.model.birthday) : null
         })
       })
     },

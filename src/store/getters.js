@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { USER_INFO} from "@/store/mutation-types"
+import { USER_INFO } from "@/store/mutation-types"
 const getters = {
   device: state => state.app.device,
   theme: state => state.app.theme,
@@ -11,7 +11,9 @@ const getters = {
   welcome: state => state.user.welcome,
   permissionList: state => state.user.permissionList,
   userInfo: state => {state.user.info = Vue.ls.get(USER_INFO); return state.user.info},
-  addRouters: state => state.permission.addRouters
+  addRouters: state => state.permission.addRouters,
+  industrialParkId: state => state.industrialPark.id,
+  industrialPark: state => state.industrialPark,
 }
 
 export default getters

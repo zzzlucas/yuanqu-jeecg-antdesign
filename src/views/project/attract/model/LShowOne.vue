@@ -3,8 +3,8 @@
   <a-drawer :title="myTitle" width="40%" destroyOnClose :visible="visible" @close="handleCancel">
     <a-card :bordered="false">
       <a-form :form="form">
-        <a-form-item v-bind="formItemLayout" label="公司名称">
-          <a-input disabled v-decorator="['custName']" />
+        <a-form-item v-bind="formItemLayout" label="姓名">
+          <a-input v-decorator="['memberName',{rules: [{required: true, message: '请输入姓名'}]}]" />
         </a-form-item>
         <a-form-item v-bind="formItemLayout" label="股权占比">
           <a-input v-decorator="['equrityRatio',{rules: [{required: true, message: '请输入股权占比'}]}]" />
@@ -114,7 +114,8 @@ export default {
           let httpurl = ''
           let method = ''
           //没有股权占比，就认为是新增，对应的，该项在新增是应为必填项目
-          if (!this.model.equrityRatio) {
+          //还是看有没有走detail获得项目id吧，上面这个股权占比感觉有问题
+          if (!this.model.projectId) {
             httpurl += this.url.add
             method = 'post'
           } else {
@@ -124,6 +125,11 @@ export default {
           //
           // let formData = {}
           let formData = Object.assign(this.model, values)
+          //把公司id塞进数据里去
+          // formData.custId = '111'
+          formData.projectId = that.$route.params.id
+          formData.parkId = '111'
+          formData.memberType = '1'
           formData = qs.stringify(formData)
           console.log(formData)
           httpAction(httpurl, formData, method)
@@ -145,56 +151,40 @@ export default {
     },
     add() {
       this.editBool = false
-      let proId = this.$route.params.id
-      getAction('/park.project/mgrProjectInfo/queryProjectById', { projectId: proId }).then(res => {
-        if (res.success) {
-          // console.log('object');
-          // console.log(res.result.mgrProjectCust.fillUnit);
-          this.record.custName = res.result.mgrProjectCust.fillUnit
-        }
-        this.model = Object.assign({}, this.record)
-        this.visible = true
-        this.$nextTick(() => {
-          this.form.setFieldsValue(pick(this.model, 'custName'))
-        })
-      })
+      this.visible = true
+      // let proId = this.$route.params.id
+      // getAction('/park.project/mgrProjectInfo/queryProjectById', { projectId: proId }).then(res => {
+      //   if (res.success) {
+      //     // console.log(res.result.custId)
+      //     this.record.custName = res.result.mgrProjectCust.fillUnit
+      //     //后端没生成这个custId，可能会是一个大坑
+      //     this.record.custId = res.result.custId
+      //   }
+      //   this.model = Object.assign({}, this.record)
+      //   this.visible = true
+      //   this.$nextTick(() => {
+      //     this.form.setFieldsValue(pick(this.model, 'custName'))
+      //   })
+      // })
     },
     //还没自己写
     detail(record) {
       this.editBool = true
       let proId = this.$route.params.id
-      //不存在record  等有了api再说
-      console.log(record)
-      getAction('/park.project/mgrProjectInfo/queryProjectById', { projectId: proId }).then(res => {
-        // console.log(res.result[0].tracker);
-        if (res.success) {
-          record.custName = res.result.fillUnit
-        }
-        this.record = record
-        // this.form.resetFields()
-        this.model = Object.assign({}, this.record)
-        this.visible = true
-        this.$nextTick(() => {
-          this.form.setFieldsValue(
-            pick(this.model, 'custName', 'equrityRatio', 'inventPatentMount', 'fixedAssetInvest', 'isTechnologyCust')
-          )
-        })
+      //不存在record  等有了api再说   //现在有了
+      // console.log(res.result[0].tracker);
+      this.record = record
+      // this.form.resetFields()
+      this.model = Object.assign({}, this.record)
+      this.visible = true
+      this.$nextTick(() => {
+        this.form.setFieldsValue(
+          pick(this.model, 'memberName', 'equrityRatio', 'inventPatentMount', 'fixedAssetInvest', 'isTechnologyCust')
+        )
       })
     },
     handleCancel() {
       this.visible = false
-    },
-    /** 切换全屏显示 */
-    handleClickToggleFullScreen() {
-      let mode = !this.modelStyle.fullScreen
-      if (mode) {
-        this.modelStyle.width = '100%'
-        this.modelStyle.style.top = '20px'
-      } else {
-        this.modelStyle.width = '60%'
-        this.modelStyle.style.top = '50px'
-      }
-      this.modelStyle.fullScreen = mode
     }
   }
 }

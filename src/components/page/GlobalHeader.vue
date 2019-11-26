@@ -10,16 +10,14 @@
         v-if="device==='mobile'"
         class="trigger"
         :type="collapsed ? 'menu-fold' : 'menu-unfold'"
-        @click.native="toggle"></a-icon>
+        @click.native="toggle" />
       <a-icon
         v-else
         class="trigger"
         :type="collapsed ? 'menu-unfold' : 'menu-fold'"
-        @click.native="toggle"/>
-
-      <span v-if="device === 'desktop'">欢迎进入 Jeecg-Boot 企业级快速开发平台</span>
-      <span v-else>Jeecg-Boot</span>
-
+        @click.native="toggle" />
+      <!-- 全局园区下拉菜单 -->
+      <park-menu />
       <user-menu :theme="theme"/>
     </div>
     <!-- 顶部导航栏模式 -->
@@ -47,6 +45,7 @@
 </template>
 
 <script>
+  import ParkMenu from '@comp/menu/ParkMenu'
   import UserMenu from '../tools/UserMenu'
   import SMenu from '../menu/'
   import Logo from '../tools/Logo'
@@ -56,6 +55,7 @@
   export default {
     name: 'GlobalHeader',
     components: {
+      ParkMenu,
       UserMenu,
       SMenu,
       Logo
@@ -90,7 +90,6 @@
     data() {
       return {
         headerBarFixed: false,
-        //update-begin--author:sunjianlei---date:20190508------for: 顶部导航栏过长时显示更多按钮-----
         topMenuStyle: {
           headerIndexLeft: {},
           topNavHeader: {},
@@ -113,14 +112,11 @@
         }
       }
     },
-    //update-end--author:sunjianlei---date:20190508------for: 顶部导航栏过长时显示更多按钮-----
     mounted() {
       window.addEventListener('scroll', this.handleScroll)
-      //update-begin--author:sunjianlei---date:20190508------for: 顶部导航栏过长时显示更多按钮-----
       if (this.mode === 'topmenu') {
         this.buildTopMenuStyle()
       }
-      //update-end--author:sunjianlei---date:20190508------for: 顶部导航栏过长时显示更多按钮-----
     },
     methods: {
       handleScroll() {
@@ -138,7 +134,6 @@
       toggle() {
         this.$emit('toggle')
       },
-      //update-begin--author:sunjianlei---date:20190508------for: 顶部导航栏过长时显示更多按钮-----
       buildTopMenuStyle() {
         if (this.mode === 'topmenu') {
           if (this.device === 'mobile') {
@@ -155,8 +150,7 @@
             this.topMenuStyle.headerIndexLeft = { 'width': `calc(100% - ${rightWidth})` }
           }
         }
-      }
-      //update-begin--author:sunjianlei---date:20190508------for: 顶部导航栏过长时显示更多按钮-----
+      },
     }
   }
 </script>

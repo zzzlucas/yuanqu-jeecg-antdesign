@@ -5,11 +5,8 @@
       <a-form :form="form" :layout="formLayout">
         <a-form-item label="区分" :label-col="formItem.label" :wrapper-col="formItem.value">
           <!-- <a-form-item label="区分"  label-col="6" wrapper-col="10"> -->
-          <a-select
-            style="width: 120px"
-            @change="handleChange"
-            v-decorator="['type',{initialValue: ''}]"
-          >
+          <a-select style="width: 120px" @change="handleChange" v-model="queryParam.type">
+            <!-- v-decorator="['type',{initialValue: ''}]" -->
             <a-select-option value>不限</a-select-option>
             <a-select-option value="YS">预算</a-select-option>
             <a-select-option value="SJ">实际</a-select-option>
@@ -58,9 +55,16 @@
         @change="handleTableChange"
       >
         <span slot="action" slot-scope="text, record">
-          <a @click.stop="showAnnualAchieveAddForm(record, ...arguments)">编辑</a>
-          <a-divider type="vertical" />
-          <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
+          <a
+            v-if="record.year!='总和'"
+            @click.stop="showAnnualAchieveAddForm(record, ...arguments)"
+          >编辑</a>
+          <a-divider v-if="record.year!='总和'" type="vertical" />
+          <a-popconfirm
+            v-if="record.year!='总和'"
+            title="确定删除吗?"
+            @confirm="() => handleDelete(record)"
+          >
             <a>删除</a>
           </a-popconfirm>
         </span>
@@ -92,7 +96,12 @@ export default {
       // type:'',
       form: this.$form.createForm(this),
       formLayout: 'horizontal',
-      queryform: {},
+      queryform: {
+        type: ''
+      },
+      queryParam: {
+        type: ''
+      },
       typee: null,
       formItem: {
         label: { span: 1 },
@@ -146,10 +155,12 @@ export default {
           align: 'center',
           dataIndex: 'generalBudgetIncome'
         },
+        //限制一下
         {
           title: '备注',
           align: 'center',
-          dataIndex: 'remark'
+          dataIndex: 'remark',
+          width: 100
         },
         {
           title: '操作',
@@ -169,18 +180,8 @@ export default {
     }
   },
 
-  created() {
-    this.loadData()
-  },
-  computed: {
-    importExcelUrl: function() {
-      return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`
-    }
-  },
-  //
-  // watch: {
-  //   typee: function(e) {}
-  // },
+  created() {},
+  computed: {},
   methods: {
     handleChange(e) {
       // console.log('eeeeeeeeeeeeeeeeeee')
@@ -192,9 +193,7 @@ export default {
           if (res.success) {
             console.log('预算筛选成功')
             this.dataSource = res.result
-            this.ipagination.total = res.result.total
-          }
-          if (res.code === 510) {
+          } else {
             this.$message.warning(res.message)
           }
           this.loading = false
@@ -205,9 +204,7 @@ export default {
           if (res.success) {
             console.log('实际筛选成功')
             this.dataSource = res.result
-            this.ipagination.total = res.result.total
-          }
-          if (res.code === 510) {
+          } else {
             this.$message.warning(res.message)
           }
           this.loading = false
@@ -219,9 +216,10 @@ export default {
           if (res.success) {
             console.log('不限筛选成功')
             this.dataSource = res.result
-            this.ipagination.total = res.result.total
-          }
-          if (res.code === 510) {
+            for (const item of res.result) {
+              item.year = item.year + '年'
+            }
+          } else {
             this.$message.warning(res.message)
           }
           this.loading = false
@@ -230,7 +228,6 @@ export default {
       // this.loadData()
     },
     loadData() {
-      console.log('ahhahahahah')
       // if (this.typee == 'YS' || this.typee == 'SJ') console.log('hahahaahahh')
       // let params = { type: this.typee }
       let params = { parkId: 555 }
@@ -238,8 +235,9 @@ export default {
       getAction(this.url.listM, params).then(res => {
         if (res.success) {
           this.dataSource = res.result
-          //分页查询未在此实现
-          this.ipagination.total = res.result.total
+          for (const item of res.result) {
+            item.year = item.year + '年'
+          }
         }
         if (res.code === 510) {
           this.$message.warning(res.message)
@@ -255,6 +253,7 @@ export default {
       row.__key = Dom7(e.currentTarget)
         .parents('.ant-table-row')
         .data('row-key')
+      console.log(row.year)
       this.$refs.AnnualAchieveAddForm.edit(row)
     },
     customRow(row) {
@@ -265,13 +264,13 @@ export default {
           // }
         }
       }
-    },
-    handleEdit(row, e) {
-      row.__key = Dom7(e.currentTarget)
-        .parents('.ant-table-row')
-        .data('row-key')
-      this.$refs.form.edit(row)
     }
+    // handleEdit(row, e) {
+    //   row.__key = Dom7(e.currentTarget)
+    //     .parents('.ant-table-row')
+    //     .data('row-key')
+    //   this.$refs.form.edit(row)
+    // }
   }
 }
 </script>
