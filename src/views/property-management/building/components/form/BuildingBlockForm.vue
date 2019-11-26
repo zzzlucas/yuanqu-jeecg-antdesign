@@ -232,8 +232,7 @@
       }
     },
     computed: mapState({
-      parkId: state => state.industrialPark.id,
-      parkName: state => state.industrialPark.name
+      parkId: state => state.industrialPark.id
     })
   }
 </script>

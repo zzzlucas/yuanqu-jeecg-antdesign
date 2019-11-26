@@ -95,6 +95,7 @@
   import qs from 'qs'
   import { PickBuildingFloorForm } from '@/config/pick-fields'
   import { floor as rules } from '../../js/rules'
+  import { mapState } from 'vuex'
 
   export default {
     name: 'BuildingFloorForm',
@@ -128,7 +129,7 @@
         this.fileList = []
         this.tree = []
         this.treeExpandedKeys = []
-        const res = await getAction(this.url.block, { parkId: '1193719771573518336' })
+        const res = await getAction(this.url.block, { parkId: this.parkId })
 
         if (res.success && res.code === 200) {
           this.tree = _.map(res.result, obj => {
@@ -312,6 +313,9 @@
           })
         })
       }
-    }
+    },
+    computed: mapState({
+      parkId: state => state.industrialPark.id
+    })
   }
 </script>

@@ -96,6 +96,7 @@
   import qs from 'qs'
   import { PickBuildingTowerForm } from '@/config/pick-fields'
   import { tower as rules } from '../../js/rules'
+  import { mapState } from 'vuex'
 
   export default {
     name: 'BuildingTowerForm',
@@ -124,7 +125,7 @@
     },
     methods: {
       async init() {
-        const res = await getAction(this.url.block, { parkId: '1193719771573518336' })
+        const res = await getAction(this.url.block, { parkId: this.parkId })
 
         if (res.success && res.code === 200) {
           this.blockList = _.map(res.result, obj => {
@@ -252,6 +253,9 @@
           this.$delete(this.fileList, this.fileList.length - 1)
         }
       }
-    }
+    },
+    computed: mapState({
+      parkId: state => state.industrialPark.id
+    })
   }
 </script>
