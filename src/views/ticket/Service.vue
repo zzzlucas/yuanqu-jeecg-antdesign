@@ -13,8 +13,7 @@
             <a-form-item label="类别">
               <j-dict-select-tag
                 v-model="queryParam.orderType"
-                :triggerChange="true"
-                :dict="types.ticket_order_type" />
+                :dict="types.order_type" />
             </a-form-item>
           </a-col>
           <a-col :xl="6">
