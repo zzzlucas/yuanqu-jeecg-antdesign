@@ -55,9 +55,13 @@
     mixins: [
       JeecgListMixin,
       MixinList,
-      list
+      list,
     ],
     props: {
+      type: {
+        type: String,
+        default: ''
+      },
       show: {
         type: Boolean,
         default: false,
@@ -69,6 +73,8 @@
     },
     data() {
       return {
+        // Mixin flag
+        noInitOnCreated: true,
         // Url
         url: url.info,
         // Status
@@ -123,10 +129,27 @@
       close() {
         this.$emit('change', false)
       },
+      changeCategoryType() {
+        const newType = this.type === 'consumables' ? '2' : '1'
+        if (this.queryParam.categoryType !== newType) {
+          this.onClearSelected()
+          this.queryParam.categoryType = newType
+        }
+      },
+      init() {
+        this.changeCategoryType()
+        this.loadData()
+        this.initDictConfig()
+      }
     },
     watch: {
-      show(val) {
+      async show(val) {
         this.modal = val
+        if (!val) {
+          return
+        }
+        await this.$nextTick()
+        this.init()
       },
     }
   }

@@ -69,7 +69,10 @@
       </a-row>
     </a-form>
     <!-- Asset modal -->
-    <assets-search-modal v-model="assetModal" @select="handleSelectAssets" />
+    <assets-search-modal
+      :type="type"
+      v-model="assetModal"
+      @select="handleSelectAssets" />
   </a-drawer>
 </template>
 
@@ -139,13 +142,21 @@
         this.assetSelectKeys = rowKeys
         this.assetSelectRows = rowSelection
       },
+      cleanup() {
+        this.assetSelectKeys = []
+        this.assetSelectRows = []
+      },
+      changeTitle() {
+        this.title = this.type === 'consumables' ? '易耗品资产领用' : '固定资产领用'
+      },
     },
     watch: {
       'show'(val) {
         if (!val) {
           return
         }
-        this.title = this.type === 'consumables' ? '易耗品资产领用' : '固定资产领用'
+        this.cleanup()
+        this.changeTitle()
       }
     }
   }
