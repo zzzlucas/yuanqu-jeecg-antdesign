@@ -32,3 +32,10 @@ export default {
 
   },
 }
+
+export const lifeCycle = {
+  async created() {
+    await this.initDictConfig();
+    this.loadData();
+  }
+}
