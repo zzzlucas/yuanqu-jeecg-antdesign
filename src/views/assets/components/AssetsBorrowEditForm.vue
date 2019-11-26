@@ -1,9 +1,9 @@
 <template>
   <a-drawer
-    class="form-edit-drawer"
-    :title="getTitle"
+    wrapClassName="assets-recipients-edit-form form-edit-drawer"
     width="65%"
     closable
+    :title="getTitle"
     :mask-closable="true"
     :visible="show"
     @close="closeDrawer">
@@ -62,6 +62,7 @@
     </a-form>
     <!-- Asset modal -->
     <assets-search-modal
+      use-status="1"
       type="fixedAsset"
       v-model="assetModal"
       @select="handleSelectAssets" />
@@ -74,7 +75,7 @@
   import AssetsSearchModal from './AssetsSearchModal'
   import { filterObj, promiseForm } from '@utils/util'
   import { assetsRegisterEditForm } from '@/config/pick-fields'
-  import { addInfo } from '../api'
+  import { addOpertion } from '../api'
 
   export default {
     mixins: [
@@ -118,7 +119,7 @@
           data.parkId = this.industrialParkId
           data.assetId = this.assetSelectKeys.join(',')
           data.useType = '2' // Borrow
-          const resp = await addInfo(data)
+          const resp = await addOpertion(data)
           if (!resp.success) {
             throw new Error(resp.message)
           }
