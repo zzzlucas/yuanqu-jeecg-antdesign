@@ -90,8 +90,11 @@ export default {
  *
  * + created()
  */
-export const created = {
+export const extra = {
   created() {
-    this.checkRouteConfig()
+    if (!this.checkRouteConfig()) {
+      return
+    }
+    this.loadData()
   }
 }
