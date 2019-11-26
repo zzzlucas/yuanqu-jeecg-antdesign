@@ -28,7 +28,13 @@
       triggerChange: Boolean,
       disabled: Boolean,
       value: String,
-      type: String
+      type: String,
+      dict: {
+        type: Array,
+        default: () => {
+          return []
+        },
+      },
     },
     data() {
       return {
@@ -37,24 +43,25 @@
       }
     },
     created() {
-      console.log(this.dictCode);
       if(!this.type || this.type==="list"){
         this.tagType = "select"
       }else{
         this.tagType = this.type
       }
-      //获取字典数据
       this.initDictData();
     },
     methods: {
       initDictData() {
-        //根据字典Code, 初始化字典数组
-        ajaxGetDictItems(this.dictCode, null).then((res) => {
-          if (res.success) {
-//                console.log(res.result);
-            this.dictOptions = res.result;
-          }
-        })
+        if (this.dictCode) {
+          //根据字典Code, 初始化字典数组
+          ajaxGetDictItems(this.dictCode, null).then((res) => {
+            if (res.success) {
+              this.dictOptions = res.result;
+            }
+          })
+        } else if (this.dict) {
+          this.dictOptions = this.dict
+        }
       },
       handleInput(e) {
         let val;
@@ -63,7 +70,6 @@
         }else{
           val = e
         }
-        console.log(val);
         if(this.triggerChange){
           this.$emit('change', val);
         }else{
@@ -76,6 +82,11 @@
       getCurrentDictOptions(){
         return this.dictOptions
       }
+    },
+    watch: {
+      dict() {
+        this.initDictData()
+      },
     }
   }
 </script>

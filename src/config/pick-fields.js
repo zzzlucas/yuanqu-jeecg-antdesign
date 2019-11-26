@@ -346,3 +346,23 @@ export const AddTechProjectForm = [
 export const PickBuildingTowerForm = ['buildingProjectId', 'buildingName', 'estimateArea', 'groundFloor', 'undergroundFloor', 'isVirtual', 'remark']
 export const PickBuildingFloorForm = ['buildingId', 'floorName', 'allarea', 'height', 'bearing', 'isVirtual', 'remark']
 export const PickBuildingRoomForm = ['floorId', 'roomName', 'actualArea', 'isRented', 'isSelfUse', 'isVirtual', 'remark']
+
+export const assetsCategoryEditForm = [
+  'categoryName',
+  'parentId',
+]
+
+export const assetsRegisterEditForm = [
+  'categoryId',
+  'assetNumber',
+  'fixedAssetName',
+  'assetModel',
+  'stockPrice',
+  'stockAmount',
+  'purchaseDate',
+  'useStatus',
+  //'useDepartment', // Does not exist
+  'usePerson',
+  'location',
+  'remark',
+]

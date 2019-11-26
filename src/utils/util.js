@@ -481,7 +481,7 @@ export function buildTreeRelation(objectMap, parentKey = 'parentId') {
  */
 export function buildTreeNodes(relationMap, key = 'id', name = 'name', parentKey = 'parentId') {
   const resolveNode = function (item) {
-    const node = { key: item[key], title: item[name] }
+    const node = { key: item[key], title: item[name], value: item[key] }
     if (!item.children) {
       return node
     }
@@ -506,9 +506,14 @@ export function buildTreeNodes(relationMap, key = 'id', name = 'name', parentKey
  * @param {String} key Dataset row key
  * @param {String} name Dataset row name
  * @param {String} parentKey Dataset row parent Key
+ * @param {Boolean} includeRoot Is have tree nodes root
  * @return Array tree data
  */
-export function buildTreeData(list, key = 'id', name = 'name', parentKey = 'parentId') {
+export function buildTreeData(list, key = 'id', name = 'name', parentKey = 'parentId', includeRoot = false) {
   const map = keyBy(list, key)
-  return buildTreeNodes(buildTreeRelation(map, parentKey), key, name, parentKey)
+  let nodes = buildTreeNodes(buildTreeRelation(map, parentKey), key, name, parentKey)
+  if (includeRoot) {
+    nodes = [{ title: '全部', key: '', children: nodes }]
+  }
+  return nodes
 }

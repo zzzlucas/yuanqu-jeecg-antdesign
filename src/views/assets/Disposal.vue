@@ -21,9 +21,11 @@
                 </span>
               </a-col>
               <a-col :xl="10">
-                <a-form-item style="float:right">
-                  <a-button type="primary" @click="handleAdd">固定资产借用登记</a-button>
-                </a-form-item>
+                <span style="float: right">
+                  <a-form-item >
+                    <a-button type="primary" @click="handleAdd">处置登记</a-button>
+                  </a-form-item>
+                </span>
               </a-col>
             </a-row>
           </a-form>
@@ -40,47 +42,34 @@
         <a-table
           ref="table"
           size="middle"
+          rowKey="opertionId"
           bordered
           :columns="columns"
           :dataSource="dataSource"
           :pagination="ipagination"
           :loading="loading"
           :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}">
-            <!-- Column slot -->
-            <span slot="action" slot-scope="text, record" @click.stop>
-              <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
-                <a>删除</a>
-              </a-popconfirm>
-            </span>
         </a-table>
         <!-- table区域-end -->
       </a-layout-content>
     </a-layout>
     <!-- Add/Edit form -->
-    <assets-borrow-edit-form
+    <assets-disposal-edit-form
       ref="modalForm"
       @submit="handleEditSubmit" />
-    <!-- View -->
-    <assets-borrow-view-modal
-      :data="viewData"
-      v-model="view" />
   </a-card>
 </template>
 
 <script>
-  import AssetsBorrowEditForm from '@views/assets/components/AssetsBorrowEditForm'
-  import AssetsBorrowViewModal from '@views/assets/components/AssetsBorrowViewModal'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import MixinList from '@/mixins/List'
   import { list as AssetsListMixin } from './mixins'
   import { url } from './api'
   import './style/list.less'
+  import AssetsDisposalEditForm from '@views/assets/components/AssetsDisposalEditForm'
 
   export default {
-    components: {
-      AssetsBorrowEditForm,
-      AssetsBorrowViewModal,
-    },
+    components: { AssetsDisposalEditForm },
     mixins: [
       JeecgListMixin,
       MixinList,
@@ -89,11 +78,12 @@
     data() {
       return {
         // Url
-        url: url.mgrAssetOpertion,
+        url: url.info,
         // Filter query
         queryParam: {
+          categoryType: '4',
+          categoryId: '',
           keyword: '',
-          useType: '2',
         },
         // Table
         columns: [
@@ -106,40 +96,34 @@
             customRender: (t, r, index) => Number(index) + 1
           },
           {
-            title: '借用单号',
+            title: '处置单号',
             align: 'center',
-            dataIndex: 'operation_id'
+            dataIndex: 'opertionId'
           },
           {
-            title: '借用日期',
+            title: '处置日期',
             align: 'center',
-            dataIndex: 'use_date'
+            dataIndex: 'useDate'
           },
           {
-            title: '借用部门',
+            title: '处置资产名称',
             align: 'center',
-            dataIndex: 'use_person_department'
+            dataIndex: 'useDepartment'
           },
           {
-            title: '借用人',
+            title: '处置类型',
             align: 'center',
-            dataIndex: 'use_person'
+            dataIndex: 'usePerson'
           },
           {
-            title: '借用资产名称',
+            title: '处置原因',
             align: 'center',
-            dataIndex: 'use_assets_name'
+            dataIndex: 'reason'
           },
           {
             title: '备注',
             align: 'center',
             dataIndex: 'remark'
-          },
-          {
-            title: '操作',
-            dataIndex: 'action',
-            align: 'center',
-            scopedSlots: { customRender: 'action' },
           },
         ],
       }

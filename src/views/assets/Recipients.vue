@@ -20,10 +20,13 @@
                   <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
                 </span>
               </a-col>
-              <a-col :xl="10">
-                <a-form-item style="float:right">
-                  <a-button type="primary" @click="handleAdd">固定资产借用登记</a-button>
-                </a-form-item>
+            </a-row>
+            <a-row :gutter="24">
+              <a-col :xl="8">
+                <span class="table-page-search-submitButtons">
+                  <a-button type="primary" @click="handleAdd('consumables')">易耗品领用登记</a-button>
+                  <a-button type="primary" @click="handleAdd('fixedAsset')" style="margin-left: 8px">固定资产领用登记</a-button>
+                </span>
               </a-col>
             </a-row>
           </a-form>
@@ -40,6 +43,7 @@
         <a-table
           ref="table"
           size="middle"
+          rowKey="opertionId"
           bordered
           :columns="columns"
           :dataSource="dataSource"
@@ -57,30 +61,22 @@
       </a-layout-content>
     </a-layout>
     <!-- Add/Edit form -->
-    <assets-borrow-edit-form
+    <assets-recipients-edit-form
       ref="modalForm"
       @submit="handleEditSubmit" />
-    <!-- View -->
-    <assets-borrow-view-modal
-      :data="viewData"
-      v-model="view" />
   </a-card>
 </template>
 
 <script>
-  import AssetsBorrowEditForm from '@views/assets/components/AssetsBorrowEditForm'
-  import AssetsBorrowViewModal from '@views/assets/components/AssetsBorrowViewModal'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import MixinList from '@/mixins/List'
   import { list as AssetsListMixin } from './mixins'
+  import AssetsRecipientsEditForm from '@/views/assets/components/AssetsRecipientsEditForm'
   import { url } from './api'
   import './style/list.less'
 
   export default {
-    components: {
-      AssetsBorrowEditForm,
-      AssetsBorrowViewModal,
-    },
+    components: { AssetsRecipientsEditForm },
     mixins: [
       JeecgListMixin,
       MixinList,
@@ -93,7 +89,7 @@
         // Filter query
         queryParam: {
           keyword: '',
-          useType: '2',
+          useType: '1',
         },
         // Table
         columns: [
@@ -106,29 +102,29 @@
             customRender: (t, r, index) => Number(index) + 1
           },
           {
-            title: '借用单号',
+            title: '领用单号',
             align: 'center',
-            dataIndex: 'operation_id'
+            dataIndex: 'opertionId'
           },
           {
-            title: '借用日期',
+            title: '领用日期',
             align: 'center',
-            dataIndex: 'use_date'
+            dataIndex: 'useDate'
           },
           {
-            title: '借用部门',
+            title: '领用部门',
             align: 'center',
-            dataIndex: 'use_person_department'
+            dataIndex: 'useDepartment'
           },
           {
-            title: '借用人',
+            title: '领用人',
             align: 'center',
-            dataIndex: 'use_person'
+            dataIndex: 'usePerson'
           },
           {
-            title: '借用资产名称',
+            title: '领用资产名称',
             align: 'center',
-            dataIndex: 'use_assets_name'
+            dataIndex: 'location'
           },
           {
             title: '备注',
@@ -148,6 +144,12 @@
       selectCategoryKey(val) {
         this.queryParam.categoryId = val
         this.loadData(1)
+      },
+      handleAdd(type) {
+        this.$refs.modalForm.add()
+        this.$refs.modalForm.title = "新增"
+        this.$refs.modalForm.type = type
+        this.$refs.modalForm.disableSubmit = false
       },
     }
   }

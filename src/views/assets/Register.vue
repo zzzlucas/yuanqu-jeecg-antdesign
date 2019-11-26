@@ -15,14 +15,22 @@
                 </a-form-item>
               </a-col>
               <a-col :xl="6">
+                <a-form-item label="类别">
+                  <j-dict-select-tag
+                    v-model="queryParam.categoryType"
+                    :triggerChange="true"
+                    :dict="types.category_type" />
+                </a-form-item>
+              </a-col>
+              <a-col :xl="6">
                 <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
                   <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
                   <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
                 </span>
               </a-col>
-              <a-col :xl="10">
+              <a-col :xl="4">
                 <a-form-item style="float:right">
-                  <a-button type="primary" @click="handleAdd">固定资产借用登记</a-button>
+                  <a-button type="primary" @click="handleAdd">资产登记</a-button>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -41,13 +49,17 @@
           ref="table"
           size="middle"
           bordered
+          rowKey="assetId"
           :columns="columns"
           :dataSource="dataSource"
           :pagination="ipagination"
           :loading="loading"
+          :customRow="handleCustomRow"
           :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}">
             <!-- Column slot -->
             <span slot="action" slot-scope="text, record" @click.stop>
+              <a @click.stop="handleEdit(record, ...arguments)">编辑</a>
+              <a-divider type="vertical" />
               <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
                 <a>删除</a>
               </a-popconfirm>
@@ -57,19 +69,20 @@
       </a-layout-content>
     </a-layout>
     <!-- Add/Edit form -->
-    <assets-borrow-edit-form
+    <assets-register-edit-form
       ref="modalForm"
       @submit="handleEditSubmit" />
     <!-- View -->
-    <assets-borrow-view-modal
+    <assets-register-view-aside
       :data="viewData"
       v-model="view" />
   </a-card>
 </template>
 
 <script>
-  import AssetsBorrowEditForm from '@views/assets/components/AssetsBorrowEditForm'
-  import AssetsBorrowViewModal from '@views/assets/components/AssetsBorrowViewModal'
+  import AssetsRegisterEditForm from '@views/assets/components/AssetsRegisterEditForm'
+  import AssetsRegisterViewAside from '@views/assets/components/AssetsRegisterViewAside'
+  import { filterDictText } from '@/components/dict/JDictSelectUtil'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import MixinList from '@/mixins/List'
   import { list as AssetsListMixin } from './mixins'
@@ -78,8 +91,8 @@
 
   export default {
     components: {
-      AssetsBorrowEditForm,
-      AssetsBorrowViewModal,
+      AssetsRegisterEditForm,
+      AssetsRegisterViewAside,
     },
     mixins: [
       JeecgListMixin,
@@ -89,11 +102,14 @@
     data() {
       return {
         // Url
-        url: url.mgrAssetOpertion,
+        url: url.info,
+        // Dictes
+        dictesCreateFields: ['asset_use_status', 'category_type'],
         // Filter query
         queryParam: {
+          categoryId: '',
+          categoryType: '',
           keyword: '',
-          useType: '2',
         },
         // Table
         columns: [
@@ -106,34 +122,47 @@
             customRender: (t, r, index) => Number(index) + 1
           },
           {
-            title: '借用单号',
+            title: '资产名称',
             align: 'center',
-            dataIndex: 'operation_id'
+            dataIndex: 'fixedAssetName'
           },
           {
-            title: '借用日期',
+            title: '资产编号',
             align: 'center',
-            dataIndex: 'use_date'
+            dataIndex: 'assetNumber'
           },
           {
-            title: '借用部门',
+            title: '所属分类',
             align: 'center',
-            dataIndex: 'use_person_department'
+            dataIndex: 'categoryId'
           },
           {
-            title: '借用人',
+            title: '规格型号',
             align: 'center',
-            dataIndex: 'use_person'
+            dataIndex: 'assetModel'
           },
           {
             title: '借用资产名称',
             align: 'center',
-            dataIndex: 'use_assets_name'
+            dataIndex: 'location'
           },
           {
-            title: '备注',
+            title: '单价',
             align: 'center',
-            dataIndex: 'remark'
+            dataIndex: 'stockPrice'
+          },
+          {
+            title: '采购日期',
+            align: 'center',
+            dataIndex: 'purchaseDate'
+          },
+          {
+            title: '使用状态',
+            align: 'center',
+            dataIndex: 'useStatus',
+            customRender: (t => {
+              return filterDictText(this.types.asset_use_status, t)
+            })
           },
           {
             title: '操作',
