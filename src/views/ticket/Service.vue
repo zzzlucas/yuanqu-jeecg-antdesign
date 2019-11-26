@@ -32,7 +32,8 @@
               <j-dict-select-tag
                 type="radio"
                 v-model="queryParam.status"
-                :dict="typeOrderStatus" />
+                :dict="typeOrderStatus"
+                @input="searchQuery" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -60,32 +61,32 @@
       :customRow="handleCustomRow">
       <!-- Column slot -->
       <span slot="action" slot-scope="text, record" @click.stop>
-          <a-dropdown>
-            <a class="ant-dropdown-link">状态管理<a-icon type="down" /></a>
-            <a-menu slot="overlay">
-              <a-menu-item>
-                <a-popconfirm title="确定受理吗?" @confirm="handleChangeStatus(record.orderId, '1')">
-                  <a>受理</a>
-                </a-popconfirm>
-              </a-menu-item>
-              <a-menu-item>
-                <a-popconfirm title="确定退回吗?" @confirm="handleChangeStatus(record.orderId, '2')">
-                  <a>退回</a>
-                </a-popconfirm>
-              </a-menu-item>
-              <a-menu-item>
-                <a-popconfirm title="确定转为已完成吗?" @confirm="handleChangeStatus(record.orderId, '3')">
-                  <a>已完成</a>
-                </a-popconfirm>
-              </a-menu-item>
-            </a-menu>
-          </a-dropdown>
-          <a-divider type="vertical" />
-          <a @click.stop="handleEdit(record, ...arguments)">编辑</a>
-          <a-divider type="vertical" />
-          <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
-            <a>删除</a>
-          </a-popconfirm>
+        <a-dropdown>
+          <a class="ant-dropdown-link">状态管理<a-icon type="down" /></a>
+          <a-menu slot="overlay">
+            <a-menu-item>
+              <a-popconfirm title="确定受理吗?" @confirm="handleChangeStatus(record.orderId, '1')">
+                <a>受理</a>
+              </a-popconfirm>
+            </a-menu-item>
+            <a-menu-item>
+              <a-popconfirm title="确定退回吗?" @confirm="handleChangeStatus(record.orderId, '2')">
+                <a>退回</a>
+              </a-popconfirm>
+            </a-menu-item>
+            <a-menu-item>
+              <a-popconfirm title="确定转为已完成吗?" @confirm="handleChangeStatus(record.orderId, '3')">
+                <a>已完成</a>
+              </a-popconfirm>
+            </a-menu-item>
+          </a-menu>
+        </a-dropdown>
+        <a-divider type="vertical" />
+        <a @click.stop="handleEdit(record, ...arguments)">编辑</a>
+        <a-divider type="vertical" />
+        <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
+          <a>删除</a>
+        </a-popconfirm>
         </span>
     </a-table>
     <!-- table区域-end -->
