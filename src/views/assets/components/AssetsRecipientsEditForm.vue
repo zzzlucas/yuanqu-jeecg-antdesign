@@ -142,8 +142,6 @@
           try {
             data.assetId = assetId
             data.qty = qty
-            console.log(data)
-            throw new Error('wooohoo')
             const resp = await addOpertion(data)
             if (!resp.success) {
               throw new Error(resp.message)
