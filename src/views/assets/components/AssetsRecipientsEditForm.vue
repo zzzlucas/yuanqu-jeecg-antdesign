@@ -42,14 +42,6 @@
 
           </a-form-item>
         </a-col>
-        <!--        <a-col :xl="24">
-                  <a-form-item label="上级分类" :label-col="gridOptions.formItem.label" :wrapper-col="gridOptions.formItem.value">
-                    <a-tree-select
-                      treeDefaultExpandAll
-                      v-decorator="['parentId']"
-                      :treeData="categoryTreeData" />
-                  </a-form-item>
-                </a-col>-->
       </a-row>
       <a-row class="action-row" type="flex" justify="end">
         <a-col :xl="2">
@@ -106,7 +98,6 @@
             { required: true, message: '请输入领用人' },
           ],
         },
-        category: [],
         // Asset modal
         assetModal: false,
         assetSelectKeys: [],
@@ -127,6 +118,7 @@
           filterObj(data)
           data.parkId = this.industrialParkId
           data.assetId = this.assetSelectKeys.join(',')
+          data.useType = '1' // Consuming
           const resp = await addOpertion(data)
           if (!resp.success) {
             throw new Error(resp.message)

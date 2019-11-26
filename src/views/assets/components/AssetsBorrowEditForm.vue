@@ -17,12 +17,12 @@
       <a-row>
         <a-col :xl="12">
           <a-form-item label="借用日期">
-            <a-input v-decorator="['categoryId', {rules: rules.categoryId}]"></a-input>
+            <j-date :trigger-change="true" v-decorator="['useDate',{rules: rules.useDate}]" style="width: 100%;" />
           </a-form-item>
         </a-col>
         <a-col :xl="12">
           <a-form-item label="借用人">
-            <a-input v-decorator="['categoryId2', {rules: rules.categoryId2}]"></a-input>
+            <a-input v-decorator="['usePerson', {rules: rules.usePerson}]"></a-input>
           </a-form-item>
         </a-col>
         <a-col :xl="24">
@@ -33,6 +33,8 @@
         <a-col :xl="24">
           <a-form-item label="借用资产" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
             <a-button @click="openAssetModal">添加</a-button>
+            <br>
+            <a-tag :key="tag.assetId" v-for="tag in assetSelectRows">{{ tag.fixedAssetName }}</a-tag>
           </a-form-item>
         </a-col>
         <a-col :xl="24">
@@ -59,11 +61,15 @@
       </a-row>
     </a-form>
     <!-- Asset modal -->
-    <assets-search-modal v-model="assetModal" />
+    <assets-search-modal
+      type="fixedAsset"
+      v-model="assetModal"
+      @select="handleSelectAssets" />
   </a-drawer>
 </template>
 
 <script>
+  import JDate from '@/components/jeecg/JDate'
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
   import AssetsSearchModal from './AssetsSearchModal'
   import { filterObj, promiseForm } from '@utils/util'
@@ -75,6 +81,7 @@
       FormEditDrawerMixin('assets-borrow'),
     ],
     components: {
+      JDate,
       AssetsSearchModal,
     },
     data() {
@@ -83,16 +90,17 @@
         fields: assetsRegisterEditForm,
         // Rules
         rules: {
-          categoryId: [
-            { required: true, message: '请选择借用日期' },
+          useDate: [
+            { required: true, message: '请选择领用日期' },
           ],
-          categoryId2: [
-            { required: true, message: '请输入借用人' },
+          usePerson: [
+            { required: true, message: '请输入领用人' },
           ],
         },
-        category: [],
         // Asset modal
         assetModal: false,
+        assetSelectKeys: [],
+        assetSelectRows: [],
       }
     },
     methods: {
@@ -103,8 +111,13 @@
         ev.preventDefault();
         const data = await promiseForm(this.form)
         try {
+          if (!this.assetSelectKeys.length) {
+            throw new Error('请选择至少一个资产')
+          }
           filterObj(data)
           data.parkId = this.industrialParkId
+          data.assetId = this.assetSelectKeys.join(',')
+          data.useType = '2' // Borrow
           const resp = await addInfo(data)
           if (!resp.success) {
             throw new Error(resp.message)
@@ -115,6 +128,10 @@
         } catch (e) {
           this.$message.error(e.message)
         }
+      },
+      handleSelectAssets(rowKeys, rowSelection) {
+        this.assetSelectKeys = rowKeys
+        this.assetSelectRows = rowSelection
       },
     },
   }
