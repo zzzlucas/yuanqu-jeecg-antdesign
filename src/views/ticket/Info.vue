@@ -7,7 +7,7 @@
       <!-- Nav (unclickable) -->
       <a-breadcrumb>
         <a-breadcrumb-item>工单管理</a-breadcrumb-item>
-        <a-breadcrumb-item>TODO: INSERT CATEGORY NAME HERE</a-breadcrumb-item>
+        <a-breadcrumb-item>{{ filterDictText(this.types.order_type, data.orderType) }}</a-breadcrumb-item>
         <a-breadcrumb-item>工单详情</a-breadcrumb-item>
       </a-breadcrumb>
       <!-- Layout Header -->
@@ -28,7 +28,7 @@
               <a-row>
                 <a-col :xl="12">工单类别：{{ filterDictText(this.types.order_type, data.orderType) }}</a-col>
                 <a-col :xl="12">工单编号：{{ data.orderId }}</a-col>
-                <a-col :xl="12">负责人：胡俊琪</a-col>
+                <a-col :xl="12">负责人：{{ data.principalUser }}</a-col>
                 <a-col :xl="12">提单时间：{{ data.createTime }}</a-col>
                 <a-col :xl="12">来源渠道：手动创建</a-col>
               </a-row>
@@ -40,9 +40,9 @@
           <!-- Action -->
           <div class="ticket-action-container">
             <a-button-group>
-              <a-button>受理</a-button>
-              <a-button>退回</a-button>
-              <a-button>删除</a-button>
+              <a-button @click="handleChangeStatus('1')">受理</a-button>
+              <a-button @click="handleChangeStatus('2')">退回</a-button>
+              <a-button @click="handleChangeStatus('3')">删除</a-button>
             </a-button-group>
             <a-button-group>
               <a-button type="primary">编辑</a-button>
@@ -50,9 +50,8 @@
           </div>
           <div class="ticket-status-container">
             状态
-            <span>待审批</span>
+            <span>{{ filterDictText(this.types.order_status, data.status) }}</span>
           </div>
-          <!-- TODO: missing status, etc. -->
         </a-col>
       </a-row>
     </a-card>
@@ -64,11 +63,19 @@
             :bordered="false"
             :loading="loading">
             <p class="detail-heading detail-row">主题：{{ data.title }}</p>
-            <p class="detail-row">企业名称：有限公司</p>
-            <p class="detail-row">经办人：?</p>
-            <p class="detail-row">联系方式：1585733333</p>
-            <p class="detail-row">项目名称：办公楼平改坡</p>
-            <div class="detail-row">问题描述：Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolore ea quas voluptatibus. Ab consequuntur cum debitis dicta, dolor et eveniet id, illo inventore ipsa molestiae nam obcaecati provident, recusandae vel.</div>
+            <!-- TODO -->
+            <template v-if="isCurrentTypeInProject">
+              <p class="detail-row">企业名称：{{ data.custName }}</p>
+              <p class="detail-row">经办人：{{ data.contactName }}</p>
+              <p class="detail-row">联系方式：{{ data.mobile }}</p>
+              <p class="detail-row">项目名称：{{ data.title }}</p>
+            </template>
+            <div class="detail-row">问题描述：
+              <br>
+              <br>
+              <div v-html="data.content"></div>
+            </div>
+            <!-- TODO -->
             <div class="detail-row">文件：</div>
           </a-card>
         </a-tab-pane>
@@ -99,7 +106,7 @@
             title="工单反馈记录"
             :bordered="false"
             :loading="loading">
-            <a-button type="primary" slot="extra" icon="plus" shape="circle" @click="addRecord" />
+            <a-button type="primary" slot="extra" icon="plus" shape="circle" @click="handleAddRecord" />
             <a-timeline>
               <a-timeline-item>
                 <p class="timeline-heading">2019-10-28 13:24:20 【演示用户】工单进展</p>
@@ -120,20 +127,30 @@
 <script>
   import { filterDictText } from '@/components/dict/JDictSelectUtil'
   import ViewMixin, { lifeCycle as ViewLifeCycleMixin } from '@/mixins/View'
-  import { url } from './api'
+  import Mixin from './mixin'
+  import { url, changeStatusInfo } from './api'
 
   export default {
     mixins: [
       ViewMixin,
       ViewLifeCycleMixin,
+      Mixin,
     ],
     data() {
       return {
         // Url
         url: url.info,
         // Types
-        dictesCreateFields: ['order_type'],
+        dictesCreateFields: ['order_type', 'order_status'],
       }
+    },
+    computed: {
+      isCurrentTypeInProjectPeriod() {
+        return this.orderTypeProjectPeriod.includes(this.data.orderType)
+      },
+      isCurrentTypeInProject() {
+        return this.orderTypeProject.includes(this.data.orderType)
+      },
     },
     methods: {
       // Route
@@ -143,8 +160,21 @@
       // Filter
       filterDictText,
       // Action
-      addRecord() {
+      handleAddRecord() {
 
+      },
+      async handleChangeStatus(status) {
+        try {
+          const params = { status, orderId: this.data.orderId }
+          const resp = await changeStatusInfo(params)
+          if (!resp.success) {
+            throw new Error(resp.message)
+          }
+          this.$message.success('操作成功')
+          this.loadData()
+        } catch (e) {
+          this.$message.error(e.message)
+        }
       },
     }
   }

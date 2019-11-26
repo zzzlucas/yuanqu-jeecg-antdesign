@@ -132,22 +132,19 @@
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
   import { filterObj, promiseForm } from '@utils/util'
   import { assetsCategoryEditForm } from '@/config/pick-fields'
-  import { orderTypesWithSpecialFields } from '@views/ticket/types'
   import { addInfo, editInfo } from '../api'
+  import Mixin from '../mixin'
 
   export default {
     mixins: [
       FormEditDrawerMixin('ticket-service'),
+      Mixin,
     ],
     components: {
       JEditor
     },
     data() {
       return {
-        // Types
-        types: {
-          orderTypesWithSpecialFields,
-        },
         // Form
         fields: assetsCategoryEditForm,
         orderType: '',
@@ -178,12 +175,6 @@
       }
     },
     computed: {
-      orderTypeProjectPeriod() {
-        return this.types.orderTypesWithSpecialFields.projectPeriod.types
-      },
-      orderTypeProject() {
-        return this.types.orderTypesWithSpecialFields.project.types
-      },
       isCurrentTypeInProjectPeriod() {
         return this.orderTypeProjectPeriod.includes(this.orderType)
       },
