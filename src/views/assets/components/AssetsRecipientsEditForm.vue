@@ -154,9 +154,9 @@
         }
         // Stats report
         if (total !== counter) {
-          this.$message.warning(`已成功领用 ${counter} 个资产，失败领用 ${total - counter} 个`, 0)
+          this.$message.warning(`已成功领用 ${counter} 个资产，失败领用 ${total - counter} 个`, 5)
           errMsg.forEach(item => {
-            this.$message.error(`资产: ${item.name}，失败原因：${item.message}`, 0)
+            this.$message.error(`资产: ${item.name}，失败原因：${item.message}`, 5)
           })
         } else {
           this.$message.success('领用成功')
