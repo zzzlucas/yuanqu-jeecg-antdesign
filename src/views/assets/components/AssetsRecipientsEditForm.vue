@@ -33,6 +33,8 @@
         <a-col :xl="24">
           <a-form-item label="领用资产" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
             <a-button @click="openAssetModal">添加</a-button>
+            <br>
+            <a-tag :key="tag.assetId" v-for="tag in assetSelectRows">{{ tag.fixedAssetName }}</a-tag>
           </a-form-item>
         </a-col>
         <a-col :xl="24">
@@ -116,8 +118,12 @@
         ev.preventDefault();
         const data = await promiseForm(this.form)
         try {
+          if (!this.assetSelectKeys.length) {
+            throw new Error('请选择至少一个资产')
+          }
           filterObj(data)
           data.parkId = this.industrialParkId
+          data.assetId = this.assetSelectKeys.join(',')
           const resp = await addOpertion(data)
           if (!resp.success) {
             throw new Error(resp.message)
@@ -134,6 +140,13 @@
         this.assetSelectRows = rowSelection
       },
     },
-
+    watch: {
+      'show'(val) {
+        if (!val) {
+          return
+        }
+        this.title = this.type === 'consumables' ? '易耗品资产领用' : '固定资产领用'
+      }
+    }
   }
 </script>

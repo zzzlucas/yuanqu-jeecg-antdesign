@@ -140,16 +140,17 @@
         ],
       }
     },
+    methods: {
+      handleAdd(type) {
+        this.$refs.modalForm.add();
+        this.$refs.modalForm.disableSubmit = false;
+        this.$refs.modalForm.type = type
+      },
+    },
     watch: {
       selectCategoryKey(val) {
         this.queryParam.categoryId = val
         this.loadData(1)
-      },
-      handleAdd(type) {
-        this.$refs.modalForm.add()
-        this.$refs.modalForm.title = "新增"
-        this.$refs.modalForm.type = type
-        this.$refs.modalForm.disableSubmit = false
       },
     }
   }

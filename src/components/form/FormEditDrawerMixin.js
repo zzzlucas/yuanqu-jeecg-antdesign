@@ -43,7 +43,7 @@ export default function make(name) {
     computed: {
       getTitle() {
         let action = this.title
-        if (!this.title) {
+        if (!action) {
           action = this.isEdit ? '编辑' : '添加'
         }
         return action + this.formLabel
