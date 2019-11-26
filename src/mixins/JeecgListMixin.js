@@ -47,10 +47,15 @@ export const JeecgListMixin = {
       /* 高级查询条件生效状态 */
       superQueryFlag:false,
       /* 高级查询条件 */
-      superQueryParams:""
+      superQueryParams:"",
+      // 禁止created()执行this.loadData()和this.initDictConfig()
+      noInitOnCreated: false,
     }
   },
   created() {
+    if (this.noInitOnCreated) {
+      return
+    }
     this.loadData();
     //初始化字典配置 在自己页面定义
     this.initDictConfig();
