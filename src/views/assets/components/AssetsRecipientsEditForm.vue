@@ -1,9 +1,9 @@
 <template>
   <a-drawer
-    class="form-edit-drawer"
-    :title="getTitle"
+    wrapClassName="assets-recipients-edit-form form-edit-drawer"
     width="65%"
     closable
+    :title="getTitle"
     :mask-closable="true"
     :visible="show"
     @close="closeDrawer">
@@ -34,7 +34,15 @@
           <a-form-item label="领用资产" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
             <a-button @click="openAssetModal">添加</a-button>
             <br>
-            <a-tag :key="tag.assetId" v-for="tag in assetSelectRows">{{ tag.fixedAssetName }}</a-tag>
+            <div class="assets-list">
+              <div class="assets-item" :key="row.assetId" v-for="row in assetSelectRows">
+                <a-tag>{{ row.fixedAssetName }}</a-tag>
+                <a-input-number
+                  size="small"
+                  placeholder="数量"
+                  v-decorator="['assets.' + row.assetId, { rules: rules.assets, initialValue: 1 }]" />
+              </div>
+            </div>
           </a-form-item>
         </a-col>
         <a-col :xl="24">
@@ -62,6 +70,7 @@
     </a-form>
     <!-- Asset modal -->
     <assets-search-modal
+      use-status="1"
       :type="type"
       v-model="assetModal"
       @select="handleSelectAssets" />
@@ -97,6 +106,9 @@
           usePerson: [
             { required: true, message: '请输入领用人' },
           ],
+          assets: [
+            { required: true, message: '请输入数量，至少需要1个', type: 'integer', min: 1 },
+          ],
         },
         // Asset modal
         assetModal: false,
@@ -111,23 +123,47 @@
       async submit(ev) {
         ev.preventDefault();
         const data = await promiseForm(this.form)
-        try {
-          if (!this.assetSelectKeys.length) {
-            throw new Error('请选择至少一个资产')
+        const total = this.assetSelectKeys.length // Total assets
+        let counter = 0
+        let errMsg = []
+        if (!total) {
+          this.$message.error('请选择至少一个资产')
+          return
+        }
+        // Setup request body
+        filterObj(data)
+        data.parkId = this.industrialParkId
+        data.useType = '1' // Consuming
+        const assets = data.assets
+        delete data.assets
+        // Batch request
+        let i = 0
+        for (let [assetId, qty] of Object.entries(assets)) {
+          try {
+            data.assetId = assetId
+            data.qty = qty
+            console.log(data)
+            throw new Error('wooohoo')
+            const resp = await addOpertion(data)
+            if (!resp.success) {
+              throw new Error(resp.message)
+            }
+            counter++
+          } catch (e) {
+            errMsg.push({ number: this.assetSelectRows[i].assetNumber, name: this.assetSelectRows[i].fixedAssetName, message: e.message })
           }
-          filterObj(data)
-          data.parkId = this.industrialParkId
-          data.assetId = this.assetSelectKeys.join(',')
-          data.useType = '1' // Consuming
-          const resp = await addOpertion(data)
-          if (!resp.success) {
-            throw new Error(resp.message)
-          }
-          this.$message.success('添加成功')
+          i++
+        }
+        // Stats report
+        if (total !== counter) {
+          this.$message.warning(`已成功领用 ${counter} 个资产，失败领用 ${total - counter} 个`, 0)
+          errMsg.forEach(item => {
+            this.$message.error(`资产: ${item.name}，失败原因：${item.message}`, 0)
+          })
+        } else {
+          this.$message.success('领用成功')
           this.closeDrawer()
           this.$emit('submit')
-        } catch (e) {
-          this.$message.error(e.message)
         }
       },
       handleSelectAssets(rowKeys, rowSelection) {
@@ -153,3 +189,18 @@
     }
   }
 </script>
+
+<style lang="less">
+  .assets-recipients-edit-form {
+    .assets-list {
+      display: flex;
+      margin-top: 10px;
+      .assets-item {
+        .ant-input {
+          text-align: right;
+          width: 60px;
+        }
+      }
+    }
+  }
+</style>
