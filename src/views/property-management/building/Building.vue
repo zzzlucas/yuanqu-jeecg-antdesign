@@ -63,6 +63,7 @@
   import BuildingFloorForm from './components/form/BuildingFloorForm'
   import BuildingRoomForm from './components/form/BuildingRoomForm'
   import { getTreeNodeOfKey } from '@utils/util'
+  import { mapState } from 'vuex'
 
   export default {
     name: 'Building',
@@ -161,7 +162,7 @@
       this.type = 'block'
 
       this.$nextTick(() => {
-        this.loadData('block', '1193719771573518336').then(list => {
+        this.loadData('block', this.parkId).then(list => {
           this.model = {
             status: 'block',
             list
@@ -359,7 +360,7 @@
         switch (type) {
           case 'block':
             this.type = 'block'
-            this.loadData('block', '1193719771573518336').then(list => {
+            this.loadData('block', this.parkId).then(list => {
               this.model = {
                 status: 'block',
                 list
@@ -507,7 +508,7 @@
           this.selectKeys = []
 
           this.$nextTick(() => {
-            this.loadData('block', '1193719771573518336').then(list => {
+            this.loadData('block', this.parkId).then(list => {
               this.model = {
                 status: 'block',
                 list
@@ -541,7 +542,11 @@
         tree.push(key)
         this.expandedKeys = _.uniq(tree)
       }
-    }
+    },
+    computed: mapState({
+      parkId: state => state.industrialPark.id,
+      parkName: state => state.industrialPark.name
+    })
   }
 </script>
 
