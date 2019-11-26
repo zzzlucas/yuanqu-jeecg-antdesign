@@ -2,32 +2,40 @@
   <a-drawer :title="title" width="50%" destroyOnClose :visible="visible" @close="handleCancel">
     <a-card :bordered="false">
       <a-form :form="form">
-        <a-form-item label="资讯名称">
-          <a-input v-decorator="['titile',  {rules: [{required: true, message: '请输入资讯名称'}]}]" />
+        <a-form-item label="标题">
+          <a-input v-decorator="['titile',  {rules: [{required: true, message: '请输入标题'}]}]" />
         </a-form-item>
-        <a-form-item label="资讯类别">
-          <a-radio-group v-decorator="['type',  {rules: [{required: true, message: '请选择资讯类别'}]}]">
-            <a-radio
-              v-if="item.value>=2"
-              v-for="(item, key) in dict.newsTypeExt"
-              :value="item.value"
+        <a-form-item label="政策类别">
+          <a-checkbox-group v-decorator="['typeGroups']">
+            <a-checkbox
+              v-for="(item, key) in dict.talentPolicy"
               :key="key"
-            >{{item.text}}</a-radio>
-          </a-radio-group>
+              :value="item.value"
+            >{{ item.text || item.label }}</a-checkbox>
+          </a-checkbox-group>
+        </a-form-item>
+        <a-form-item label="发布部门">
+          <a-checkbox-group v-decorator="['deptGroups']">
+            <a-checkbox
+              v-for="(item, key) in dict.publishingDepartment"
+              :key="key"
+              :value="item.value"
+            >{{ item.text || item.label }}</a-checkbox>
+          </a-checkbox-group>
         </a-form-item>
         <a-form-item label="发布时间">
+          <a-time-picker  format="HH:mm" size="large" />
           <a-date-picker
-            showTime
+            :showTime="{disabledSeconds: disabledSeconds}"
             placeholder
             style="width:100%"
             format="YYYY-MM-DD HH:mm:ss"
             v-decorator="['publishTime',  {rules: [{required: true, message: '请输入发布时间'}]}]"
           />
         </a-form-item>
-        <a-form-item label="内容">
+        <a-form-item label="内容描述">
           <j-editor v-model="editor.context"></j-editor>
         </a-form-item>
-        <a-form-item label="图片"></a-form-item>
       </a-form>
 
       <a-button type="primary" @click="handleOk">发布</a-button>
@@ -78,28 +86,42 @@ export default {
       visible: false,
       loading: false,
       editBool: false,
-      //这是跟踪人，不是服务人员，是否走字典有待考究
-      dict: {},
+      dict: {
+        talentPolicyExt: '',
+        publishingDepartmentExt: ''
+      },
       url: {
-        add: '/park.service/mgrNewsInfo/add',
-        edit: '/park.service/mgrNewsInfo/edit'
+        add: '/park.service/mgrPolicyInfo/add',
+        edit: '/park.service/mgrPolicyInfo/edit'
       }
     }
   },
   computed: {
     title() {
-      return '资讯' + (this.editBool ? '编辑' : '新建')
+      return '政策' + (this.editBool ? '编辑' : '新建')
     },
     ...mapGetters(['industrialParkId'])
   },
   created() {
-    initDictOptions('news_type').then(res => {
-      if (res.code === 0 && res.success) {
-        this.dict.newsTypeExt = res.result
-      }
-    })
+    this.initConfig()
   },
   methods: {
+    disabledSeconds(h, m){
+      console.log(h, m)
+      return []
+    },
+    initConfig() {
+      initDictOptions('policy_type').then(res => {
+        if (res.code === 0 && res.success) {
+          this.dict.talentPolicy = res.result
+        }
+      })
+      initDictOptions('publishing_department').then(res => {
+        if (res.code === 0 && res.success) {
+          this.dict.publishingDepartment = res.result
+        }
+      })
+    },
     handleOOKK() {
       const that = this
       this.form.validateFieldsAndScroll((err, values) => {
@@ -108,7 +130,7 @@ export default {
           const { context } = this.editor
           let httpurl = ''
           let method = ''
-          if (!this.model.newId) {
+          if (!this.model.policyId) {
             httpurl += this.url.add
             method = 'post'
           } else {
@@ -120,6 +142,9 @@ export default {
           formData.context = context
           formData.isPublic = '0'
           formData.parkId = this.industrialParkId
+          //把 formData.typeGroups 转换成逗号分割的字符串
+          formData.typeGroups = formData.typeGroups.toString()
+          formData.deptGroups = formData.deptGroups.toString()
           formData = qs.stringify(formData)
           httpAction(httpurl, formData, method)
             .then(res => {
@@ -145,7 +170,7 @@ export default {
           const { context } = this.editor
           let httpurl = ''
           let method = ''
-          if (!this.model.newId) {
+          if (!this.model.policyId) {
             httpurl += this.url.add
             method = 'post'
           } else {
@@ -157,6 +182,9 @@ export default {
           formData.context = context
           formData.isPublic = '1'
           formData.parkId = this.industrialParkId
+          //把 formData.typeGroups 转换成逗号分割的字符串
+          formData.typeGroups = formData.typeGroups.toString()
+          formData.deptGroups = formData.deptGroups.toString()
           formData = qs.stringify(formData)
           httpAction(httpurl, formData, method)
             .then(res => {
@@ -176,15 +204,25 @@ export default {
     },
     detail(record) {
       this.editBool = true
+      console.log('record')
       console.log(record)
       this.form.resetFields()
+      //做俩类别数据的数组出来
+      record.typeGroups = []
+      for (const item of record.types) {
+        record.typeGroups.push(item.labelNo)
+      }
+      record.deptGroups = []
+      for (const item of record.depts) {
+        record.deptGroups.push(item.labelNo)
+      }
       this.model = Object.assign({}, record)
       this.visible = true
       this.$nextTick(() => {
         this.editor = {
           context: record.context
         }
-        this.form.setFieldsValue(pick(this.model, 'titile', 'type'))
+        this.form.setFieldsValue(pick(this.model, 'publishTime', 'titile', 'typeGroups', 'deptGroups', 'type'))
         this.form.setFieldsValue({
           publishTime: this.model.publishTime ? moment(this.model.publishTime) : null
         })

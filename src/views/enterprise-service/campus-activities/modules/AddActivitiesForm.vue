@@ -43,7 +43,7 @@
         </a-form-item>
       </a-form>
 
-      <a-button type="primary" @click="handleOk">确定</a-button>
+      <a-button type="primary" @click="handleOk">发布</a-button>
       <a-button @click="handleCancel">取消</a-button>
     </a-card>
   </a-drawer>

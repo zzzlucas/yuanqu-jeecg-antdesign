@@ -6,7 +6,7 @@
         <a-row :gutter="24">
           <a-col :md="6" :sm="8">
             <a-form-item label>
-              <a-input placeholder="资讯名称" v-model="queryParam.keyword"></a-input>
+              <a-input placeholder="政策标题" v-model="queryParam.keyword"></a-input>
             </a-form-item>
           </a-col>
           <a-col :md="4" :sm="8">
@@ -34,35 +34,55 @@
             </a-dropdown>
           </a-col>
           <a-col :md="8" :sm="8" style="float:right;">
-            <a-button style="float:right;margin-left: 8px" type="primary" @click="AddInfoForm">发布资讯</a-button>
+            <a-button style="float:right;margin-left: 8px" type="primary" @click="AddAInfoForm">发布政策</a-button>
           </a-col>
         </a-row>
         <a-row :gutter="24">
-          <a-col :md="6" :sm="8">
+          <a-col :md="16" :sm="8">
+            <a-form-item label="政策类别">
+              <a-button-group>
+                <a-button
+                  v-for="(item, key) in dict.talentPolicy"
+                  :key="key"
+                  :type="btn.indexOf(item.value) !== -1 ? 'primary' : 'default'"
+                  value="item.value"
+                  @click="btnClick(key, item.value)"
+                >{{ item.text || item.label }}</a-button>
+              </a-button-group>
+              <!-- <a-checkbox-group v-decorator="['typeGroups']"> -->
+              <a-checkbox-group @change="searchQuery" v-model="queryParam.typeGroups">
+                <!-- <a-checkbox value>不限</a-checkbox> -->
+                <a-checkbox
+                  v-for="(item, key) in dict.talentPolicy"
+                  :key="key"
+                  value="item.value"
+                >{{ item.text || item.label }}</a-checkbox>
+              </a-checkbox-group>
+            </a-form-item>
+          </a-col>
+        </a-row>
+        <a-row :gutter="24">
+          <a-col :md="16" :sm="8">
+            <a-form-item label="发布部门">
+              <a-checkbox-group @change="searchQuery" v-model="queryParam.deptGroups">
+                <!-- <a-checkbox value>不限</a-checkbox> -->
+                <a-checkbox
+                  v-for="(item, key) in dict.publishingDepartment"
+                  :key="key"
+                  :value="item.value"
+                >{{ item.text || item.label }}</a-checkbox>
+              </a-checkbox-group>
+            </a-form-item>
+          </a-col>
+        </a-row>
+        <a-row :gutter="24">
+          <a-col :md="16" :sm="8">
             <a-form-item label="发布状态">
               <a-radio-group @change="searchQuery" v-model="queryParam.isPublic">
                 <a-radio-button value>不限</a-radio-button>
-                <a-radio-button value="0">未发布</a-radio-button>
                 <a-radio-button value="1">已发布</a-radio-button>
-                <a-radio-button value="2">已撤销</a-radio-button>
+                <a-radio-button value="0">未发布</a-radio-button>
               </a-radio-group>
-              <!-- <a-checkbox-group @change="searchQuery" v-model="queryParam.isPublic">
-                <a-checkbox value>不限</a-checkbox>
-                <a-checkbox value="1">已发布</a-checkbox>
-                <a-checkbox value="0">未发布</a-checkbox>
-              </a-checkbox-group>-->
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="8">
-            <a-form-item label="类别">
-              <a-radio-group @change="searchQuery" v-model="queryParam.type">
-                <a-radio-button value="2">新闻</a-radio-button>
-                <a-radio-button value="3">通知公告</a-radio-button>
-              </a-radio-group>
-              <!-- <a-checkbox-group @change="searchQuery" v-model="queryParam.type">
-                <a-checkbox value="2">通知公告</a-checkbox>
-                <a-checkbox value="3">新闻</a-checkbox>
-              </a-checkbox-group>-->
             </a-form-item>
           </a-col>
         </a-row>
@@ -97,17 +117,7 @@
           >
             <a>发布</a>
           </a-popconfirm>
-          <a-popconfirm
-            v-if="record.isPublic == 1"
-            title="确定撤销吗?"
-            @confirm="() => changeInfoFormD(record, ...arguments)"
-          >
-            <a>撤销</a>
-          </a-popconfirm>
-          <!-- <a v-if="record.isPublic == 0" @click.stop="changeInfoForm(record, ...arguments)">发布</a> -->
-          <!-- <a v-if="record.isPublic == 1" @click.stop="changeInfoFormD(record, ...arguments)">撤销</a> -->
           <a-divider v-if="record.isPublic == 0" type="vertical" />
-          <a-divider v-if="record.isPublic == 1" type="vertical" />
 
           <a v-if="true" @click.stop="EditInfoForm(record, ...arguments)">编辑</a>
           <a-divider type="vertical" />
@@ -116,39 +126,33 @@
       </a-table>
     </div>
     <!-- table区域-end -->
-    <add-info-form ref="AddInfoForm" @reload="loadData"></add-info-form>
+    <add-a-info-form ref="AddAInfoForm" @reload="loadData"></add-a-info-form>
   </a-card>
 </template>
 
 <script>
+import { mixinList } from '@/utils/mixin'
+import { mapGetters } from 'vuex'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import Config from '@/defaultSettings'
-import AddInfoForm from './AddInfoForm'
+import AddAInfoForm from './AddAInfoForm'
 import { getAction, putAction } from '@/api/manage'
 import qs from 'qs'
 import Dom7 from 'dom7'
-import { mixinList } from '@/utils/mixin'
+import moment from 'moment'
 import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
+import _ from 'lodash'
 
 export default {
   name: 'IndustrialParksList',
-  components: { AddInfoForm },
+  components: { AddAInfoForm },
   mixins: [JeecgListMixin, mixinList],
   data() {
     return {
       description: '',
       dict: {},
+      btn:[],
       columns: [
-        // {
-        //   title: '序号',
-        //   dataIndex: '',
-        //   key: 'rowIndex',
-        //   width: 60,
-        //   align: 'center',
-        //   customRender: function(t, r, index) {
-        //     return parseInt(index) + 1
-        //   }
-        // },
         {
           title: '标题',
           align: 'center',
@@ -158,20 +162,13 @@ export default {
           title: '发布时间',
           align: 'center',
           dataIndex: 'publishTime',
-          width: 180
-        },
-        {
-          title: '类别',
-          align: 'center',
-          dataIndex: 'type',
-          width: 150,
-          // customRender: function(text) {    此处必须是用箭头函数，箭头函数不产生自己的作用域，没有自己的this
+          width: 180,
           customRender: text => {
-            return filterDictText(this.dict.newsTypeExt, text)
+          return moment(text).format('YYYY-MM-DD HH:mm')
           }
         },
         {
-          title: '资讯状态',
+          title: '状态',
           align: 'center',
           dataIndex: 'isPublic',
           width: 150,
@@ -180,8 +177,6 @@ export default {
               return '未发布'
             } else if (text == '1') {
               return '已发布'
-            } else {
-              return '已撤销'
             }
           }
         },
@@ -194,41 +189,58 @@ export default {
         }
       ],
       url: {
-        list: '/park.service/mgrNewsInfo/list'
+        list: '/park.service/mgrPolicyInfo/list'
       },
       queryParam: {
-        type: '4'
+        // typeGroups: '',
+        // deptGroups: ''
       },
       temprow: '',
-      rightShow: false,
-      cusId: ''
+      rightShow: false
     }
   },
-  computed: {},
-  created() {
-    // console.log(this.queryParam)
-  },
+  computed: { ...mapGetters(['industrialParkId']) },
+  created() {},
   methods: {
+    moment,
+    btnClick(key, value){
+      const btn = _.clone(this.btn)
+      if(_.get(btn, `[${key}]`)){
+        _.unset(btn)
+        this.btn = btn
+      } else {
+        _.set(btn, `[${key}]`, value)
+      }
+    },
+    initConfig() {
+      initDictOptions('policy_type').then(res => {
+        if (res.code === 0 && res.success) {
+          this.dict.talentPolicy = res.result
+        }
+      })
+      initDictOptions('publishing_department').then(res => {
+        if (res.code === 0 && res.success) {
+          this.dict.publishingDepartment = res.result
+        }
+      })
+    },
     loadData() {
       // if (arg === 1) {
       //   this.ipagination.current = 1
       // }
       var params = this.getQueryParams()
+      console.log('params')
+      console.log(params)
       this.loading = true
-      initDictOptions('news_type').then(res => {
-        if (res.code === 0 && res.success) {
-          this.dict.newsTypeExt = res.result
-          getAction(this.url.list, params).then(res => {
-            if (res.success) {
-              this.dataSource = res.result.records
-              this.ipagination.total = res.result.total
-            }
-            if (res.code === 510) {
-              this.$message.warning(res.message)
-            }
-            this.loading = false
-          })
+      this.initConfig()
+      getAction(this.url.list, params).then(res => {
+        if (res.success) {
+          this.dataSource = res.result.records
+          this.ipagination.total = res.result.total
+        } else {
+          this.$message.warning(res.message)
         }
+        this.loading = false
       })
     },
     customRow(row) {
@@ -237,8 +249,8 @@ export default {
           click: () => {
             //拿到id
             this.$router.push({
-              name: 'enterprise-service-info-detail-@id',
-              params: { id: row.newId }
+              name: 'enterprise-service-policy-detail-@id',
+              params: { id: row.policyId }
             })
           }
         }
@@ -246,9 +258,23 @@ export default {
     },
     //发布
     changeInfoForm(record) {
-      let params = { isPublic: '1', newId: record.newId }
+      //解决俩类别需要提交的问题
+      //先从后端给的数组中获取组合成自己的数组
+      //1
+      let typeGroups = []
+      for (const item of record.types) {
+        typeGroups.push(item.labelNo)
+      }
+      typeGroups = typeGroups.toString()
+      //2
+      let deptGroups = []
+      for (const item of record.depts) {
+        deptGroups.push(item.labelNo)
+      }
+      deptGroups = deptGroups.toString()
+      let params = { isPublic: '1', policyId: record.policyId, typeGroups, deptGroups }
       params = qs.stringify(params)
-      putAction('/park.service/mgrNewsInfo/edit', params).then(res => {
+      putAction('/park.service/mgrPolicyInfo/edit', params).then(res => {
         if (res.code === 200) {
           this.$message.success('发布成功')
           this.loadData()
@@ -257,34 +283,21 @@ export default {
         }
       })
     },
-    //撤销
-    changeInfoFormD(record) {
-      let params = { isPublic: '2', newId: record.newId }
-      params = qs.stringify(params)
-      putAction('/park.service/mgrNewsInfo/edit', params).then(res => {
-        if (res.code === 200) {
-          this.$message.success('撤销成功')
-          this.loadData()
-        } else {
-          this.$message.error(res.message)
-        }
-      })
-    },
     searchReset() {
-      this.queryParam = { type: '4' }
+      this.queryParam = { parkId: this.industrialParkId }
       this.loadData(1)
     },
     searchQuery() {
       this.loadData(1)
     },
-    AddInfoForm() {
-      this.$refs.AddInfoForm.Add()
+    AddAInfoForm() {
+      this.$refs.AddAInfoForm.Add()
     },
     EditInfoForm(row, e) {
       row.__key = Dom7(e.currentTarget)
         .parents('.ant-table-row')
         .data('row-key')
-      this.$refs.AddInfoForm.detail(row)
+      this.$refs.AddAInfoForm.detail(row)
     }
   }
 }
