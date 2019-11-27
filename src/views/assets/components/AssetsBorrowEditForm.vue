@@ -39,7 +39,7 @@
         </a-col>
         <a-col :xl="24">
           <a-form-item label="附件" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
-
+            <j-upload v-decorator="['addDocFiles']" />
           </a-form-item>
         </a-col>
       </a-row>
@@ -71,6 +71,7 @@
 
 <script>
   import JDate from '@/components/jeecg/JDate'
+  import JUpload from '@/components/jeecg/JUpload'
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
   import AssetsSearchModal from './AssetsSearchModal'
   import { filterObj, promiseForm } from '@utils/util'
@@ -83,6 +84,7 @@
     ],
     components: {
       JDate,
+      JUpload,
       AssetsSearchModal,
     },
     data() {

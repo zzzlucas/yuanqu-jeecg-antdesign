@@ -96,7 +96,7 @@
         </a-col>
         <a-col :xl="24">
           <a-form-item label="附件" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
-
+            <j-upload v-decorator="['addDocFiles']" />
           </a-form-item>
         </a-col>
       </a-row>
@@ -122,18 +122,20 @@
 
 <script>
   import JDate from '@/components/jeecg/JDate'
+  import JUpload from '@/components/jeecg/JUpload'
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
   import { filterObj, promiseForm, buildTreeData } from '@utils/util'
   import { assetsRegisterEditForm } from '@/config/pick-fields'
   import { addInfo, editInfo, treeListCategory } from '../api'
 
   export default {
-    components: {
-      JDate,
-    },
     mixins: [
       FormEditDrawerMixin('assets-register'),
     ],
+    components: {
+      JDate,
+      JUpload,
+    },
     data() {
       return {
         // Form
