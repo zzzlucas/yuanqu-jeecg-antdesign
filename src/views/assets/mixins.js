@@ -37,7 +37,7 @@ export const list = {
     handleCustomRow(row) {
       return {
         on: {
-          click: event => {
+          click: () => {
             this.viewData = row
             this.view = true
           }
@@ -80,4 +80,37 @@ export const view = {
       this.modal = val
     }
   }
+}
+
+export const viewAssetsTable = {
+  columns: [
+    {
+      title: '#',
+      dataIndex: '',
+      key: 'rowIndex',
+      width: 60,
+      align: 'center',
+      customRender: (t, r, index) => Number(index) + 1
+    },
+    {
+      title: '资产名称',
+      align: 'center',
+      dataIndex: 'assetName'
+    },
+    {
+      title: '资产编号',
+      align: 'center',
+      dataIndex: 'assetNumber'
+    },
+    {
+      title: '规格型号',
+      align: 'center',
+      dataIndex: 'assetModel'
+    },
+    {
+      title: '使用状态',
+      align: 'center',
+      dataIndex: 'useStatus'
+    },
+  ]
 }

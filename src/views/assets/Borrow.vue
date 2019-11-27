@@ -40,12 +40,14 @@
         <a-table
           ref="table"
           size="middle"
+          rowKey="opertionId"
           bordered
           :columns="columns"
           :dataSource="dataSource"
           :pagination="ipagination"
           :loading="loading"
-          :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}">
+          :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
+          :customRow="handleCustomRow">
             <!-- Column slot -->
             <span slot="action" slot-scope="text, record" @click.stop>
               <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
@@ -61,7 +63,8 @@
       ref="modalForm"
       @submit="handleEditSubmit" />
     <!-- View -->
-    <assets-borrow-view-modal
+    <assets-view-modal
+      :columns="viewColumns"
       :data="viewData"
       v-model="view" />
   </a-card>
@@ -69,17 +72,17 @@
 
 <script>
   import AssetsBorrowEditForm from '@views/assets/components/AssetsBorrowEditForm'
-  import AssetsBorrowViewModal from '@views/assets/components/AssetsBorrowViewModal'
+  import AssetsViewModal from '@views/assets/components/AssetsViewModal'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import MixinList from '@/mixins/List'
-  import { list as AssetsListMixin } from './mixins'
+  import { list as AssetsListMixin, viewAssetsTable as AssetsViewAssetsTableMixin } from './mixins'
   import { url } from './api'
   import './style/list.less'
 
   export default {
     components: {
       AssetsBorrowEditForm,
-      AssetsBorrowViewModal,
+      AssetsViewModal,
     },
     mixins: [
       JeecgListMixin,
@@ -136,6 +139,15 @@
             align: 'center',
             scopedSlots: { customRender: 'action' },
           },
+        ],
+        // View
+        viewColumns: [
+          { name: '借用单号', value: 'opertionId', },
+          { name: '借用日期', value: 'useDate', },
+          { name: '借用人', value: 'usePerson', },
+          { name: '备注', value: 'remark', type: 'remark', },
+          { value: { ...AssetsViewAssetsTableMixin, dataSource: [] }, type: 'table', },
+          { name: '附件', type: 'files', value: '' },
         ],
       }
     },
