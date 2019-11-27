@@ -57,7 +57,7 @@
         </a-col>
         <a-col :xl="24">
           <a-form-item label="附件" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
-
+            <j-upload v-decorator="['addDocFiles']" />
           </a-form-item>
         </a-col>
       </a-row>
@@ -80,7 +80,7 @@
     </a-form>
     <!-- Asset modal -->
     <assets-search-modal
-      type="fixedAsset"
+      :use-status="['1', '3']"
       v-model="assetModal"
       @select="handleSelectAssets" />
   </a-drawer>
@@ -88,6 +88,7 @@
 
 <script>
   import JDate from '@/components/jeecg/JDate'
+  import JUpload from '@/components/jeecg/JUpload'
   import AssetsSearchModal from './AssetsSearchModal'
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
   import { filterObj, promiseForm } from '@utils/util'
@@ -100,6 +101,7 @@
     ],
     components: {
       JDate,
+      JUpload,
       AssetsSearchModal,
     },
     data() {
@@ -119,11 +121,12 @@
             { required: true, message: '请输入数量，至少需要1个', type: 'integer', min: 1 },
           ],
         },
-        category: [],
         // Asset modal
         assetModal: false,
         assetSelectKeys: [],
         assetSelectRows: [],
+        // Upload
+        uploadPath: '',
       }
     },
     methods: {
@@ -154,6 +157,8 @@
         data.useType = '4' // Disposal
         const assets = data.assets
         delete data.assets
+        console.log(data)
+        return
         // Batch request
         let i = 0
         for (let [assetId, qty] of Object.entries(assets)) {

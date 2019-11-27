@@ -70,8 +70,8 @@
     </a-form>
     <!-- Asset modal -->
     <assets-search-modal
+      type="1"
       use-status="1"
-      :type="type"
       v-model="assetModal"
       @select="handleSelectAssets" />
   </a-drawer>

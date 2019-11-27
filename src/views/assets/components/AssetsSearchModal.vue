@@ -59,16 +59,16 @@
     ],
     props: {
       type: {
-        type: String,
+        type: [String, Array],
         default: ''
+      },
+      useStatus: {
+        type: [String, Array],
+        default: '',
       },
       show: {
         type: Boolean,
         default: false,
-      },
-      useStatus: {
-        type: String,
-        default: '',
       },
     },
     model: {
@@ -135,14 +135,21 @@
       },
       buildQueryParams() {
         // categoryType
-        const typeMap = { consumables: '2', fixedAsset: '1' }
-        const newType = typeMap[this.type] || ''
+        let _type = this.type
+        if (!Array.isArray(_type)) {
+          _type = [_type]
+        }
+        const newType = _type.join(',')
         if (this.queryParam.categoryType !== newType) {
           this.onClearSelected()
           this.queryParam.categoryType = newType
         }
+        let _useStatus = this.useStatus
+        if (!Array.isArray(_useStatus)) {
+          _useStatus = [_useStatus]
+        }
         // useStatus
-        this.queryParam.useStatus = this.useStatus
+        this.queryParam.useStatus = _useStatus.join(',')
       },
       init() {
         this.loadData()
