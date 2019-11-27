@@ -53,8 +53,8 @@
             <a-input v-decorator="['contactTel', {rules: rules.contactTel}]"></a-input>
           </a-form-item>
         </a-col>
-        <a-col :xl="12">
-          <a-form-item label="是否收费">
+        <a-col :xl="24">
+          <a-form-item label="是否收费" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
             <a-switch v-model="isCharge"></a-switch>
           </a-form-item>
         </a-col>
@@ -174,6 +174,12 @@
           return
         }
       },
+      isCharge(val) {
+        if (val === false) {
+          this.form.setFieldsValue('price', '')
+          this.form.setFieldsValue('unit', '')
+        }
+      }
     },
   }
 </script>
