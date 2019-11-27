@@ -69,9 +69,8 @@
         // Filter query
         queryParam: {
           categoryId: '',
-          categoryType: '1',
           keyword: '',
-          useStatus: '2',
+          useStatus: '3', // Always be fixed asset
         },
         // Table
         columns: [
