@@ -54,8 +54,8 @@
           :dataSource="dataSource"
           :pagination="ipagination"
           :loading="loading"
-          :customRow="handleCustomRow"
-          :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}">
+          :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
+          :customRow="handleCustomRow">
             <!-- Column slot -->
             <span slot="action" slot-scope="text, record" @click.stop>
               <a @click.stop="handleEdit(record, ...arguments)">编辑</a>
@@ -73,7 +73,8 @@
       ref="modalForm"
       @submit="handleEditSubmit" />
     <!-- View -->
-    <assets-register-view-aside
+    <assets-view-aside
+      :columns="viewColumns"
       :data="viewData"
       v-model="view" />
   </a-card>
@@ -81,7 +82,7 @@
 
 <script>
   import AssetsRegisterEditForm from '@views/assets/components/AssetsRegisterEditForm'
-  import AssetsRegisterViewAside from '@views/assets/components/AssetsRegisterViewAside'
+  import AssetsViewAside from '@views/assets/components/AssetsViewAside'
   import { filterDictText } from '@/components/dict/JDictSelectUtil'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import MixinList from '@/mixins/List'
@@ -92,7 +93,7 @@
   export default {
     components: {
       AssetsRegisterEditForm,
-      AssetsRegisterViewAside,
+      AssetsViewAside,
     },
     mixins: [
       JeecgListMixin,
@@ -170,6 +171,19 @@
             align: 'center',
             scopedSlots: { customRender: 'action' },
           },
+        ],
+        // View
+        viewColumns: [
+          { name: '所属分类', value: 'categoryId', },
+          { name: '资产编号', value: 'assetNumber', },
+          { name: '资产名称', value: 'fixedAssetName', },
+          { name: '规格型号', value: 'assetModel', },
+          { name: '单价', value: 'stockPrice', },
+          { name: '总价', value: 'stockAmount', },
+          { name: '采购日期', value: 'purchaseDate', },
+          { name: '使用人', value: 'usePerson', },
+          { name: '备注', value: 'remark', type: 'remark', },
+          { name: '附件', type: 'files', value: '' },
         ],
       }
     },

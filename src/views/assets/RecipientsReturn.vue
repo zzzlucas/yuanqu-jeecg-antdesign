@@ -32,7 +32,8 @@
           :columns="columns"
           :dataSource="dataSource"
           :pagination="ipagination"
-          :loading="loading">
+          :loading="loading"
+          :customRow="handleCustomRow">
             <!-- Column slot -->
             <span slot="action" slot-scope="text, record" @click.stop>
               <a @click.stop="handleEdit(record, ...arguments)">归还</a>
@@ -44,11 +45,17 @@
     <assets-recipients-return-edit-form
       ref="modalForm"
       @submit="handleEditSubmit" />
+    <!-- View -->
+    <assets-view-aside
+      :columns="viewColumns"
+      :data="viewData"
+      v-model="view" />
   </a-card>
 </template>
 
 <script>
   import AssetsRecipientsReturnEditForm from '@/views/assets/components/AssetsRecipientsReturnEditForm'
+  import AssetsViewAside from '@views/assets/components/AssetsViewAside'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import MixinList from '@/mixins/List'
   import { list as AssetsListMixin } from './mixins'
@@ -56,7 +63,10 @@
   import './style/list.less'
 
   export default {
-    components: { AssetsRecipientsReturnEditForm },
+    components: {
+      AssetsRecipientsReturnEditForm,
+      AssetsViewAside,
+    },
     mixins: [
       JeecgListMixin,
       MixinList,
@@ -123,6 +133,19 @@
             align: 'center',
             scopedSlots: { customRender: 'action' },
           },
+        ],
+        // View
+        viewColumns: [
+          { name: '所属分类', value: 'categoryType', },
+          { name: '资产编号', value: 'assetNumber', },
+          { name: '资产名称', value: 'assertName', },
+          { name: '规格型号', value: 'assetModel', },
+          { name: '单价', value: 'stockPrice', },
+          { name: '总价', value: 'stockAmount', },
+          { name: '采购日期', value: 'purchaseDate', },
+          { name: '使用人', value: 'usePerson', },
+          { name: '备注', value: 'remark', type: 'remark', },
+          { name: '附件', type: 'files', value: '' },
         ],
       }
     },

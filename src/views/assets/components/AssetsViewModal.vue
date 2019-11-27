@@ -52,13 +52,15 @@
   import { view } from '@views/assets/mixins'
 
   export default {
+    mixins: [
+      view,
+    ],
     props: {
       columns: {
         type: Array,
         required: true,
       },
     },
-    mixins: [view],
     data() {
       return {
         title: '借用详情',
