@@ -17,12 +17,15 @@
       <a-row>
         <a-col :xl="12">
           <a-form-item label="处置日期">
-            <a-input v-decorator="['useDate', {rules: rules.useDate}]"></a-input>
+            <j-date :trigger-change="true" v-decorator="['useDate',{rules: rules.useDate}]" style="width: 100%;" />
           </a-form-item>
         </a-col>
         <a-col :xl="12">
           <a-form-item label="处置类型">
-            <a-input v-decorator="['usePerson', {rules: rules.usePerson}]"></a-input>
+            <j-dict-select-tag
+              v-decorator="['detailType', {rules: rules.detailType}]"
+              :triggerChange="true"
+              dictCode="detail_type" />
           </a-form-item>
         </a-col>
         <a-col :xl="24">
@@ -38,6 +41,8 @@
         <a-col :xl="24">
           <a-form-item label="处置资产" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
             <a-button @click="openAssetModal">添加</a-button>
+            <br>
+            <a-tag :key="tag.assetId" v-for="tag in assetSelectRows">{{ tag.fixedAssetName }}</a-tag>
           </a-form-item>
         </a-col>
         <a-col :xl="24">
@@ -64,13 +69,16 @@
       </a-row>
     </a-form>
     <!-- Asset modal -->
-    <assets-search-modal v-model="assetModal" />
+    <assets-search-modal
+      v-model="assetModal"
+      @select="handleSelectAssets" />
   </a-drawer>
 </template>
 
 <script>
-  import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
+  import JDate from '@/components/jeecg/JDate'
   import AssetsSearchModal from './AssetsSearchModal'
+  import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
   import { filterObj, promiseForm } from '@utils/util'
   import { assetsRegisterEditForm } from '@/config/pick-fields'
   import { addInfo } from '../api'
@@ -80,6 +88,7 @@
       FormEditDrawerMixin('assets-disposal'),
     ],
     components: {
+      JDate,
       AssetsSearchModal,
     },
     data() {
@@ -92,18 +101,24 @@
           useDate: [
             { required: true, message: '请选择处置日期' },
           ],
-          usePerson: [
+          detailType: [
             { required: true, message: '请选择处置类型' },
           ],
         },
         category: [],
         // Asset modal
         assetModal: false,
+        assetSelectKeys: [],
+        assetSelectRows: [],
       }
     },
     methods: {
       openAssetModal() {
         this.assetModal = true
+      },
+      handleSelectAssets(rowKeys, rowSelection) {
+        this.assetSelectKeys = rowKeys
+        this.assetSelectRows = rowSelection
       },
       async submit(ev) {
         ev.preventDefault();
@@ -123,6 +138,5 @@
         }
       },
     },
-
   }
 </script>

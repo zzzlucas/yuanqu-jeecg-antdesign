@@ -61,15 +61,17 @@
 </template>
 
 <script>
+  import AssetsDisposalEditForm from '@views/assets/components/AssetsDisposalEditForm'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import MixinList from '@/mixins/List'
   import { list as AssetsListMixin } from './mixins'
   import { url } from './api'
   import './style/list.less'
-  import AssetsDisposalEditForm from '@views/assets/components/AssetsDisposalEditForm'
 
   export default {
-    components: { AssetsDisposalEditForm },
+    components: {
+      AssetsDisposalEditForm,
+    },
     mixins: [
       JeecgListMixin,
       MixinList,

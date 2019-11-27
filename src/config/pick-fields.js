@@ -369,6 +369,12 @@ export const assetsRegisterEditForm = [
   'remark',
 ]
 
+export const assetsRecipientsReturnEditForm = [
+  'assetNumber',
+  'fixedAssetName',
+  'usePerson',
+]
+
 export const ticketEditForm = [
   'orderType',
   'principalUser',

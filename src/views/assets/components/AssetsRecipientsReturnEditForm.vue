@@ -31,18 +31,13 @@
           </a-form-item>
         </a-col>
         <a-col :xl="12">
-          <a-form-item label="归还部门">
-            <a-input v-decorator="['useDepartment']" disabled></a-input>
-          </a-form-item>
-        </a-col>
-        <a-col :xl="12">
           <a-form-item label="操作人">
-            <a-input v-decorator="['usePerson']" disabled></a-input>
+            <a-input v-model="nickname" disabled></a-input>
           </a-form-item>
         </a-col>
         <a-col :xl="12">
           <a-form-item label="归还时间">
-            <a-input v-decorator="['useDate']"></a-input>
+            <j-date :trigger-change="true" v-decorator="['useDate',{rules: rules.useDate}]" style="width: 100%;" />
           </a-form-item>
         </a-col>
         <a-col :xl="24">
@@ -77,20 +72,24 @@
 </template>
 
 <script>
+  import JDate from '@/components/jeecg/JDate'
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
+  import { mapGetters } from 'vuex'
   import { filterObj, promiseForm } from '@utils/util'
-  import { assetsRegisterEditForm } from '@/config/pick-fields'
+  import { assetsRecipientsReturnEditForm } from '@/config/pick-fields'
   import { addInfo } from '../api'
 
   export default {
     mixins: [
       FormEditDrawerMixin('assets-recipients-return'),
     ],
+    components: {
+      JDate,
+    },
     data() {
       return {
         // Form
-        type: '',
-        fields: assetsRegisterEditForm,
+        fields: assetsRecipientsReturnEditForm,
         // Rules
         rules: {
           usePerson: [
@@ -100,21 +99,21 @@
             { required: true, message: '请输入归还原因' },
           ],
         },
-        category: [],
-        // Asset modal
-        assetModal: false,
       }
     },
+    computed: {
+      ...mapGetters([
+        'nickname',
+      ]),
+    },
     methods: {
-      openAssetModal() {
-        this.assetModal = true
-      },
       async submit(ev) {
         ev.preventDefault();
         const data = await promiseForm(this.form)
         try {
           filterObj(data)
           data.parkId = this.industrialParkId
+          data.useType = '3'
           const resp = await addInfo(data)
           if (!resp.success) {
             throw new Error(resp.message)

@@ -48,10 +48,10 @@
 </template>
 
 <script>
+  import AssetsRecipientsReturnEditForm from '@/views/assets/components/AssetsRecipientsReturnEditForm'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import MixinList from '@/mixins/List'
   import { list as AssetsListMixin } from './mixins'
-  import AssetsRecipientsReturnEditForm from '@/views/assets/components/AssetsRecipientsReturnEditForm'
   import { url } from './api'
   import './style/list.less'
 
