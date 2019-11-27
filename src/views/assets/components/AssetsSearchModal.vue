@@ -133,7 +133,7 @@
       close() {
         this.$emit('change', false)
       },
-      buildQueryParam() {
+      buildQueryParams() {
         // categoryType
         const newType = this.type === 'consumables' ? '2' : '1'
         if (this.queryParam.categoryType !== newType) {
@@ -144,7 +144,6 @@
         this.queryParam.useStatus = this.useStatus
       },
       init() {
-        this.buildQueryParam()
         this.loadData()
         this.initDictConfig()
       }
