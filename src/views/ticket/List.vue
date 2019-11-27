@@ -212,7 +212,9 @@
           'building-facility-renovation': '12',
           'temporary-occupation-road': '10',
         }
-        this.queryParam.orderType = routeMap[category] || ''
+        if (routeMap[category]) {
+          this.queryParam.orderType = routeMap[category]
+        }
       },
       // List
       handleCustomRow(row) {
