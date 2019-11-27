@@ -245,7 +245,11 @@
       },
     },
     watch: {
-      '$route'() {
+      '$route'(val) {
+        // Reset orderType if route name === 'ticket-service'
+        if (val.name === 'ticket-service') {
+          this.queryParam.orderType = ''
+        }
         this.loadData(1)
       },
     }
