@@ -161,7 +161,7 @@
           {
             title: '提单日期',
             align: 'center',
-            dataIndex: 'createUserName'
+            dataIndex: 'createTime'
           },
           {
             title: '负责人',
