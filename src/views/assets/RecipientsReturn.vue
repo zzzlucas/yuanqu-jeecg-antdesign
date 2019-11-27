@@ -69,7 +69,9 @@
         // Filter query
         queryParam: {
           categoryId: '',
+          categoryType: '1',
           keyword: '',
+          useStatus: '2',
         },
         // Table
         columns: [
@@ -94,17 +96,12 @@
           {
             title: '所属分类',
             align: 'center',
-            dataIndex: 'assetCategory'
+            dataIndex: 'categoryType'
           },
           {
             title: '规格型号',
             align: 'center',
             dataIndex: 'assetModel'
-          },
-          {
-            title: '数量',
-            align: 'center',
-            dataIndex: 'qty'
           },
           {
             title: '单价',
