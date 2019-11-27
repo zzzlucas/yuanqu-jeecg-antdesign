@@ -10,7 +10,7 @@
             </a-form-item>
           </a-col>
           <a-col :xl="6">
-            <a-form-item label="类别">
+            <a-form-item label="类别" v-if="!isShortcutRoute">
               <j-dict-select-tag
                 v-model="queryParam.orderType"
                 :dict="types.order_type" />
@@ -22,7 +22,7 @@
               <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
             </span>
           </a-col>
-          <a-col :xl="4">
+          <a-col :xl="isShortcutRoute ? 10 : 4">
             <a-form-item style="float:right">
               <a-button type="primary" @click="handleAdd">创建工单</a-button>
             </a-form-item>
@@ -115,6 +115,8 @@
     ],
     data() {
       return {
+        // Mixin options
+        deleteKey: 'orderId',
         // Url
         url: url.info,
         // Types
@@ -183,7 +185,6 @@
             scopedSlots: { customRender: 'action' },
           },
         ],
-        deleteKey: 'orderId',
       }
     },
     computed: {
@@ -194,8 +195,25 @@
         }
         return types
       },
+      isShortcutRoute() {
+        return this.$route.name !== 'ticket-service'
+      },
     },
     methods: {
+      // Query params
+      buildQueryParams() {
+        const name = this.$route.name
+        const prefix = 'ticket-'
+        const category = name.substring(prefix.length)
+        const routeMap = {
+          'public-facilities': '7',
+          'construction-company-license': '8',
+          'construction-waste-disposal': '9',
+          'building-facility-renovation': '12',
+          'temporary-occupation-road': '10',
+        }
+        this.queryParam.orderType = routeMap[category] || ''
+      },
       // List
       handleCustomRow(row) {
         return {
@@ -224,6 +242,11 @@
         this.loadData(1)
       },
     },
+    watch: {
+      '$route'() {
+        this.loadData(1)
+      },
+    }
   }
 </script>
 
