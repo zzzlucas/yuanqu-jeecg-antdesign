@@ -15,17 +15,9 @@
       :wrapper-col="gridOptions.formItem.value"
       @submit="submit">
       <a-row>
-        <a-col :xl="12">
-
-        </a-col>
         <a-col :xl="24">
-          <a-form-item label="备注" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
+          <a-form-item label="内容" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
             <a-textarea v-decorator="['remark']" :rows="6" />
-          </a-form-item>
-        </a-col>
-        <a-col :xl="24">
-          <a-form-item label="附件" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
-
           </a-form-item>
         </a-col>
       </a-row>
