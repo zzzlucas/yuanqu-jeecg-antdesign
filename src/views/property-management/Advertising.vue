@@ -23,15 +23,15 @@
                 :dict="types.order_type" />
             </a-form-item>
           </a-col>
-        </a-row>
-        <a-row :gutter="24">
-          <a-col :xl="20">
-            <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
+          <a-col :xl="4">
+            <span style="float: right;overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
               <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
             </span>
           </a-col>
-          <a-col :xl="4">
+        </a-row>
+        <a-row :gutter="24">
+          <a-col :xl="24">
             <a-form-item style="float:right">
               <a-button type="primary" @click="handleAdd">创建工单</a-button>
             </a-form-item>
