@@ -77,12 +77,12 @@
           </a-col>
           <a-col :xl="12">
             <a-form-item label="期限开始时间">
-              <a-input v-decorator="['begDate', {rules: rules.begDate}]"></a-input>
+              <j-date :trigger-change="true" v-decorator="['begDate']" style="width: 100%;" />
             </a-form-item>
           </a-col>
           <a-col :xl="12">
             <a-form-item label="期限结束时间">
-              <a-input v-decorator="['endDate', {rules: rules.endDate}]"></a-input>
+              <j-date :trigger-change="true" v-decorator="['endDate']" style="width: 100%;" />
             </a-form-item>
           </a-col>
           <a-col :xl="24">
@@ -90,13 +90,8 @@
 
             </a-form-item>
           </a-col>
-<!--          <a-col :xl="12"> &lt;!&ndash; TODO: depend on type &ndash;&gt;
-            <a-form-item label="所属园区">
-              <a-input v-decorator="['parkId', {rules: rules.parkId}]"></a-input>
-            </a-form-item>
-          </a-col>-->
         </template>
-        <a-col :xl="24">
+        <a-col :xl="24" v-if="!isCurrentTypeInProject && !isCurrentTypeInProjectPeriod">
           <a-form-item label="主题" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
             <a-input v-decorator="['title', {rules: rules.title}]"></a-input>
           </a-form-item>
@@ -128,6 +123,7 @@
 </template>
 
 <script>
+  import JDate from '@/components/jeecg/JDate'
   import JEditor from '@/components/jeecg/JEditor'
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
   import { filterObj, promiseForm } from '@utils/util'
@@ -141,7 +137,8 @@
       Mixin,
     ],
     components: {
-      JEditor
+      JEditor,
+      JDate,
     },
     data() {
       return {

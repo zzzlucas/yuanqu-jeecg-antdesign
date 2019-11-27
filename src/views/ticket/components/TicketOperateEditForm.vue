@@ -17,7 +17,7 @@
       <a-row>
         <a-col :xl="24">
           <a-form-item label="内容" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
-            <a-textarea v-decorator="['remark']" :rows="6" />
+            <a-textarea v-decorator="['remark', { rules: rules.remark }]" :rows="6" />
           </a-form-item>
         </a-col>
       </a-row>
@@ -58,7 +58,9 @@
       return {
         // Rules
         rules: {
-
+          remark: [
+            { required: true, message: '请填写内容' }
+          ],
         },
       }
     },
