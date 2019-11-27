@@ -120,6 +120,14 @@
       openAssetModal() {
         this.assetModal = true
       },
+      handleSelectAssets(rowKeys, rowSelection) {
+        this.assetSelectKeys = rowKeys
+        this.assetSelectRows = rowSelection
+      },
+      cleanup() {
+        this.assetSelectKeys = []
+        this.assetSelectRows = []
+      },
       async submit(ev) {
         ev.preventDefault();
         const data = await promiseForm(this.form)
@@ -163,14 +171,6 @@
           this.closeDrawer()
           this.$emit('submit')
         }
-      },
-      handleSelectAssets(rowKeys, rowSelection) {
-        this.assetSelectKeys = rowKeys
-        this.assetSelectRows = rowSelection
-      },
-      cleanup() {
-        this.assetSelectKeys = []
-        this.assetSelectRows = []
       },
       changeTitle() {
         this.title = this.type === 'consumables' ? '易耗品资产领用' : '固定资产领用'
