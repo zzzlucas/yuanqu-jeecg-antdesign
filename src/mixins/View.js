@@ -1,7 +1,7 @@
 import { filterObj } from '@/utils/util';
 import store from '@/store'
 import AppBase from './AppBase'
-import { getAction } from '@api/manage'
+import { deleteAction, getAction } from '@api/manage'
 
 /**
  * View(查看/详情) mixin
@@ -100,6 +100,34 @@ export default {
       this.$refs.modalForm.title = "编辑";
       this.$refs.modalForm.disableSubmit = false;
     },
+    /**
+     * 删除
+     * 需要设置url.delete和deleteKey
+     */
+    handleDel(data) {
+      if (!this.url.delete) {
+        this.$message.error('请设置url.delete属性!')
+        return
+      }
+      if (typeof data !== 'object') {
+        data = { id: data }
+      }
+      if (!this.deleteKey) {
+        if (!data.hasOwnProperty('id')) {
+          this.$message.error('请设置deleteKey，删除的主键!')
+          return
+        }
+      }
+      var that = this;
+      deleteAction(that.url.delete, {id: data[this.deleteKey ? this.deleteKey : 'id']}).then((res) => {
+        if (res.success) {
+          that.$message.success(res.message);
+          that.loadData();
+        } else {
+          that.$message.warning(res.message);
+        }
+      });
+    }
   },
 }
 

@@ -40,13 +40,23 @@
           <!-- Action -->
           <div class="ticket-action-container">
             <a-button-group>
-              <a-button @click="handleChangeStatus('1')">受理</a-button>
-              <a-button @click="handleChangeStatus('2')">退回</a-button>
-              <a-button @click="handleChangeStatus('3')">删除</a-button>
+              <a-button @click="handleChangeStatus('1')" v-if="data.status == null || data.status === '2' || data.status === '3'">{{ data.status == null ? '受理' : '重新受理' }}</a-button>
+              <a-button @click="handleChangeStatus('2')" v-if="data.status == null || data.status === '1'">退回</a-button>
+              <a-button @click="handleChangeStatus('3')" v-if="data.status === '1'">完成</a-button>
             </a-button-group>
-            <a-button-group>
-              <a-button type="primary" @click="handleEdit">编辑</a-button>
-            </a-button-group>
+            <a-dropdown>
+              <a class="ant-dropdown-link">更多<a-icon type="down" /></a>
+              <a-menu slot="overlay">
+                <a-menu-item>
+                  <a @click="handleEdit">编辑</a>
+                </a-menu-item>
+                <a-menu-item>
+                  <a-popconfirm title="确定删除吗?" @confirm="() => handleDel(data)">
+                    <a>删除</a>
+                  </a-popconfirm>
+                </a-menu-item>
+              </a-menu>
+            </a-dropdown>
           </div>
           <div class="ticket-status-container">
             状态
@@ -83,20 +93,12 @@
           <a-card
             title="工单处理记录"
             :bordered="false"
-            :loading="loading">
-            <a-button type="primary" slot="extra" icon="plus" shape="circle" @click="handleAddRecord" />
+            :loading="recordLoading">
+            <a-button type="primary" slot="extra" icon="plus" shape="circle" @click="handleAddOperate" />
             <a-timeline>
-              <a-timeline-item>
-                <p class="timeline-heading">2019-10-28 13:24:20 【演示用户】工单进展</p>
-                <p class="timeline-content">时间、用户名、工单进展、备注内容或操作步骤（完成、退回、）</p>
-              </a-timeline-item>
-              <a-timeline-item>
-                <p class="timeline-heading">2019-10-28 13:24:20【演示用户】完成工单</p>
-                <p class="timeline-content">点击设为完成是生成工单处理记录</p>
-              </a-timeline-item>
-              <a-timeline-item>
-                <p class="timeline-heading">2019-10-28 13:30:20【演示用户】受理工单</p>
-                <p class="timeline-content">点击受理工单生成受理工单记录</p>
+              <a-timeline-item v-for="record in records" :key="record.recordId">
+                <p class="timeline-heading">{{ record.createTime }} 【{{ record.createUserName }}】 {{ record.operateName_dictText }}工单</p>
+                <p class="timeline-content" v-if="record.remark">{{ record.remark }}</p>
               </a-timeline-item>
             </a-timeline>
           </a-card>
@@ -105,8 +107,8 @@
           <a-card
             title="工单反馈记录"
             :bordered="false"
-            :loading="loading">
-            <a-button type="primary" slot="extra" icon="plus" shape="circle" @click="handleAddRecord" />
+            :loading="recordLoading">
+            <a-button type="primary" slot="extra" icon="plus" shape="circle" @click="handleAddOperate" />
             <a-timeline>
               <a-timeline-item>
                 <p class="timeline-heading">2019-10-28 13:24:20 【演示用户】工单进展</p>
@@ -125,31 +127,41 @@
     <ticket-edit-form
       ref="modalForm"
       @submit="handleEditSubmit" />
+    <!-- Add/Edit form -->
+    <ticket-operate-edit-form
+      ref="operateModalForm"
+      @submit="handleEditSubmit" />
   </div>
 </template>
 
 <script>
   import TicketEditForm from '@views/ticket/components/TicketEditForm'
+  import TicketOperateEditForm from '@views/ticket/components/TicketOperateEditForm'
   import { filterDictText } from '@/components/dict/JDictSelectUtil'
-  import ViewMixin, { lifeCycle as ViewLifeCycleMixin } from '@/mixins/View'
+  import ViewMixin from '@/mixins/View'
   import Mixin from './mixin'
-  import { url, changeStatusInfo } from './api'
+  import { url, viewInfo, changeStatusInfo, listOperate } from './api'
 
   export default {
     mixins: [
       ViewMixin,
-      ViewLifeCycleMixin,
       Mixin,
     ],
     components: {
       TicketEditForm,
+      TicketOperateEditForm,
     },
     data() {
       return {
+        // Mixin option
+        deleteKey: 'orderId',
         // Url
         url: url.info,
         // Types
         dictesCreateFields: ['order_type', 'order_status'],
+        // Data
+        recordLoading: true,
+        records: [],
       }
     },
     computed: {
@@ -167,9 +179,41 @@
       },
       // Filter
       filterDictText,
+      // Request data
+      async loadData() {
+        this.loadDetail()
+        this.loadRecords()
+      },
+      async loadDetail() {
+        this.loading = true
+        try {
+          const resp = await viewInfo(this.getRouteParams())
+          if (!resp.success) {
+            throw new Error(resp.message)
+          }
+          this.data = resp.result
+        } catch (e) {
+          this.$message.error(e.message)
+        }
+        this.loading = false
+      },
+      async loadRecords() {
+        this.recordLoading = true
+        try {
+          const resp = await listOperate({ orderId: this.getRouteParams().orderId, column: 'createTime', order: 'desc' })
+          if (!resp.success) {
+            throw new Error(resp.message)
+          }
+          this.records = resp.result.records
+        } catch (e) {
+          this.$message.error(e.message)
+        }
+        this.recordLoading = false
+      },
       // Action
-      handleAddRecord() {
-
+      handleAddOperate() {
+        this.$refs.operateModalForm.add();
+        this.$refs.operateModalForm.disableSubmit = false;
       },
       // Change status
       async handleChangeStatus(status) {
@@ -189,6 +233,13 @@
       async handleEditSubmit() {
         this.loadData()
       },
+    },
+    async created() {
+      if (!this.checkRouteConfig()) {
+        return
+      }
+      await this.initDictConfig()
+      this.loadData()
     }
   }
 </script>
@@ -234,9 +285,7 @@
       // Buttons
       .ticket-action-container {
         .ant-btn-group {
-          + .ant-btn-group {
-            margin-left: 10px;
-          }
+          margin-right: 15px;
         }
       }
       // Status
