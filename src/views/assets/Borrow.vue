@@ -146,7 +146,7 @@
           { name: '借用日期', value: 'useDate', },
           { name: '借用人', value: 'usePerson', },
           { name: '备注', value: 'remark', type: 'remark', },
-          { value: { ...AssetsViewAssetsTableMixin, dataSource: [] }, type: 'table', },
+          { value: { ...AssetsViewAssetsTableMixin, }, type: 'table', },
           { name: '附件', type: 'files', value: '' },
         ],
       }

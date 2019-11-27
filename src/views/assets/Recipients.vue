@@ -49,7 +49,8 @@
           :dataSource="dataSource"
           :pagination="ipagination"
           :loading="loading"
-          :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}">
+          :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
+          :customRow="handleCustomRow">
             <!-- Column slot -->
             <span slot="action" slot-scope="text, record" @click.stop>
               <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
@@ -64,19 +65,28 @@
     <assets-recipients-edit-form
       ref="modalForm"
       @submit="handleEditSubmit" />
+    <!-- View -->
+    <assets-view-modal
+      :columns="viewColumns"
+      :data="viewData"
+      v-model="view" />
   </a-card>
 </template>
 
 <script>
+  import AssetsRecipientsEditForm from '@/views/assets/components/AssetsRecipientsEditForm'
+  import AssetsViewModal from '@views/assets/components/AssetsViewModal'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import MixinList from '@/mixins/List'
-  import { list as AssetsListMixin } from './mixins'
-  import AssetsRecipientsEditForm from '@/views/assets/components/AssetsRecipientsEditForm'
+  import { list as AssetsListMixin, viewAssetsTable as AssetsViewAssetsTableMixin } from './mixins'
   import { url } from './api'
   import './style/list.less'
 
   export default {
-    components: { AssetsRecipientsEditForm },
+    components: {
+      AssetsRecipientsEditForm,
+      AssetsViewModal,
+    },
     mixins: [
       JeecgListMixin,
       MixinList,
@@ -132,6 +142,15 @@
             align: 'center',
             scopedSlots: { customRender: 'action' },
           },
+        ],
+        // View
+        viewColumns: [
+          { name: '领用单号', value: 'opertionId', },
+          { name: '领用日期', value: 'useDate', },
+          { name: '领用人', value: 'usePerson', },
+          { name: '备注', value: 'remark', type: 'remark', },
+          { value: { ...AssetsViewAssetsTableMixin, }, type: 'table', },
+          { name: '附件', type: 'files', value: '' },
         ],
       }
     },

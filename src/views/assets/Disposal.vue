@@ -48,7 +48,8 @@
           :dataSource="dataSource"
           :pagination="ipagination"
           :loading="loading"
-          :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}">
+          :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
+          :customRow="handleCustomRow">
         </a-table>
         <!-- table区域-end -->
       </a-layout-content>
@@ -57,20 +58,27 @@
     <assets-disposal-edit-form
       ref="modalForm"
       @submit="handleEditSubmit" />
+    <!-- View -->
+    <assets-view-modal
+      :columns="viewColumns"
+      :data="viewData"
+      v-model="view" />
   </a-card>
 </template>
 
 <script>
   import AssetsDisposalEditForm from '@views/assets/components/AssetsDisposalEditForm'
+  import AssetsViewModal from '@views/assets/components/AssetsViewModal'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import MixinList from '@/mixins/List'
-  import { list as AssetsListMixin } from './mixins'
+  import { list as AssetsListMixin, viewAssetsTable as AssetsViewAssetsTableMixin } from './mixins'
   import { url } from './api'
   import './style/list.less'
 
   export default {
     components: {
       AssetsDisposalEditForm,
+      AssetsViewModal,
     },
     mixins: [
       JeecgListMixin,
@@ -127,6 +135,15 @@
             align: 'center',
             dataIndex: 'remark'
           },
+        ],
+        // View
+        viewColumns: [
+          { name: '处置单号', value: 'opertionId', },
+          { name: '处置日期', value: 'useDate', },
+          { name: '处置原因', value: 'detailType', },
+          { name: '备注', value: 'remark', type: 'remark', },
+          { value: { ...AssetsViewAssetsTableMixin }, type: 'table', },
+          { name: '附件', type: 'files', value: '' },
         ],
       }
     },
