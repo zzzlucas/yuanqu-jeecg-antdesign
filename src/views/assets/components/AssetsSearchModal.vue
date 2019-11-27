@@ -135,7 +135,8 @@
       },
       buildQueryParams() {
         // categoryType
-        const newType = this.type === 'consumables' ? '2' : '1'
+        const typeMap = { consumables: '2', fixedAsset: '1' }
+        const newType = typeMap[this.type] || ''
         if (this.queryParam.categoryType !== newType) {
           this.onClearSelected()
           this.queryParam.categoryType = newType
