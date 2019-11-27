@@ -387,3 +387,17 @@ export const ticketEditForm = [
   'endDate',
   'content',
 ]
+
+export const advertisingEditForm = [
+  'advertName',
+  'projectId',
+  'buildingId',
+  'floorId',
+  'address',
+  'contactPerson',
+  'contactTel',
+  'price',
+  'unit',
+  'remarks',
+  'summary',
+]
