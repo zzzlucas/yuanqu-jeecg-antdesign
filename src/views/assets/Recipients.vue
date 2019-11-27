@@ -24,8 +24,8 @@
             <a-row :gutter="24">
               <a-col :xl="8">
                 <span class="table-page-search-submitButtons">
-                  <a-button type="primary" @click="handleAdd('consumables')">易耗品领用登记</a-button>
-                  <a-button type="primary" @click="handleAdd('fixedAsset')" style="margin-left: 8px">固定资产领用登记</a-button>
+                  <a-button type="primary" @click="handleAdd('2')">易耗品领用登记</a-button>
+                  <a-button type="primary" @click="handleAdd('1')" style="margin-left: 8px">固定资产领用登记</a-button>
                 </span>
               </a-col>
             </a-row>

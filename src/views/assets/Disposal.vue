@@ -110,12 +110,12 @@
           {
             title: '处置资产名称',
             align: 'center',
-            dataIndex: 'useDepartment'
+            dataIndex: 'assertName'
           },
           {
             title: '处置类型',
             align: 'center',
-            dataIndex: 'usePerson'
+            dataIndex: 'detailType'
           },
           {
             title: '处置原因',

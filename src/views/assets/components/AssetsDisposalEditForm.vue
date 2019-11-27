@@ -125,8 +125,6 @@
         assetModal: false,
         assetSelectKeys: [],
         assetSelectRows: [],
-        // Upload
-        uploadPath: '',
       }
     },
     methods: {

@@ -37,9 +37,9 @@
             <div class="assets-list">
               <div class="assets-item" :key="row.assetId" v-for="row in assetSelectRows">
                 <a-tag>{{ row.fixedAssetName }}</a-tag>
+                数量：
                 <a-input-number
                   size="small"
-                  placeholder="数量"
                   v-decorator="['assets.' + row.assetId, { rules: rules.assets, initialValue: 1 }]" />
               </div>
             </div>
@@ -70,7 +70,7 @@
     </a-form>
     <!-- Asset modal -->
     <assets-search-modal
-      type="1"
+      :type="type"
       use-status="1"
       v-model="assetModal"
       @select="handleSelectAssets" />
