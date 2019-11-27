@@ -45,6 +45,7 @@
             <div class="assets-list">
               <div class="assets-item" :key="row.assetId" v-for="row in assetSelectRows">
                 <a-tag>{{ row.fixedAssetName }}</a-tag>
+                数量：
                 <a-input-number
                   size="small"
                   placeholder="数量"
@@ -79,6 +80,7 @@
     </a-form>
     <!-- Asset modal -->
     <assets-search-modal
+      type="fixedAsset"
       v-model="assetModal"
       @select="handleSelectAssets" />
   </a-drawer>
@@ -149,7 +151,7 @@
         // Setup request body
         filterObj(data)
         data.parkId = this.industrialParkId
-        data.useType = '1' // Consuming
+        data.useType = '4' // Disposal
         const assets = data.assets
         delete data.assets
         // Batch request
@@ -170,12 +172,12 @@
         }
         // Stats report
         if (total !== counter) {
-          this.$message.warning(`已成功领用 ${counter} 个资产，失败领用 ${total - counter} 个`, 5)
+          this.$message.warning(`已成功操作 ${counter} 个资产，失败操作 ${total - counter} 个`, 5)
           errMsg.forEach(item => {
             this.$message.error(`资产: ${item.name}，失败原因：${item.message}`, 5)
           })
         } else {
-          this.$message.success('领用成功')
+          this.$message.success('操作成功')
           this.closeDrawer()
           this.$emit('submit')
         }
