@@ -23,7 +23,9 @@
                 :dict="types.order_type" />
             </a-form-item>
           </a-col>
-          <a-col :xl="6">
+        </a-row>
+        <a-row :gutter="24">
+          <a-col :xl="20">
             <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
               <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
@@ -98,7 +100,7 @@
         // Url
         url: url.advertisingPlace,
         // Types
-        dictesCreateFields: ['order_type', 'order_status'],
+        dictesCreateFields: [],
         // Filter query
         queryParam: {
           orderType: '',
@@ -126,27 +128,9 @@
             dataIndex: 'title'
           },
           {
-            title: '工单类别',
-            align: 'center',
-            dataIndex: 'orderType',
-            customRender: t => {
-              return filterDictText(this.types.order_type, t)
-            }
-          },
-          {
             title: '提单客户',
             align: 'center',
             dataIndex: 'custName'
-          },
-          {
-            title: '提单日期',
-            align: 'center',
-            dataIndex: 'createTime'
-          },
-          {
-            title: '负责人',
-            align: 'center',
-            dataIndex: 'principalUser'
           },
           {
             title: '状态',
@@ -169,16 +153,6 @@
 
     },
     methods: {
-      // List
-      handleCustomRow(row) {
-        return {
-          on: {
-            click: () => {
-              this.$router.push({ name: 'ticket-info-@id', params: { id: row.orderId } })
-            }
-          }
-        }
-      },
       // Add/Edit
       async handleEditSubmit() {
         this.loadData(1)
