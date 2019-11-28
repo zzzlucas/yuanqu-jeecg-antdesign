@@ -1,17 +1,18 @@
 <template>
   <div class="meeting-week-view">
-<!--    <full-calendar
+    <full-calendar
       ref="calendar"
       :events="internalEvents"
-      :config="config" />-->
+      :config="config" />
   </div>
 </template>
 
 <script>
-/*  import 'fullcalendar/dist/locale/zh-cn'
+  import 'jquery'
+  import 'fullcalendar/dist/locale/zh-cn'
   import { FullCalendar } from 'vue-full-calendar'
   import 'fullcalendar/dist/fullcalendar.css'
-  import '../api'*/
+  import '../api'
 
   export default {
     props: {
@@ -27,7 +28,7 @@
       }
     },
     components: {
-      // FullCalendar,
+      FullCalendar,
     },
     data() {
       return {
