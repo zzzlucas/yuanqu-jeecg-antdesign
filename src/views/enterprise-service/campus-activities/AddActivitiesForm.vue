@@ -43,9 +43,9 @@
         <a-form-item label="主办单位">
           <a-input v-decorator="['hostUnit',  {rules: [{required: true, message: '请输入主办单位'}]}]" />
         </a-form-item>
-        <!-- <a-form-item label="所属园区 （暂园区ID">
-          <a-input v-decorator="['parkId',  {rules: [{required: true, message: '请输入所属园区'}]}]" />
-        </a-form-item>-->
+        <a-form-item label="图片">
+
+        </a-form-item>
         <a-form-item label="活动介绍">
           <j-editor v-model="editor.context"></j-editor>
         </a-form-item>
