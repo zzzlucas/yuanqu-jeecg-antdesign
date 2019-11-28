@@ -10,16 +10,26 @@
           </a-col>
           <a-col :xl="5">
             <a-form-item label="厂房">
-              <j-dict-select-tag
-                v-model="queryParam.orderType"
-                :dict="types.order_type" />
+              <a-select style="width: 100%;" v-model="queryParam.projectId" @change="fetchBuildings">
+                <a-select-option
+                  :value="item.buildingProjectId"
+                  v-for="item in types.project"
+                  :key="item.buildingProjectId">
+                  {{ item.projectName }}
+                </a-select-option>
+              </a-select>
             </a-form-item>
           </a-col>
           <a-col :xl="5">
             <a-form-item label="楼宇">
-              <j-dict-select-tag
-                v-model="queryParam.orderType"
-                :dict="types.order_type" />
+              <a-select style="width: 100%;" v-model="queryParam.buildingId">
+                <a-select-option
+                  :value="item.buildingId"
+                  v-for="item in types.floor"
+                  :key="item.buildingId">
+                  {{ item.buildingName }}
+                </a-select-option>
+              </a-select>
             </a-form-item>
           </a-col>
           <a-col :xl="5">
@@ -87,6 +97,7 @@
   import JDate from '@/components/jeecg/JDate'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import MixinList from '@/mixins/List'
+  import Mixin from '../mixin'
   import { url } from '../api'
   import '@assets/less/common.less'
 
@@ -94,6 +105,7 @@
     mixins: [
       JeecgListMixin,
       MixinList,
+      Mixin,
     ],
     components: {
       JDate,
@@ -156,6 +168,20 @@
       async handleEditSubmit() {
         this.loadData(1)
       },
+      async fetchProjects() {
+        await this.getProjects(this.queryParam.parkId)
+        this.types.project.unshift({ buildingProjectId: '', projectName: '全部', })
+      },
+      async fetchBuildings() {
+        if (this.queryParam.projectId) {
+          await this.getBuildings(this.queryParam.projectId)
+        }
+        this.types.building.unshift({ buildingId: '', buildingName: '全部'  })
+      },
+    },
+    created() {
+      this.fetchProjects()
+      this.fetchBuildings()
     },
   }
 

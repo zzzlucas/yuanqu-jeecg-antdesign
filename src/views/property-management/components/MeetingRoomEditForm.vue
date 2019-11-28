@@ -32,7 +32,7 @@
         </a-col>
         <a-col :xl="12">
           <a-form-item label="所属厂房">
-            <a-select style="width: 100%;" v-decorator="['projectId', {rules: rules.projectId}]" @change="getBuildings">
+            <a-select style="width: 100%;" v-decorator="['projectId', {rules: rules.projectId}]" @change="getBuildings(form.getFieldValue('projectId'))">
               <a-select-option
                 :value="item.buildingProjectId"
                 v-for="item in types.project"
@@ -44,7 +44,7 @@
         </a-col>
         <a-col :xl="12">
           <a-form-item label="所属楼宇">
-            <a-select style="width: 100%;" v-decorator="['buildingId', {rules: rules.buildingId}]" @change="getFloors">
+            <a-select style="width: 100%;" v-decorator="['buildingId', {rules: rules.buildingId}]" @change="getFloors(form.getFieldValue('buildingId'))">
               <a-select-option
                 :value="item.buildingProjectId"
                 v-for="item in types.building"
@@ -158,6 +158,7 @@
   import JUpload from '@/components/jeecg/JUpload'
   import JMultiSelectTag from '@comp/dict/JMultiSelectTag'
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
+  import Mixin from '../mixin'
   import { filterObj, promiseForm } from '@utils/util'
   import { assetsRegisterEditForm } from '@/config/pick-fields'
   import { addMeetingRoom, editMeetingRoom, listBuilding, listFloor, listProject } from '../api'
@@ -165,6 +166,7 @@
   export default {
     mixins: [
       FormEditDrawerMixin('meeting-room-edit'),
+      Mixin,
     ],
     components: {
       JDate,
@@ -173,12 +175,6 @@
     },
     data() {
       return {
-        // Types
-        types: {
-          project: [],
-          building: [],
-          floor: [],
-        },
         // Form
         fields: assetsRegisterEditForm,
         isCharge: false,
@@ -215,41 +211,6 @@
       }
     },
     methods: {
-      async getProjects() {
-        try {
-          const resp = await listProject({ parkId: this.industrialParkId })
-          if (!resp.success) {
-            throw new Error(resp.message)
-          }
-          this.types.project = resp.result
-        } catch (e) {
-          this.$message.error('无法获取厂房')
-        }
-      },
-      async getBuildings() {
-        await this.$nextTick()
-        try {
-          const resp = await listBuilding({ projectId: this.form.getFieldValue('projectId') })
-          if (!resp.success) {
-            throw new Error(resp.message)
-          }
-          this.types.building = resp.result
-        } catch (e) {
-          this.$message.error('无法获取楼宇')
-        }
-      },
-      async getFloors() {
-        await this.$nextTick()
-        try {
-          const resp = await listFloor({ projectId: this.form.getFieldValue('buildingId') })
-          if (!resp.success) {
-            throw new Error(resp.message)
-          }
-          this.types.floor = resp.result
-        } catch (e) {
-          this.$message.error('无法获取楼层')
-        }
-      },
       async submit(ev) {
         ev.preventDefault();
         const data = await promiseForm(this.form)
@@ -278,7 +239,7 @@
         if (!val) {
           return
         }
-        this.getProjects()
+        this.getProjects(this.industrialParkId)
       }
     }
   }
