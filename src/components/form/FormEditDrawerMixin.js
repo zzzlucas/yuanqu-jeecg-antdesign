@@ -65,10 +65,10 @@ export default function make(name) {
         this.form.setFieldsValue(pick(record, this.fields))
         this.$emit('open', false)
       },
-      async add() {
+      async add(data = {}) {
         this.isEdit = false
         this.show = true
-        this.record = {}
+        this.record = { ...data }
         await this.$nextTick()
         this.form.resetFields()
         this.$emit('open', false)

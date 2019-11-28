@@ -25,7 +25,7 @@ const url = {
     delete: '/park.service/baseMeetingroomInfo/delete',
     deleteBatch: '/park.service/baseMeetingroomInfo/deleteBatch',
   },
-  meeting: {
+  event: {
     list: '/park.service/mgrMeetingroomRequest/list',
     add: '/park.service/mgrMeetingroomRequest/add',
     edit: '/park.service/mgrMeetingroomRequest/edit',
@@ -51,7 +51,11 @@ const editMeetingRoom = params => putAction(url.meetingRoom.edit, qs.stringify(p
 /** 会议室建档-分页列表查询 */
 const listMeetingRoom = params => getAction(url.meetingRoom.list, params)
 /** 会议室预定-全部查询 */
-const listMeeting = params => getAction(url.meeting.list, params)
+const listEvent = params => getAction(url.event.list, params)
+/** 会议室预定-添加 */
+const addEvent = params => postAction(url.event.add, qs.stringify(params))
+/** 会议室预定-编辑 */
+const editEvent = params => putAction(url.event.edit, qs.stringify(params))
 
 export {
   url,
@@ -60,8 +64,10 @@ export {
   listFloor,
   addPlace,
   editPlace,
+  listMeetingRoom,
   addMeetingRoom,
   editMeetingRoom,
-  listMeetingRoom,
-  listMeeting,
+  listEvent,
+  addEvent,
+  editEvent
 }

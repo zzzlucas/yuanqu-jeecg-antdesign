@@ -4,7 +4,7 @@ import 'fullcalendar/dist/locale/zh-cn'
 import { FullCalendar } from 'vue-full-calendar'
 import MixinList from '@/mixins/List'
 import 'fullcalendar/dist/fullcalendar.min.css';
-import { listMeetingRoom, listMeeting } from '../api'
+import { listMeetingRoom, listEvent } from '../api'
 import { filterObj } from '@utils/util'
 
 export default {
@@ -63,7 +63,7 @@ export default {
       try {
         const params = this.queryParam
         filterObj(params)
-        const resp = await listMeeting(params)
+        const resp = await listEvent(params)
         if (!resp.success) {
           throw new Error(resp.message)
         }
