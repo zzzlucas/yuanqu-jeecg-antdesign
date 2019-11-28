@@ -20,21 +20,8 @@
                   <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
                 </span>
               </a-col>
-              <a-col :xl="10">
-                <a-form-item style="float:right">
-                  <a-button type="primary" @click="handleAdd">固定资产借用登记</a-button>
-                </a-form-item>
-              </a-col>
             </a-row>
           </a-form>
-        </div>
-        <!-- table区域-begin -->
-        <div class="table-operator">
-          <a-button style="margin-left: 8px" type="danger" icon="delete" @click="batchDel" v-if="selectedRowKeys.length > 0">批量删除</a-button>
-        </div>
-        <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;">
-          <i class="anticon anticon-info-circle ant-alert-icon"></i> 已选择 <a style="font-weight: 600">{{ selectedRowKeys.length }}</a>项
-          <a style="margin-left: 24px" @click="onClearSelected">清空</a>
         </div>
         <!-- Table -->
         <a-table
@@ -46,24 +33,20 @@
           :dataSource="dataSource"
           :pagination="ipagination"
           :loading="loading"
-          :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
           :customRow="handleCustomRow">
             <!-- Column slot -->
             <span slot="action" slot-scope="text, record" @click.stop>
-              <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
-                <a>删除</a>
-              </a-popconfirm>
+              <a @click.stop="handleEdit(record, ...arguments)">归还</a>
             </span>
         </a-table>
-        <!-- table区域-end -->
       </a-layout-content>
     </a-layout>
     <!-- Add/Edit form -->
-    <assets-borrow-edit-form
+    <assets-recipients-return-edit-form
       ref="modalForm"
       @submit="handleEditSubmit" />
     <!-- View -->
-    <assets-view-modal
+    <assets-view-aside
       :columns="viewColumns"
       :data="viewData"
       v-model="view" />
@@ -71,18 +54,18 @@
 </template>
 
 <script>
-  import AssetsBorrowEditForm from '@views/assets/components/AssetsBorrowEditForm'
-  import AssetsViewModal from '@views/assets/components/AssetsViewModal'
+  import AssetsRecipientsReturnEditForm from '@/views/assets/components/AssetsRecipientsReturnEditForm'
+  import AssetsViewAside from '@views/assets/components/AssetsViewAside'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import MixinList from '@/mixins/List'
-  import { list as AssetsListMixin, viewAssetsTable as AssetsViewAssetsTableMixin } from './mixins'
+  import { list as AssetsListMixin } from './mixins'
   import { url } from './api'
   import './style/list.less'
 
   export default {
     components: {
-      AssetsBorrowEditForm,
-      AssetsViewModal,
+      AssetsRecipientsReturnEditForm,
+      AssetsViewAside,
     },
     mixins: [
       JeecgListMixin,
@@ -95,8 +78,9 @@
         url: url.opertion,
         // Filter query
         queryParam: {
+          categoryId: '',
           keyword: '',
-          useType: '2',
+          useStatus: '3', // Always be fixed asset
         },
         // Table
         columns: [
@@ -109,29 +93,39 @@
             customRender: (t, r, index) => Number(index) + 1
           },
           {
-            title: '借用单号',
-            align: 'center',
-            dataIndex: 'opertionId'
-          },
-          {
-            title: '借用日期',
-            align: 'center',
-            dataIndex: 'useDate'
-          },
-          {
-            title: '借用人',
-            align: 'center',
-            dataIndex: 'usePerson'
-          },
-          {
-            title: '借用资产名称',
+            title: '资产名称',
             align: 'center',
             dataIndex: 'assertName'
           },
           {
-            title: '备注',
+            title: '资产编号',
             align: 'center',
-            dataIndex: 'remark'
+            dataIndex: 'assetNumber'
+          },
+          {
+            title: '所属分类',
+            align: 'center',
+            dataIndex: 'categoryType'
+          },
+          {
+            title: '规格型号',
+            align: 'center',
+            dataIndex: 'assetModel'
+          },
+          {
+            title: '单价',
+            align: 'center',
+            dataIndex: 'stockPrice'
+          },
+          {
+            title: '采购日期',
+            align: 'center',
+            dataIndex: 'purchaseDate'
+          },
+          {
+            title: '使用状态',
+            align: 'center',
+            dataIndex: 'useStatus'
           },
           {
             title: '操作',
@@ -142,11 +136,15 @@
         ],
         // View
         viewColumns: [
-          { name: '借用单号', value: 'opertionId', },
-          { name: '借用日期', value: 'useDate', },
-          { name: '借用人', value: 'usePerson', },
+          { name: '所属分类', value: 'categoryType', },
+          { name: '资产编号', value: 'assetNumber', },
+          { name: '资产名称', value: 'assertName', },
+          { name: '规格型号', value: 'assetModel', },
+          { name: '单价', value: 'stockPrice', },
+          { name: '总价', value: 'stockAmount', },
+          { name: '采购日期', value: 'purchaseDate', },
+          { name: '使用人', value: 'usePerson', },
           { name: '备注', value: 'remark', type: 'remark', },
-          { value: { ...AssetsViewAssetsTableMixin, }, type: 'table', },
           { name: '附件', type: 'files', value: '' },
         ],
       }

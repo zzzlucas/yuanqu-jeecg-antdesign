@@ -7,47 +7,71 @@
  * so i have to write this mixin to make this edit drawer.
  */
 
+import pick from 'lodash/pick'
+import { mapGetters } from 'vuex'
 import './FormEditDrawer.less'
 
 export default function make(name) {
   return {
-    props: {
-      show: {
-        type: Boolean,
-        default: false,
-      },
-      edit: {
-        type: Boolean,
-        default: false,
-      },
-      editData: {
-        type: Object,
-        default: () => {
-          return {}
-        },
-      },
-    },
-    model: {
-      prop: 'show',
-      event: 'close'
-    },
     data() {
       return {
+        // Grid
+        gridOptions: {
+          formItem: {
+            label: { xl: 6 },
+            value: { xl: 18 }
+          },
+          formItemFullRow: {
+            label: { xl: 3 },
+            value: { xl: 21 }
+          },
+        },
+        // Status
+        isEdit: false,
+        show: false,
+        title: '',
+        disableSubmit: false,
         // Form
         formLabel: '',
         form: this.$form.createForm(this, { name }),
+        fields: [], // Please overwrite me
         // Rules
         rules: {},
+        record: {},
       }
     },
     computed: {
       getTitle() {
-        return (this.edit ? '编辑' : '添加') + this.formLabel
+        let action = this.title
+        if (!action) {
+          action = this.isEdit ? '编辑' : '添加'
+        }
+        return action + this.formLabel
       },
+      ...mapGetters([
+        'industrialParkId'
+      ]),
     },
     methods: {
       closeDrawer() {
+        this.show = false
         this.$emit('close', false)
+      },
+      async edit(record) {
+        this.isEdit = true
+        this.show = true
+        this.record = record
+        await this.$nextTick()
+        this.form.setFieldsValue(pick(record, this.fields))
+        this.$emit('open', false)
+      },
+      async add() {
+        this.isEdit = false
+        this.show = true
+        this.record = {}
+        await this.$nextTick()
+        this.form.resetFields()
+        this.$emit('open', false)
       },
     }
   }

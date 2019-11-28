@@ -1,6 +1,7 @@
 import keyBy from 'lodash/keyBy'
 import { isURL } from '@/utils/validate'
 import { axios } from '@utils/request'
+import _ from 'lodash'
 
 export function timeFix() {
   const time = new Date()
@@ -303,19 +304,14 @@ export function uploadFile(request) {
  * @returns {[]}
  */
 export function getFileListData(fileList) {
-  const data = []
-
-  for (const item of fileList) {
-    const { response, name, uid } = item
-    data.push({
-      url: response.old,
-      name,
-      uid,
+  return _.map(fileList, obj => {
+    return {
+      url: obj.response.old,
+      name: obj.name,
+      uid: obj.uid,
       status: 'done'
-    })
-  }
-
-  return data
+    }
+  })
 }
 
 /**
@@ -402,6 +398,30 @@ export function objectReplace(obj, fields) {
 }
 
 /**
+ * 获取 Tree 的路径
+ * @param list
+ * @param key
+ * @param keyName
+ * @param path
+ * @returns {Array}
+ */
+export function getTreeNodeOfKey(list, key, keyName, path = []) {
+  _.map(list, (obj, index) => {
+    if (obj[keyName] === key) {
+      path.push(index)
+      return obj
+    }
+    if (obj.children) {
+      path.push(index)
+      path = getTreeNodeOfKey(obj.children, key, keyName, path)
+    }
+    return obj
+  })
+
+  return path
+}
+
+/**
  * Promisify
  * Converts NodeJS async style functions to native JS promises.
  *
@@ -461,7 +481,7 @@ export function buildTreeRelation(objectMap, parentKey = 'parentId') {
  */
 export function buildTreeNodes(relationMap, key = 'id', name = 'name', parentKey = 'parentId') {
   const resolveNode = function (item) {
-    const node = { key: item[key], title: item[name] }
+    const node = { key: item[key], title: item[name], value: item[key] }
     if (!item.children) {
       return node
     }
@@ -486,9 +506,14 @@ export function buildTreeNodes(relationMap, key = 'id', name = 'name', parentKey
  * @param {String} key Dataset row key
  * @param {String} name Dataset row name
  * @param {String} parentKey Dataset row parent Key
+ * @param {Boolean} includeRoot Is have tree nodes root
  * @return Array tree data
  */
-export function buildTreeData(list, key = 'id', name = 'name', parentKey = 'parentId') {
+export function buildTreeData(list, key = 'id', name = 'name', parentKey = 'parentId', includeRoot = false) {
   const map = keyBy(list, key)
-  return buildTreeNodes(buildTreeRelation(map, parentKey), key, name, parentKey)
+  let nodes = buildTreeNodes(buildTreeRelation(map, parentKey), key, name, parentKey)
+  if (includeRoot) {
+    nodes = [{ title: '全部', key: '', children: nodes }]
+  }
+  return nodes
 }

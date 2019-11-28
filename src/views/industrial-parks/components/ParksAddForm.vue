@@ -184,6 +184,7 @@
             const { content, policy } = this.editor
             form.content = content
             form.policy = policy
+            form.deviceGroupId = form.deviceGroupId.toString()
             if (this.editBool) {
               this.editBool = false
               const { __key, parkId } = this.editData

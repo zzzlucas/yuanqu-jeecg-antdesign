@@ -2,7 +2,7 @@
   <a-card class="assets-list" :bordered="false">
     <a-layout>
       <a-layout-sider theme="light">
-        <assets-category @select="selectCategory" />
+        <assets-category @select="selectCategory" v-if="showCategory" />
       </a-layout-sider>
       <a-layout-content>
         <!-- Filter/Action -->
@@ -11,7 +11,7 @@
             <a-row :gutter="24" type="flex" justify="end">
               <a-col>
                 <a-form-item>
-                  <a-button type="primary" @click="openAddCategory">新增分类</a-button>
+                  <a-button type="primary" @click="handleAdd">新增分类</a-button>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -22,11 +22,12 @@
           ref="table"
           size="middle"
           bordered
+          rowKey="categoryId"
           :columns="columns"
           :dataSource="dataSource"
           :pagination="ipagination"
           :loading="loading">
-            <span slot="action" slot-scope="text, record">
+            <span slot="action" slot-scope="text, record" @click.stop>
               <a @click.stop="handleEdit(record, ...arguments)">编辑</a>
               <a-divider type="vertical" />
               <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
@@ -37,35 +38,33 @@
       </a-layout-content>
     </a-layout>
     <!-- Add/Edit form -->
-    <assets-category-add-form
-      :edit="edit"
-      :edit-data="editForm"
-      v-model="showForm"
+    <assets-category-edit-form
+      ref="modalForm"
       @submit="handleEditSubmit" />
   </a-card>
 </template>
 
 <script>
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-  import { mixinList } from '@/utils/mixin'  // PARKID
-  import Mixin from './mixins'
+  import MixinList from '@/mixins/List'
+  import { list as AssetsListMixin } from './mixins'
   import AssetsCategoryEditForm from './components/AssetsCategoryEditForm'
+  import { url } from './api'
   import './style/list.less'
 
   export default {
     mixins: [
       JeecgListMixin,
-      mixinList,   // PARKID
-      Mixin
+      MixinList,
+      AssetsListMixin,
     ],
     components: {
-      AssetsCategoryAddForm: AssetsCategoryEditForm,
+      AssetsCategoryEditForm,
     },
     data() {
       return {
-        url: {
-          list: '/park.asset/baseAssetCategory/list',
-        },
+        // Url
+        url: url.category,
         // Table
         columns: [
           {
@@ -74,43 +73,34 @@
             key: 'rowIndex',
             width: 60,
             align: 'center',
+            customRender: (t, r, index) => Number(index) + 1
           },
           {
             title: '分类名称',
             align: 'center',
-            dataIndex: 'category_name'
-          },
-          {
-            title: '分类编码',
-            align: 'center',
-            dataIndex: 'category_code'
+            dataIndex: 'categoryName'
           },
           {
             title: '上级分类',
             align: 'center',
-            dataIndex: 'category_parent_name'
+            dataIndex: 'parentName.categoryName'
           },
           {
             title: '操作',
             dataIndex: 'action',
             align: 'center',
             scopedSlots: { customRender: 'action' },
-          }
+          },
         ],
-        // Add/Edit form
-        showForm: false,
-        edit: false,
-        editForm: {},
+        deleteKey: 'categoryId',
       }
     },
-    methods: {
-      openAddCategory() {
-        this.showForm = true
+    watch: {
+      selectCategoryKey(val) {
+/*        this.queryParam.parentId = val
+        this.loadData(1)*/
       },
-      handleEditSubmit() {
-        this.loadData(1)
-      },
-    },
+    }
   }
 </script>
 

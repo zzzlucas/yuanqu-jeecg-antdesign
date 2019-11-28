@@ -20,10 +20,13 @@
                   <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
                 </span>
               </a-col>
-              <a-col :xl="10">
-                <a-form-item style="float:right">
-                  <a-button type="primary" @click="handleAdd">固定资产借用登记</a-button>
-                </a-form-item>
+            </a-row>
+            <a-row :gutter="24">
+              <a-col :xl="8">
+                <span class="table-page-search-submitButtons">
+                  <a-button type="primary" @click="handleAdd('2')">易耗品领用登记</a-button>
+                  <a-button type="primary" @click="handleAdd('1')" style="margin-left: 8px">固定资产领用登记</a-button>
+                </span>
               </a-col>
             </a-row>
           </a-form>
@@ -59,7 +62,7 @@
       </a-layout-content>
     </a-layout>
     <!-- Add/Edit form -->
-    <assets-borrow-edit-form
+    <assets-recipients-edit-form
       ref="modalForm"
       @submit="handleEditSubmit" />
     <!-- View -->
@@ -71,7 +74,7 @@
 </template>
 
 <script>
-  import AssetsBorrowEditForm from '@views/assets/components/AssetsBorrowEditForm'
+  import AssetsRecipientsEditForm from '@/views/assets/components/AssetsRecipientsEditForm'
   import AssetsViewModal from '@views/assets/components/AssetsViewModal'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import MixinList from '@/mixins/List'
@@ -81,7 +84,7 @@
 
   export default {
     components: {
-      AssetsBorrowEditForm,
+      AssetsRecipientsEditForm,
       AssetsViewModal,
     },
     mixins: [
@@ -96,7 +99,7 @@
         // Filter query
         queryParam: {
           keyword: '',
-          useType: '2',
+          useType: '1',
         },
         // Table
         columns: [
@@ -109,22 +112,22 @@
             customRender: (t, r, index) => Number(index) + 1
           },
           {
-            title: '借用单号',
+            title: '领用单号',
             align: 'center',
             dataIndex: 'opertionId'
           },
           {
-            title: '借用日期',
+            title: '领用日期',
             align: 'center',
             dataIndex: 'useDate'
           },
           {
-            title: '借用人',
+            title: '领用人',
             align: 'center',
             dataIndex: 'usePerson'
           },
           {
-            title: '借用资产名称',
+            title: '领用资产名称',
             align: 'center',
             dataIndex: 'assertName'
           },
@@ -142,14 +145,21 @@
         ],
         // View
         viewColumns: [
-          { name: '借用单号', value: 'opertionId', },
-          { name: '借用日期', value: 'useDate', },
-          { name: '借用人', value: 'usePerson', },
+          { name: '领用单号', value: 'opertionId', },
+          { name: '领用日期', value: 'useDate', },
+          { name: '领用人', value: 'usePerson', },
           { name: '备注', value: 'remark', type: 'remark', },
           { value: { ...AssetsViewAssetsTableMixin, }, type: 'table', },
           { name: '附件', type: 'files', value: '' },
         ],
       }
+    },
+    methods: {
+      handleAdd(type) {
+        this.$refs.modalForm.add();
+        this.$refs.modalForm.disableSubmit = false;
+        this.$refs.modalForm.type = type
+      },
     },
     watch: {
       selectCategoryKey(val) {

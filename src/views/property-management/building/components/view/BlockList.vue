@@ -4,7 +4,7 @@
       <header class="block">
         <div class="title" v-text="item.projectName"></div>
         <div class="header-right">
-          <a-button size="small" @click="editBtn('block', item.buildingProjectId, key, item)">编辑</a-button>
+          <a-button size="small" @click="editBtn('block', item.buildingProjectId, item)">编辑</a-button>
           <a-button
             class="delete-btn"
             size="small"
@@ -14,7 +14,7 @@
           </a-button>
         </div>
       </header>
-      <main class="block">
+      <main class="block" @click="onChange(item.buildingProjectId)">
         <div class="image-box">
           <yq-image class="block-image" size="40" :src="getImage(item.addDocFiles)"></yq-image>
         </div>
@@ -41,24 +41,25 @@
     props: {
       list: {
         type: Array,
-        default(){
+        default() {
           return []
         }
       }
     },
     methods: {
-      getImage(list){
+      getImage(json) {
+        const list = JSON.parse(json)
         let url = _.get(list, '[0].url', '')
-        if(url){
-          url = getOneImage(url)
-        }
-        return url
+        return getOneImage(url)
       },
       deleteBtn() {
         this.$emit('delete', ...arguments)
       },
       editBtn() {
         this.$emit('edit', ...arguments)
+      },
+      onChange(id) {
+        this.$emit('change', 'tower', id)
       }
     }
   }
@@ -96,6 +97,7 @@
       main.block {
         border: 1px solid #d9d9d9;
         padding: 8px;
+        cursor: pointer;
 
         .image-box {
           width: 38%;

@@ -343,3 +343,61 @@ export const AddTechProjectForm = [
   'workFlowUseObject',
   'afterChangeBuildArea'
 ]
+export const PickBuildingTowerForm = ['buildingProjectId', 'buildingName', 'estimateArea', 'groundFloor', 'undergroundFloor', 'isVirtual', 'remark']
+export const PickBuildingFloorForm = ['buildingId', 'floorName', 'allarea', 'height', 'bearing', 'isVirtual', 'remark']
+export const PickBuildingRoomForm = ['floorId', 'roomName', 'actualArea', 'isRented', 'isSelfUse', 'isVirtual', 'remark']
+
+export const assetsCategoryEditForm = [
+  'categoryName',
+  'parentId',
+]
+
+export const assetsRegisterEditForm = [
+  'categoryId',
+  'categoryType',
+  'assetNumber',
+  'fixedAssetName',
+  'assetModel',
+  'qty',
+  'stockPrice',
+  'stockAmount',
+  'purchaseDate',
+  'useStatus',
+  'USEDept',
+  'usePerson',
+  'location',
+  'remark',
+]
+
+export const assetsRecipientsReturnEditForm = [
+  'assetNumber',
+  'fixedAssetName',
+  'usePerson',
+]
+
+export const ticketEditForm = [
+  'orderType',
+  'principalUser',
+  'method',
+  'isCharge',
+  'custName',
+  'title',
+  'principalUser',
+  'begDate',
+  'endDate',
+  'content',
+]
+
+export const advertisingEditForm = [
+  'advertName',
+  'projectId',
+  'buildingId',
+  'floorId',
+  'address',
+  'contactPerson',
+  'contactTel',
+  'price',
+  'unit',
+  'remarks',
+  'summary',
+]

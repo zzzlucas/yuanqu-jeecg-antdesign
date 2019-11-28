@@ -1,10 +1,14 @@
 <template>
-  <a-tree
-    showLine
-    defaultExpandAll
-    :tree-data="nodes"
-    :defaultSelectedKeys="defaultSelectedKeys"
-    @select="onSelect" />
+  <div class="assets-category-aside">
+    <a-tree
+      showLine
+      defaultExpandAll
+      :tree-data="data"
+      :defaultSelectedKeys="defaultSelectedKeys"
+      @select="onSelect"
+      v-if="ready" />
+    <a-spin v-if="!ready" size="large" />
+  </div>
 </template>
 
 <script>  
@@ -15,57 +19,17 @@
   export default {
     data() {
       return {
-        nodes: [
-          {
-            key: '0-0',
-            title: '易耗品类',
-            children: [
-              {
-                key: '0-0-0',
-                title: '日常生活办公',
-              },
-              {
-                key: '0-0-1',
-                title: '生活类',
-              },
-              {
-                key: '0-0-2',
-                title: '办公类',
-              },
-            ],
-          },
-          {
-            key: '0-1',
-            title: '固定资产',
-            children: [
-              {
-                key: '0-1-0',
-                title: '运输车辆',
-              },
-              {
-                key: '0-1-1',
-                title: 'IT设备类',
-                children: [
-                  {
-                    key: '0-1-1-0',
-                    title: '笔记本',
-                  },
-                ]
-              },
-            ],
-          }
-        ],
+        ready: false,
+        data: [],
         list: [],
       }
     },
     computed: {
       defaultSelectedKeys() {
-        if (!this.nodes[0]) {
+        if (!this.data[0]) {
           return []
         }
-        const keys = [this.nodes[0].key]
-        this.$emit('select', keys)
-        return keys
+        return [this.data[0].key]
       },
       ...mapGetters([
         'industrialParkId'
@@ -79,12 +43,13 @@
         const res = await treeListCategory({ parkId: this.industrialParkId })
         this.list = res.result
       },
-      async buildNodes() {
-        this.nodes = buildTreeData(this.list, 'categoryId', 'categoryName')
+      async buildTree() {
+        this.data = buildTreeData(this.list, 'categoryId', 'categoryName', 'parentId', true)
+        this.ready = true
       },
       async getList() {
         await this.fetchList()
-        this.buildNodes()
+        this.buildTree()
       },
     },
     created() {

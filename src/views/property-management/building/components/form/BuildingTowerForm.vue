@@ -7,58 +7,51 @@
     :mask-closable="false"
     @close="close"
   >
-    <a-form class="drawer-form building-block-form" layout="horizontal" :form="form">
+    <a-form class="drawer-form building-tower-form" layout="horizontal" :form="form">
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="所属园区">
-        <a-select placeholder="请选择园区" v-decorator="['parkId', {rules: rules.parkId, initialValue: parkId}]">
-          <a-select-option value="1193719771573518336">园区1</a-select-option>
-          <a-select-option value="1193773294512242688">园区2</a-select-option>
-          <a-select-option value="1193775260059566080">园区3</a-select-option>
+        label="归属">
+        <a-select placeholder="请选择归属" v-decorator="['buildingProjectId', {rules: rules.buildingProjectId}]">
+          <a-select-option
+            v-for="(item, key) in blockList"
+            :value="item.value"
+            :key="key">{{ item.label }}
+          </a-select-option>
         </a-select>
       </a-form-item>
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="区块名称">
-        <a-input placeholder="请输入区块名称" v-decorator="['projectName', {}]"/>
+        label="楼宇名称">
+        <a-input placeholder="请输入楼宇名称" v-decorator="['buildingName', {}]"/>
       </a-form-item>
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="区块简称">
-        <a-input placeholder="请输入区块简称" v-decorator="['projectAbbr', {}]"/>
+        label="建筑面积">
+        <a-input placeholder="请输入建筑面积" v-decorator="['estimateArea', {}]" addonAfter="㎡"/>
       </a-form-item>
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="房源类型">
-        <a-input placeholder="请输入房源类型" v-decorator="['rentTypeValue', {}]"/>
+        label="地上层数">
+        <a-input placeholder="请输入地上层数" v-decorator="['groundFloor', {}]"/>
       </a-form-item>
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="业主">
-        <a-input placeholder="请输入业主" v-decorator="['ownerName', {}]"/>
+        label="地下层数">
+        <a-input placeholder="请输入地下层数" v-decorator="['undergroundFloor', {}]"/>
       </a-form-item>
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="物业公司">
-        <a-input placeholder="请输入物业公司" v-decorator="['propertyCompany', {}]"/>
-      </a-form-item>
-      <a-form-item
-        :labelCol="labelCol"
-        :wrapperCol="wrapperCol"
-        label="总建筑面积">
-        <a-input placeholder="请输入总建筑面积" v-decorator="['buildingArea', {}]" addonAfter="㎡"/>
-      </a-form-item>
-      <a-form-item
-        :labelCol="labelCol"
-        :wrapperCol="wrapperCol"
-        label="总计费面积">
-        <a-input placeholder="请输入总计费面积" v-decorator="['rentArea', {}]" addonAfter="㎡"/>
+        label="是否虚拟">
+        <a-switch
+          checkedChildren="是"
+          unCheckedChildren="否"
+          v-decorator="['isVirtual', {initialValue: false, valuePropName: 'checked'}]"/>
       </a-form-item>
       <a-form-item
         :labelCol="labelCol"
@@ -96,22 +89,22 @@
 </template>
 
 <script>
-  import { httpAction } from '@/api/manage'
+  import { getAction, httpAction } from '@/api/manage'
   import pick from 'lodash.pick'
   import _ from 'lodash'
   import { getFileListData, getOneImage, promiseForm, uploadFile } from '@utils/util'
   import qs from 'qs'
-  import { PickBuildingBlockForm } from '@/config/pick-fields'
-  import { block as rules } from '../../js/rules'
+  import { PickBuildingTowerForm } from '@/config/pick-fields'
+  import { tower as rules } from '../../js/rules'
   import { mapState } from 'vuex'
 
   export default {
-    name: 'BuildingBlockForm',
+    name: 'BuildingTowerForm',
     data() {
       return {
         rules,
         uploadFile,
-        title: '区块',
+        title: '楼宇',
         visible: false,
         model: {},
         labelCol: {
@@ -120,34 +113,58 @@
         wrapperCol: {
           span: 20
         },
-        form: this.$form.createForm(this, { name: 'buildingBlock' }),
+        form: this.$form.createForm(this, { name: 'buildingTower' }),
         url: {
-          add: '/park.architecture/baseArchitectureProject/add',
-          edit: '/park.architecture/baseArchitectureProject/edit'
+          add: '/park.architecture/baseArchitectureBuilding/add',
+          edit: '/park.architecture/baseArchitectureBuilding/edit',
+          block: '/park.architecture/baseArchitectureProject/queryByParkId'
         },
-        fileList: []
+        fileList: [],
+        blockList: []
       }
     },
     methods: {
-      init() {
-        this.fileList = []
+      async init() {
+        const res = await getAction(this.url.block, { parkId: this.parkId })
+
+        if (res.success && res.code === 200) {
+          this.blockList = _.map(res.result, obj => {
+            return {
+              label: obj.projectAbbr,
+              value: JSON.stringify({
+                parkId: obj.parkId,
+                buildingProjectId: obj.buildingProjectId
+              })
+            }
+          })
+        } else {
+          await this.$message.error(res.message)
+          this.close()
+        }
       },
-      add() {
-        this.init()
-        this.title = '新建区块'
+      async add() {
+        await this.init()
+        this.title = '新建楼宇'
         this.form.resetFields()
         this.visible = true
       },
-      edit(record) {
-        this.init()
-        this.title = '编辑区块'
+      async edit(record) {
+        await this.init()
+        this.title = '编辑楼宇'
         this.form.resetFields()
+
+        record.buildingProjectId = JSON.stringify({
+          parkId: record.parkId,
+          buildingProjectId: record.buildingProjectId
+        })
+        record.isVirtual = record.isVirtual === 'true'
+
         this.model = Object.assign({}, record)
 
         this.visible = true
 
         this.$nextTick(() => {
-          this.form.setFieldsValue(pick(this.model, PickBuildingBlockForm))
+          this.form.setFieldsValue(pick(this.model, PickBuildingTowerForm))
 
           let images = JSON.parse(record.addDocFiles)
           images = _.map(images, obj => {
@@ -173,13 +190,19 @@
           let httpUrl = ''
           let method = ''
 
+          const data = JSON.parse(form.buildingProjectId)
+          form.buildingProjectId = data.buildingProjectId
+          form.parkId = data.parkId
+          form.allFloor = parseInt(form.groundFloor) + parseInt(form.undergroundFloor)
           form.addDocFiles = JSON.stringify(getFileListData(this.fileList))
 
-          if (!this.model.buildingProjectId) {
+          const pid = form.buildingProjectId
+
+          if (!this.model.buildingId) {
             httpUrl = this.url.add
             method = 'post'
           } else {
-            form.buildingProjectId = this.model.buildingProjectId
+            form.buildingId = this.model.buildingId
             httpUrl = this.url.edit
             method = 'put'
           }
@@ -190,14 +213,14 @@
             this.confirmLoading = false
             if (res.success) {
               this.$message.success(res.message)
-              this.$emit('ok', 'block')
+              this.$emit('ok', 'tower', pid)
               this.close()
             } else {
               this.$message.warning(res.message)
             }
           })
         }).catch(err => {
-          console.log('区块新增：', err)
+          console.log('新建楼宇：', err)
         })
       },
       handleCancel() {

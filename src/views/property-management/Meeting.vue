@@ -1,0 +1,43 @@
+<template>
+  <a-card class="meeting-tab" :bordered="false">
+    <a-tab v-model="tab">
+      <a-tab-pane tab="会议室列表" key="roomList">
+        <meeting-list />
+      </a-tab-pane>
+      <a-tab-pane tab="周视图" key="weekView">
+        <meeting-week-view :config="calendar" />
+      </a-tab-pane>
+      <a-tab-pane tab="月视图" key="monthView">
+      </a-tab-pane>
+    </a-tab>
+  </a-card>
+</template>
+
+<script>
+  import MeetingList from './components/MeetingList'
+  import MeetingWeekView from './components/MeetingWeekView'
+
+  export default {
+    components: {
+      MeetingList,
+      MeetingWeekView,
+    },
+    data() {
+      return {
+        // Tab
+        tab: 0,
+        // Fc
+        calendar: {
+          config: {
+            locale: 'zh-cn',
+          },
+        }
+      }
+    }
+  }
+
+</script>
+
+<style lang="less">
+
+</style>

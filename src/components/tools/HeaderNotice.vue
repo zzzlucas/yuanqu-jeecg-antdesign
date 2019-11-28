@@ -185,8 +185,19 @@
       initWebSocket: function () {
         // WebSocket与普通的请求所用协议有所不同，ws等同于http，wss等同于https
         var userId = store.getters.userInfo.id;
-        var url = window._CONFIG['domianURL'].replace("https://","wss://").replace("http://","ws://")+"/websocket/"+userId;
-        //console.log(url);
+        var regexRes = window._CONFIG['domianURL'].match(/(https?):\/\//)
+        var proto = 'ws://'
+        if (!regexRes) {
+          if (location.protocol === 'https:') {
+            proto = 'wss://'
+          }
+          proto += location.host
+        } else {
+          if (regexRes[0] === 'https') {
+            proto = 'wss://'
+          }
+        }
+        var url = proto + (window._CONFIG['domianURL'].replace("https://","").replace("http://","")) + "/websocket/"+userId;
         this.websock = new WebSocket(url);
         this.websock.onopen = this.websocketonopen;
         this.websock.onerror = this.websocketonerror;

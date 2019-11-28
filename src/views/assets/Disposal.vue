@@ -21,9 +21,11 @@
                 </span>
               </a-col>
               <a-col :xl="10">
-                <a-form-item style="float:right">
-                  <a-button type="primary" @click="handleAdd">固定资产借用登记</a-button>
-                </a-form-item>
+                <span style="float: right">
+                  <a-form-item >
+                    <a-button type="primary" @click="handleAdd">处置登记</a-button>
+                  </a-form-item>
+                </span>
               </a-col>
             </a-row>
           </a-form>
@@ -48,18 +50,12 @@
           :loading="loading"
           :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
           :customRow="handleCustomRow">
-            <!-- Column slot -->
-            <span slot="action" slot-scope="text, record" @click.stop>
-              <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
-                <a>删除</a>
-              </a-popconfirm>
-            </span>
         </a-table>
         <!-- table区域-end -->
       </a-layout-content>
     </a-layout>
     <!-- Add/Edit form -->
-    <assets-borrow-edit-form
+    <assets-disposal-edit-form
       ref="modalForm"
       @submit="handleEditSubmit" />
     <!-- View -->
@@ -71,7 +67,7 @@
 </template>
 
 <script>
-  import AssetsBorrowEditForm from '@views/assets/components/AssetsBorrowEditForm'
+  import AssetsDisposalEditForm from '@views/assets/components/AssetsDisposalEditForm'
   import AssetsViewModal from '@views/assets/components/AssetsViewModal'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import MixinList from '@/mixins/List'
@@ -81,7 +77,7 @@
 
   export default {
     components: {
-      AssetsBorrowEditForm,
+      AssetsDisposalEditForm,
       AssetsViewModal,
     },
     mixins: [
@@ -95,8 +91,9 @@
         url: url.opertion,
         // Filter query
         queryParam: {
+          categoryId: '',
           keyword: '',
-          useType: '2',
+          useType: '4',
         },
         // Table
         columns: [
@@ -109,44 +106,43 @@
             customRender: (t, r, index) => Number(index) + 1
           },
           {
-            title: '借用单号',
+            title: '处置单号',
             align: 'center',
             dataIndex: 'opertionId'
           },
           {
-            title: '借用日期',
+            title: '处置日期',
             align: 'center',
             dataIndex: 'useDate'
           },
           {
-            title: '借用人',
-            align: 'center',
-            dataIndex: 'usePerson'
-          },
-          {
-            title: '借用资产名称',
+            title: '处置资产名称',
             align: 'center',
             dataIndex: 'assertName'
+          },
+          {
+            title: '处置类型',
+            align: 'center',
+            dataIndex: 'detailType'
+          },
+          {
+            title: '处置原因',
+            align: 'center',
+            dataIndex: 'reason'
           },
           {
             title: '备注',
             align: 'center',
             dataIndex: 'remark'
           },
-          {
-            title: '操作',
-            dataIndex: 'action',
-            align: 'center',
-            scopedSlots: { customRender: 'action' },
-          },
         ],
         // View
         viewColumns: [
-          { name: '借用单号', value: 'opertionId', },
-          { name: '借用日期', value: 'useDate', },
-          { name: '借用人', value: 'usePerson', },
+          { name: '处置单号', value: 'opertionId', },
+          { name: '处置日期', value: 'useDate', },
+          { name: '处置原因', value: 'detailType', },
           { name: '备注', value: 'remark', type: 'remark', },
-          { value: { ...AssetsViewAssetsTableMixin, }, type: 'table', },
+          { value: { ...AssetsViewAssetsTableMixin }, type: 'table', },
           { name: '附件', type: 'files', value: '' },
         ],
       }

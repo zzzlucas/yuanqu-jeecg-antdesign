@@ -47,10 +47,15 @@ export const JeecgListMixin = {
       /* 高级查询条件生效状态 */
       superQueryFlag:false,
       /* 高级查询条件 */
-      superQueryParams:""
+      superQueryParams:"",
+      // 禁止created()执行this.loadData()和this.initDictConfig()
+      noInitOnCreated: false,
     }
   },
   created() {
+    if (this.noInitOnCreated) {
+      return
+    }
     this.loadData();
     //初始化字典配置 在自己页面定义
     this.initDictConfig();
@@ -92,14 +97,18 @@ export const JeecgListMixin = {
       }
       this.loadData()
     },
+    //获取查询条件
     getQueryParams() {
-      //获取查询条件
-      let sqp = {}
-      if(this.superQueryParams){
+      // If does have buildQueryParam method then call it first
+      if (typeof this.buildQueryParams === 'function') {
+        this.buildQueryParams()
+      }
+      // Super query
+      const sqp = {}
+      if (this.superQueryParams){
         sqp['superQueryParams']=encodeURI(this.superQueryParams)
       }
-      // param.status = status
-      var param = Object.assign(sqp, this.queryParam, this.isorter ,this.filters);
+      const param = Object.assign(sqp, this.queryParam, this.isorter ,this.filters);
       param.field = this.getQueryField();
       param.pageNo = this.ipagination.current;
       param.pageSize = this.ipagination.pageSize;
