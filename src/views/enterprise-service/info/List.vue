@@ -125,6 +125,7 @@ import AddInfoForm from './AddInfoForm'
 import { getAction, putAction } from '@/api/manage'
 import qs from 'qs'
 import Dom7 from 'dom7'
+import moment from 'moment'
 import { mixinList } from '@/utils/mixin'
 import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
 
@@ -156,7 +157,10 @@ export default {
           title: '发布时间',
           align: 'center',
           dataIndex: 'publishTime',
-          width: 180
+          width: 180,
+          customRender: text => {
+            return moment(text).format('YYYY-MM-DD HH:mm')
+          }
         },
         {
           title: '类别',

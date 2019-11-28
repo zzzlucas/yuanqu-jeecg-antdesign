@@ -11,13 +11,15 @@
           ></a-range-picker>-->
           <a-date-picker
             showTime
+            placeholder
             style="width:50%"
-            format="YYYY-MM-DD HH:mm:ss"
+            format="YYYY-MM-DD HH:mm"
             v-decorator="['begDate',  {rules: [{required: true, message: '请输入活动开始时间'}]}]"
           />
           <a-date-picker
             showTime
-            format="YYYY-MM-DD HH:mm:ss"
+            placeholder
+            format="YYYY-MM-DD HH:mm"
             style="width:50%"
             v-decorator="['endDate',  {rules: [{required: true, message: '请输入活动结束时间'}]}]"
           />
@@ -25,26 +27,32 @@
         <a-form-item label="活动地点">
           <a-input v-decorator="['address',  {rules: [{required: true, message: '请输入活动地点'}]}]" />
         </a-form-item>
-        <a-form-item label="主办单位">
-          <a-input v-decorator="['hostUnit',  {rules: [{required: true, message: '请输入主办单位'}]}]" />
-        </a-form-item>
-        <a-form-item label="所属园区 （暂园区ID">
-          <a-input v-decorator="['parkId',  {rules: [{required: true, message: '请输入所属园区'}]}]" />
+        <a-form-item label="发布时间">
+          <a-date-picker
+            placeholder
+            format="YYYY-MM-DD"
+            style="width:100%"
+            v-decorator="['publishDate',  {rules: [{required: true, message: '请输入发布时间'}]}]"
+          />
         </a-form-item>
         <a-form-item label="活动限额">
           <a-input
             v-decorator="['applyMembersMax',  {rules: [{required: true, message: '请输入活动限额'}]}]"
           />
         </a-form-item>
-
+        <a-form-item label="主办单位">
+          <a-input v-decorator="['hostUnit',  {rules: [{required: true, message: '请输入主办单位'}]}]" />
+        </a-form-item>
+        <!-- <a-form-item label="所属园区 （暂园区ID">
+          <a-input v-decorator="['parkId',  {rules: [{required: true, message: '请输入所属园区'}]}]" />
+        </a-form-item>-->
         <a-form-item label="活动介绍">
-          <!-- <a-input v-decorator="['context', {rules: [{required: true, message: '请输入活动介绍'}]}]" /> -->
           <j-editor v-model="editor.context"></j-editor>
         </a-form-item>
       </a-form>
 
       <a-button type="primary" @click="handleOk">发布</a-button>
-      <a-button @click="handleCancel">取消</a-button>
+      <a-button @click="handleOOKK">暂存</a-button>
     </a-card>
   </a-drawer>
 </template>
@@ -57,6 +65,9 @@ import moment from 'moment'
 import qs from 'qs'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import { initDictOptions } from '@comp/dict/JDictSelectUtil'
+import { mapGetters } from 'vuex'
+import { getAction } from '../../../api/manage'
+
 export default {
   name: '',
   components: { JEditor },
@@ -102,7 +113,8 @@ export default {
   computed: {
     title() {
       return '活动' + (this.editBool ? '编辑' : '发布')
-    }
+    },
+    ...mapGetters(['industrialParkId'])
   },
   created() {
     initDictOptions('tracker').then(res => {
@@ -112,6 +124,47 @@ export default {
     })
   },
   methods: {
+    handleOOKK() {
+      const that = this
+      this.form.validateFieldsAndScroll((err, values) => {
+        if (!err) {
+          that.confirmLoading = true
+          const { context } = this.editor
+          let httpurl = ''
+          let method = ''
+          if (!this.model.activityId) {
+            httpurl += this.url.add
+            method = 'post'
+          } else {
+            httpurl += this.url.edit
+            method = 'put'
+          }
+          let formData = Object.assign(this.model, values)
+          formData.begDate = formData.begDate ? formData.begDate.format('YYYY-MM-DD HH:mm:ss') : null
+          formData.endDate = formData.endDate ? formData.endDate.format('YYYY-MM-DD HH:mm:ss') : null
+          formData.publishDate = formData.publishDate ? formData.publishDate.format('YYYY-MM-DD') : null
+          formData.context = context
+          //暂存发布状态
+          formData.status = '0'
+          formData.parkId = this.industrialParkId
+          formData = qs.stringify(formData)
+          // console.log(formData)
+          httpAction(httpurl, formData, method)
+            .then(res => {
+              if (res.success) {
+                that.$message.success(res.message)
+                that.$emit('reload')
+              } else {
+                that.$message.warning(res.message)
+              }
+            })
+            .finally(() => {
+              that.confirmLoading = false
+              that.handleCancel()
+            })
+        }
+      })
+    },
     handleOk() {
       const that = this
       this.form.validateFieldsAndScroll((err, values) => {
@@ -130,14 +183,24 @@ export default {
           let formData = Object.assign(this.model, values)
           formData.begDate = formData.begDate ? formData.begDate.format('YYYY-MM-DD HH:mm:ss') : null
           formData.endDate = formData.endDate ? formData.endDate.format('YYYY-MM-DD HH:mm:ss') : null
+          formData.publishDate = formData.publishDate ? formData.publishDate.format('YYYY-MM-DD') : null
+
+          //把这个填入的时间，和今天作比较，如果在未来，就要提示确认，以免将未来定时发布的，误操作直接发布了
+          let Today = moment().format('YYYY-MM-DD')
+          if (formData.publishDate > Today) {
+            return that.$message.warning('填入的发布日期不是今日，请再次确认是否立即发布!')
+          }
+
           formData.context = context
+          //直接发布状态
+          formData.status = '1'
+          formData.parkId = this.industrialParkId
           formData = qs.stringify(formData)
           // console.log(formData)
           httpAction(httpurl, formData, method)
             .then(res => {
               if (res.success) {
                 that.$message.success(res.message)
-                // that.visible = false
                 that.$emit('reload')
               } else {
                 that.$message.warning(res.message)
@@ -149,29 +212,69 @@ export default {
             })
         }
       })
-      // this.form.resetFields()
     },
     detail(record) {
-      // this.record = record
-      // console.log('record');
-      // console.log(record);
+      this.editBool = true
       this.form.resetFields()
-      this.model = Object.assign({}, record)
-      this.visible = true
-      this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.model, 'custId', 'customerName', 'servicer'))
+      let rreeccoorrdd = {}
+      getAction('/park.service/mgrActivityInfo/queryById', { activityId: this.$route.params.id }).then(res => {
+        if (res.success) {
+          rreeccoorrdd = res.result
+          this.model = Object.assign({}, rreeccoorrdd)
+          this.visible = true
+          this.$nextTick(() => {
+            this.form.setFieldsValue(
+              pick(this.model, 'title', 'begDate', 'address','endDate', 'publishDate', 'applyMembersMax', 'hostUnit', 'context')
+            )
+            this.editor = {
+              context: rreeccoorrdd.context
+            }
+            this.form.setFieldsValue({
+              begDate: this.model.begDate ? moment(this.model.begDate) : null
+            })
+            this.form.setFieldsValue({
+              endDate: this.model.endDate ? moment(this.model.endDate) : null
+            })
+            this.form.setFieldsValue({
+              publishDate: this.model.publishDate ? moment(this.model.publishDate) : null
+            })
+          })
+        } else {
+          this.$message.error(res.message)
+        }
       })
     },
     Add() {
       this.visible = true
+      this.editBool = false
+      let record = {}
+      record.publishDate = moment()
+      this.model = Object.assign({}, record)
+      this.$nextTick(() => {
+        this.form.setFieldsValue(pick(this.model, 'publishDate'))
+      })
     },
     handleCancel() {
       this.visible = false
+      this.editor = {}
+      // this.editor.context = ''
     }
   }
 }
 </script>
 
+<style lang="less">
+.ant-calendar-time-picker-panel {
+  .ant-calendar-time-picker-select:last-child {
+    display: none !important;
+  }
+}
+.ant-calendar-time-picker-column-3 {
+  .ant-calendar-time-picker-select {
+    width: 50% !important;
+  }
+}
+</style>
 <style lang="less">
 .announcementCustomModal {
   .ant-modal-header {

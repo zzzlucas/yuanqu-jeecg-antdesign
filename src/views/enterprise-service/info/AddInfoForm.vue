@@ -20,7 +20,7 @@
             showTime
             placeholder
             style="width:100%"
-            format="YYYY-MM-DD HH:mm:ss"
+            format="YYYY-MM-DD HH:mm"
             v-decorator="['publishTime',  {rules: [{required: true, message: '请输入发布时间'}]}]"
           />
         </a-form-item>
@@ -216,6 +216,18 @@ export default {
 }
 </script>
 
+<style lang="less">
+.ant-calendar-time-picker-panel {
+  .ant-calendar-time-picker-select:last-child {
+    display: none !important;
+  }
+}
+.ant-calendar-time-picker-column-3 {
+  .ant-calendar-time-picker-select {
+    width: 50% !important;
+  }
+}
+</style>
 <style lang="less">
 .announcementCustomModal {
   .ant-modal-header {
