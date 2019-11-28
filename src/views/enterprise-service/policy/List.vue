@@ -18,20 +18,14 @@
                 icon="reload"
                 style="margin-left: 8px"
               >重置</a-button>
+              <a-button
+                style="margin-left: 8px"
+                type="danger"
+                icon="delete"
+                @click="batchDel"
+                v-if="selectedRowKeys.length > 0"
+              >批量删除</a-button>
             </span>
-          </a-col>
-          <a-col :md="4" :sm="8">
-            <a-dropdown v-if="selectedRowKeys.length > 0">
-              <a-menu slot="overlay">
-                <a-menu-item key="1" @click="batchDel">
-                  <a-icon type="delete" />删除
-                </a-menu-item>
-              </a-menu>
-              <a-button style="margin-left: 8px">
-                批量操作
-                <a-icon type="down" />
-              </a-button>
-            </a-dropdown>
           </a-col>
           <a-col :md="8" :sm="8" style="float:right;">
             <a-button style="float:right;margin-left: 8px" type="primary" @click="AddAInfoForm">发布政策</a-button>
@@ -40,7 +34,8 @@
         <a-row :gutter="24">
           <a-col :md="16" :sm="8">
             <a-form-item label="政策类别">
-              <a-button-group>
+              <!-- 11-26 18:30 test fail-->
+              <!-- <a-button-group>
                 <a-button
                   v-for="(item, key) in dict.talentPolicy"
                   :key="key"
@@ -48,14 +43,13 @@
                   value="item.value"
                   @click="btnClick(key, item.value)"
                 >{{ item.text || item.label }}</a-button>
-              </a-button-group>
-              <!-- <a-checkbox-group v-decorator="['typeGroups']"> -->
+              </a-button-group>-->
+
               <a-checkbox-group @change="searchQuery" v-model="queryParam.typeGroups">
-                <!-- <a-checkbox value>不限</a-checkbox> -->
                 <a-checkbox
                   v-for="(item, key) in dict.talentPolicy"
                   :key="key"
-                  value="item.value"
+                  :value="item.value"
                 >{{ item.text || item.label }}</a-checkbox>
               </a-checkbox-group>
             </a-form-item>
@@ -64,8 +58,10 @@
         <a-row :gutter="24">
           <a-col :md="16" :sm="8">
             <a-form-item label="发布部门">
+              <!-- 在不限按钮按下时，状态Flag为true,加载时判断状态为true，就会自动清空对应参数 -->
+              <a-button @click="searchQueryNoParma">不限</a-button>
               <a-checkbox-group @change="searchQuery" v-model="queryParam.deptGroups">
-                <!-- <a-checkbox value>不限</a-checkbox> -->
+                <a-checkbox value>不限</a-checkbox>
                 <a-checkbox
                   v-for="(item, key) in dict.publishingDepartment"
                   :key="key"
@@ -121,7 +117,10 @@
 
           <a v-if="true" @click.stop="EditInfoForm(record, ...arguments)">编辑</a>
           <a-divider type="vertical" />
-          <a v-if="true" @click.stop="EditInfoForm(record, ...arguments)">删除</a>
+          <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.policyId)">
+            <a>删除</a>
+          </a-popconfirm>
+          <!-- <a v-if="true" @click.stop="handleDelete(record.policyId)">删除</a> -->
         </span>
       </a-table>
     </div>
@@ -136,7 +135,7 @@ import { mapGetters } from 'vuex'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import Config from '@/defaultSettings'
 import AddAInfoForm from './AddAInfoForm'
-import { getAction, putAction } from '@/api/manage'
+import { getAction, putAction, deleteAction } from '@/api/manage'
 import qs from 'qs'
 import Dom7 from 'dom7'
 import moment from 'moment'
@@ -151,7 +150,7 @@ export default {
     return {
       description: '',
       dict: {},
-      btn:[],
+      btn: [],
       columns: [
         {
           title: '标题',
@@ -164,7 +163,7 @@ export default {
           dataIndex: 'publishTime',
           width: 180,
           customRender: text => {
-          return moment(text).format('YYYY-MM-DD HH:mm')
+            return moment(text).format('YYYY-MM-DD HH:mm')
           }
         },
         {
@@ -189,29 +188,34 @@ export default {
         }
       ],
       url: {
-        list: '/park.service/mgrPolicyInfo/list'
+        list: '/park.service/mgrPolicyInfo/list',
+        delete: '/park.service/mgrPolicyInfo/delete',
+        batchDel: '/park.service/mgrPolicyInfo/deleteBatch',
+        deleteBatch: '/park.service/mgrPolicyInfo/deleteBatch'
       },
+      deleteKey: 'policyId',
       queryParam: {
         // typeGroups: '',
         // deptGroups: ''
       },
       temprow: '',
-      rightShow: false
+      rightShow: false,
+      searchQueryNoParmaFlag: false
     }
   },
   computed: { ...mapGetters(['industrialParkId']) },
   created() {},
   methods: {
     moment,
-    btnClick(key, value){
-      const btn = _.clone(this.btn)
-      if(_.get(btn, `[${key}]`)){
-        _.unset(btn)
-        this.btn = btn
-      } else {
-        _.set(btn, `[${key}]`, value)
-      }
-    },
+    // btnClick(key, value){
+    //   const btn = _.clone(this.btn)
+    //   if(_.get(btn, `[${key}]`)){
+    //     _.unset(btn)
+    //     this.btn = btn
+    //   } else {
+    //     _.set(btn, `[${key}]`, value)
+    //   }
+    // },
     initConfig() {
       initDictOptions('policy_type').then(res => {
         if (res.code === 0 && res.success) {
@@ -224,13 +228,51 @@ export default {
         }
       })
     },
+    // batchDel() {
+    //   console.log(this.selectedRowKeys)
+    //   let policyIdS = []
+    //   //查处了序号，大约是数组里的序号，根据这个去找数组对应项里的policyid嘛
+    //   for (const item of this.selectedRowKeys) {
+    //     policyIdS.push(this.dataSource[item].policyId)
+    //   }
+    //   policyIdS = policyIdS.toString()
+    //   let parma = { ids: policyIdS }
+    //   deleteAction(this.url.batchDel, parma).then(res => {
+    //     if (res.success) {
+    //       this.$message.success(res.message)
+    //       this.loadData()
+    //     } else {
+    //       this.$message.warning(res.message)
+    //     }
+    //   })
+    // },
+    handleDelete(record) {
+      deleteAction(this.url.delete, { id: record }).then(res => {
+        if (res.success) {
+          this.$message.success(res.message)
+          this.loadData()
+        } else {
+          this.$message.warning(res.message)
+        }
+      })
+    },
     loadData() {
       // if (arg === 1) {
       //   this.ipagination.current = 1
       // }
+      console.log(this.searchQueryNoParmaFlag)
+      if (this.searchQueryNoParmaFlag) {
+        this.queryParam.deptGroups = []
+      }
       var params = this.getQueryParams()
       console.log('params')
       console.log(params)
+      if (params.deptGroups) {
+        params.deptGroups = params.deptGroups.toString()
+      }
+      if (params.typeGroups) {
+        params.typeGroups = params.typeGroups.toString()
+      }
       this.loading = true
       this.initConfig()
       getAction(this.url.list, params).then(res => {
@@ -238,6 +280,10 @@ export default {
           this.dataSource = res.result.records
           this.ipagination.total = res.result.total
         } else {
+          //筛选条件下无内容的情况，清空表格
+          if (res.result == null) {
+            this.dataSource = null
+          }
           this.$message.warning(res.message)
         }
         this.loading = false
@@ -282,6 +328,10 @@ export default {
           this.$message.error(res.message)
         }
       })
+    },
+    searchQueryNoParma() {
+      this.searchQueryNoParmaFlag = !this.searchQueryNoParmaFlag
+      this.loadData(1)
     },
     searchReset() {
       this.queryParam = { parkId: this.industrialParkId }

@@ -18,21 +18,16 @@
                 icon="reload"
                 style="margin-left: 8px"
               >重置</a-button>
+              <a-button
+                style="margin-left: 8px"
+                type="danger"
+                icon="delete"
+                @click="batchDel"
+                v-if="selectedRowKeys.length > 0"
+              >批量删除</a-button>
             </span>
           </a-col>
-          <a-col :md="4" :sm="8">
-            <a-dropdown v-if="selectedRowKeys.length > 0">
-              <a-menu slot="overlay">
-                <a-menu-item key="1" @click="batchDel">
-                  <a-icon type="delete" />删除
-                </a-menu-item>
-              </a-menu>
-              <a-button style="margin-left: 8px">
-                批量操作
-                <a-icon type="down" />
-              </a-button>
-            </a-dropdown>
-          </a-col>
+
           <a-col :md="8" :sm="8" style="float:right;">
             <a-button style="float:right;margin-left: 8px" type="primary" @click="AddInfoForm">发布资讯</a-button>
           </a-col>
@@ -111,7 +106,10 @@
 
           <a v-if="true" @click.stop="EditInfoForm(record, ...arguments)">编辑</a>
           <a-divider type="vertical" />
-          <a v-if="true" @click.stop="EditInfoForm(record, ...arguments)">删除</a>
+          <!-- <a v-if="true" @click.stop="EditInfoForm(record, ...arguments)">删除</a> -->
+          <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
+            <a>删除</a>
+          </a-popconfirm>
         </span>
       </a-table>
     </div>
@@ -194,8 +192,11 @@ export default {
         }
       ],
       url: {
-        list: '/park.service/mgrNewsInfo/list'
+        list: '/park.service/mgrNewsInfo/list',
+        delete: '/park.service/mgrNewsInfo/delete',
+        deleteBatch: '/park.service/mgrNewsInfo/deleteBatch'
       },
+      deleteKey: 'newId',
       queryParam: {
         type: '4'
       },

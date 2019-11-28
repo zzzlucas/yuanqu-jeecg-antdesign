@@ -6,7 +6,7 @@
           <a-input v-decorator="['titile',  {rules: [{required: true, message: '请输入标题'}]}]" />
         </a-form-item>
         <a-form-item label="政策类别">
-          <a-checkbox-group v-decorator="['typeGroups']">
+          <a-checkbox-group v-decorator="['typeGroups',  {rules: [{required: true, message: '请选择政策类别'}]}]">
             <a-checkbox
               v-for="(item, key) in dict.talentPolicy"
               :key="key"
@@ -15,7 +15,7 @@
           </a-checkbox-group>
         </a-form-item>
         <a-form-item label="发布部门">
-          <a-checkbox-group v-decorator="['deptGroups']">
+          <a-checkbox-group v-decorator="['deptGroups',  {rules: [{required: true, message: '请选择发布部门'}]}]">
             <a-checkbox
               v-for="(item, key) in dict.publishingDepartment"
               :key="key"
@@ -24,12 +24,12 @@
           </a-checkbox-group>
         </a-form-item>
         <a-form-item label="发布时间">
-          <a-time-picker  format="HH:mm" size="large" />
+          <!-- <a-time-picker  format="HH:mm" size="large" /> -->
           <a-date-picker
             :showTime="{disabledSeconds: disabledSeconds}"
             placeholder
             style="width:100%"
-            format="YYYY-MM-DD HH:mm:ss"
+            format="YYYY-MM-DD HH:mm"
             v-decorator="['publishTime',  {rules: [{required: true, message: '请输入发布时间'}]}]"
           />
         </a-form-item>
@@ -106,9 +106,9 @@ export default {
     this.initConfig()
   },
   methods: {
-    disabledSeconds(h, m){
+    disabledSeconds(h, m) {
       console.log(h, m)
-      return []
+      // return []
     },
     initConfig() {
       initDictOptions('policy_type').then(res => {
@@ -149,7 +149,8 @@ export default {
           httpAction(httpurl, formData, method)
             .then(res => {
               if (res.success) {
-                that.$message.success(res.message)
+                that.$message.success('暂存成功！')
+                // that.$message.success(res.message)
                 that.$emit('reload')
               } else {
                 that.$message.warning(res.message)
@@ -179,6 +180,11 @@ export default {
           }
           let formData = Object.assign(this.model, values)
           formData.publishTime = formData.publishTime ? formData.publishTime.format('YYYY-MM-DD HH:mm:ss') : null
+          //把这个填入的时间，和当前时间作比较，如果在当前时间的一小时之后，就要提示确认，以免将未来定时发布的，误操作直接发布了
+          let OneHourLater = moment().add(1,'hours').format('YYYY-MM-DD HH:mm:ss')
+          if(formData.publishTime>OneHourLater){
+            return that.$message.warning('填入的发布时间与当前时间不符，请再次确认是否立即发布!')
+          }
           formData.context = context
           formData.isPublic = '1'
           formData.parkId = this.industrialParkId
@@ -267,6 +273,18 @@ export default {
   }
   .daily-article {
     border-bottom: 0;
+  }
+}
+</style>
+<style lang="less">
+.ant-calendar-time-picker-panel {
+  .ant-calendar-time-picker-select:last-child {
+    display: none !important;
+  }
+}
+.ant-calendar-time-picker-column-3 {
+  .ant-calendar-time-picker-select {
+    width: 50% !important;
   }
 }
 </style>

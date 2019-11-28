@@ -295,7 +295,7 @@ export default {
                 resolve()
               } else {
                 reject(new Error(res.message))
-                this.$message.error(res.message)
+                that.$message.error(res.message)
               }
             })
           }).catch(() => console.log('Oops errors!'))
