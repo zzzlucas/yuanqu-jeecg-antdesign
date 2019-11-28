@@ -1,4 +1,5 @@
 const path = require('path')
+const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 
 function resolve(dir) {
   return path.join(__dirname, dir)
@@ -38,6 +39,9 @@ module.exports = {
       .set('@layout', resolve('src/layout'))
       .set('@static', resolve('src/static'))
       .set('@utils', resolve('src/utils'))
+    config
+      .plugin('MomentLocales')
+      .use(MomentLocalesPlugin, [{ localesToKeep: ['zh-cn']}])
   },
 
   css: {
