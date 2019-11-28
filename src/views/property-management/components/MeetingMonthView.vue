@@ -9,8 +9,6 @@
 
 <script>
   import Mixin from '../mixin/calendar'
-  import 'fullcalendar-scheduler';
-  import 'fullcalendar-scheduler/dist/scheduler.min.css';
 
   export default {
     mixins: [
@@ -19,15 +17,13 @@
     data() {
       return {
         config: {
-          schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
           locale: 'zh-cn',
           header: {
             left: '',
             center: 'title',
-            right: 'today prev,next'
+            right:  'today prev,next'
           },
-          defaultView: 'timelineWeek',
-          resourceLabelText: "会议室",
+          defaultView: 'month',
         }
       }
     },

@@ -158,7 +158,7 @@
   import JUpload from '@/components/jeecg/JUpload'
   import JMultiSelectTag from '@comp/dict/JMultiSelectTag'
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
-  import Mixin from '../mixin'
+  import Mixin from '../mixin/list'
   import { filterObj, promiseForm } from '@utils/util'
   import { assetsRegisterEditForm } from '@/config/pick-fields'
   import { addMeetingRoom, editMeetingRoom, listBuilding, listFloor, listProject } from '../api'

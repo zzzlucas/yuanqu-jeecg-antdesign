@@ -8,6 +8,7 @@
         <meeting-week-view />
       </a-tab-pane>
       <a-tab-pane tab="月视图" key="monthView">
+        <meeting-month-view />
       </a-tab-pane>
     </a-tabs>
   </a-card>
@@ -16,11 +17,13 @@
 <script>
   import MeetingList from './components/MeetingList'
   import MeetingWeekView from './components/MeetingWeekView'
+  import MeetingMonthView from './components/MeetingMonthView'
 
   export default {
     components: {
       MeetingList,
       MeetingWeekView,
+      MeetingMonthView,
     },
     data() {
       return {

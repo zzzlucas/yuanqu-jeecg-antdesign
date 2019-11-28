@@ -97,7 +97,7 @@
   import JDate from '@/components/jeecg/JDate'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import MixinList from '@/mixins/List'
-  import Mixin from '../mixin'
+  import Mixin from '../mixin/list'
   import { url } from '../api'
   import '@assets/less/common.less'
 

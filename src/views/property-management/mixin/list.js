@@ -1,4 +1,4 @@
-import { listBuilding, listFloor, listProject } from './api'
+import { listBuilding, listFloor, listProject } from '../api'
 
 export default {
   data() {
