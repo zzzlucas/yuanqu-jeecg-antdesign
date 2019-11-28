@@ -1,6 +1,5 @@
 <template>
-  <a-card class="advertising-list" :bordered="false">
-    <!-- Filter/Action -->
+  <div class="meeting-list">
     <div class="table-page-search-wrapper">
       <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
@@ -69,37 +68,24 @@
       </span>
     </a-table>
     <!-- table区域-end -->
-    <!-- Add/Edit form -->
-    <advertising-edit-form
-      ref="modalForm"
-      @submit="handleEditSubmit" />
-  </a-card>
+  </div>
 </template>
 
 <script>
-  import AdvertisingEditForm from './components/AdvertisingEditForm'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import MixinList from '@/mixins/List'
-  import { filterDictText } from '@/components/dict/JDictSelectUtil'
-  import { url } from './api'
+  import { url } from '../api'
   import '@assets/less/common.less'
 
   export default {
-    components: {
-      AdvertisingEditForm,
-    },
     mixins: [
       JeecgListMixin,
       MixinList,
     ],
     data() {
       return {
-        // Mixin options
-        deleteKey: 'orderId',
         // Url
         url: url.advertisingPlace,
-        // Types
-        dictesCreateFields: [],
         // Filter query
         queryParam: {
           orderType: '',
@@ -135,9 +121,9 @@
             title: '状态',
             align: 'center',
             dataIndex: 'status',
-            customRender: t => {
+            /*customRender: t => {
               return filterDictText(this.types.order_status, t)
-            }
+            }*/
           },
           {
             title: '操作',
@@ -148,9 +134,6 @@
         ],
       }
     },
-    computed: {
-
-    },
     methods: {
       // Add/Edit
       async handleEditSubmit() {
@@ -158,10 +141,11 @@
       },
     },
   }
+
 </script>
 
 <style lang="less">
-  .advertising-list {
+  .meeting-list {
     .ant-table-row {
       cursor: pointer;
     }
