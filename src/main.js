@@ -15,13 +15,9 @@ import '@/utils/filter' // base filter
 import parkSetupPromise from '@/park'
 import Print from 'vue-print-nb-jeecg'
 /*import '@babel/polyfill'*/
-import VueApexCharts from 'vue-apexcharts'
 
 import preview from 'vue-photo-preview'
 import 'vue-photo-preview/dist/skin.css'
-import "@jeecg/antd-onine"
-import '@jeecg/antd-onine/dist/OnlineForm.css'
-
 
 import {
   ACCESS_TOKEN,
@@ -43,6 +39,12 @@ import hasPermission from '@/utils/hasPermission'
 import vueBus from '@/utils/vueBus';
 import JeecgComponents from '@/components/jeecg/index'
 
+// Possible remove this?
+if (process.env.NODE_ENV !== 'production') {
+  require('@jeecg/antd-onine/dist/OnlineForm.umd.min')
+  require('@jeecg/antd-onine/dist/OnlineForm.css')
+}
+
 Vue.config.productionTip = false
 Vue.use(Storage, config.storageOptions)
 Vue.use(Antd)
@@ -51,8 +53,6 @@ Vue.use(Viser)
 Vue.use(hasPermission)
 Vue.use(JDictSelectTag)
 Vue.use(Print)
-Vue.use(VueApexCharts)
-Vue.component('apexchart', VueApexCharts)
 Vue.use(preview)
 Vue.use(vueBus);
 Vue.use(JeecgComponents);
