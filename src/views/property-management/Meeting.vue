@@ -1,6 +1,6 @@
 <template>
   <a-card class="meeting-tab" :bordered="false">
-    <a-tab v-model="tab">
+    <a-tabs v-model="tab">
       <a-tab-pane tab="会议室列表" key="roomList">
         <meeting-list />
       </a-tab-pane>
@@ -9,7 +9,7 @@
       </a-tab-pane>
       <a-tab-pane tab="月视图" key="monthView">
       </a-tab-pane>
-    </a-tab>
+    </a-tabs>
   </a-card>
 </template>
 
@@ -25,7 +25,7 @@
     data() {
       return {
         // Tab
-        tab: 0,
+        tab: 'roomList',
         // Fc
         calendar: {
           config: {

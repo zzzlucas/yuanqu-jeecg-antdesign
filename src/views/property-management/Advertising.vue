@@ -33,7 +33,7 @@
         <a-row :gutter="24">
           <a-col :xl="24">
             <a-form-item style="float:right">
-              <a-button type="primary" @click="handleAdd">创建工单</a-button>
+              <a-button type="primary" @click="handleAdd">新建</a-button>
             </a-form-item>
           </a-col>
         </a-row>

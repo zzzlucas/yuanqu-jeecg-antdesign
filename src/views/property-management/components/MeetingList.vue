@@ -5,34 +5,41 @@
         <a-row :gutter="24">
           <a-col :xl="8">
             <a-form-item label="关键字">
-              <a-input placeholder="广告位名称、联系人、联系电话" v-model="queryParam.keyword"></a-input>
+              <a-input placeholder="资源名称、订单号、预订人、手机号" v-model="queryParam.keyword"></a-input>
             </a-form-item>
           </a-col>
-          <a-col :xl="6">
+          <a-col :xl="5">
             <a-form-item label="厂房">
               <j-dict-select-tag
                 v-model="queryParam.orderType"
                 :dict="types.order_type" />
             </a-form-item>
           </a-col>
-          <a-col :xl="6">
+          <a-col :xl="5">
             <a-form-item label="楼宇">
               <j-dict-select-tag
                 v-model="queryParam.orderType"
                 :dict="types.order_type" />
             </a-form-item>
           </a-col>
+          <a-col :xl="5">
+            <a-form-item label="人数限制">
+              <j-dict-select-tag
+                v-model="queryParam.orderType"
+                :dict="types.order_type" />
+            </a-form-item>
+          </a-col>
+        </a-row>
+        <a-row :gutter="24">
           <a-col :xl="4">
-            <span style="float: right;overflow: hidden;" class="table-page-search-submitButtons">
+            <span class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
               <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
             </span>
           </a-col>
-        </a-row>
-        <a-row :gutter="24">
-          <a-col :xl="24">
+          <a-col :xl="20">
             <a-form-item style="float:right">
-              <a-button type="primary" @click="handleAdd">创建工单</a-button>
+              <a-button type="primary" @click="handleAdd">新建</a-button>
             </a-form-item>
           </a-col>
         </a-row>
@@ -68,10 +75,16 @@
       </span>
     </a-table>
     <!-- table区域-end -->
+    <!-- Add/Edit form -->
+    <meeting-room-edit-form
+      ref="modalForm"
+      @submit="handleEditSubmit" />
   </div>
 </template>
 
 <script>
+  import MeetingRoomEditForm from '@views/property-management/components/MeetingRoomEditForm'
+  import JDate from '@/components/jeecg/JDate'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import MixinList from '@/mixins/List'
   import { url } from '../api'
@@ -82,10 +95,14 @@
       JeecgListMixin,
       MixinList,
     ],
+    components: {
+      JDate,
+      MeetingRoomEditForm,
+    },
     data() {
       return {
         // Url
-        url: url.advertisingPlace,
+        url: url.meetingRoom,
         // Filter query
         queryParam: {
           orderType: '',
@@ -103,17 +120,17 @@
             customRender: (t, r, index) => Number(index) + 1
           },
           {
-            title: '工单编号',
+            title: '订单编号',
             align: 'center',
             dataIndex: 'orderId'
           },
           {
-            title: '工单主题',
+            title: '资源名称',
             align: 'center',
             dataIndex: 'title'
           },
           {
-            title: '提单客户',
+            title: '预定时间',
             align: 'center',
             dataIndex: 'custName'
           },
