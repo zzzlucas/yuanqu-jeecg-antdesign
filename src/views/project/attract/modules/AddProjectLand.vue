@@ -273,11 +273,8 @@
                   <a-input addonAfter="m²" placeholder v-decorator="['rentBuildArea']" />
                 </a-form-item>
               </a-col>
-              <!-- 按要求，应该使用数据字典 -->
               <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                 <a-form-item label="所属行业" required>
-                  <!-- <JDictSelectTag v-decorator="['industrySectorValue', {initialValue: '1'}]" dictCode="INDUSTRY_SECTOR_VALUE"></JDictSelectTag> -->
-                  <!-- {initialValue: dict.industrySectorValueExt[0].value} -->
                   <a-select v-decorator="['industrySectorValue']">
                     <a-select-option
                       v-for="(item, key) in dict.industrySectorValueExt"

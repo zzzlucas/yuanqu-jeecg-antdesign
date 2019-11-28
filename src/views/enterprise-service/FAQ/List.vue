@@ -18,20 +18,14 @@
                 icon="reload"
                 style="margin-left: 8px"
               >重置</a-button>
+              <a-button
+                style="margin-left: 8px"
+                type="danger"
+                icon="delete"
+                @click="batchDel"
+                v-if="selectedRowKeys.length > 0"
+              >批量删除</a-button>
             </span>
-          </a-col>
-          <a-col :md="4" :sm="8">
-            <a-dropdown v-if="selectedRowKeys.length > 0">
-              <a-menu slot="overlay">
-                <a-menu-item key="1" @click="batchDel">
-                  <a-icon type="delete" />删除
-                </a-menu-item>
-              </a-menu>
-              <a-button style="margin-left: 8px">
-                批量操作
-                <a-icon type="down" />
-              </a-button>
-            </a-dropdown>
           </a-col>
           <a-col :md="8" :sm="8" style="float:right;">
             <a-button style="float:right;margin-left: 8px" type="primary" @click="AddQForm">添加问题</a-button>
@@ -54,7 +48,7 @@
         rowKey="id"
         :columns="columns"
         :dataSource="dataSource"
-        :pagination="false"
+        :pagination="ipagination"
         :loading="loading"
         @change="handleTableChange"
         :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
@@ -63,7 +57,10 @@
         <span slot="action" slot-scope="text, record">
           <a v-if="true" @click.stop="EditQForm(record, ...arguments)">编辑</a>
           <a-divider type="vertical" />
-          <a v-if="true" @click.stop="EditQForm(record, ...arguments)">删除</a>
+          <!-- <a v-if="true" @click.stop="EditQForm(record, ...arguments)">删除</a> -->
+          <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
+            <a>删除</a>
+          </a-popconfirm>
         </span>
       </a-table>
     </div>
@@ -100,22 +97,22 @@ export default {
         registrationTypeExt: [{ value: '' }]
       },
       columns: [
-        // {
-        //   title: '序号',
-        //   dataIndex: '',
-        //   key: 'rowIndex',
-        //   width: 60,
-        //   align: 'center',
-        //   customRender: function(t, r, index) {
-        //     return parseInt(index) + 1
-        //   }
-        // },
         {
           title: '编号',
+          dataIndex: '',
+          key: 'rowIndex',
+          width: 100,
           align: 'center',
-          dataIndex: 'newId',
-          width: 200
+          customRender: function(t, r, index) {
+            return parseInt(index) + 1
+          }
         },
+        // {
+        //   title: '编号',
+        //   align: 'center',
+        //   dataIndex: 'newId',
+        //   width: 200
+        // },
         {
           title: '问题描述',
           align: 'center',
@@ -136,8 +133,11 @@ export default {
       ],
       //资讯type是写在queryParam中的，这次尝试写死在地址里，更方便
       url: {
-        list: '/park.service/mgrNewsInfo/list?type=1'
+        list: '/park.service/mgrNewsInfo/list?type=1',
+        delete: '/park.service/mgrNewsInfo/delete',
+        deleteBatch: '/park.service/mgrNewsInfo/deleteBatch'
       },
+      deleteKey: 'newId',
       temprow: '',
       rightShow: false
     }

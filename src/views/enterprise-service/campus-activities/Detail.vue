@@ -5,15 +5,15 @@
         <a-tab-pane tab="活动概况" key="1">
           <a-spin :spinning="confirmLoading">
             <detail-list :col="1">
-              <detail-list-item term="开始时间">{{ info.fillUnit }}</detail-list-item>
+              <detail-list-item term="开始时间">{{ info.begDate | formatDate }}</detail-list-item>
               <detail-list :col="1"></detail-list>
-              <detail-list-item term="结束时间">{{ info.creditCode }}</detail-list-item>
+              <detail-list-item term="结束时间">{{ info.endDate | formatDate }}</detail-list-item>
               <detail-list :col="1"></detail-list>
-              <detail-list-item term="活动地点">{{ info.unitAddress }}</detail-list-item>
+              <detail-list-item term="活动地点">{{ info.address }}</detail-list-item>
               <detail-list :col="1"></detail-list>
-              <detail-list-item term="主办单位">{{ info.setUpYear }}</detail-list-item>
+              <detail-list-item term="主办单位">{{ info.hostUnit }}</detail-list-item>
               <detail-list :col="1"></detail-list>
-              <detail-list-item term="报名情况">{{ info.registerMoney }}万元</detail-list-item>
+              <detail-list-item term="报名情况">{{ info.num }}</detail-list-item>
             </detail-list>
           </a-spin>
         </a-tab-pane>
@@ -27,27 +27,28 @@
             bordered
             rowKey="id"
             :columns="columns"
-            :dataSource="dataSourceA"
-            :pagination="ipagination"
+            :dataSource="dataSource"
+            :pagination="false"
             :loading="loading"
             @change="handleTableChange"
           >
             <!-- :customRow="customRow" -->
             <span slot="action" slot-scope="text, record">
-              <a @click="twoShowOne(record, ...arguments)">编辑</a>
-              <a-divider type="vertical" />
-              <a @click="showCard(record, ...arguments)">查看</a>
-              <a-divider type="vertical" />
-              <a @click="deleteeee(record)">删除</a>
+              <a v-if="record.auditStatus == 0" @click.stop="showConfirm(record)">审核</a>
+              <span v-if="record.auditStatus == 1">审核通过</span>
+              <span v-if="record.auditStatus == 2">审核不通过</span>
             </span>
           </a-table>
         </a-tab-pane>
 
         <a-tab-pane tab="活动介绍" key="4">
-          <p>暂无介绍</p>
+          <p v-html="info.context"></p>
         </a-tab-pane>
+        <a-button slot="tabBarExtraContent" type="primary" @click="AddActivitiesForm">编辑活动</a-button>
       </a-tabs>
     </a-card>
+    <!-- 表单 -->
+    <add-activities-form ref="AddActivitiesForm" @reload="loadData"></add-activities-form>
   </page-layout>
 </template>
 
@@ -63,14 +64,17 @@ import qs from 'querystring'
 import Dom7 from 'dom7'
 import moment from 'moment'
 import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
+import AddActivitiesForm from './AddActivitiesForm'
 
 export default {
-  name: 'Detail',
+  name: '',
+  mixins: [JeecgListMixin],
   components: {
     PageLayout,
     ABadge,
     DetailList,
-    DetailListItem
+    DetailListItem,
+    AddActivitiesForm
   },
   data() {
     return {
@@ -78,7 +82,7 @@ export default {
       confirmLoading: false,
       info: {},
       dict: {},
-      dataSourceA: [],
+      dataSource: [],
       columns: [
         {
           title: '序号',
@@ -93,59 +97,47 @@ export default {
         {
           title: '报名人',
           align: 'center',
-          dataIndex: 'trackDate'
+          dataIndex: 'personName'
         },
         {
           title: '报名时间',
           align: 'center',
-          dataIndex: 'tracker'
+          dataIndex: 'signupDate'
         },
         {
           title: '参加人数',
           align: 'center',
-          dataIndex: 'content'
+          dataIndex: 'num'
         },
         {
           title: '手机号码',
           align: 'center',
-          dataIndex: 'trackMethod'
+          dataIndex: 'telephone'
         },
         {
           title: '联系邮箱',
           align: 'center',
-          dataIndex: 'trackMethod'
+          dataIndex: 'email'
         },
         {
           title: '审核状态',
           align: 'center',
-          dataIndex: 'trackMethod',
-          customRender: text => {
-            return filterDictText(this.dict.trackMethodDictOptions, text)
-          }
+          scopedSlots: { customRender: 'action' },
+          dataIndex: 'auditStatus'
+          // customRender: text => {
+          //   return filterDictText(this.dict.trackMethodDictOptions, text)
+          // }
         }
-        // {
-        //   title: '操作',
-        //   dataIndex: 'action',
-        //   align: 'center',
-        //   scopedSlots: { customRender: 'action' }
-        // }
       ],
       url: {
-        list: '/park.project/mgrProjectLand/queryById'
+        list: '/park.service/mgrActivitySignup/queryById'
       }
     }
   },
 
   created() {
-    // console.log('aaa')
-    // if (typeof this.$route.params.id !== 'string') {
-    //   this.$router.back()
-    //   this.$message.warning('ID不正确')
-    //   return false
-    // }
     this.confirmLoading = true
-    // console.log(this.$route.params.id);
-    getAction('/park.service/mgrActivityInfo/showDetail', { activityId: this.$route.params.id }).then(res => {
+    getAction('/park.service/mgrActivityInfo/queryById', { activityId: this.$route.params.id }).then(res => {
       if (res.code === 200) {
         this.info = res.result
         this.confirmLoading = false
@@ -155,27 +147,74 @@ export default {
         this.$message.error(res.message)
       }
     })
-
-    initDictOptions('mgr-attr-addpl-companyRegisterType').then(res => {
-      if (res.code === 0 && res.success) {
-        this.dict.companyRegisterTypeExt = res.result
-      }
-    })
-    initDictOptions('industry_sector_value').then(res => {
-      if (res.code === 0 && res.success) {
-        this.dict.industrySectorValueExt = res.result
-      }
-    })
   },
   mounted() {},
   methods: {
+    loadData(arg) {
+      if (arg === 1) {
+        this.ipagination.current = 1
+      }
+      // var params = this.getQueryParams()
+      this.loading = true
+      getAction(this.url.list, { activityId: this.$route.params.id }).then(res => {
+        if (res.success) {
+          this.dataSource = res.result
+        }
+        if (res.code === 510) {
+          this.$message.warning(res.message)
+        }
+        this.loading = false
+      })
+    },
     moment,
-    filterDictText
+    filterDictText,
+    AddActivitiesForm() {
+      this.$refs.AddActivitiesForm.detail()
+    },
+    showConfirm(row, e) {
+      const that = this
+      this.$confirm({
+        okText: '通过',
+        cancelText: '拒绝',
+        title: '审核报名信息',
+        content: '确认通过此条报名信息吗？',
+        onOk() {
+          return new Promise((resolve, reject) => {
+            let params = { id: row.id, auditStatus: '1' }
+            params = qs.stringify(params)
+            putAction('/park.service/mgrActivitySignup/changeStatus', params).then(res => {
+              if (res.code === 200) {
+                that.loadData()
+                resolve()
+              } else {
+                reject()
+                that.$message.error(res.message)
+              }
+            })
+          }).catch(() => console.log('Oops errors!'))
+        },
+        onCancel() {
+          return new Promise((resolve, reject) => {
+            let params = { id: row.id, auditStatus: '2' }
+            params = qs.stringify(params)
+            putAction('/park.service/mgrActivitySignup/changeStatus', params).then(res => {
+              if (res.code === 200) {
+                that.loadData()
+                resolve()
+              } else {
+                reject()
+                that.$message.error(res.message)
+              }
+            })
+          }).catch(() => console.log('Oops errors!'))
+        }
+      })
+    }
   },
   filters: {
     formatDate: function(time) {
       if (!time) return ''
-      time = time ? moment(time).format('YYYY-MM-DD') : null
+      time = time ? moment(time).format('YYYY年MM月DD日 HH:mm') : null
       return time
     }
   },

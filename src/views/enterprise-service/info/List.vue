@@ -18,21 +18,16 @@
                 icon="reload"
                 style="margin-left: 8px"
               >重置</a-button>
+              <a-button
+                style="margin-left: 8px"
+                type="danger"
+                icon="delete"
+                @click="batchDel"
+                v-if="selectedRowKeys.length > 0"
+              >批量删除</a-button>
             </span>
           </a-col>
-          <a-col :md="4" :sm="8">
-            <a-dropdown v-if="selectedRowKeys.length > 0">
-              <a-menu slot="overlay">
-                <a-menu-item key="1" @click="batchDel">
-                  <a-icon type="delete" />删除
-                </a-menu-item>
-              </a-menu>
-              <a-button style="margin-left: 8px">
-                批量操作
-                <a-icon type="down" />
-              </a-button>
-            </a-dropdown>
-          </a-col>
+
           <a-col :md="8" :sm="8" style="float:right;">
             <a-button style="float:right;margin-left: 8px" type="primary" @click="AddInfoForm">发布资讯</a-button>
           </a-col>
@@ -40,14 +35,29 @@
         <a-row :gutter="24">
           <a-col :md="6" :sm="8">
             <a-form-item label="发布状态">
-              <a-input placeholder="资讯名称" v-model="queryParam.keyword"></a-input>
+              <a-radio-group @change="searchQuery" v-model="queryParam.isPublic">
+                <a-radio-button value>不限</a-radio-button>
+                <a-radio-button value="0">未发布</a-radio-button>
+                <a-radio-button value="1">已发布</a-radio-button>
+                <a-radio-button value="2">已撤销</a-radio-button>
+              </a-radio-group>
+              <!-- <a-checkbox-group @change="searchQuery" v-model="queryParam.isPublic">
+                <a-checkbox value>不限</a-checkbox>
+                <a-checkbox value="1">已发布</a-checkbox>
+                <a-checkbox value="0">未发布</a-checkbox>
+              </a-checkbox-group>-->
             </a-form-item>
           </a-col>
-        </a-row>
-        <a-row :gutter="24">
           <a-col :md="6" :sm="8">
             <a-form-item label="类别">
-              <a-input placeholder="资讯名称" v-model="queryParam.keyword"></a-input>
+              <a-radio-group @change="searchQuery" v-model="queryParam.type">
+                <a-radio-button value="2">新闻</a-radio-button>
+                <a-radio-button value="3">通知公告</a-radio-button>
+              </a-radio-group>
+              <!-- <a-checkbox-group @change="searchQuery" v-model="queryParam.type">
+                <a-checkbox value="2">通知公告</a-checkbox>
+                <a-checkbox value="3">新闻</a-checkbox>
+              </a-checkbox-group>-->
             </a-form-item>
           </a-col>
         </a-row>
@@ -74,18 +84,32 @@
         :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
         :customRow="customRow"
       >
-        <span slot="action" slot-scope="text, record">
-          <!-- <a-popconfirm v-if="record.isPublic == 0" title="确定发布吗?" @confirm.stop="() => EditInfoForm(record, ...arguments)">
+        <span slot="action" slot-scope="text, record" @click.stop>
+          <a-popconfirm
+            v-if="record.isPublic == 0"
+            title="确定发布吗?"
+            @confirm="() => changeInfoForm(record, ...arguments)"
+          >
             <a>发布</a>
-          </a-popconfirm>-->
-          <a v-if="record.isPublic == 0" @click.stop="changeInfoForm(record, ...arguments)">发布</a>
-          <a v-if="record.isPublic == 1" @click.stop="changeInfoFormD(record, ...arguments)">撤销</a>
+          </a-popconfirm>
+          <a-popconfirm
+            v-if="record.isPublic == 1"
+            title="确定撤销吗?"
+            @confirm="() => changeInfoFormD(record, ...arguments)"
+          >
+            <a>撤销</a>
+          </a-popconfirm>
+          <!-- <a v-if="record.isPublic == 0" @click.stop="changeInfoForm(record, ...arguments)">发布</a> -->
+          <!-- <a v-if="record.isPublic == 1" @click.stop="changeInfoFormD(record, ...arguments)">撤销</a> -->
           <a-divider v-if="record.isPublic == 0" type="vertical" />
           <a-divider v-if="record.isPublic == 1" type="vertical" />
 
           <a v-if="true" @click.stop="EditInfoForm(record, ...arguments)">编辑</a>
           <a-divider type="vertical" />
-          <a v-if="true" @click.stop="EditInfoForm(record, ...arguments)">删除</a>
+          <!-- <a v-if="true" @click.stop="EditInfoForm(record, ...arguments)">删除</a> -->
+          <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
+            <a>删除</a>
+          </a-popconfirm>
         </span>
       </a-table>
     </div>
@@ -101,6 +125,7 @@ import AddInfoForm from './AddInfoForm'
 import { getAction, putAction } from '@/api/manage'
 import qs from 'qs'
 import Dom7 from 'dom7'
+import moment from 'moment'
 import { mixinList } from '@/utils/mixin'
 import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
 
@@ -132,7 +157,10 @@ export default {
           title: '发布时间',
           align: 'center',
           dataIndex: 'publishTime',
-          width: 180
+          width: 180,
+          customRender: text => {
+            return moment(text).format('YYYY-MM-DD HH:mm')
+          }
         },
         {
           title: '类别',
@@ -168,8 +196,11 @@ export default {
         }
       ],
       url: {
-        list: '/park.service/mgrNewsInfo/list'
+        list: '/park.service/mgrNewsInfo/list',
+        delete: '/park.service/mgrNewsInfo/delete',
+        deleteBatch: '/park.service/mgrNewsInfo/deleteBatch'
       },
+      deleteKey: 'newId',
       queryParam: {
         type: '4'
       },
