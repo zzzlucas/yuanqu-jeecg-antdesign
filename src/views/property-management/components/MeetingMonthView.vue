@@ -41,7 +41,7 @@
     },
     methods: {
       handleAddEvent(date) {
-        this.$refs.modalForm.add({ date });
+        this.$refs.modalForm.add({ begDate: date });
         this.$refs.modalForm.title = "添加";
         this.$refs.modalForm.disableSubmit = false;
       },
