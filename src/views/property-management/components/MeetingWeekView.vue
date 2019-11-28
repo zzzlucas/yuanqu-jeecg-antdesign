@@ -2,59 +2,106 @@
   <div class="meeting-week-view">
     <full-calendar
       ref="calendar"
-      :events="internalEvents"
+      :events="events"
       :config="config" />
   </div>
 </template>
 
 <script>
   import 'jquery'
+  import moment from 'moment'
   import 'fullcalendar/dist/locale/zh-cn'
   import { FullCalendar } from 'vue-full-calendar'
-  import 'fullcalendar/dist/fullcalendar.css'
-  import '../api'
+  import 'fullcalendar-scheduler';
+  import MixinList from '@/mixins/List'
+  import 'fullcalendar/dist/fullcalendar.min.css';
+  import 'fullcalendar-scheduler/dist/scheduler.min.css';
+  import { listMeetingRoom, listMeeting } from '../api'
+  import { filterObj } from '@utils/util'
 
   export default {
-    props: {
-      config: {
-        type: Object,
-        default: () => {
-          return {}
-        }
-      },
-      events: {
-        type: Array,
-        default: () => [],
-      }
-    },
+    mixins: [
+      MixinList,
+    ],
     components: {
       FullCalendar,
     },
     data() {
       return {
-        internalEvents: [],
+        // Query
+        queryParam: {
+          projectId: '',
+          buildingId: '',
+        },
+        // Data
+        roomList: [],
+        meeting: [],
+        // Events
+        events: [
+          {
+            title: "test",
+            resourceId: "a",
+            start: moment(),
+            end: moment().add(1, "d")
+          },
+          {
+            title: "test2",
+            resourceId: "a2",
+            start: moment().add(2, "d"),
+            end: moment().add(3, "d")
+          }
+        ],
+        config: {
+          schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+            locale: 'zh-cn',
+            header: {
+            left: '',
+              center: 'title',
+              right:  'today prev,next'
+          },
+          defaultView: "timelineWeek",
+          resourceLabelText: "会议室",
+        }
       }
     },
     methods: {
-      async buildEvents() {
-        const events = this.events
-        if (events.length) {
-          this.internalEvents = events
-          return
+      async getRoomList() {
+        try {
+          const params = {
+            parkId: this.queryParam.parkId,
+            projectId: this.queryParam.projectId,
+            buildingId: this.queryParam.buildingId,
+          }
+          filterObj(params)
+          const resp = await listMeetingRoom(params)
+          if (!resp.success) {
+            throw new Error(resp.message)
+          }
+          this.roomList = resp.result.records
+        } catch (e) {
+          this.$message.error('获取会议室列表失败')
         }
-        await this.fetchList()
       },
-      fetchList() {
-
+      async getList() {
+        try {
+          const params = this.queryParam
+          filterObj(params)
+          const resp = await listMeeting(params)
+          if (!resp.success) {
+            throw new Error(resp.message)
+          }
+          this.meeting = resp.result
+        } catch (e) {
+          this.$message.error('获取会议预定列表失败')
+        }
+      },
+      loadData() {
+        this.getList()
+        this.getRoomList()
       },
     },
     created() {
-      this.buildEvents()
+      this.loadData()
     },
-    watch: {
-      'events'() {
-        this.buildEvents()
-      }
-    }
   }
 </script>

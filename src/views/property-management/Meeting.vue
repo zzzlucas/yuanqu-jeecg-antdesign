@@ -5,7 +5,7 @@
         <meeting-list />
       </a-tab-pane>
       <a-tab-pane tab="周视图" key="weekView">
-        <meeting-week-view :config="calendar" />
+        <meeting-week-view />
       </a-tab-pane>
       <a-tab-pane tab="月视图" key="monthView">
       </a-tab-pane>
@@ -25,13 +25,7 @@
     data() {
       return {
         // Tab
-        tab: 'roomList',
-        // Fc
-        calendar: {
-          config: {
-            locale: 'zh-cn',
-          },
-        }
+        tab: 'weekView',
       }
     }
   }

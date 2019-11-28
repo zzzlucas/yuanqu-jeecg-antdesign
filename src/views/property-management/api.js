@@ -25,6 +25,13 @@ const url = {
     delete: '/park.service/baseMeetingroomInfo/delete',
     deleteBatch: '/park.service/baseMeetingroomInfo/deleteBatch',
   },
+  meeting: {
+    list: '/park.service/mgrMeetingroomRequest/list',
+    add: '/park.service/mgrMeetingroomRequest/add',
+    edit: '/park.service/mgrMeetingroomRequest/edit',
+    delete: '/park.service/mgrMeetingroomRequest/delete',
+    deleteBatch: '/park.service/mgrMeetingroomRequest/deleteBatch',
+  },
 }
 
 /** 厂房项目列表-通过园区id查询- */
@@ -41,6 +48,10 @@ const editPlace = params => putAction(url.advertisingPlace.edit, qs.stringify(pa
 const addMeetingRoom = params => postAction(url.meetingRoom.add, qs.stringify(params))
 /** 会议室建档-编辑 */
 const editMeetingRoom = params => putAction(url.meetingRoom.edit, qs.stringify(params))
+/** 会议室建档-分页列表查询 */
+const listMeetingRoom = params => getAction(url.meetingRoom.list, params)
+/** 会议室预定-全部查询 */
+const listMeeting = params => getAction(url.meeting.list, params)
 
 export {
   url,
@@ -51,4 +62,6 @@ export {
   editPlace,
   addMeetingRoom,
   editMeetingRoom,
+  listMeetingRoom,
+  listMeeting,
 }
