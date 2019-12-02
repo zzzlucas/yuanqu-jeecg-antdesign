@@ -34,7 +34,7 @@
           </a-col>
           <a-col :md="6" :sm="8">
             <a-form-item label="状态">
-              <a-radio-group defaultValue="" v-model="queryParam.status">
+              <a-radio-group defaultValue v-model="queryParam.status">
                 <a-radio value="1">在园</a-radio>
                 <a-radio value="0">离园</a-radio>
                 <!-- <a-radio :style="radioStyle" :value="2">离园</a-radio> -->
@@ -58,7 +58,7 @@
                 type="primary"
                 style="float:right;margin-left: 8px"
                 @click="showZero"
-                icon="search"
+                icon="plus"
               >登记新客户</a-button>
             </span>
           </a-col>
@@ -80,10 +80,10 @@
         @change="handleTableChange"
         :customRow="customRow"
       >
-        <span slot="action" slot-scope="text, record">
-          <a @click.stop="showConfirm(record, ...arguments)">迁动</a>
-          <a-divider type="vertical" />
-          <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
+        <span slot="action" slot-scope="text, record" @click.stop>
+          <a v-if="record.status == 1" @click.stop="showConfirm(record, ...arguments)">迁出</a>
+          <a-divider v-if="record.status == 1" type="vertical" />
+          <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
             <a>删除</a>
           </a-popconfirm>
         </span>
@@ -104,7 +104,6 @@ import qs from 'qs'
 import Dom7 from 'dom7'
 import { filterObj } from '@/utils/util'
 
-
 export default {
   name: '',
   components: { ShowZero },
@@ -122,6 +121,7 @@ export default {
         enterpriseRatingExt: [{ value: '' }],
         registrationTypeExt: [{ value: '' }]
       },
+      deleteKey: 'custId',
       columns: [
         // {
         //   title: '序号',
@@ -151,7 +151,7 @@ export default {
         {
           title: '成立日期',
           align: 'center',
-          dataIndex: 'createTime'
+          dataIndex: 'registDate'
         },
         {
           title: '联系方式',
@@ -179,14 +179,14 @@ export default {
           title: '操作',
           dataIndex: 'action',
           align: 'center',
+          width: 180,
           scopedSlots: { customRender: 'action' }
         }
       ],
       url: {
         list: '/park.customer/baseCustomer/list',
-        // list: '/park.base/basePark/list',
-        queryParam: '/park.customer/baseCustomer/queryById'
-        // delete: '/park.base/basePark/delete',
+        queryParam: '/park.customer/baseCustomer/queryById',
+        delete: '/park.customer/baseCustomer/delete'
         // deleteBatch: '/park.base/basePark/deleteBatch',
         // exportXlsUrl: 'park.base/basePark/exportXls',
         // importExcelUrl: 'park.base/basePark/importExcel'
@@ -229,6 +229,12 @@ export default {
       this.loading = true
       getAction(this.url.list, params).then(res => {
         if (res.success) {
+          //获取对象里的日期
+          for (const item of res.result.records) {
+            if (item.baseCustomerBusiness) {
+              item.registDate = item.baseCustomerBusiness.registDate
+            }
+          }
           this.dataSource = res.result.records
           this.ipagination.total = res.result.total
         }
