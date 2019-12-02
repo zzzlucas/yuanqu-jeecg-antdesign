@@ -16,7 +16,7 @@ const url = {
     edit: '/park.asset/baseAssetInfo/edit',
     delete: '/park.asset/baseAssetInfo/delete',
     deleteBatch: '/park.asset/baseAssetInfo/deleteBatch',
-    exportXlsUrl: "/park.asset/baseAssetInfo/exportXls",
+    exportXlsUrl: '/park.asset/baseAssetInfo/exportXls',
     importExcelUrl: '/park.asset/baseAssetInfo/importExcel',
   },
   opertion: {

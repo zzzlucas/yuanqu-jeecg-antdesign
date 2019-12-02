@@ -32,7 +32,7 @@
         </a-col>
         <a-col :xl="12">
           <a-form-item label="所属厂房">
-            <a-select style="width: 100%;" v-decorator="['projectId', {rules: rules.projectId}]" @change="getBuildings(form.getFieldValue('projectId'))">
+            <a-select style="width: 100%;" v-decorator="['projectId', {rules: rules.projectId}]" @change="fetchBuildings">
               <a-select-option
                 :value="item.buildingProjectId"
                 v-for="item in types.project"
@@ -44,7 +44,7 @@
         </a-col>
         <a-col :xl="12">
           <a-form-item label="所属楼宇">
-            <a-select style="width: 100%;" v-decorator="['buildingId', {rules: rules.buildingId}]" @change="getFloors(form.getFieldValue('buildingId'))">
+            <a-select style="width: 100%;" v-decorator="['buildingId', {rules: rules.buildingId}]" @change="fetchFloors">
               <a-select-option
                 :value="item.buildingProjectId"
                 v-for="item in types.building"
@@ -161,7 +161,7 @@
   import Mixin from '../mixin/list'
   import { filterObj, promiseForm } from '@utils/util'
   import { assetsRegisterEditForm } from '@/config/pick-fields'
-  import { addMeetingRoom, editMeetingRoom, listBuilding, listFloor, listProject } from '../api'
+  import { addMeetingRoom, editMeetingRoom } from '../api'
 
   export default {
     mixins: [
@@ -232,7 +232,15 @@
         } catch (e) {
           this.$message.error(e.message)
         }
-      }
+      },
+      async fetchBuildings() {
+        await this.$nextTick()
+        await this.getBuildings(this.form.projectId)
+      },
+      async fetchFloors() {
+        await this.$nextTick()
+        await this.getFloors(this.form.buildingId)
+      },
     },
     watch: {
       'show'(val) {

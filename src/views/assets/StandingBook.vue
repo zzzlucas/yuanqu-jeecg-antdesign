@@ -35,9 +35,10 @@
                     :showUploadList="false"
                     :multiple="false"
                     :headers="tokenHeader"
-                    :action="url.importExcelUrl"
+                    :data="{ parkId: queryParam.parkId }"
+                    :action="baseUrl + url.importExcelUrl"
                     @change="handleImportExcel">
-                    <a-button type="primary" icon="import">批量登记入库</a-button>
+                    <a-button type="primary">批量登记入库</a-button>
                   </a-upload>
                   <a-button @click="handleExportXls('资产台账')" style="margin-left: 8px;">Excel导出</a-button>
                 </div>
@@ -87,6 +88,7 @@
     data() {
       return {
         // Url
+        baseUrl: window._CONFIG['domianURL'],
         url: url.info,
         // Filter query
         queryParam: {
