@@ -8,7 +8,20 @@
           </a-spin>
         </a-tab-pane>
 
-        <a-tab-pane tab="资讯图片" key="2"></a-tab-pane>
+        <a-tab-pane tab="资讯图片" key="2">
+          <yq-image
+            v-for="(item,i) in info.addDocFiles"
+            class="block-image"
+            size="40"
+            fit="contain"
+            :src="getOneImage(info.addDocFiles[i])"
+          ></yq-image>
+          <!-- <img
+            v-for="(item,i) in info.addDocFiles"
+            :src="getOneImage(info.addDocFiles[i])"
+            alt="资讯图片"
+          />-->
+        </a-tab-pane>
       </a-tabs>
     </a-card>
   </page-layout>
@@ -26,6 +39,9 @@ import qs from 'querystring'
 import Dom7 from 'dom7'
 import moment from 'moment'
 import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
+//获取到文件地址
+import { getFileListData, getOneImage, promiseForm, uploadFile } from '@utils/util'
+import YqImage from '@comp/extend/YqImage'
 
 export default {
   name: 'Detail',
@@ -33,7 +49,8 @@ export default {
     PageLayout,
     ABadge,
     DetailList,
-    DetailListItem
+    DetailListItem,
+    YqImage
   },
   data() {
     return {
@@ -51,16 +68,33 @@ export default {
     getAction('/park.service/mgrNewsInfo/queryById', { id: this.$route.params.id }).then(res => {
       if (res.code === 200) {
         this.info = res.result
-        // console.log(info.context)
+        // this.info.addDocFiles = getOneImage(this.info.addDocFiles)
+
+        //把 附件组 变成数组
+        //如何把做好的地址传到外面
+        this.info.addDocFiles = this.info.addDocFiles.split(',')
+        // console.log(this.info.addDocFiles)
+        // for (const item of this.info.addDocFiles) {
+        //   item = getOneImage(item)
+        //   console.log(item)
+        // }
+
+        // console.log(this.info.addDocFiles)
         this.confirmLoading = false
       } else {
-        // this.$router.back()
         this.$message.error(res.message)
       }
     })
   },
   mounted() {},
   methods: {
+    getOneImage,
+    //上传时候是一个json才这么来，刘的j-upload方法不是json
+    // getImage(json) {
+    //   const list = JSON.parse(json)
+    //   let url = _.get(list, '[0].url', '')
+    //   return getOneImage(url)
+    // },
     moment,
     filterDictText
   },
@@ -71,7 +105,11 @@ export default {
   }
 }
 </script>
-
+<style lang="less">
+.block-image {
+  height: 130px;
+}
+</style>
 <style lang="scss" scoped>
 .title {
   color: rgba(0, 0, 0, 0.85);

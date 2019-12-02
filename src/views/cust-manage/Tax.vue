@@ -38,9 +38,13 @@
         @change="handleTableChange"
       >
         <span slot="action" slot-scope="text, record">
-          <a @click.stop="showTaxAddForm(record, ...arguments)">编辑</a>
-          <a-divider type="vertical" />
-          <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
+          <a v-if="record.year!='总和'" @click.stop="showTaxAddForm(record, ...arguments)">编辑</a>
+          <a-divider v-if="record.year!='总和'" type="vertical" />
+          <a-popconfirm
+            v-if="record.year!='总和'"
+            title="确定删除吗?"
+            @confirm="() => handleDelete(record)"
+          >
             <a>删除</a>
           </a-popconfirm>
         </span>
@@ -155,13 +159,15 @@ export default {
     // importExcelUrl: function() {
     //   return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`
     // }
-
   },
   methods: {
     loadData() {
       //分页参数
       getAction(this.url.list).then(res => {
         if (res.success) {
+          for (const item of res.result) {
+            item.year = item.year + '年'
+          }
           this.dataSource = res.result
         }
         if (res.code === 510) {

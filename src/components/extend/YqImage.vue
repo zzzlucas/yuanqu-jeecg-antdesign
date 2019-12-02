@@ -3,7 +3,7 @@
     <div class="image-text" v-if="error">
       <a-icon type="picture" :style="{fontSize: size + 'px'}"/>
     </div>
-    <img class="this-image" v-else :src="src" alt="图片" @error="imageErr">
+    <img class="this-image" v-else :src="src" alt="图片" @error="imageErr" :style="{objectFit: fit}">
   </div>
 </template>
 
@@ -14,6 +14,10 @@
       src: {
         type: String,
         default: ''
+      },
+      fit: {
+        type: String,
+        default: 'conver'
       },
       size: {
         type: [Number, String],

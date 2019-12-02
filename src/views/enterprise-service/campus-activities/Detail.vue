@@ -18,7 +18,15 @@
           </a-spin>
         </a-tab-pane>
 
-        <a-tab-pane tab="活动图片" key="2"></a-tab-pane>
+        <a-tab-pane tab="活动图片" key="2">
+          <yq-image
+            v-for="(item,i) in info.addDocFiles"
+            class="block-image"
+            size="40"
+            fit="contain"
+            :src="getOneImage(info.addDocFiles[i])"
+          ></yq-image>
+        </a-tab-pane>
 
         <a-tab-pane tab="参与情况" key="3">
           <a-table
@@ -65,6 +73,8 @@ import Dom7 from 'dom7'
 import moment from 'moment'
 import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
 import AddActivitiesForm from './AddActivitiesForm'
+import { getFileListData, getOneImage, promiseForm, uploadFile } from '@utils/util'
+import YqImage from '@comp/extend/YqImage'
 
 export default {
   name: '',
@@ -74,7 +84,8 @@ export default {
     ABadge,
     DetailList,
     DetailListItem,
-    AddActivitiesForm
+    AddActivitiesForm,
+    YqImage
   },
   data() {
     return {
@@ -137,20 +148,25 @@ export default {
 
   created() {
     this.confirmLoading = true
-    getAction('/park.service/mgrActivityInfo/queryById', { activityId: this.$route.params.id }).then(res => {
-      if (res.code === 200) {
-        this.info = res.result
-        this.confirmLoading = false
-        // console.log(this.info)
-      } else {
-        this.$router.back()
-        this.$message.error(res.message)
-      }
-    })
   },
   mounted() {},
   methods: {
+    getOneImage,
     loadData(arg) {
+      getAction('/park.service/mgrActivityInfo/queryById', { activityId: this.$route.params.id }).then(res => {
+        if (res.code === 200) {
+          this.info = res.result
+          if (this.info.addDocFiles) {
+            this.info.addDocFiles = this.info.addDocFiles.split(',')
+          }
+          this.confirmLoading = false
+          // console.log(this.info)
+        } else {
+          this.$router.back()
+          this.$message.error(res.message)
+        }
+      })
+      console.log('object1111')
       if (arg === 1) {
         this.ipagination.current = 1
       }
@@ -225,7 +241,11 @@ export default {
   }
 }
 </script>
-
+<style lang="less">
+.block-image {
+  height: 130px;
+}
+</style>
 <style lang="scss" scoped>
 .title {
   color: rgba(0, 0, 0, 0.85);
