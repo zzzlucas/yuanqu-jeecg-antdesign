@@ -18,7 +18,6 @@
                 <a-form-item label="使用状态">
                   <j-dict-select-tag
                     v-model="queryParam.useStatus"
-                    :triggerChange="true"
                     dict-code="asset_use_status" />
                 </a-form-item>
               </a-col>

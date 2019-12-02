@@ -18,7 +18,6 @@
                 <a-form-item label="类别">
                   <j-dict-select-tag
                     v-model="queryParam.categoryType"
-                    :triggerChange="true"
                     :dict="types.category_type" />
                 </a-form-item>
               </a-col>
