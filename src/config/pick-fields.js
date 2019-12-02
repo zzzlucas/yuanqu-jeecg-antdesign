@@ -367,12 +367,14 @@ export const assetsRegisterEditForm = [
   'usePerson',
   'location',
   'remark',
+  'addDocFiles',
 ]
 
 export const assetsRecipientsReturnEditForm = [
   'assetNumber',
   'fixedAssetName',
   'usePerson',
+  'addDocFiles',
 ]
 
 export const ticketEditForm = [
