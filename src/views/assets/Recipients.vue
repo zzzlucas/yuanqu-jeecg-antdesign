@@ -150,7 +150,7 @@
           { name: '领用人', value: 'usePerson', },
           { name: '备注', value: 'remark', type: 'remark', },
           { value: { ...AssetsViewAssetsTableMixin, }, type: 'table', },
-          { name: '附件', type: 'files', value: '' },
+          { name: '附件', type: 'files', value: 'addDocFiles' },
         ],
       }
     },

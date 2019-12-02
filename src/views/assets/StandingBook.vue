@@ -63,15 +63,22 @@
           :dataSource="dataSource"
           :pagination="ipagination"
           :loading="loading"
-          :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}">
+          :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
+          :customRow="handleCustomRow">
         </a-table>
         <!-- table区域-end -->
       </a-layout-content>
     </a-layout>
+    <!-- View -->
+    <assets-view-aside
+      :columns="viewColumns"
+      :data="viewData"
+      v-model="view" />
   </a-card>
 </template>
 
 <script>
+  import AssetsViewAside from '@views/assets/components/AssetsViewAside'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import MixinList from '@/mixins/List'
   import { list as AssetsListMixin } from './mixins'
@@ -79,6 +86,9 @@
   import './style/list.less'
 
   export default {
+    components: {
+      AssetsViewAside,
+    },
     mixins: [
       JeecgListMixin,
       MixinList,
@@ -140,6 +150,19 @@
             align: 'center',
             dataIndex: 'useStatus_dictText'
           },
+        ],
+        // View
+        viewColumns: [
+          { name: '所属分类', value: 'categoryId', },
+          { name: '资产编号', value: 'assetNumber', },
+          { name: '资产名称', value: 'fixedAssetName', },
+          { name: '规格型号', value: 'assetModel', },
+          { name: '单价', value: 'stockPrice', },
+          { name: '总价', value: 'stockAmount', },
+          { name: '采购日期', value: 'purchaseDate', },
+          { name: '使用人', value: 'usePerson', },
+          { name: '备注', value: 'remark', type: 'remark', },
+          { name: '附件', type: 'files', value: 'addDocFiles' },
         ],
       }
     },

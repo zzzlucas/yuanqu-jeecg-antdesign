@@ -40,7 +40,10 @@
             {{ column.name }}：
           </a-col>
           <a-col :xl="24">
-            <!-- TODO -->
+            <template v-for="image in getFieldValueWithSplit(column.value)">
+              <img :src="urlDownload + image" />
+              <br>
+            </template>
           </a-col>
         </template>
       </template>
@@ -82,7 +85,14 @@
     methods: {
       getFieldValue(field) {
         return this.data[field]
-      }
+      },
+      getFieldValueWithSplit(field, spec = ',') {
+        const value = this.data[field]
+        if (!value) {
+          return []
+        }
+        return this.data[field].split(spec)
+      },
     },
   }
 </script>

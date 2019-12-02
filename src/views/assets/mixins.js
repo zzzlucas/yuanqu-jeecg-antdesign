@@ -68,6 +68,7 @@ export const view = {
     return {
       title: '',
       modal: false,
+      urlDownload: window._CONFIG['domianURL'] + "/sys/common/download/",
     }
   },
   methods: {

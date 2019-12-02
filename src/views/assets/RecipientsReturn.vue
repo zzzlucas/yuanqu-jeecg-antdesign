@@ -145,7 +145,7 @@
           { name: '采购日期', value: 'purchaseDate', },
           { name: '使用人', value: 'usePerson', },
           { name: '备注', value: 'remark', type: 'remark', },
-          { name: '附件', type: 'files', value: '' },
+          { name: '附件', type: 'files', value: 'addDocFiles' },
         ],
       }
     },
