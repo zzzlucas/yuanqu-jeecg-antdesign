@@ -10,35 +10,35 @@
     <a-spin :spinning="confirmLoading">
       <a-form :form="form">
         <a-row>
-          <a-col span="12">
-            <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="年度">
+          <a-col v-if="this.record.year" span="24">
+            <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="年度">
               <a-select
                 placeholder="请选择年份"
                 v-decorator="['year', validatorRules.year,{initialValue: ''}]"
               >
-                <a-select-option value="2018">2018</a-select-option>
-                <a-select-option value="2019">2019</a-select-option>
-                <a-select-option value="2020">2020</a-select-option>
-                <a-select-option value="2021">2021</a-select-option>
-                <a-select-option value="2022">2022</a-select-option>
+                <a-select-option value="2018">2018年</a-select-option>
+                <a-select-option value="2019">2019年</a-select-option>
+                <a-select-option value="2020">2020年</a-select-option>
+                <a-select-option value="2021">2021年</a-select-option>
+                <a-select-option value="2022">2022年</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
-          <a-col span="12">
-            <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="月份">
+          <a-col v-if="this.record.month" span="24">
+            <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="月份">
               <a-select placeholder="请选择月份" v-decorator="['month', {initialValue: ''}]">
-                <a-select-option value="1">1</a-select-option>
-                <a-select-option value="2">2</a-select-option>
-                <a-select-option value="3">3</a-select-option>
-                <a-select-option value="4">4</a-select-option>
-                <a-select-option value="5">5</a-select-option>
-                <a-select-option value="6">6</a-select-option>
-                <a-select-option value="7">7</a-select-option>
-                <a-select-option value="8">8</a-select-option>
-                <a-select-option value="9">9</a-select-option>
-                <a-select-option value="10">10</a-select-option>
-                <a-select-option value="11">11</a-select-option>
-                <a-select-option value="12">12</a-select-option>
+                <a-select-option value="1">1月</a-select-option>
+                <a-select-option value="2">2月</a-select-option>
+                <a-select-option value="3">3月</a-select-option>
+                <a-select-option value="4">4月</a-select-option>
+                <a-select-option value="5">5月</a-select-option>
+                <a-select-option value="6">6月</a-select-option>
+                <a-select-option value="7">7月</a-select-option>
+                <a-select-option value="8">8月</a-select-option>
+                <a-select-option value="9">9月</a-select-option>
+                <a-select-option value="10">10月</a-select-option>
+                <a-select-option value="11">11月</a-select-option>
+                <a-select-option value="12">12月</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
@@ -93,7 +93,7 @@ import pick from 'lodash.pick'
 import moment from 'moment'
 import qs from 'querystring'
 export default {
-  name: 'baseIndicatorsMsgModal',
+  name: '',
   data() {
     return {
       // title: '新增纳税情况',
@@ -109,6 +109,7 @@ export default {
         sm: { span: 14 },
         long: { span: 19 }
       },
+      record: {},
       editBool: false,
       confirmLoading: false,
       form: this.$form.createForm(this),
@@ -136,9 +137,25 @@ export default {
       this.visible = true
     },
     edit(record) {
+      console.log('record')
+      console.log(record)
+
+      this.record = Object.assign({}, record)
+      //处理后端给的月字段，多了“月”字，字段从year转到month
+      this.record.month = this.record.year
+      let monthS = this.record.month.indexOf('月')
+      this.record.month = this.record.month.slice(0, monthS)
+      if (this.record.month > 2000) {
+        this.record.month = null
+      }
+      //处理后端给的年字段，当小于2000时直接为空，同时表单这一项v-if不显示
+      if (this.record.year.includes('月')) {
+        this.record.year = null
+      }
+
       this.editBool = true
       this.form.resetFields()
-      this.model = Object.assign({}, record)
+      this.model = Object.assign({}, this.record)
       this.visible = true
       this.$nextTick(() => {
         this.form.setFieldsValue(

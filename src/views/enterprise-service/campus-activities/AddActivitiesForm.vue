@@ -3,7 +3,7 @@
     <a-card :bordered="false">
       <a-form :form="form">
         <a-form-item label="活动名称">
-          <a-input v-decorator="['title',  {rules: [{required: true, message: '请输入活动名称'}]}]" />
+          <a-input v-decorator="['title',{rules: [{required: true, message: '请输入活动名称'}]}]" />
         </a-form-item>
         <a-form-item label="活动时间">
           <!-- <a-range-picker
@@ -14,38 +14,38 @@
             placeholder
             style="width:50%"
             format="YYYY-MM-DD HH:mm"
-            v-decorator="['begDate',  {rules: [{required: true, message: '请输入活动开始时间'}]}]"
+            v-decorator="['begDate',{rules: [{required: true, message: '请输入活动开始时间'}]}]"
           />
           <a-date-picker
             showTime
             placeholder
             format="YYYY-MM-DD HH:mm"
             style="width:50%"
-            v-decorator="['endDate',  {rules: [{required: true, message: '请输入活动结束时间'}]}]"
+            v-decorator="['endDate',{rules: [{required: true, message: '请输入活动结束时间'}]}]"
           />
         </a-form-item>
         <a-form-item label="活动地点">
-          <a-input v-decorator="['address',  {rules: [{required: true, message: '请输入活动地点'}]}]" />
+          <a-input v-decorator="['address',{rules: [{required: true, message: '请输入活动地点'}]}]" />
         </a-form-item>
         <a-form-item label="发布时间">
           <a-date-picker
             placeholder
             format="YYYY-MM-DD"
             style="width:100%"
-            v-decorator="['publishDate',  {rules: [{required: true, message: '请输入发布时间'}]}]"
+            v-decorator="['publishDate',{rules: [{required: true, message: '请输入发布时间'}]}]"
           />
         </a-form-item>
         <a-form-item label="活动限额">
           <a-input
-            v-decorator="['applyMembersMax',  {rules: [{required: true, message: '请输入活动限额'}]}]"
+            v-decorator="['applyMembersMax',{rules: [{required: true, message: '请输入活动限额'}]}]"
           />
         </a-form-item>
         <a-form-item label="主办单位">
-          <a-input v-decorator="['hostUnit',  {rules: [{required: true, message: '请输入主办单位'}]}]" />
+          <a-input v-decorator="['hostUnit',{rules: [{required: true, message: '请输入主办单位'}]}]" />
         </a-form-item>
-        <!-- <a-form-item label="所属园区 （暂园区ID">
-          <a-input v-decorator="['parkId',  {rules: [{required: true, message: '请输入所属园区'}]}]" />
-        </a-form-item>-->
+        <a-form-item label="图片">
+          <j-upload v-decorator="['addDocFiles']" />
+        </a-form-item>
         <a-form-item label="活动介绍">
           <j-editor v-model="editor.context"></j-editor>
         </a-form-item>
@@ -59,6 +59,7 @@
 
 <script>
 import JEditor from '@comp/jeecg/JEditor'
+import JUpload from '@/components/jeecg/JUpload'
 import { httpAction } from '@/api/manage'
 import pick from 'lodash.pick'
 import moment from 'moment'
@@ -70,7 +71,7 @@ import { getAction } from '../../../api/manage'
 
 export default {
   name: '',
-  components: { JEditor },
+  components: { JEditor, JUpload },
   data() {
     return {
       form: this.$form.createForm(this),
@@ -224,7 +225,17 @@ export default {
           this.visible = true
           this.$nextTick(() => {
             this.form.setFieldsValue(
-              pick(this.model, 'title', 'begDate', 'address','endDate', 'publishDate', 'applyMembersMax', 'hostUnit', 'context')
+              pick(
+                this.model,
+                'title',
+                'begDate',
+                'address',
+                'endDate',
+                'publishDate',
+                'applyMembersMax',
+                'hostUnit',
+                'context'
+              )
             )
             this.editor = {
               context: rreeccoorrdd.context

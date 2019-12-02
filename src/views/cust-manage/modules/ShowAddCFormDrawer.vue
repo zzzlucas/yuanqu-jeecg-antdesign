@@ -96,7 +96,6 @@ export default {
   name: 'BaseCustomerContactModal',
   data() {
     return {
-      title: '添加联系人',
       visible: false,
       model: {},
       labelCol: {
@@ -107,7 +106,7 @@ export default {
         xs: { span: 24 },
         sm: { span: 16 }
       },
-
+      editBool: false,
       confirmLoading: false,
       form: this.$form.createForm(this),
       validatorRules: {
@@ -128,8 +127,14 @@ export default {
     //   }
     // })
   },
+  computed: {
+    title() {
+      return '联系人' + (this.editBool ? '编辑' : '新增')
+    }
+  },
   methods: {
     add(record) {
+      this.editBool = false
       this.form.resetFields()
       this.model = Object.assign({}, record)
       this.visible = true
@@ -138,6 +143,7 @@ export default {
       })
     },
     edit(record) {
+      this.editBool = true
       this.form.resetFields()
       this.model = Object.assign({}, record)
       this.visible = true

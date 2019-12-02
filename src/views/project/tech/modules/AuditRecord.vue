@@ -94,10 +94,10 @@ export default {
         {
           title: '审核状态',
           align: 'center',
-          dataIndex: 'approvalResult',
-          customRender: text => {
-            return filterDictText(this.dict.approvalResult, text)
-          }
+          dataIndex: 'approvalResultName',
+          // customRender: text => {
+          //   return filterDictText(this.dict.approvalResult, text)
+          // }
         },
         {
           title: '审核时间',
@@ -133,6 +133,7 @@ export default {
         getAction('/park.workflow/baseWorkFlowProject/listAudit', { projectId: this.record.projectId }).then(res => {
           if (res.code === 200) {
             this.dataSource = res.result.records
+            // delete this.dataSource[0]
             this.ipagination.total = res.result.total
             this.initDictConfig()
           } else {

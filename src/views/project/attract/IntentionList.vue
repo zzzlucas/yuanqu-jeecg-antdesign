@@ -37,7 +37,7 @@
       ref="table"
       size="default"
       bordered
-      rowKey="id"
+      rowKey="projectId"
       :columns="columns"
       :dataSource="dataSource"
       :pagination="ipagination"

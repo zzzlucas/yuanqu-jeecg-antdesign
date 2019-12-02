@@ -27,7 +27,9 @@
         <a-form-item label="内容">
           <j-editor v-model="editor.context"></j-editor>
         </a-form-item>
-        <a-form-item label="图片"></a-form-item>
+        <a-form-item label="图片">
+          <j-upload v-decorator="['addDocFiles']" />
+        </a-form-item>
       </a-form>
 
       <a-button type="primary" @click="handleOk">发布</a-button>
@@ -38,6 +40,7 @@
 
 <script>
 import JEditor from '@comp/jeecg/JEditor'
+import JUpload from '@/components/jeecg/JUpload'
 import { httpAction } from '@/api/manage'
 import pick from 'lodash.pick'
 import moment from 'moment'
@@ -48,7 +51,9 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: '',
-  components: { JEditor },
+  //刘 上传文件（可能是单个文件   
+  //多个文件是否可以
+  components: { JEditor, JUpload },
   data() {
     return {
       form: this.$form.createForm(this),

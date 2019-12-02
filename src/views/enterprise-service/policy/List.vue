@@ -46,6 +46,7 @@
               </a-button-group>-->
 
               <a-checkbox-group @change="searchQuery" v-model="queryParam.typeGroups">
+                <a-checkbox value="alltypeGroups">不限</a-checkbox>
                 <a-checkbox
                   v-for="(item, key) in dict.talentPolicy"
                   :key="key"
@@ -59,9 +60,10 @@
           <a-col :md="16" :sm="8">
             <a-form-item label="发布部门">
               <!-- 在不限按钮按下时，状态Flag为true,加载时判断状态为true，就会自动清空对应参数 -->
-              <a-button @click="searchQueryNoParma">不限</a-button>
+              <!-- <a-button @click="searchQueryNoParma">不限</a-button> -->
+
               <a-checkbox-group @change="searchQuery" v-model="queryParam.deptGroups">
-                <a-checkbox value>不限</a-checkbox>
+                <a-checkbox value="alldeptGroups">不限</a-checkbox>
                 <a-checkbox
                   v-for="(item, key) in dict.publishingDepartment"
                   :key="key"
@@ -260,13 +262,25 @@ export default {
       // if (arg === 1) {
       //   this.ipagination.current = 1
       // }
-      console.log(this.searchQueryNoParmaFlag)
-      if (this.searchQueryNoParmaFlag) {
-        this.queryParam.deptGroups = []
-      }
+      // console.log(this.searchQueryNoParmaFlag)
+      // if (this.searchQueryNoParmaFlag) {
+      //   this.queryParam.deptGroups = []
+      // }
       var params = this.getQueryParams()
-      console.log('params')
-      console.log(params)
+      console.log('33 params')
+      console.log(_.cloneDeep(params))
+      if (params) {
+        console.log(typeof params.deptGroups)
+      }
+      console.log(params.deptGroups instanceof Array)
+      //流程到这里时候，已经是一个字符串了？？？why   字符串、数组、对象   2019-11-28
+      console.log(params.deptGroups);
+      if (params.deptGroups == 'alldeptGroups') {
+        params.deptGroups = []
+      }
+      if (params.typeGroups == 'alltypeGroups') {
+        params.typeGroups = []
+      }
       if (params.deptGroups) {
         params.deptGroups = params.deptGroups.toString()
       }
@@ -337,7 +351,15 @@ export default {
       this.queryParam = { parkId: this.industrialParkId }
       this.loadData(1)
     },
-    searchQuery() {
+    searchQuery(values) {
+      //部门全查
+      if (values.indexOf('alldeptGroups') !== -1) {
+        this.queryParam.deptGroups = ['alldeptGroups']
+      }
+      //类别全查
+      if (values.indexOf('alltypeGroups') !== -1) {
+        this.queryParam.typeGroups = ['alltypeGroups']
+      }
       this.loadData(1)
     },
     AddAInfoForm() {

@@ -72,7 +72,7 @@
         ref="table"
         size="middle"
         bordered
-        rowKey="id"
+        rowKey="custId"
         :columns="columns"
         :dataSource="dataSource"
         :pagination="ipagination"

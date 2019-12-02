@@ -49,7 +49,7 @@
     methods: {
       getImage(json) {
         const list = JSON.parse(json)
-        let url = _.get(list, '[0].url', '')
+        let url = _.get(list, '[0].url', '')      
         return getOneImage(url)
       },
       deleteBtn() {

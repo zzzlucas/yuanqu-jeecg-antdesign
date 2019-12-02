@@ -1,8 +1,8 @@
 <template>
   <a-drawer
     wrapClassName="mgr-project-trace-drawer"
-    title="跟踪记录"
-    width="50%"
+    :title="getTitle"
+    width="40%"
     :visible="visible"
     @close="close"
     destroyOnClose
@@ -11,7 +11,7 @@
       <a-card class="daily-article" :bordered="false">
         <a-spin :spinning="confirmLoading">
           <a-form class="project-drawer-form" :form="form">
-            <a-row>
+            <!-- <a-row>
               <a-col span="24">
                 <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="项目ID">
                   <a-input
@@ -21,7 +21,7 @@
                   />
                 </a-form-item>
               </a-col>
-            </a-row>
+            </a-row>-->
             <a-row>
               <a-col span="24">
                 <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="项目名称">
@@ -92,20 +92,24 @@
             <a-row>
               <a-col>
                 <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="过程纪要">
-                  <a-textarea :rows="4" placeholder="请输入过程纪要" v-decorator="['content', {}]"></a-textarea>
+                  <a-textarea :rows="4" placeholde v-decorator="['content', {}]"></a-textarea>
                 </a-form-item>
-                <a-form-item
-                  :labelCol="labelCol.long"
-                  :wrapperCol="wrapperCol.long"
-                  label="意向房源组ID"
-                >
-                  <a-input placeholder="请输入意向房源组ID" v-decorator="['resourceGroupId', {}]" />
+                <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="意向房源">
+                  <a-button
+                    type="primary"
+                    shape="circle"
+                    icon="flag"
+                    style="left:0px"
+                    @click="ShowRoom"
+                  />
+
+                  <!-- <a-input placeholder="请输入意向房源组ID" v-decorator="['resourceGroupId', {}]" /> -->
                 </a-form-item>
                 <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="备注">
-                  <a-textarea :rows="4" placeholder="请输入备注" v-decorator="['remark', {}]"></a-textarea>
+                  <a-textarea :rows="4" placeholder v-decorator="['remark', {}]"></a-textarea>
                 </a-form-item>
-                <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="附件组ID">
-                  <a-input placeholder="请输入附件组ID" v-decorator="['addDocFiles', {}]" />
+                <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="附件">
+                  <j-upload v-decorator="['addDocFiles']" />
                   <!-- <a-upload
                     name="file"
                     :showUploadList="true"
@@ -121,7 +125,7 @@
                 </a-form-item>
               </a-col>
             </a-row>
-            <a-row>
+            <!-- <a-row>
               <a-form-item
                 :labelCol="labelCol.long"
                 :wrapperCol="wrapperCol.long"
@@ -132,13 +136,16 @@
                   v-decorator="['parkId', {rules: [{ required: true, message: '请输入parkId', whitespace: true}]}]"
                 />
               </a-form-item>
-            </a-row>
+            </a-row>-->
           </a-form>
         </a-spin>
-        <a-button type="primary" @click="handleOk">确定</a-button>
-        <a-button @click="handleCancel">取消</a-button>
       </a-card>
     </div>
+    <div class="drawer-bottom-btn-group">
+      <a-button style="margin-right: 8px" type="primary" @click="handleOk">确定</a-button>
+      <a-button @click="handleCancel">取消</a-button>
+    </div>
+    <show-room ref="ShowRoom"></show-room>
   </a-drawer>
 </template>
 
@@ -149,10 +156,14 @@ import pick from 'lodash.pick'
 import qs from 'querystring'
 import { ProjectAttractShowZeroForm } from '@/config/pick-fields'
 import moment from 'moment'
+import { mapGetters } from 'vuex'
+import JUpload from '@/components/jeecg/JUpload'
+import ShowRoom from './ShowRoomM'
 moment.locale('zh-cn')
 
 export default {
   name: 'mgrProjectTraceDrawer',
+  components: { JUpload, ShowRoom },
   props: {
     show: {
       type: Boolean,
@@ -207,11 +218,12 @@ export default {
     }
   },
   //左上角标题变换
-  // computed: {
-  //   getTitle() {
-  //     return (this.edit ? '编辑' : '登记') + '园区'
-  //   }
-  // },
+  computed: {
+    getTitle() {
+      return '跟踪记录' + (this.editBool ? '编辑' : '登记')
+    },
+    ...mapGetters(['industrialParkId'])
+  },
   created() {
     initDictOptions('track_method').then(res => {
       if (res.code === 0 && res.success) {
@@ -230,6 +242,9 @@ export default {
     })
   },
   methods: {
+    ShowRoom() {
+      this.$refs.ShowRoom.detail()
+    },
     handleCancel() {
       this.visible = false
     },
@@ -238,6 +253,7 @@ export default {
     tokenHeader() {},
     //给列表页专用，列表页通过row获取projectId
     detail(record) {
+      this.editBool = true
       const that = this
       that.record = record
       that.form.resetFields()
@@ -277,6 +293,7 @@ export default {
     //给详情页专用，详情页具有$route.params.id获取projectId
     moment,
     detailDDD(record) {
+      this.editBool = true
       const that = this
       that.record = record
       that.form.resetFields()
@@ -306,6 +323,7 @@ export default {
     },
     //只获取部分对应行的属性  在添加新记录时候使用
     partDetail(record) {
+      this.editBool = false
       // console.log('partDetail')
       this.form.resetFields()
       //id查询项目基本信息api
@@ -344,6 +362,7 @@ export default {
     },
     //未跟进 1122
     partDetailDDD() {
+      this.editBool = false
       this.form.resetFields()
       let record = {}
       let params = { projectId: this.$route.params.id }
@@ -392,6 +411,7 @@ export default {
           let formData = Object.assign(this.model, values)
           //时间格式化
           formData.trackDate = formData.trackDate ? formData.trackDate.format('YYYY-MM-DD') : null
+          formData.parkId = this.industrialParkId
           formData = qs.stringify(formData)
           console.log(formData)
           httpAction(httpurl, formData, method)
@@ -416,13 +436,17 @@ export default {
 </script>
 
 <style lang="less">
+// .mgr-project-trace-drawer .ant-btn {
+//   margin-left: 10px;
+//   margin-bottom: 10px;
+// }
 .mgr-project-trace-drawer {
   /** Button按钮间距 */
-  .ant-btn {
-    margin-left: 30px;
-    margin-bottom: 30px;
-    float: right;
-  }
+  // .ant-btn {
+  //   margin-left: 30px;
+  //   margin-bottom: 30px;
+  //   float: right;
+  // }
 
   .project-drawer-form {
     @width: 120px;

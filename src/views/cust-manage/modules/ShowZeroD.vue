@@ -3,8 +3,9 @@
     wrapClassName="mgr-project-trace-drawer"
     width="80%"
     :visible="visible"
-    @close="close"
+    @close="handleCancel"
     destroyOnClose
+    :title="title"
   >
     <div>
       <a-form class="project-drawer-form" :form="form">
@@ -19,6 +20,7 @@
                     :wrapperCol="wrapperCol.default"
                     label="企业名称"
                   >
+                    <!-- 99999999 -->
                     <a-input
                       v-decorator="['customerName',{rules: [{ required: true, message: '请输入企业名称', whitespace:true}]}]"
                     ></a-input>
@@ -112,22 +114,22 @@
                     <a-date-picker style="width:100%" v-decorator="[ 'settledDate']" />
                   </a-form-item>
                 </a-col>
-                <!-- , {rules: [{required: true, message: '请输入跟踪日期'}]} -->
                 <a-col span="12">
                   <a-form-item
                     :labelCol="labelCol.default"
                     :wrapperCol="wrapperCol.default"
                     label="所属园区"
                   >
-                    <a-input
-                      placeholder="暂无联动"
+                    <a-select
+                      style="width:100%"
                       v-decorator="['parkId',{rules: [{ required: true, message: '请输入', whitespace:true}]}]"
-                    ></a-input>
-                    <!-- 传递园区名到此处？ -->
-                    <!-- <a-select defaultValue="1" style="width:100%">
-                      <a-select-option value="1">来访</a-select-option>
-                      <a-select-option value="2">联营企业</a-select-option>
-                    </a-select>-->
+                      @change="getBlockList"
+                    >
+                      <a-select-option
+                        v-for="item in info.parkList"
+                        :value="item.parkId"
+                      >{{item.parkName}}</a-select-option>
+                    </a-select>
                   </a-form-item>
                 </a-col>
                 <!-- 六行 -->
@@ -137,15 +139,16 @@
                     :wrapperCol="wrapperCol.default"
                     label="所属项目"
                   >
-                    <a-input
-                      placeholder="暂无联动"
+                    <a-select
+                      style="width:100%"
                       v-decorator="['caseId',{rules: [{ required: true, message: '请输入', whitespace:true}]}]"
-                    ></a-input>
-                    <!-- caseId -->
-                    <!-- <a-select defaultValue="1" style="width:100%">
-                      <a-select-option value="1">来访</a-select-option>
-                      <a-select-option value="2">联营企业</a-select-option>
-                    </a-select>-->
+                      @change="getBuildingList"
+                    >
+                      <a-select-option
+                        v-for="item in info.BlockList"
+                        :value="item.buildingProjectId"
+                      >{{item.projectName}}</a-select-option>
+                    </a-select>
                   </a-form-item>
                 </a-col>
                 <a-col span="12">
@@ -154,12 +157,12 @@
                     :wrapperCol="wrapperCol.default"
                     label="所属楼宇"
                   >
-                    <a-input placeholder="暂无联动" v-decorator="['buidling']"></a-input>
-                    <!-- buidling -->
-                    <!-- <a-select defaultValue="1" style="width:100%">
-                      <a-select-option value="1">来访</a-select-option>
-                      <a-select-option value="2">联营企业</a-select-option>
-                    </a-select>-->
+                    <a-select style="width:100%" v-decorator="['buidling']">
+                      <a-select-option
+                        v-for="item in info.BuildingList"
+                        :value="item.buildingId"
+                      >{{item.buildingName}}</a-select-option>
+                    </a-select>
                   </a-form-item>
                 </a-col>
                 <!-- 一行 -->
@@ -189,7 +192,12 @@
                       :wrapperCol="wrapperCol.long"
                       label="关联客户"
                     >
-                      <a-textarea :rows="4" v-decorator="['relCustListId', {}]"></a-textarea>
+                      <a-select style="width:100%" mode="multiple" v-model="CUSTOMERNAMEARRAY">
+                        <a-select-option
+                          v-for="item in info.CustList"
+                          :value="item.custId"
+                        >{{item.customerName}}</a-select-option>
+                      </a-select>
                     </a-form-item>
 
                     <a-form-item
@@ -206,71 +214,64 @@
 
             <a-col span="9">
               <a-card class="daily-article" :bordered="false" title="企业标识">
-                <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label>
-                  <!-- <a-checkbox-group :options="plainOptions" v-model="checkedList" @change="onChange" /> -->
-                  <!-- :options="plainOptions"   摘出 -->
-                  <a-checkbox-group v-model="checkedList" @change="onChange">
-                    <a-row>
-                      <a-col :span="6">
-                        <a-checkbox value="A">test</a-checkbox>
-                      </a-col>
-                      <a-col :span="6">
-                        <a-checkbox value="B">test</a-checkbox>
-                      </a-col>
-                      <a-col :span="6">
-                        <a-checkbox value="C">test</a-checkbox>
-                      </a-col>
-                      <a-col :span="6">
-                        <a-checkbox value="D">test</a-checkbox>
-                      </a-col>
-                      <a-col :span="6">
-                        <a-checkbox value="E">test</a-checkbox>
-                      </a-col>
-                      <a-col :span="6">
-                        <a-checkbox value="E">test</a-checkbox>
-                      </a-col>
-                      <a-col :span="6">
-                        <a-checkbox value="E">test</a-checkbox>
-                      </a-col>
-                      <a-col :span="6">
-                        <a-checkbox value="E">test</a-checkbox>
-                      </a-col>
-                      <a-col :span="6">
-                        <a-checkbox value="E">test</a-checkbox>
-                      </a-col>
-                      <a-col :span="6">
-                        <a-checkbox value="E">test</a-checkbox>
-                      </a-col>
-                    </a-row>
-                  </a-checkbox-group>
-                </a-form-item>
+                <!-- <a-checkbox-group :options="plainOptions" v-model="checkedList" @change="onChange" /> -->
+                <!-- :options="plainOptions"   摘出 -->
+                <a-checkbox-group v-model="checkedList" @change="onChange"></a-checkbox-group>
+                <a-row>
+                  <a-col :span="24">
+                    <!-- customerLabel -->
+                    <a-radio-group v-model="BS.A">
+                      <a-radio value="1">挂靠企业</a-radio>
+                      <a-radio value="2">实地入驻企业</a-radio>
+                    </a-radio-group>
+                    <a-radio-group v-model="BS.B">
+                      <a-radio value="1">内资</a-radio>
+                      <a-radio value="2">外资</a-radio>
+                    </a-radio-group>
+                    <a-checkbox-group v-model="BS.C">
+                      <a-checkbox value="1">园区合作企业</a-checkbox>
+                      <a-checkbox value="2">中介服务企业</a-checkbox>
+                      <a-checkbox value="3">大学生企业</a-checkbox>
+                      <a-checkbox value="4">留学人员企业</a-checkbox>
+                      <a-checkbox value="5">大学教师创业</a-checkbox>
+                    </a-checkbox-group>
+                    <a-radio-group v-model="BS.D">
+                      <a-radio value="1">一般纳税人</a-radio>
+                      <a-radio value="2">小规模纳税人</a-radio>
+                    </a-radio-group>
+                    <a-checkbox-group v-model="BS.E">
+                      <a-checkbox value="1">高新技术企业</a-checkbox>
+                    </a-checkbox-group>
+                    <a-checkbox-group v-model="BS.F">
+                      <a-checkbox value="1">与创业导师建立辅导关系</a-checkbox>
+                    </a-checkbox-group>
+                    <a-checkbox-group v-model="BS.G">
+                      <a-checkbox value="1">毕业企业</a-checkbox>
+                    </a-checkbox-group>
+                    <a-radio-group v-model="BS.H">
+                      <a-radio value="1">在园企业</a-radio>
+                      <a-radio value="2">在孵企业</a-radio>
+                    </a-radio-group>
+                    <a-radio-group v-model="BS.I">
+                      <a-radio value="1">龙头企业</a-radio>
+                      <a-radio value="2">明星企业</a-radio>
+                    </a-radio-group>
+                    <a-radio-group v-model="BS.J">
+                      <a-radio value="1">税收落户</a-radio>
+                      <a-radio value="2">税收未落户</a-radio>
+                    </a-radio-group>
+                    <a-checkbox-group v-model="BS.K">
+                      <a-checkbox value="1">上市企业</a-checkbox>
+                    </a-checkbox-group>
+                  </a-col>
+                </a-row>
               </a-card>
               <a-card class="daily-article" :bordered="false" title="附件">
                 <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label>
-                  <!-- <a-input placeholder="请输入附件组ID" v-decorator="['addDocFiles', {}]" /> -->
-                  <!-- <a-upload
-                  name="file"
-                  :showUploadList="true"
-                  :multiple="false"
-                  :headers="tokenHeader"
-                  :action="importExcelUrl"
-                  @change="handleImportExcel"
-                >
-                  <a-button type="primary" icon="import">营业执照</a-button>
-                  </a-upload>-->
+                  <j-upload v-decorator="['businessLicense']" />
                 </a-form-item>
                 <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label>
-                  <!-- <a-input placeholder="请输入附件组ID" v-decorator="['addDocFiles', {}]" /> -->
-                  <!-- <a-upload
-                  name="file"
-                  :showUploadList="true"
-                  :multiple="false"
-                  :headers="tokenHeader"
-                  :action="importExcelUrl"
-                  @change="handleImportExcel"
-                > 
-                  <a-button type="primary" icon="import">其他附件</a-button>
-                  </a-upload>-->
+                  <j-upload v-decorator="['addDocFiles']" />
                 </a-form-item>
               </a-card>
             </a-col>
@@ -298,6 +299,7 @@
                   :wrapperCol="wrapperCol.default"
                   label="行业类型"
                 >
+                  <!-- 9999999999999999999999 -->
                   <a-select
                     v-decorator="['industryCategory',{rules: [{ required: true, message: '请选择行业类型', whitespace:true}]}]"
                     placeholder="请选择"
@@ -452,6 +454,7 @@
                   :wrapperCol="wrapperCol.default"
                   label="统一社会信用号码"
                 >
+                  <!-- 99999999999999 -->
                   <a-input
                     v-decorator="[ 'creditCode',{rules: [{ required: true, message: '请输入统一社会信用号码', whitespace:true}]}]"
                   />
@@ -507,38 +510,15 @@
                   <a-textarea :rows="4" v-decorator="['businessScopePermit', {}]"></a-textarea>
                 </a-form-item>
               </a-col>
-              <a-col span="24">
-                <!-- <a-form-item
-                  :labelCol="labelCol.whole"
-                  :wrapperCol="wrapperCol.whole"
-                  label="parkId"
-                >
-                  <a-input
-                    v-decorator="['parkId',{rules: [{ required: true, message: '请输入parkId', whitespace:true}]}]"
-                  ></a-input>
-                </a-form-item>-->
-              </a-col>
+              <a-col span="24"></a-col>
             </a-row>
           </a-card>
         </a-spin>
       </a-form>
-
-      <div
-        :style="{
-          position: 'absolute',
-          left: 0,
-          bottom: 0,
-          width: '100%',
-          borderTop: '1px solid #e9e9e9',
-          padding: '10px 16px',
-          background: '#fff',
-          textAlign: 'right',
-        }"
-      >
-        <a-button :style="{marginRight: '8px'}" @click="onClose">取消</a-button>
-        <!-- <a-button :style="{marginRight: '8px'}" @click="onClose">Cancel</a-button> -->
-        <a-button @click="handleOk" type="primary">保存</a-button>
-      </div>
+    </div>
+    <div class="drawer-bottom-btn-group">
+      <a-button style="margin-right: 8px" type="primary" @click="handleOk">确定</a-button>
+      <a-button @click="handleCancel">取消</a-button>
     </div>
   </a-drawer>
 </template>
@@ -550,9 +530,12 @@ import pick from 'lodash.pick'
 import moment from 'moment'
 import { initDictOptions } from '@comp/dict/JDictSelectUtil'
 import { AddbaseCustomerForm } from '@/config/pick-fields'
+import JUpload from '@/components/jeecg/JUpload'
+import { getAction } from '../../../api/manage'
 
 export default {
   name: '',
+  components: { JUpload },
   //1111111111111111111111
   props: {
     show: {
@@ -569,7 +552,6 @@ export default {
   //11111111111111111111112
   data() {
     return {
-      title: '操作',
       visible: false,
       model: {},
       checkedList: [],
@@ -605,7 +587,12 @@ export default {
         add: '/park.customer/baseCustomer/add',
         edit: '/park.customer/baseCustomer/edit'
       },
+      editBool: false,
       merchantManager: '',
+      //企业标识 大对象
+      BS: {},
+      info: {},
+      CUSTOMERNAMEARRAY: [],
       dict: {
         merchantManagerExt: [{ value: '' }],
         servicerExt: [{ value: '' }],
@@ -619,93 +606,149 @@ export default {
       }
     }
   },
+  computed: {
+    title() {
+      return '企业信息' + (this.editBool ? '修改' : '登记')
+    }
+  },
   created() {
+    //需要一个地方来自主加载区块（项目）选项和楼宇选项，以至于下拉框能够根据id匹配出具体名称
+    //这个地方该在哪呢，获得园区id的地方:detail()
+    getAction('/park.park/basePark/list').then(res => {
+      if (res.success) {
+        // console.log(res)
+        this.info.parkList = res.result.records
+      } else {
+        console.log('获取园区列表失败')
+      }
+    })
+    getAction('/park.customer/baseCustomer/listAll').then(res => {
+      if (res.success) {
+        // console.log(res)
+        this.info.CustList = res.result.records
+      } else {
+        console.log('获取关联客户范围列表失败')
+      }
+    })
+    //字典初始化
     initDictOptions('attract_staff').then(res => {
       if (res.code === 0 && res.success) {
         this.dict.merchantManagerExt = res.result
       }
-    }),
-      initDictOptions('service_staff').then(res => {
-        if (res.code === 0 && res.success) {
-          this.dict.servicerExt = res.result
-        }
-      }),
-      initDictOptions('unit_nature').then(res => {
-        if (res.code === 0 && res.success) {
-          this.dict.unitNatureExt = res.result
-        }
-      }),
-      initDictOptions('industry_gategory').then(res => {
-        if (res.code === 0 && res.success) {
-          this.dict.industryCategoryExt = res.result
-        }
-      }),
-      initDictOptions('organizational').then(res => {
-        if (res.code === 0 && res.success) {
-          this.dict.organizationalExt = res.result
-        }
-      }),
-      initDictOptions('technical_field').then(res => {
-        if (res.code === 0 && res.success) {
-          this.dict.technicalFieldExt = res.result
-        }
-      }),
-      initDictOptions('enterprise_rating').then(res => {
-        if (res.code === 0 && res.success) {
-          this.dict.enterpriseRatingExt = res.result
-        }
-      }),
-      initDictOptions('registration_type').then(res => {
-        if (res.code === 0 && res.success) {
-          this.dict.registrationTypeExt = res.result
-        }
-      }),
-      initDictOptions('registered_capital_unit').then(res => {
-        if (res.code === 0 && res.success) {
-          this.dict.registeredCapitalUnitExt = res.result
-        }
-      })
+    })
+    initDictOptions('service_staff').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.servicerExt = res.result
+      }
+    })
+    initDictOptions('unit_nature').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.unitNatureExt = res.result
+      }
+    })
+    initDictOptions('industry_gategory').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.industryCategoryExt = res.result
+      }
+    })
+    initDictOptions('organizational').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.organizationalExt = res.result
+      }
+    })
+    initDictOptions('technical_field').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.technicalFieldExt = res.result
+      }
+    })
+    initDictOptions('enterprise_rating').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.enterpriseRatingExt = res.result
+      }
+    })
+    initDictOptions('registration_type').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.registrationTypeExt = res.result
+      }
+    })
+    initDictOptions('registered_capital_unit').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.registeredCapitalUnitExt = res.result
+      }
+    })
   },
   methods: {
+    getBlockList(e) {
+      this.confirmLoading = true
+      getAction('/park.architecture/baseArchitectureProject/queryByParkId', { parkId: e }).then(res => {
+        if (res.success) {
+          this.info.BlockList = res.result
+          //此处重新往表单填入一下值  确实空值即可刷新
+          this.$nextTick(() => {
+            this.form.setFieldsValue()
+            this.confirmLoading = false
+          })
+        } else {
+          console.log('获取区块列表失败')
+        }
+      })
+    },
+    getBuildingList(e) {
+      this.confirmLoading = true
+      getAction('/park.architecture/baseArchitectureBuilding/queryByProjectId', { projectId: e }).then(res => {
+        if (res.success) {
+          this.info.BuildingList = res.result
+          // console.log(this.info.BuildingList)
+          //此处重新往表单填入一下值  确实空值即可刷新
+          this.$nextTick(() => {
+            this.form.setFieldsValue()
+            this.confirmLoading = false
+          })
+        } else {
+          console.log('获取楼宇列表失败')
+        }
+      })
+    },
     plainOptions() {},
     showDrawer() {
       this.visible = true
-    },
-    onClose() {
-      this.visible = false
     },
     onChange(checkedValues) {
       console.log('checked = ', checkedValues)
     },
     add() {
+      this.editBool = false
       this.visible = true
     },
     //新页面 详情 打开的，咋传，考虑一哈
     detail(record) {
+      this.editBool = true
       // this.record = record
-      console.log(record)
+      // console.log(record)
       this.form.resetFields()
-
-      record.unitNature = record.baseCustomerType.unitNature
-      record.industryCategory = record.baseCustomerType.industryCategory
-      record.organizational = record.baseCustomerType.organizational
-      record.technicalField = record.baseCustomerType.technicalField
-      record.enterpriseRating = record.baseCustomerType.enterpriseRating
-      record.registrationType = record.baseCustomerType.registrationType
-
-      record.registDate = record.baseCustomerBusiness.registDate
-      record.registeredCapital = record.baseCustomerBusiness.registeredCapital
-      record.registeredCapitalUnit = record.baseCustomerBusiness.registeredCapitalUnit
-      record.bussinessStatus = record.baseCustomerBusiness.bussinessStatus
-      record.taxStatus = record.baseCustomerBusiness.taxStatus
-      record.creditCode = record.baseCustomerBusiness.creditCode
-      record.registerAddress = record.baseCustomerBusiness.registerAddress
-      record.registerAddressZipCode = record.baseCustomerBusiness.registerAddressZipCode
-      record.businessAddress = record.baseCustomerBusiness.businessAddress
-      record.businessAddressZipCode = record.baseCustomerBusiness.businessAddressZipCode
-      record.businessScope = record.baseCustomerBusiness.businessScope
-      record.businessScopePermit = record.baseCustomerBusiness.businessScopePermit
-      record.rCToRMB = record.baseCustomerBusiness.rCToRMB
+      if (record.baseCustomerType) {
+        record.unitNature = record.baseCustomerType.unitNature
+        record.industryCategory = record.baseCustomerType.industryCategory
+        record.organizational = record.baseCustomerType.organizational
+        record.technicalField = record.baseCustomerType.technicalField
+        record.enterpriseRating = record.baseCustomerType.enterpriseRating
+        record.registrationType = record.baseCustomerType.registrationType
+      }
+      if (record.baseCustomerBusiness) {
+        record.registDate = record.baseCustomerBusiness.registDate
+        record.registeredCapital = record.baseCustomerBusiness.registeredCapital
+        record.registeredCapitalUnit = record.baseCustomerBusiness.registeredCapitalUnit
+        record.bussinessStatus = record.baseCustomerBusiness.bussinessStatus
+        record.taxStatus = record.baseCustomerBusiness.taxStatus
+        record.creditCode = record.baseCustomerBusiness.creditCode
+        record.registerAddress = record.baseCustomerBusiness.registerAddress
+        record.registerAddressZipCode = record.baseCustomerBusiness.registerAddressZipCode
+        record.businessAddress = record.baseCustomerBusiness.businessAddress
+        record.businessAddressZipCode = record.baseCustomerBusiness.businessAddressZipCode
+        record.businessScope = record.baseCustomerBusiness.businessScope
+        record.businessScopePermit = record.baseCustomerBusiness.businessScopePermit
+        record.rCToRMB = record.baseCustomerBusiness.rCToRMB
+      }
       //浏览器编辑请求里多余的东西来自record，把record里的对象遍历出来删掉
       delete record.baseCustomerBusiness
       delete record.baseCustomerType
@@ -716,9 +759,36 @@ export default {
       //     Rrecord.push(item)
       //   }
       // }
-
       this.model = Object.assign({}, record)
       this.visible = true
+
+      this.BS = this.model.customerLabel
+      this.BS = JSON.parse(this.BS)
+
+      //这里本来是不是可以用promise作回调处理，只是我还不会用
+      this.getBlockList(this.model.parkId)
+      this.getBuildingList(this.model.caseId)
+
+      //此处要跟根据单个id去查出 ids ，那个ids才是能填入表单的玩意
+      //此处要获取对应name，且能够有效再次编辑提交，不应使用现成字段name，此处容易被误导
+      //其实直接返回labeldic更好用，后端画蛇添足了
+      //区别不大，上面的问题其实上周五已解决，现在的问题应该是在获得数据之前，选择项初始化未完成，所以是本质上是时序问题吗
+      //不是，应当是关键字段没对应上，后端把问题复杂化了
+      //尝试在复杂化的背景下还原正确字段
+      //字段也没错，就是不该用recordId。。
+      getAction('/park.middletables/pubLabelGroup/queryById', { id: this.model.relCustListId }).then(res => {
+        if (res.success) {
+          console.log(res.result)
+          for (const item of res.result) {
+            this.CUSTOMERNAMEARRAY.push(item.labelNo)
+          }
+          console.log(this.CUSTOMERNAMEARRAY)
+          this.$nextTick(() => {
+            this.form.setFieldsValue()
+          })
+        }
+      })
+
       this.$nextTick(() => {
         this.form.setFieldsValue(pick(this.model, AddbaseCustomerForm))
         this.form.setFieldsValue({ merchantDate: this.model.merchantDate ? moment(this.model.merchantDate) : null })
@@ -726,15 +796,13 @@ export default {
         this.form.setFieldsValue({ registDate: this.model.registDate ? moment(this.model.registDate) : null })
       })
     },
-    handleCancel() {
-      this.visible = false
-    },
-    handleImportExcel() {},
-    importExcelUrl() {},
-    tokenHeader() {},
+    // handleImportExcel() {},
+    // importExcelUrl() {},
+    // tokenHeader() {},
     close() {
       this.$emit('close')
       this.visible = false
+      this.CUSTOMERNAMEARRAY = []
     },
     handleOk() {
       const that = this
@@ -758,9 +826,28 @@ export default {
             formData.registDate = formData.registDate ? formData.registDate.format('YYYY-MM-DD') : null
           if (formData.settledDate)
             formData.settledDate = formData.settledDate ? formData.settledDate.format('YYYY-MM-DD') : null
-          formData = qs.stringify(formData)
-          console.log(formData)
 
+          //转化企业标识的BS对象为Json字符串
+          // for(const item in this.BS){
+          //   if(typeof item == Array){
+          //     item = item.toString()
+          //   }
+          // }
+
+          //考虑一种更优美健壮的写法，在无此项值的情况下返回默认值null ？
+          if (this.BS) {
+            this.BS = JSON.stringify(this.BS)
+            formData.customerLabel = this.BS
+          }
+          console.log(this.BS)
+          //考虑一种更优美健壮的写法，在无此项值的情况下返回默认值null ？  我也是-，-
+          //关联客户的实际id
+          if (this.CUSTOMERNAMEARRAY) {
+            formData.labelDic = this.CUSTOMERNAMEARRAY.toString()
+            // formData.labelDic = formData.labelDic.toString()
+          }
+          formData = qs.stringify(formData)
+          // console.log(formData)
           httpAction(httpurl, formData, method)
             .then(res => {
               if (res.success) {
@@ -785,6 +872,10 @@ export default {
 </script>
 
 <style lang="less">
+.daily-article {
+  margin-bottom: 10px;
+  margin-right: 10px;
+}
 .mgr-project-trace-drawer {
   /** Button按钮间距 */
   .ant-btn {
