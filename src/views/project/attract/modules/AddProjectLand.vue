@@ -273,8 +273,10 @@
               </a-form-item>
             </a-col>
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-              <a-form-item label="所属行业" required>
-                <a-select v-decorator="['industrySectorValue']">
+              <a-form-item label="所属行业">
+                <a-select
+                  v-decorator="['industrySectorValue',{rules: [{ required: true, message: '请选择所属行业'}]}]"
+                >
                   <a-select-option
                     v-for="(item, key) in dict.industrySectorValueExt"
                     :value="item.value"
@@ -287,13 +289,19 @@
           <a-row class="form-row" :gutter="16">
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="建设开始时间" required>
-                <a-date-picker v-decorator="['buildingBeginDate']" style="width:100%" />
+                <a-date-picker
+                  v-decorator="['buildingBeginDate',{rules: [{ required: true, message: '请选择建设开始时间'}]}]"
+                  style="width:100%"
+                />
               </a-form-item>
             </a-col>
 
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="建设结束时间" required>
-                <a-date-picker v-decorator="['buildingEndDate']" style="width:100%" />
+                <a-date-picker
+                  v-decorator="['buildingEndDate',{rules: [{ required: true, message: '请选择建设结束时间'}]}]"
+                  style="width:100%"
+                />
               </a-form-item>
             </a-col>
           </a-row>

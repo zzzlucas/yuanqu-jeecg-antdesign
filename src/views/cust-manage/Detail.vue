@@ -364,7 +364,37 @@ export default {
           console.log(this.BS)
           // info.relCustListId
 
-          //关联客户
+          //-----------------------展示太慢了，有必要的话这里的parkid直接用map进来的-----------------------12.02
+          //所属项目文本的遍历比对
+          getAction('/park.architecture/baseArchitectureProject/queryByParkId', { parkId: that.info.parkId }).then(
+            res => {
+              if (res.success) {
+                for (const item of res.result) {
+                  if (this.info.caseId == item.buildingProjectId) {
+                    this.info.caseId = item.projectName
+                  }
+                }
+              }
+            }
+          )
+
+          //所属楼宇文本的遍历比对
+          getAction('/park.architecture/baseArchitectureBuilding/queryByProjectId', {
+            projectId: that.info.caseId
+          }).then(res => {
+            if (res.success) {
+              console.log('res')
+              console.log(res)
+              for (const item of res.result) {
+                if (this.info.buidling == item.buildingId) {
+                  this.info.buidling = item.buildingName
+                }
+              }
+            }
+          })
+
+          //------------奇怪的是这里的res并没有冲突貌似？？？？？？
+          //关联客户的文本拼接
           getAction('/park.middletables/pubLabelGroup/queryById', { id: this.info.relCustListId }).then(res => {
             if (res.success) {
               console.log(res.result)

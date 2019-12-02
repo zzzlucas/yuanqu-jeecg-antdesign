@@ -15,7 +15,7 @@
         <!-- <a-row>
         <a-col span="12">-->
         <a-form-item
-          v-if="this.record.year"
+          v-if="!this.record.month"
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="年度"
@@ -32,7 +32,7 @@
         <a-col span="12">-->
         <!-- 如果行传来的year转为的month大于2000，就是真年份了，就设置为空，且disabled -->
         <a-form-item
-          v-if="this.record.month"
+          v-if="!this.record.year"
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="月份"

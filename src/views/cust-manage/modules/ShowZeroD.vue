@@ -219,7 +219,6 @@
                 <a-checkbox-group v-model="checkedList" @change="onChange"></a-checkbox-group>
                 <a-row>
                   <a-col :span="24">
-                    <!-- customerLabel -->
                     <a-radio-group v-model="BS.A">
                       <a-radio value="1">挂靠企业</a-radio>
                       <a-radio value="2">实地入驻企业</a-radio>
@@ -393,7 +392,7 @@
                   label="注册资本"
                 >
                   <a-input v-decorator="[ 'registeredCapital']">
-                    <a-select
+                    <!-- <a-select
                       slot="addonAfter"
                       style="width: 100px;"
                       v-decorator="['registeredCapitalUnit', {initialValue:dict.registeredCapitalUnitExt[0].value}]"
@@ -403,7 +402,7 @@
                         :value="item.value"
                         :key="key"
                       >{{ item.text }}</a-select-option>
-                    </a-select>
+                    </a-select> -->
                   </a-input>
                 </a-form-item>
               </a-col>
@@ -422,14 +421,21 @@
                   :wrapperCol="wrapperCol.default"
                   label="工商状态"
                 >
-                  <a-select style="width:100%" v-decorator="['bussinessStatus']" placeholder="请选择">
+                  <a-select style="width: 100%;" v-decorator="['bussinessStatus']">
+                    <a-select-option
+                      v-for="(item, key) in dict.bussinessStatus"
+                      :value="item.value"
+                      :key="key"
+                    >{{ item.text }}</a-select-option>
+                  </a-select>
+                  <!-- <a-select style="width:100%" v-decorator="['bussinessStatus']" placeholder="请选择">
                     <a-select-option value="1">工商正常</a-select-option>
                     <a-select-option value="2">工商未办</a-select-option>
                     <a-select-option value="3">工商未迁</a-select-option>
                     <a-select-option value="4">工商迁出</a-select-option>
                     <a-select-option value="5">工商吊销</a-select-option>
                     <a-select-option value="6">工商注销</a-select-option>
-                  </a-select>
+                  </a-select>-->
                 </a-form-item>
               </a-col>
               <a-col span="8">
@@ -438,14 +444,21 @@
                   :wrapperCol="wrapperCol.default"
                   label="税务状态"
                 >
-                  <a-select style="width:100%" v-decorator="['taxStatus']" placeholder="请选择">
+                  <a-select style="width: 100%;" v-decorator="['taxStatus']">
+                    <a-select-option
+                      v-for="(item, key) in dict.taxStatus"
+                      :value="item.value"
+                      :key="key"
+                    >{{ item.text }}</a-select-option>
+                  </a-select>
+                  <!-- <a-select style="width:100%" v-decorator="['taxStatus']" placeholder="请选择">
                     <a-select-option value="1">税务正常</a-select-option>
                     <a-select-option value="2">税务未办</a-select-option>
                     <a-select-option value="3">税务未迁</a-select-option>
                     <a-select-option value="4">税务迁出</a-select-option>
                     <a-select-option value="5">税务吊销</a-select-option>
                     <a-select-option value="6">税务注销</a-select-option>
-                  </a-select>
+                  </a-select> -->
                 </a-form-item>
               </a-col>
               <a-col span="8">
@@ -517,8 +530,7 @@
       </a-form>
     </div>
     <div class="drawer-bottom-btn-group">
-      <a-button style="margin-right: 8px" type="primary" @click="handleOk">确定</a-button>
-      <a-button @click="handleCancel">取消</a-button>
+      <a-button style="margin-right: 8px" type="primary" @click="handleOk">保存</a-button>
     </div>
   </a-drawer>
 </template>
@@ -676,6 +688,16 @@ export default {
         this.dict.registeredCapitalUnitExt = res.result
       }
     })
+    initDictOptions('bussiness_status').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.bussinessStatus = res.result
+      }
+    })
+    initDictOptions('tax_status').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.taxStatus = res.result
+      }
+    })
   },
   methods: {
     getBlockList(e) {
@@ -775,7 +797,7 @@ export default {
       //区别不大，上面的问题其实上周五已解决，现在的问题应该是在获得数据之前，选择项初始化未完成，所以是本质上是时序问题吗
       //不是，应当是关键字段没对应上，后端把问题复杂化了
       //尝试在复杂化的背景下还原正确字段
-      //字段也没错，就是不该用recordId。。
+      //字段也没错，就是不该用recordId
       getAction('/park.middletables/pubLabelGroup/queryById', { id: this.model.relCustListId }).then(res => {
         if (res.success) {
           console.log(res.result)
