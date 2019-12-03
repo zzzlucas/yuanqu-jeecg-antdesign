@@ -37,7 +37,7 @@ pipeline {
             }
         }
         stage('Test-Deploy') {
-            stages {
+            steps {
                 archiveArtifacts 'dist/*.7z'
                 sshPublisher(
                     publishers: [
