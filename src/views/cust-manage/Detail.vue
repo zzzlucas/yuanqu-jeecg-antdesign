@@ -42,11 +42,11 @@
                 <a-tag v-if="BS.A == 2" color="blue">实地入驻企业</a-tag>
                 <a-tag v-if="BS.B == 1" color="blue">内资</a-tag>
                 <a-tag v-if="BS.B == 2" color="blue">外资</a-tag>
-                <a-tag v-if="BS.C.includes('1')" color="blue">园区合作企业</a-tag>
-                <a-tag v-if="BS.C.includes('2')" color="blue">中介服务企业</a-tag>
-                <a-tag v-if="BS.C.includes('3')" color="blue">大学生企业</a-tag>
-                <a-tag v-if="BS.C.includes('4')" color="blue">留学人员企业</a-tag>
-                <a-tag v-if="BS.C.includes('5')" color="blue">大学教师创业</a-tag>
+                <a-tag v-if="BS.C?(BS.C.includes('1')?true:false):null" color="blue">园区合作企业</a-tag>
+                <a-tag v-if="BS.C?(BS.C.includes('2')?true:false):null" color="blue">中介服务企业</a-tag>
+                <a-tag v-if="BS.C?(BS.C.includes('3')?true:false):null" color="blue">大学生企业</a-tag>
+                <a-tag v-if="BS.C?(BS.C.includes('4')?true:false):null" color="blue">留学人员企业</a-tag>
+                <a-tag v-if="BS.C?(BS.C.includes('5')?true:false):null" color="blue">大学教师创业</a-tag>
                 <a-tag v-if="BS.D == 1" color="blue">一般纳税人</a-tag>
                 <a-tag v-if="BS.D == 2" color="blue">小规模纳税人</a-tag>
                 <a-tag v-if="BS.E == 1" color="blue">高新技术企业</a-tag>
@@ -379,8 +379,8 @@ export default {
           )
 
           //所属楼宇文本的遍历比对
-          getAction('/park.architecture/baseArchitectureBuilding/queryByProjectId', {
-            projectId: that.info.caseId
+          getAction('/park.architecture/baseArchitectureBuilding/queryBuildingList', {
+            buildingProjectId: that.info.caseId
           }).then(res => {
             if (res.success) {
               console.log('res')
