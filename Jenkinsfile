@@ -30,11 +30,9 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                script {
-                    // Currently only support build under windows, if somebody want build under linux/osx please call FF.
-                    bat 'build.bat'
-                    archiveArtifacts 'app.7z'
-                }
+                // Currently only support build under windows, if somebody want build under linux/osx please call FF.
+                bat 'build.bat'
+                archiveArtifacts 'app.7z'
             }
         }
         stage('Test-Deploy') {
