@@ -717,7 +717,7 @@ export default {
     },
     getBuildingList(e) {
       this.confirmLoading = true
-      getAction('/park.architecture/baseArchitectureBuilding/queryByProjectId', { projectId: e }).then(res => {
+      getAction('/park.architecture/baseArchitectureBuilding/queryBuildingList', { buildingProjectId: e }).then(res => {
         if (res.success) {
           this.info.BuildingList = res.result
           // console.log(this.info.BuildingList)

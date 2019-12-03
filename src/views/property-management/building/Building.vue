@@ -86,8 +86,8 @@
               id: 'parkId'
             },
             tower: {
-              url: '/park.architecture/baseArchitectureBuilding/queryByProjectId',
-              id: 'projectId'
+              url: '/park.architecture/baseArchitectureBuilding/queryBuildingList',
+              id: 'buildingProjectId'
             },
             floor: {
               url: '/park.architecture/baseArchitectureFloor/queryByBuildingId',
@@ -100,8 +100,8 @@
           },
           info: {
             block: {
-              url: '/park.architecture/baseArchitectureProject/queryByParkId',
-              id: 'parkId'
+              url: '/park.architecture/baseArchitectureProject/queryById',
+              id: 'id'
             },
             tower: {
               url: '/park.architecture/baseArchitectureProject/queryById',
@@ -109,11 +109,11 @@
             },
             floor: {
               url: '/park.architecture/baseArchitectureBuilding/queryById',
-              id: 'id'
+              id: 'buildingId'
             },
             rooms: {
               url: '/park.architecture/baseArchitectureFloor/queryById',
-              id: 'buildingId'
+              id: 'floorId'
             },
             room: {
               url: '/park.architecture/baseArchitectureRoom/queryById',
@@ -140,8 +140,8 @@
           },
           tree: {
             block: {
-              url: '/park.architecture/baseArchitectureBuilding/queryByProjectId',
-              id: 'projectId'
+              url: '/park.architecture/baseArchitectureBuilding/queryBuildingList',
+              id: 'buildingProjectId'
             },
             tower: {
               url: '/park.architecture/baseArchitectureFloor/queryByBuildingId',

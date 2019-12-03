@@ -26,10 +26,8 @@
           </a-col>
           <a-col span="24">
             <a-form-item label="区块">
-              <a-radio-group
-                @change="loadDataBuilding"
-                :defaultValue="buildingInfo.block[1].buildingProjectId"
-              >
+              <a-radio-group @change="loadDataBuilding">
+                <!-- :defaultValue="buildingInfo.block[1].buildingProjectId" -->
                 <a-radio
                   v-for="item in buildingInfo.block"
                   :value="item.buildingProjectId"
@@ -47,31 +45,39 @@
               </a-radio-group>
             </a-form-item>
           </a-col>
-          <!-- 更改显示方式 -->
+          <!-- 楼层+房间显示方式 -->
           <a-col span="24">
-            <p>333</p>
-            <div v-for="item in buildingInfo.floor" :value="item.floorId">
-              <div>{{item.floorName}}</div>
+            <div
+              v-for="item in buildingInfo.floor"
+              :value="item.floorId"
+              v-if="item.rooms.length > 0"
+            >
+              <div>
+                {{item.floorName}}
+                <a-checkbox-group v-model="queryParam.FIANALLYROOM" @change="consoleee">
+                  <a-checkbox v-for="itemA in item.rooms" :value="itemA.roomId">{{itemA.roomName}}</a-checkbox>
+                </a-checkbox-group>
+              </div>
             </div>
           </a-col>
 
-          <a-col span="24">
+          <!-- <a-col span="24">
             <a-form-item label="楼层">
-              <a-checkbox-group @change="loadDataRoom">
+              <a-checkbox-group >
                 <a-checkbox
                   v-for="item in buildingInfo.floor"
                   :value="item.floorId"
                 >{{item.floorName}}</a-checkbox>
               </a-checkbox-group>
             </a-form-item>
-          </a-col>
-          <a-col span="24">
+          </a-col>-->
+          <!-- <a-col span="24">
             <a-form-item label="房间">
               <a-checkbox-group v-model="queryParam.deptGroups">
                 <a-checkbox v-for="item in buildingInfo.room" :value="item.roomId">{{item.roomName}}</a-checkbox>
               </a-checkbox-group>
             </a-form-item>
-          </a-col>
+          </a-col>-->
         </a-row>
       </a-form>
     </a-card>
@@ -130,11 +136,15 @@ export default {
     ...mapGetters(['industrialParkId'])
   },
   methods: {
+    consoleee(e) {
+      console.log('e')
+      console.log(e)
+    },
     detail() {
       //需要默认值？
       // this.loadDataBlock()
-      // this.loadDataBuilding('1198870720399015936')
-      // this.loadDataFloor('1198871006224056320')
+      // this.loadDataBuilding('')
+      // this.loadDataFloor('')
       // this.loadDataRoom()
       this.visible = true
     },
@@ -161,9 +171,9 @@ export default {
       // let params = { projectId: '1198870720399015936' }
       console.log('loadDataBuilding')
       console.log(record)
-      let params = { projectId: record.target.value }
+      let params = { buildingProjectId: record.target.value }
       this.loading = true
-      getAction('/park.architecture/baseArchitectureBuilding/queryByProjectId', params).then(res => {
+      getAction('/park.architecture/baseArchitectureBuilding/queryBuildingList', params).then(res => {
         if (res.success) {
           this.buildingInfo.building = res.result
           console.log(this.buildingInfo.building)
@@ -179,34 +189,51 @@ export default {
       // let params = { buildingId: '1198871006224056320' }
       console.log('loadDataFloor')
       console.log(record)
-      let params = { buildingId: record.target.value }
       this.loading = true
-      getAction('/park.architecture/baseArchitectureFloor/queryByBuildingId', params).then(res => {
-        if (res.success) {
-          this.buildingInfo.floor = res.result
-          console.log(this.buildingInfo.floor)
-          this.form.setFieldsValue()
-        } else {
-          this.$message.warning(res.message)
+      getAction('/park.architecture/baseArchitectureFloor/queryByBuildingId', { buildingId: record.target.value }).then(
+        res => {
+          if (res.success) {
+            this.buildingInfo.floor = res.result
+            console.log(this.buildingInfo.floor)
+            //每个楼层里面遍历出自己的房间
+            for (const item of res.result) {
+              getAction('/park.architecture/baseArchitectureRoom/queryByFloorId', { floorId: item.floorId }).then(
+                resA => {
+                  if (resA.success) {
+                    console.log(typeof resA.result.length)
+                    item.rooms = resA.result ? resA.result : []
+                    // this.buildingInfo.room = resA.result
+                    // 这里获取到对应的房间，但是如何分发这个值呢。。。。
+                    //
+                    // console.log(this.buildingInfo.room)
+                    this.form.setFieldsValue()
+                  }
+                }
+              )
+            }
+            this.form.setFieldsValue()
+          } else {
+            this.$message.warning(res.message)
+          }
+          this.loading = false
         }
-        this.loading = false
-      })
+      )
     },
-    // 4/5 用floor查room
-    loadDataRoom(record) {
-      let params = { floorId: record.toString() }
-      this.loading = true
-      getAction('/park.architecture/baseArchitectureRoom/queryByFloorId', params).then(res => {
-        if (res.success) {
-          this.buildingInfo.room = res.result
-          console.log(this.buildingInfo.room)
-          this.form.setFieldsValue()
-        } else {
-          this.$message.warning(res.message)
-        }
-        this.loading = false
-      })
-    },
+
+    // 4/5 用floor查room   应当是自主遍历出来
+    // loadDataRoom(record) {
+    //   this.loading = true
+    //   getAction('/park.architecture/baseArchitectureRoom/queryByFloorId', { floorId: record.toString() }).then(res => {
+    //     if (res.success) {
+    //       this.buildingInfo.room = res.result
+    //       console.log(this.buildingInfo.room)
+    //       this.form.setFieldsValue()
+    //     } else {
+    //       this.$message.warning(res.message)
+    //     }
+    //     this.loading = false
+    //   })
+    // },
 
     handleCancel() {
       this.visible = false
