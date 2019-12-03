@@ -33,12 +33,12 @@ pipeline {
                 script {
                     // Currently only support build under windows, if somebody want build under linux/osx please call FF.
                     bat 'build.bat'
+                    archiveArtifacts 'app.7z'
                 }
             }
         }
         stage('Test-Deploy') {
             steps {
-                archiveArtifacts 'dist/*.7z'
                 sshPublisher(
                     publishers: [
                         sshPublisherDesc(
