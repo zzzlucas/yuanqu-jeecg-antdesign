@@ -70,9 +70,13 @@
           </detail-list>
         </a-tab-pane>
         <a-tab-pane tab="附件" key="5">
-          <detail-list :col="1">
-            <detail-list-item term="附件"></detail-list-item>
-          </detail-list>
+          <yq-image
+            v-for="(item,i) in info.addDocFiles"
+            class="block-image"
+            size="40"
+            fit="contain"
+            :src="getOneImage(info.addDocFiles[i])"
+          ></yq-image>
         </a-tab-pane>
         <a-tab-pane tab="公司注册信息" key="6">
           <detail-list :col="2">
@@ -158,6 +162,8 @@ import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import DetailShowTwo from './modules/DetailShowTwoM'
 import qs from 'querystring'
 import Dom7 from 'dom7'
+import { getFileListData, getOneImage, promiseForm, uploadFile } from '@utils/util'
+import YqImage from '@comp/extend/YqImage'
 
 export default {
   name: 'Detail',
@@ -166,13 +172,15 @@ export default {
     ABadge,
     DetailList,
     DetailListItem,
-    DetailShowTwo
+    DetailShowTwo,
+    YqImage
   },
   data() {
     return {
       // dataSource: [],
       // ipagination: [],
       confirmLoading: false,
+      loading: false,
       dataSourceA: [],
       dataSourceB: [],
       dataSourceC: [],
@@ -267,12 +275,6 @@ export default {
           align: 'center',
           dataIndex: 'birthday'
         }
-        // {
-        //   title: '操作',
-        //   dataIndex: 'action',
-        //   align: 'center',
-        //   scopedSlots: { customRender: 'action' }
-        // }
       ],
       url: {
         list: '/park.project/mgrProjectInfo/queryProjectById'
@@ -290,6 +292,7 @@ export default {
     getAction('/park.project/mgrProjectInfo/queryProjectById', { projectId: this.$route.params.id }).then(res => {
       if (res.code === 200) {
         this.info = res.result
+        this.info.addDocFiles = this.info.mgrProjectInvest.addDocFiles.split(',')
         this.confirmLoading = false
         // console.log(this.info)
       } else {
@@ -314,6 +317,7 @@ export default {
   },
 
   methods: {
+    getOneImage,
     getListA() {
       getAction('/project/mgrCustTeamMember/queryById', { projectId: this.$route.params.id, memberType: '1' }).then(
         res => {

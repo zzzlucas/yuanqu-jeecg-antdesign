@@ -37,7 +37,7 @@
       ref="table"
       size="default"
       bordered
-      rowKey="id"
+      rowKey="projectId"
       :columns="columns"
       :dataSource="dataSource"
       :pagination="ipagination"
@@ -59,26 +59,37 @@
             <a-menu-item>
               <a @click.stop="showTwo(record, ...arguments)">跟踪记录</a>
             </a-menu-item>
-            <a-menu-item>
+            <a-menu-item v-if="record.status!=1">
+              <a-popconfirm title="确定转为意向吗?" @confirm="() => goIntention(record.projectId)">
+                <a>转为意向</a>
+              </a-popconfirm>
+            </a-menu-item>
+            <a-menu-item v-if="record.status!=2">
               <a-popconfirm title="确定转为重点跟进吗?" @confirm="() => goKeyFollow(record.projectId)">
                 <a>转为重点跟进</a>
               </a-popconfirm>
             </a-menu-item>
-            <a-menu-item>
+            <a-menu-item v-if="record.status!=3">
               <a-popconfirm title="确定转为拟落地吗?" @confirm="() => goWantWorkable(record.projectId)">
                 <a>转为拟落地</a>
               </a-popconfirm>
             </a-menu-item>
-            <a-menu-item>
-              <a @click="goLuoDi(record)">转为落地</a>
+            <a-menu-item v-if="record.status==3&&record.auditStatus!=1">
+              <a @click="goLuoDi(record)">填写二次申请</a>
             </a-menu-item>
-            <a-menu-item>
+            <!-- 判断二次申请表单提交之后，出现转为落地按钮  使用之前空置的auditStatus字段-->
+            <a-menu-item v-if="record.status==3&&record.auditStatus==1">
+              <a-popconfirm title="确定转为落地吗?" @confirm="() => goWorkable(record.projectId)">
+                <a>转为落地</a>
+              </a-popconfirm>
+            </a-menu-item>
+            <a-menu-item v-if="record.status!=5">
               <a-popconfirm title="确定转为留存吗?" @confirm="() => goRemain(record.projectId)">
                 <a>转为留存</a>
               </a-popconfirm>
             </a-menu-item>
             <a-menu-item>
-              <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.projectId)">
+              <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
                 <a>删除</a>
               </a-popconfirm>
             </a-menu-item>
@@ -124,14 +135,14 @@ import ShowTwo from './modules/ShowTwoM'
 import ShowZero from './modules/ShowZeroD'
 import AddProjectLand from './modules/AddProjectLand'
 import AddProjectLease from './modules/AddProjectLease'
-
+import { mixinList } from '@/utils/mixin'
 //数据字典使用步骤0
 import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
 import Dom7 from 'dom7'
 
 export default {
   name: '',
-  mixins: [JeecgListMixin],
+  mixins: [JeecgListMixin,mixinList],
   components: {
     ShowOne,
     ShowTwo,
@@ -219,13 +230,12 @@ export default {
           scopedSlots: { customRender: 'action' }
         }
       ],
+      deleteKey:'projectId',
       url: {
         list: '/park.project/mgrProjectInfo/list?status=4',
-        // list: '/park.project/mgrProjectInfo/list?status=1',
-
         add: '/park.project/mgrProjectTrace/addMgrProjectTrace',
         edit: '/park.project/mgrProjectTrace/edit',
-
+        delete:'/park.project/mgrProjectInfo/delete',
         editCementSend: 'sys/sysAnnouncementSend/editByAnntIdAndUserId',
         readAllMsg: 'sys/sysAnnouncementSend/readAll'
       },
@@ -321,6 +331,18 @@ export default {
         }
       }
     },
+    goIntention(record) {
+      let params = { projectId: record, status: '1' }
+      params = qs.stringify(params)
+      putAction('/park.project/mgrProjectInfo/changeStatus', params).then(res => {
+        if (res.success) {
+          this.$message.success(res.message)
+          this.$router.push({ path: '/project/attract/intention' })
+        } else {
+          this.$message.warning(res.message)
+        }
+      })
+    },
     goKeyFollow(record) {
       // console.log(record);
       let params = { projectId: record, status: '2' }
@@ -345,6 +367,18 @@ export default {
         if (res.success) {
           this.$message.success(res.message)
           this.$router.push({ path: '/project/attract/wantworkablelist' })
+        } else {
+          this.$message.warning(res.message)
+        }
+      })
+    },
+    goWorkable(record) {
+      let params = { projectId: record, status: '4' }
+      params = qs.stringify(params)
+      putAction('/park.project/mgrProjectInfo/changeStatus', params).then(res => {
+        if (res.success) {
+          this.$message.success(res.message)
+          this.$router.push({ path: '/project/attract/workablelist' })
         } else {
           this.$message.warning(res.message)
         }

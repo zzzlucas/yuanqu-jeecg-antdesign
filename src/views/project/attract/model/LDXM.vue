@@ -5,9 +5,8 @@
 
       <!-- <a-card > </a-card> -->
       <a-card :bordered="false" style="width:1200px;margin:auto">
-        <a-tabs :activeKey="activeKey">
-          <!-- @change="callback" -->
-
+        <a-tabs>
+          <!-- <a-tabs :activeKey="activeKey">   12.03 -->
           <a-tab-pane tab="项目初次申请" key="1">
             <!-- 11111111111111 -->
             <a-spin :spinning="confirmLoading">
@@ -481,17 +480,8 @@
                       </a-form-item>
                     </a-col>
                   </a-row>
+
                   <!-- <a-row class="form-row" :gutter="16">
-                    <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                      <a-form-item label="projectId test">
-                        <a-input
-                          placeholder
-                          v-decorator="['projectId', {rules: [{ required: true, message: '请输入projectId', whitespace: true}]}]"
-                        />
-                      </a-form-item>
-                    </a-col>
-                  </a-row>-->
-                  <a-row class="form-row" :gutter="16">
                     <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                       <a-form-item label="parkId test">
                         <a-input
@@ -500,35 +490,19 @@
                         />
                       </a-form-item>
                     </a-col>
-                  </a-row>
-                  <!-- <a-row class="form-row" :gutter="16">
-                    <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                      <a-form-item label="projectType test">
-                        <a-input
-                          placeholder
-                          v-decorator="['projectType', {rules: [{ required: true, message: '请输入projectType', whitespace: true}]}]"
-                        />
-                      </a-form-item>
-                    </a-col>
                   </a-row>-->
+
                   <!-- upload  addDocFiles   附件 -->
                   <a-row class="form-row" :gutter="16">
                     <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                       <a-form-item label="附件">
-                        <a-upload name="file" :showUploadList="true" :multiple="false">
-                          <a-button type="primary" icon="import">上传附件</a-button>
-                          <!-- <span>（单个图片大小不可超过10.00M，全部图片大小不可超过30.00M）</span> -->
-                        </a-upload>
+                        <j-upload v-decorator="['addDocFiles']" />
                       </a-form-item>
                     </a-col>
                   </a-row>
                 </a-card>
                 <a-card :bordered="false" size="small">
-                  <a-button
-                    style="float:right;"
-                    type="primary"
-                    @click="handleSubmit"
-                  >保存（ Test: 保存后该项目转换为落地项目状态）</a-button>
+                  <a-button style="float:right;" type="primary" @click="handleSubmit">保存</a-button>
                   <!-- <a-button type="primary" html-type="submit" @click="handleSubmit">Test Submit</a-button> -->
                 </a-card>
               </a-form>
@@ -658,7 +632,7 @@
                   </a-table>
                 </a-card>
                 <a-card :bordered="false" size="small">
-                  <a-button style="float:right;" type="primary" @click="handleSubmitTwo">保存（Test）</a-button>
+                  <a-button style="float:right;" type="primary" @click="handleSubmitTwo">保存</a-button>
                 </a-card>
               </a-form>
             </a-spin>
@@ -681,6 +655,7 @@ import ShowTwo from './LShowTwo'
 import ShowThree from './LShowThree'
 import PageLayout from '@/components/page/PageLayout'
 import JEditor from '@/components/jeecg/JEditor'
+import JUpload from '@/components/jeecg/JUpload'
 import { getAction, putAction, httpAction } from '@/api/manage'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import pick from 'lodash.pick'
@@ -692,7 +667,7 @@ import Dom7 from 'dom7'
 
 export default {
   mixins: [JeecgListMixin],
-  components: { PageLayout, JEditor, ShowOne, ShowTwo, ShowThree },
+  components: { PageLayout, JEditor, ShowOne, ShowTwo, ShowThree, JUpload },
 
   data() {
     return {
@@ -936,12 +911,6 @@ export default {
           method = 'put'
           //这个model不能复用
           let formData = Object.assign(this.modelS, values)
-          // if (formData.issueDate) {
-          //   formData.issueDate = formData.issueDate ? formData.issueDate.format('YYYY-MM-DD') : null
-          // }
-          // if (formData.planSewerLineTime) {
-          //   formData.planSewerLineTime = formData.planSewerLineTime ? formData.planSewerLineTime.format('YYYY-MM-DD') : null
-          // }
           formData.projectId = this.$route.params.id
           formData = qs.stringify(formData)
           httpAction(httpurl, formData, method)
@@ -976,27 +945,27 @@ export default {
             : null
           formData.buildingEndDate = formData.buildingEndDate ? formData.buildingEndDate.format('YYYY-MM-DD') : null
           formData.projectTechnologyFlow = projectTechnologyFlow
+          //二次表单已填，允许落地按钮出现
+          formData.auditStatus = 1
           formData = qs.stringify(formData)
           httpAction(httpurl, formData, method)
             .then(res => {
               if (res.success) {
                 // that.$message.success('项目维护编辑成功')
                 that.$message.success(res.message)
+
                 //第一步：提交编辑
                 //第二步：goWorkable  项目状态转变为落地
-                let ppaarrmmss = { projectId: this.$route.params.id, status: '4' }
-                // console.log('object')
-                // console.log(ppaarrmmss)
-                ppaarrmmss = qs.stringify(ppaarrmmss)
-                putAction('/park.project/mgrProjectInfo/changeStatus', ppaarrmmss).then(res => {
-                  if (res.success) {
-                    that.$message.success('该项目已转变为落地项目')
-                    // 第三步，切换tab-pane
-                    that.activeKey = '2'
-                  } else {
-                    that.$message.warning(res.message)
-                  }
-                })
+                // let ppaarrmmss = { projectId: this.$route.params.id, status: '4' }
+                // ppaarrmmss = qs.stringify(ppaarrmmss)
+                // putAction('/park.project/mgrProjectInfo/changeStatus', ppaarrmmss).then(res => {
+                //   if (res.success) {
+                //     that.$message.success('该项目已转变为落地项目')
+                //     that.activeKey = '2'
+                //   } else {
+                //     that.$message.warning(res.message)
+                //   }
+                // })
               } else {
                 that.$message.warning(res.message)
               }
@@ -1039,7 +1008,7 @@ export default {
             // record.parkId = record.mgrProjectCust.parkId
             record.companyRegisterType = record.mgrProjectCust.companyRegisterType
             record.createBy = record.mgrProjectCust.createBy
-            record.creditCode = record.mgrProjectCust.legalTel
+            record.creditCode = record.mgrProjectCust.creditCode
             record.createTime = record.mgrProjectCust.createTime
             record.updateBy = record.mgrProjectCust.updateBy
             record.legalPerson = record.mgrProjectCust.legalPerson

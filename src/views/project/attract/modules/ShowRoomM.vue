@@ -9,8 +9,8 @@
     destroyOnClose
   >
     <a-card style="margin-bottom:10px">
-      <a-form-item label="已选择房间">
-        <a-input v-decorator="['title']" />
+      <a-form-item label="已选房间">
+        <div>{{checkRoom}}</div>
       </a-form-item>
     </a-card>
     <a-card>
@@ -26,8 +26,9 @@
           </a-col>
           <a-col span="24">
             <a-form-item label="区块">
-              <a-radio-group @change="loadDataBuilding">
+              <a-radio-group @change="loadDataBuilding" v-model="query.block">
                 <!-- :defaultValue="buildingInfo.block[1].buildingProjectId" -->
+                <!-- 更合理的方法应当是v-model绑定数据，给数据设置默认值 -->
                 <a-radio
                   v-for="item in buildingInfo.block"
                   :value="item.buildingProjectId"
@@ -37,7 +38,7 @@
           </a-col>
           <a-col span="24">
             <a-form-item label="楼宇">
-              <a-radio-group @change="loadDataFloor">
+              <a-radio-group @change="loadDataFloor" v-model="query.building">
                 <a-radio
                   v-for="item in buildingInfo.building"
                   :value="item.buildingId"
@@ -101,7 +102,6 @@ export default {
   data() {
     return {
       form: this.$form.createForm(this),
-      buildingInfo: {},
       confirmLoading: false,
       title: '物业位置',
       record: {},
@@ -126,15 +126,19 @@ export default {
       },
       url: {
         list: '/park.project/mgrProjectTrace/list'
-      }
+      },
+      buildingInfo: {},
+      checkRoom: '',
+      query: {}
     }
   },
   created() {
-    this.loadDataBlock()
+    // this.loadDataBlock()
   },
   computed: {
     ...mapGetters(['industrialParkId'])
   },
+  watch: {},
   methods: {
     consoleee(e) {
       console.log('e')
@@ -142,7 +146,7 @@ export default {
     },
     detail() {
       //需要默认值？
-      // this.loadDataBlock()
+      this.loadDataBlock()
       // this.loadDataBuilding('')
       // this.loadDataFloor('')
       // this.loadDataRoom()
@@ -157,9 +161,11 @@ export default {
           this.buildingInfo.block = res.result
           console.log(this.buildingInfo.block)
           //目前通过这个方式来刷新表单项，不确定是否规范   12.02
-          // this.$nextTick(() => {
           this.form.setFieldsValue()
-          // })
+
+          this.query.block = this.buildingInfo.block[0].buildingProjectId
+
+          this.loadDataBuilding(this.query.block)
         } else {
           this.$message.warning(res.message)
         }
@@ -171,13 +177,29 @@ export default {
       // let params = { projectId: '1198870720399015936' }
       console.log('loadDataBuilding')
       console.log(record)
-      let params = { buildingProjectId: record.target.value }
+      //数据类型为string的判断难搞啊
+      let params = {}
+      if (typeof record == Object) {
+        params = { buildingProjectId: record.target.value }
+        console.log('1111111');
+      } else {
+        params = { buildingProjectId: record }
+        console.log('22222222');
+      }
       this.loading = true
       getAction('/park.architecture/baseArchitectureBuilding/queryBuildingList', params).then(res => {
         if (res.success) {
           this.buildingInfo.building = res.result
           console.log(this.buildingInfo.building)
           this.form.setFieldsValue()
+          console.log('1')
+          console.log(res)
+          //无法读取   怎么区分  只能拆开吗
+          //为什么报错这个
+          console.log(this.buildingInfo.building)
+          this.query.building = this.buildingInfo.building[0].buildingId
+          console.log('2')
+          this.loadDataFloor(this.query.building)
         } else {
           this.$message.warning(res.message)
         }
@@ -189,35 +211,39 @@ export default {
       // let params = { buildingId: '1198871006224056320' }
       console.log('loadDataFloor')
       console.log(record)
+      let params = {}
+      if (typeof record == Object) {
+        params = { buildingId: record.target.value }
+      } else {
+        params = { buildingId: record }
+      }
       this.loading = true
-      getAction('/park.architecture/baseArchitectureFloor/queryByBuildingId', { buildingId: record.target.value }).then(
-        res => {
-          if (res.success) {
-            this.buildingInfo.floor = res.result
-            console.log(this.buildingInfo.floor)
-            //每个楼层里面遍历出自己的房间
-            for (const item of res.result) {
-              getAction('/park.architecture/baseArchitectureRoom/queryByFloorId', { floorId: item.floorId }).then(
-                resA => {
-                  if (resA.success) {
-                    console.log(typeof resA.result.length)
-                    item.rooms = resA.result ? resA.result : []
-                    // this.buildingInfo.room = resA.result
-                    // 这里获取到对应的房间，但是如何分发这个值呢。。。。
-                    //
-                    // console.log(this.buildingInfo.room)
-                    this.form.setFieldsValue()
-                  }
+      getAction('/park.architecture/baseArchitectureFloor/queryByBuildingId', params).then(res => {
+        if (res.success) {
+          this.buildingInfo.floor = res.result
+          console.log(this.buildingInfo.floor)
+          //每个楼层里面遍历出自己的房间
+          for (const item of res.result) {
+            getAction('/park.architecture/baseArchitectureRoom/queryByFloorId', { floorId: item.floorId }).then(
+              resA => {
+                if (resA.success) {
+                  console.log(typeof resA.result.length)
+                  item.rooms = resA.result ? resA.result : []
+                  // this.buildingInfo.room = resA.result
+                  // 这里获取到对应的房间，但是如何分发这个值呢。。。。
+                  //
+                  // console.log(this.buildingInfo.room)
+                  this.form.setFieldsValue()
                 }
-              )
-            }
-            this.form.setFieldsValue()
-          } else {
-            this.$message.warning(res.message)
+              }
+            )
           }
-          this.loading = false
+          this.form.setFieldsValue()
+        } else {
+          this.$message.warning(res.message)
         }
-      )
+        this.loading = false
+      })
     },
 
     // 4/5 用floor查room   应当是自主遍历出来

@@ -5,7 +5,7 @@
 
       <!-- <a-card > </a-card> -->
       <a-card :bordered="false" style="width:1200px;margin:auto">
-        <a-tabs :activeKey="activeKey">
+        <a-tabs>
           <!-- @change="callback" -->
 
           <a-tab-pane tab="项目初次申请" key="1">
@@ -331,60 +331,16 @@
                       </a-form-item>
                     </a-col>
                   </a-row>
-                  <!-- <a-row class="form-row" :gutter="16">
-              <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="projectId test">
-                  <a-input
-                    placeholder
-                    v-decorator="['projectId', {rules: [{ required: true, message: '请输入projectId', whitespace: true}]}]"
-                  />
-                </a-form-item>
-              </a-col>
-                  </a-row>-->
-                  <a-row class="form-row" :gutter="16">
-                    <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                      <a-form-item label="parkId test">
-                        <a-input
-                          placeholder
-                          v-decorator="['parkId', {rules: [{ required: true, message: '请输入parkId', whitespace: true}]}]"
-                        />
-                      </a-form-item>
-                    </a-col>
-                  </a-row>
-                  <!-- <a-row class="form-row" :gutter="16">
-              <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
-                <a-form-item label="projectType test">
-                  <a-input
-                    placeholder
-                    v-decorator="['projectType', {rules: [{ required: true, message: '请输入projectType', whitespace: true}]}]"
-                  />
-                </a-form-item>
-              </a-col>
-                  </a-row>-->
-                  <!-- upload  addDocFiles   附件 -->
                   <a-row class="form-row" :gutter="16">
                     <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
                       <a-form-item label="附件">
-                        <!-- <a-upload
-                    name="file"
-                    :showUploadList="true"
-                    :multiple="false"
-                    :headers="tokenHeader"
-                    :action="importExcelUrl"
-                    @change="handleImportExcel"
-                  >
-                    <a-button type="primary" icon="import">上传附件</a-button>
-                        </a-upload>-->
+                        <j-upload v-decorator="['addDocFiles']" />
                       </a-form-item>
                     </a-col>
                   </a-row>
                 </a-card>
                 <a-card :bordered="false" size="small">
-                  <a-button
-                    style="float:right;"
-                    type="primary"
-                    @click="handleSubmit"
-                  >保存（ Test: 保存后该项目转换为落地项目状态）</a-button>
+                  <a-button style="float:right;" type="primary" @click="handleSubmit">保存</a-button>
                   <!-- <a-button type="primary" html-type="submit" @click="handleSubmit">Test Submit</a-button> -->
                 </a-card>
               </a-form>
@@ -691,7 +647,7 @@
                   </a-row>
                 </a-card>
                 <a-card :bordered="false" size="small">
-                  <a-button style="float:right;" type="primary" @click="handleSubmitTwo">保存（Test）</a-button>
+                  <a-button style="float:right;" type="primary" @click="handleSubmitTwo">保存</a-button>
                 </a-card>
               </a-form>
             </a-spin>
@@ -722,10 +678,11 @@ import { AddProjectLeaseForm } from '@/config/pick-fields'
 import { initDictOptions } from '@/components/dict/JDictSelectUtil'
 import qs from 'qs'
 import Dom7 from 'dom7'
+import JUpload from '@/components/jeecg/JUpload'
 
 export default {
   mixins: [JeecgListMixin],
-  components: { PageLayout, JEditor, ShowOne, ShowTwo, ShowThree },
+  components: { PageLayout, JEditor, ShowOne, ShowTwo, ShowThree, JUpload },
 
   data() {
     return {
@@ -1010,27 +967,25 @@ export default {
           formData.endDate = formData.endDate ? formData.endDate.format('YYYY-MM-DD') : null
 
           // formData.projectTechnologyFlow = projectTechnologyFlow
+          formData.auditStatus = 1
           formData = qs.stringify(formData)
           httpAction(httpurl, formData, method)
             .then(res => {
               if (res.success) {
-                // that.$message.success('项目维护编辑成功')
                 that.$message.success(res.message)
                 //第一步：提交编辑
                 //第二步：goWorkable  项目状态转变为落地
-                let ppaarrmmss = { projectId: this.$route.params.id, status: '4' }
-                // console.log('object')
-                // console.log(ppaarrmmss)
-                ppaarrmmss = qs.stringify(ppaarrmmss)
-                putAction('/park.project/mgrProjectInfo/changeStatus', ppaarrmmss).then(res => {
-                  if (res.success) {
-                    that.$message.success('该项目已转变为落地项目')
-                    // 第三步，切换tab-pane
-                    that.activeKey = '2'
-                  } else {
-                    that.$message.warning(res.message)
-                  }
-                })
+                // let ppaarrmmss = { projectId: this.$route.params.id, status: '4' }
+                // ppaarrmmss = qs.stringify(ppaarrmmss)
+                // putAction('/park.project/mgrProjectInfo/changeStatus', ppaarrmmss).then(res => {
+                //   if (res.success) {
+                //     that.$message.success('该项目已转变为落地项目')
+                //     // 第三步，切换tab-pane
+                //     that.activeKey = '2'
+                //   } else {
+                //     that.$message.warning(res.message)
+                //   }
+                // })
               } else {
                 that.$message.warning(res.message)
               }

@@ -72,7 +72,7 @@
           ref="table"
           size="default"
           bordered
-          rowKey="id"
+          rowKey="recordId"
           :columns="columns"
           :dataSource="dataSourceSTM"
           :pagination="ipagination"
@@ -229,8 +229,7 @@ export default {
       if (this.ff.endDate) {
         this.ff.endDate = this.ff.endDate ? this.ff.endDate.format('YYYY-MM-DD') : null
       }
-      //大约是因为时间的格式化   意外的是枚举复制后的老对象依旧会影响新对象
-      this.queryform = Object.assign(this.ff)
+      this.queryform = Object.assign({},this.ff)
       var param = Object.assign(this.queryform)
       param.projectId = this.record.projectId
       param.pageNo = this.ipagination.current

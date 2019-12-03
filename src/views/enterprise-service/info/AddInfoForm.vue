@@ -196,7 +196,7 @@ export default {
         this.editor = {
           context: record.context
         }
-        this.form.setFieldsValue(pick(this.model, 'titile', 'type'))
+        this.form.setFieldsValue(pick(this.model, 'titile', 'type','addDocFiles'))
         this.form.setFieldsValue({
           publishTime: this.model.publishTime ? moment(this.model.publishTime) : null
         })

@@ -234,6 +234,7 @@ export default {
                 'publishDate',
                 'applyMembersMax',
                 'hostUnit',
+                'addDocFiles',
                 'context'
               )
             )

@@ -93,11 +93,12 @@ import ShowAllot from './modules/ShowAllotD'
 import { getAction, putAction } from '@/api/manage'
 import qs from 'qs'
 import Dom7 from 'dom7'
+import { mixinList } from '@/utils/mixin'
 
 export default {
   name: 'IndustrialParksList',
   components: { ShowAllot },
-  mixins: [JeecgListMixin],
+  mixins: [JeecgListMixin,mixinList],
   data() {
     return {
       description: '企业管理-客户信息列表页',
