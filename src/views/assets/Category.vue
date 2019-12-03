@@ -97,8 +97,8 @@
     },
     watch: {
       selectCategoryKey(val) {
-/*        this.queryParam.parentId = val
-        this.loadData(1)*/
+        this.queryParam.categoryId = val
+        this.loadData(1)
       },
     }
   }
