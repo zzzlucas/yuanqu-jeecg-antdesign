@@ -7,7 +7,7 @@
       <!-- Nav (unclickable) -->
       <a-breadcrumb>
         <a-breadcrumb-item>工单管理</a-breadcrumb-item>
-        <a-breadcrumb-item>{{ filterDictText(this.types.order_type, data.orderType) }}</a-breadcrumb-item>
+        <a-breadcrumb-item>{{ filterDictText(types.order_type, data.orderType) }}</a-breadcrumb-item>
         <a-breadcrumb-item>工单详情</a-breadcrumb-item>
       </a-breadcrumb>
       <!-- Layout Header -->
@@ -26,7 +26,7 @@
             <div class="ticket-header-content-box-right">
               <h1>主题：{{ data.title }}</h1>
               <a-row>
-                <a-col :xl="12">工单类别：{{ filterDictText(this.types.order_type, data.orderType) }}</a-col>
+                <a-col :xl="12">工单类别：{{ filterDictText(types.order_type, data.orderType) }}</a-col>
                 <a-col :xl="12">工单编号：{{ data.orderId }}</a-col>
                 <a-col :xl="12">负责人：{{ data.principalUser }}</a-col>
                 <a-col :xl="12">提单时间：{{ data.createTime }}</a-col>
@@ -97,8 +97,8 @@
             <a-button type="primary" slot="extra" icon="plus" shape="circle" @click="handleAddOperate('process')" />
             <a-timeline>
               <a-timeline-item v-for="record in records.process" :key="record.recordId">
-                <p class="timeline-heading">{{ record.createTime }} 【{{ record.createUserName }}】 {{ record.operateName_dictText }}工单</p>
-                <p class="timeline-content" v-if="record.remark">{{ record.remark }}</p>
+                <p class="timeline-heading">{{ record.createTime }} 【{{ record.createUserName }}】 将工单状态设置为{{ getProcessStatus(record.operateName) }}</p>
+                <p class="timeline-content" v-if="isNaN(record.operateName)">{{ record.operateName }}</p>
               </a-timeline-item>
             </a-timeline>
           </a-card>
@@ -111,7 +111,7 @@
             <a-button type="primary" slot="extra" icon="plus" shape="circle" @click="handleAddOperate('feedback')" />
             <a-timeline>
               <a-timeline-item v-for="record in records.feedback" :key="record.recordId">
-                <p class="timeline-heading">{{ record.createTime }} 【{{ record.createUserName }}】 {{ record.operateName_dictText }}工单</p>
+                <p class="timeline-heading">{{ record.createTime }} 【{{ record.createUserName }}】 工单</p>
                 <p class="timeline-content" v-if="record.remark">{{ record.remark }}</p>
               </a-timeline-item>
             </a-timeline>
@@ -178,6 +178,12 @@
       },
       // Filter
       filterDictText,
+      getProcessStatus(operateName) {
+        if (!isNaN(operateName)) {
+          return filterDictText(this.types.order_status, operateName)
+        }
+        return '更新了信息'
+      },
       // Request data
       async loadData() {
         this.loadDetail()
