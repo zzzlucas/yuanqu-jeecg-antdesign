@@ -57,6 +57,11 @@
             <a-form-item label="经办人">
               <a-input v-decorator="['contactName', {rules: rules.contactName}]"></a-input>
             </a-form-item>
+            <a-col :xl="12">
+              <a-form-item label="联系方式">
+                <a-input v-decorator="['mobile', {rules: rules.mobile}]"></a-input>
+              </a-form-item>
+            </a-col>
             <a-col :xl="24">
               <a-form-item label="附件" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
 
@@ -73,6 +78,11 @@
           <a-col :xl="12">
             <a-form-item label="经办人">
               <a-input v-decorator="['contactName', {rules: rules.contactName}]"></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :xl="12">
+            <a-form-item label="联系方式">
+              <a-input v-decorator="['mobile', {rules: rules.mobile}]"></a-input>
             </a-form-item>
           </a-col>
           <a-col :xl="12">
@@ -153,20 +163,20 @@
           principalUser: [
             { required: true, message: '请选择负责人名称' }
           ],
-          contactName: [
-            { required: true, message: '请选择经办人名称' }
-          ],
           method: [
             { required: true, message: '请选择服务方式' }
           ],
           custName: [
             { required: true, message: '请输入客户名称' }
           ],
-          parkId: [
-            { required: true, message: '请输入所属园区' }
-          ],
           title: [
             { required: true, message: '请输入主题' }
+          ],
+          contactName: [
+            { required: true, message: '请选择经办人名称' }
+          ],
+          mobile: [
+            { required: true, message: '请填写联系方式' }
           ],
           content: [
             { required: true, message: '请输入内容' }
