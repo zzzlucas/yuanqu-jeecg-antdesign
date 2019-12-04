@@ -7,7 +7,7 @@ if %USE_DEPENDENT_MANAGER_INSTALL%==true call npm i
 rem ---Dependent manger install end---
 
 rem ---Build begin---
-start /wait "" npm run build ^&^& exit
+call npm run build
 rem ---Build end---
 
 rem ---Archive files begin---
