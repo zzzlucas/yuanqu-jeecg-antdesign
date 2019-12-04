@@ -92,7 +92,7 @@
               <div v-html="data.content"></div>
             </div>
             <div class="detail-row">文件：</div>
-            <j-upload ref="uploader" :value="data.addDocFiles" />
+            <j-upload ref="uploader" />
           </a-card>
         </a-tab-pane>
         <a-tab-pane tab="处理记录" key="records">
