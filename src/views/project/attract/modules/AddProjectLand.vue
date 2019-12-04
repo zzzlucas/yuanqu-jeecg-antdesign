@@ -620,7 +620,7 @@ export default {
         record.unitAddress = record.mgrProjectCust.unitAddress
         record.companyRegisterType = record.mgrProjectCust.companyRegisterType
         record.createBy = record.mgrProjectCust.createBy
-        record.creditCode = record.mgrProjectCust.legalTel
+        record.creditCode = record.mgrProjectCust.creditCode
         record.createTime = record.mgrProjectCust.createTime
         record.updateBy = record.mgrProjectCust.updateBy
         record.legalPerson = record.mgrProjectCust.legalPerson

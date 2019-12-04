@@ -437,6 +437,7 @@ export default {
         record.reportTime = record.mgrProjectCust.reportTime
       }
       if (record.mgrProjectInvestLease) {
+        record.addDocFiles = record.mgrProjectInvestLease.addDocFiles
         record.investAmount = record.mgrProjectInvestLease.investAmount
         record.registerCapital = record.mgrProjectInvestLease.registerCapital
         record.isForeignCapital = record.mgrProjectInvestLease.isForeignCapital

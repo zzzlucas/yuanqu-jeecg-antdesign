@@ -38,6 +38,7 @@ import moment from 'moment'
 import qs from 'qs'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import { initDictOptions } from '@comp/dict/JDictSelectUtil'
+
 export default {
   name: 'SysAnnouncementModal',
   components: {},

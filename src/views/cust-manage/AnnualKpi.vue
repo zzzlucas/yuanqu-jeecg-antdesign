@@ -3,17 +3,13 @@
     <!-- 操作按钮区域 -->
     <div class="table-operator">
       <a-button @click="goAnnualKpiAddForm()" type="primary" icon="plus">新增预算指标</a-button>
-      <a-dropdown v-if="selectedRowKeys.length > 0">
-        <a-menu slot="overlay">
-          <a-menu-item key="1" @click="batchDel">
-            <a-icon type="delete" />删除
-          </a-menu-item>
-        </a-menu>
-        <a-button style="margin-left: 8px">
-          批量操作
-          <a-icon type="down" />
-        </a-button>
-      </a-dropdown>
+      <a-button
+        style="margin-left: 8px"
+        type="danger"
+        icon="delete"
+        @click="batchDel"
+        v-if="selectedRowKeys.length > 0"
+      >批量删除</a-button>
     </div>
 
     <!-- table区域-begin -->
@@ -31,7 +27,7 @@
         rowKey="id"
         :columns="columns"
         :dataSource="dataSource"
-          :pagination="false"
+        :pagination="false"
         :loading="loading"
         :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
         :customRow="customRow"
@@ -60,11 +56,12 @@ import AnnualKpiAddForm from './modules/AnnualKpiAddForm'
 import { postAction, putAction, getAction } from '@/api/manage'
 import qs from 'querystring'
 import Dom7 from 'dom7'
+import { mixinList } from '@/utils/mixin'
 
 export default {
   name: 'IndustrialParksList',
   components: { AnnualKpiAddForm },
-  mixins: [JeecgListMixin],
+  mixins: [JeecgListMixin, mixinList],
   data() {
     return {
       description: '',
@@ -140,8 +137,8 @@ export default {
       ],
       url: {
         list: '/park.indicators/baseIndicatorsMsg/list',
-        delete: '/park.park/basePark/delete',
-        deleteBatch: '/park.park/basePark/deleteBatch'
+        delete: '/park.indicators/baseIndicatorsMsg/delete',
+        deleteBatch: '/park.indicators/baseIndicatorsMsg/deleteBatch'
       },
       deleteKey: 'parkId',
       rightShow: false
@@ -157,6 +154,7 @@ export default {
   },
   methods: {
     loadData() {
+      this.loading = true
       let param = {}
       // param.pageNo = this.ipagination.current
       // param.pageSize = this.ipagination.pageSize

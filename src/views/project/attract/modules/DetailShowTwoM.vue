@@ -5,13 +5,14 @@
         <a-row>
           <a-col :span="4">
             <a-form-item label="跟踪日期" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-date-picker placeholder="开始" v-model="ff.beginDate" :format="dateFormat" />
+              <a-date-picker placeholder="开始" v-model="ff.beginDate"  />
+              <!-- dateFormat  放这个干吗？ -->
               <!-- <a-date-picker v-decorator="['beginDate']" /> -->
             </a-form-item>
           </a-col>
           <a-col :span="4">
             <a-form-item label :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-date-picker placeholder="结束" v-model="ff.endDate" :format="dateFormat" />
+              <a-date-picker placeholder="结束" v-model="ff.endDate"  />
               <!-- <a-date-picker v-decorator="['endDate']" /> -->
             </a-form-item>
           </a-col>
@@ -61,7 +62,7 @@
           ref="table"
           size="default"
           bordered
-          rowKey="id"
+          rowKey="recordId"
           :columns="columns"
           :dataSource="dataSourceSTM"
           :pagination="ipagination"

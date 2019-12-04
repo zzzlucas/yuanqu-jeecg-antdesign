@@ -9,9 +9,9 @@
   >
     <a-spin :spinning="confirmLoading">
       <a-form :form="form">
-        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="园区ID">
+        <!-- <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="园区ID">
           <a-input placeholder="请输入园区ID" v-decorator="['parkId', validatorRules.parkId ]" />
-        </a-form-item>
+        </a-form-item>-->
         <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="年度">
           <!-- <a-input placeholder="请输入年度" v-decorator="['year', validatorRules.year ]" /> -->
           <a-select v-decorator="['year', validatorRules.year,{initialValue: ''}]">
@@ -55,6 +55,7 @@ import { httpAction } from '@/api/manage'
 import pick from 'lodash.pick'
 import moment from 'moment'
 import qs from 'querystring'
+import { mapGetters } from 'vuex'
 export default {
   name: 'baseIndicatorsMsgModal',
   data() {
@@ -87,7 +88,8 @@ export default {
   computed: {
     title() {
       return (this.editBool ? '编辑' : '新增') + '预算指标'
-    }
+    },
+    ...mapGetters(['industrialParkId'])
   },
   created() {},
   methods: {
@@ -145,6 +147,7 @@ export default {
             method = 'put'
           }
           let formData = Object.assign(this.model, values)
+          formData.parkId = this.industrialParkId
           //时间格式化
           formData = qs.stringify(formData)
           console.log(formData)

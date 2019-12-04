@@ -267,10 +267,13 @@
               </a-card>
               <a-card class="daily-article" :bordered="false" title="附件">
                 <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label>
-                  <j-upload v-decorator="['businessLicense']" />
+                  <j-upload
+                    :text="UPA.text"
+                    v-decorator="['businessLicense']"
+                  />
                 </a-form-item>
                 <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label>
-                  <j-upload v-decorator="['addDocFiles']" />
+                  <j-upload :text="UPB.text" v-decorator="['addDocFiles']" />
                 </a-form-item>
               </a-card>
             </a-col>
@@ -402,7 +405,7 @@
                         :value="item.value"
                         :key="key"
                       >{{ item.text }}</a-select-option>
-                    </a-select> -->
+                    </a-select>-->
                   </a-input>
                 </a-form-item>
               </a-col>
@@ -428,14 +431,6 @@
                       :key="key"
                     >{{ item.text }}</a-select-option>
                   </a-select>
-                  <!-- <a-select style="width:100%" v-decorator="['bussinessStatus']" placeholder="请选择">
-                    <a-select-option value="1">工商正常</a-select-option>
-                    <a-select-option value="2">工商未办</a-select-option>
-                    <a-select-option value="3">工商未迁</a-select-option>
-                    <a-select-option value="4">工商迁出</a-select-option>
-                    <a-select-option value="5">工商吊销</a-select-option>
-                    <a-select-option value="6">工商注销</a-select-option>
-                  </a-select>-->
                 </a-form-item>
               </a-col>
               <a-col span="8">
@@ -451,14 +446,6 @@
                       :key="key"
                     >{{ item.text }}</a-select-option>
                   </a-select>
-                  <!-- <a-select style="width:100%" v-decorator="['taxStatus']" placeholder="请选择">
-                    <a-select-option value="1">税务正常</a-select-option>
-                    <a-select-option value="2">税务未办</a-select-option>
-                    <a-select-option value="3">税务未迁</a-select-option>
-                    <a-select-option value="4">税务迁出</a-select-option>
-                    <a-select-option value="5">税务吊销</a-select-option>
-                    <a-select-option value="6">税务注销</a-select-option>
-                  </a-select> -->
                 </a-form-item>
               </a-col>
               <a-col span="8">
@@ -544,6 +531,7 @@ import { initDictOptions } from '@comp/dict/JDictSelectUtil'
 import { AddbaseCustomerForm } from '@/config/pick-fields'
 import JUpload from '@/components/jeecg/JUpload'
 import { getAction } from '../../../api/manage'
+import { mapGetters } from 'vuex'
 
 export default {
   name: '',
@@ -567,6 +555,14 @@ export default {
       visible: false,
       model: {},
       checkedList: [],
+      //jupload组件
+      UPA: {
+        text: '营业执照',
+        // fileType: 'image'
+      },
+      UPB: {
+        text: '其他附件'
+      },
       labelCol: {
         long: {
           span: 4
@@ -621,7 +617,8 @@ export default {
   computed: {
     title() {
       return '企业信息' + (this.editBool ? '修改' : '登记')
-    }
+    },
+    ...mapGetters(['industrialParkId'])
   },
   created() {
     //需要一个地方来自主加载区块（项目）选项和楼宇选项，以至于下拉框能够根据id匹配出具体名称
@@ -868,6 +865,7 @@ export default {
             formData.labelDic = this.CUSTOMERNAMEARRAY.toString()
             // formData.labelDic = formData.labelDic.toString()
           }
+          formData.parkId = this.industrialParkId
           formData = qs.stringify(formData)
           // console.log(formData)
           httpAction(httpurl, formData, method)

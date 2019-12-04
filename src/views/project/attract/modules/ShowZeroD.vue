@@ -11,17 +11,6 @@
       <a-card class="daily-article" :bordered="false">
         <a-spin :spinning="confirmLoading">
           <a-form class="project-drawer-form" :form="form">
-            <!-- <a-row>
-              <a-col span="24">
-                <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="项目ID">
-                  <a-input
-                    placeholder="请输入项目Id"
-                    disabled
-                    v-decorator="['projectId',  {rules: [{required: true, message: '请输入项目Id'}]}]"
-                  />
-                </a-form-item>
-              </a-col>
-            </a-row>-->
             <a-row>
               <a-col span="24">
                 <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="项目名称">
@@ -80,13 +69,14 @@
                 :wrapperCol="wrapperCol.default"
                 label="项目状态"
               >
-                <a-select disabled v-decorator="['status']">
+                <a-input disabled v-model="statusText"></a-input>
+                <!-- <a-select disabled v-decorator="['status']">
                   <a-select-option
                     v-for="(item, key) in dict.statusExt"
                     :value="item.value"
                     :key="key"
                   >{{ item.text }}</a-select-option>
-                </a-select>
+                </a-select>-->
               </a-form-item>
             </a-col>
             <a-row>
@@ -94,7 +84,12 @@
                 <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="过程纪要">
                   <a-textarea :rows="4" placeholde v-decorator="['content', {}]"></a-textarea>
                 </a-form-item>
-                <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="意向房源">
+                <a-form-item
+                  class="flag"
+                  :labelCol="labelCol.long"
+                  :wrapperCol="wrapperCol.long"
+                  label="意向房源"
+                >
                   <a-button
                     type="primary"
                     shape="circle"
@@ -125,18 +120,6 @@
                 </a-form-item>
               </a-col>
             </a-row>
-            <!-- <a-row>
-              <a-form-item
-                :labelCol="labelCol.long"
-                :wrapperCol="wrapperCol.long"
-                label="parkId test"
-              >
-                <a-input
-                  placeholder
-                  v-decorator="['parkId', {rules: [{ required: true, message: '请输入parkId', whitespace: true}]}]"
-                />
-              </a-form-item>
-            </a-row>-->
           </a-form>
         </a-spin>
       </a-card>
@@ -150,7 +133,7 @@
 </template>
 
 <script>
-import { initDictOptions } from '@comp/dict/JDictSelectUtil'
+import { initDictOptions, filterDictText } from '@comp/dict/JDictSelectUtil'
 import { getAction, httpAction } from '@/api/manage'
 import pick from 'lodash.pick'
 import qs from 'querystring'
@@ -214,10 +197,10 @@ export default {
       url: {
         add: '/park.project/mgrProjectTrace/addMgrProjectTrace',
         edit: '/park.project/mgrProjectTrace/edit'
-      }
+      },
+      statusText: ''
     }
   },
-  //左上角标题变换
   computed: {
     getTitle() {
       return '跟踪记录' + (this.editBool ? '编辑' : '登记')
@@ -233,11 +216,6 @@ export default {
     initDictOptions('tracker').then(res => {
       if (res.code === 0 && res.success) {
         this.dict.trackerExt = res.result
-      }
-    })
-    initDictOptions('project_status').then(res => {
-      if (res.code === 0 && res.success) {
-        this.dict.statusExt = res.result
       }
     })
   },
@@ -275,7 +253,12 @@ export default {
                 that.record = res.result
                 that.record.projectName = resSSS.result.projectName
                 that.model = Object.assign({}, that.record)
-
+                initDictOptions('project_status').then(resInit => {
+                  if (resInit.success) {
+                    that.dict.statusExt = resInit.result
+                    that.statusText = filterDictText(that.dict.statusExt, that.model.status)
+                  }
+                })
                 that.$nextTick(() => {
                   that.form.setFieldsValue(pick(that.model, ProjectAttractShowZeroForm))
                   that.form.setFieldsValue({ trackDate: that.model.trackDate ? moment(that.model.trackDate) : null })
@@ -290,7 +273,7 @@ export default {
         }
       })
     },
-    //给详情页专用，详情页具有$route.params.id获取projectId
+    //$route.params.id获取projectId
     moment,
     detailDDD(record) {
       this.editBool = true
@@ -306,6 +289,12 @@ export default {
                 that.record = res.result
                 that.record.projectName = resSSS.result.projectName
                 that.model = Object.assign({}, that.record)
+                initDictOptions('project_status').then(resInit => {
+                  if (resInit.success) {
+                    that.dict.statusExt = resInit.result
+                    that.statusText = filterDictText(that.dict.statusExt, that.model.status)
+                  }
+                })
                 that.visible = true
                 that.$nextTick(() => {
                   that.form.setFieldsValue(pick(that.model, ProjectAttractShowZeroForm))
@@ -324,11 +313,12 @@ export default {
     //只获取部分对应行的属性  在添加新记录时候使用
     partDetail(record) {
       this.editBool = false
+      const that = this
       // console.log('partDetail')
-      this.form.resetFields()
+      that.form.resetFields()
       //id查询项目基本信息api
-      this.visible = true
-      this.confirmLoading = true
+      that.visible = true
+      that.confirmLoading = true
       getAction('/park.project/mgrProjectInfo/queryProjectById', { projectId: record.projectId }).then(res => {
         if (res.success) {
           // console.log(res.result.projectManager)
@@ -348,27 +338,34 @@ export default {
                   record.tracker = resA.result[resA.result.length - 1].tracker
                 }
               }
-              this.model = Object.assign({}, record)
-              this.$nextTick(() => {
-                this.form.setFieldsValue(pick(this.model, 'projectId', 'projectName', 'trackDate', 'tracker', 'status'))
-                this.confirmLoading = false
+              that.model = Object.assign({}, record)
+              initDictOptions('project_status').then(resInit => {
+                if (resInit.success) {
+                  that.dict.statusExt = resInit.result
+                  that.statusText = filterDictText(that.dict.statusExt, that.model.status)
+                }
+              })
+              that.$nextTick(() => {
+                that.form.setFieldsValue(pick(that.model, 'projectId', 'projectName', 'trackDate', 'tracker', 'status'))
+                that.confirmLoading = false
               })
             }
           })
         } else {
-          this.$message.warning(res.message)
+          that.$message.warning(res.message)
         }
       })
     },
     //未跟进 1122
     partDetailDDD() {
       this.editBool = false
-      this.form.resetFields()
+      const that = this
+      that.form.resetFields()
       let record = {}
-      let params = { projectId: this.$route.params.id }
+      let params = { projectId: that.$route.params.id }
       // console.log(params)
-      this.visible = true
-      // this.confirmLoading = true
+      that.visible = true
+      // that.confirmLoading = true
       getAction('/park.project/mgrProjectInfo/queryProjectById', params).then(res => {
         if (res.success) {
           // console.log('object');
@@ -378,13 +375,19 @@ export default {
           record.projectId = res.result.projectId
           record.status = res.result.status
           // record.trackDate = res.result.trackDate
-          this.model = Object.assign({}, record)
-          this.$nextTick(() => {
-            this.form.setFieldsValue(pick(this.model, 'projectId', 'projectName', 'trackDate', 'tracker', 'status'))
+          that.model = Object.assign({}, record)
+          initDictOptions('project_status').then(resInit => {
+            if (resInit.success) {
+              that.dict.statusExt = resInit.result
+              that.statusText = filterDictText(that.dict.statusExt, that.model.status)
+            }
           })
-          // this.confirmLoading = false
+          that.$nextTick(() => {
+            that.form.setFieldsValue(pick(that.model, 'projectId', 'projectName', 'trackDate', 'tracker', 'status'))
+          })
+          // that.confirmLoading = false
         } else {
-          this.$message.warning(res.message)
+          that.$message.warning(res.message)
         }
       })
     },
@@ -442,11 +445,11 @@ export default {
 // }
 .mgr-project-trace-drawer {
   /** Button按钮间距 */
-  // .ant-btn {
-  //   margin-left: 30px;
-  //   margin-bottom: 30px;
-  //   float: right;
-  // }
+  .flag .ant-btn {
+    margin-left: 5px;
+    margin-bottom: 10px;
+    float: left;
+  }
 
   .project-drawer-form {
     @width: 120px;

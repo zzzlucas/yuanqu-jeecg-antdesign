@@ -37,11 +37,13 @@
             <a-tag :key="tag.assetId" v-for="tag in assetSelectRows">{{ tag.fixedAssetName }}</a-tag>
           </a-form-item>
         </a-col>
+
         <a-col :xl="24">
           <a-form-item label="附件" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
             <j-upload v-decorator="['addDocFiles']" />
           </a-form-item>
         </a-col>
+        
       </a-row>
       <a-row class="action-row" type="flex" justify="end">
         <a-col :xl="2">

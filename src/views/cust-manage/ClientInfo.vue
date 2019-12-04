@@ -10,34 +10,47 @@
             </a-form-item>
           </a-col>-->
           <a-col :md="6" :sm="8">
+            <a-form-item label="厂房">
+              <a-select v-model="queryParam.caseId" @change="getBuildingList" placeholder="请选择厂房">
+                <a-select-option
+                  v-for="item in info.BlockList"
+                  :value="item.buildingProjectId"
+                >{{item.projectName}}</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+          <a-col :md="6" :sm="8">
             <a-form-item label="楼宇">
-              <a-input placeholder v-model="queryParam.buidling"></a-input>
+              <a-select v-model="queryParam.bulidingId" placeholder="请选择楼宇">
+                <a-select-option
+                  v-for="item in info.BuildingList"
+                  :value="item.buildingId"
+                >{{item.buildingName}}</a-select-option>
+              </a-select>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
             <a-form-item label="行业类型">
-              <a-select v-model="queryParam.industryCategory" placeholder="请选择">
-                <!-- <a-select v-decorator="['industryCategory']" placeholder="请选择"> -->
+              <a-select v-model="queryParam.industryCategory" placeholder="请选择行业类型">
                 <a-select-option
                   v-for="(item, key) in dict.industryCategoryExt"
                   :value="item.value"
                   :key="key"
                 >{{ item.text }}</a-select-option>
               </a-select>
-              <!-- <a-input placeholder v-model="queryParam.industryCategory"></a-input> -->
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
             <a-form-item label="关键字">
-              <a-input placeholder="请输入客户名称" v-model="queryParam.keyword"></a-input>
+              <a-input placeholder="请输入企业名称" v-model="queryParam.keyword"></a-input>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
             <a-form-item label="状态">
               <a-radio-group defaultValue v-model="queryParam.status">
-                <a-radio value="1">在园</a-radio>
-                <a-radio value="0">离园</a-radio>
-                <!-- <a-radio :style="radioStyle" :value="2">离园</a-radio> -->
+                <!-- @change="searchQuery" 有五个查询子项目，干脆一起查吧 -->
+                <a-radio-button value="1">在园</a-radio-button>
+                <a-radio-button value="0">离园</a-radio-button>
               </a-radio-group>
             </a-form-item>
           </a-col>
@@ -103,11 +116,13 @@ import { getAction, putAction } from '@/api/manage'
 import qs from 'qs'
 import Dom7 from 'dom7'
 import { filterObj } from '@/utils/util'
+import { mixinList } from '@/utils/mixin'
+import { mapGetters } from 'vuex'
 
 export default {
   name: '',
   components: { ShowZero },
-  mixins: [JeecgListMixin],
+  mixins: [JeecgListMixin, mixinList],
   data() {
     return {
       description: '企业管理-客户信息列表页',
@@ -121,6 +136,8 @@ export default {
         enterpriseRatingExt: [{ value: '' }],
         registrationTypeExt: [{ value: '' }]
       },
+      info: {},
+      form: this.$form.createForm(this),
       deleteKey: 'custId',
       columns: [
         // {
@@ -188,8 +205,6 @@ export default {
         queryParam: '/park.customer/baseCustomer/queryById',
         delete: '/park.customer/baseCustomer/delete'
         // deleteBatch: '/park.base/basePark/deleteBatch',
-        // exportXlsUrl: 'park.base/basePark/exportXls',
-        // importExcelUrl: 'park.base/basePark/importExcel'
       },
       temprow: '',
       // rightShow: false,
@@ -198,9 +213,7 @@ export default {
     }
   },
   computed: {
-    // importExcelUrl: function() {
-    //   return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`
-    // }
+    ...mapGetters(['industrialParkId'])
   },
   mounted() {
     //这个status基本不能从筛选处获取，要自己手写写一次，但又不能写死，要能够被筛选处覆写
@@ -214,9 +227,32 @@ export default {
         this.dict.industryCategoryExt = res.result
       }
     })
+    getAction('/park.architecture/baseArchitectureProject/queryByParkId', { parkId: this.industrialParkId }).then(
+      res => {
+        if (res.success) {
+          // console.log(res)
+          this.info.BlockList = res.result
+        } else {
+          console.log('获取厂房（区块）列表失败')
+        }
+      }
+    )
   },
   methods: {
-    //本地定制化加载
+    getBuildingList(e) {
+      // console.log('e')
+      // console.log(e)
+      getAction('/park.architecture/baseArchitectureBuilding/queryBuildingList', { buildingProjectId: e }).then(res => {
+        if (res.success) {
+          this.info.BuildingList = res.result
+          this.$nextTick(() => {
+            this.form.setFieldsValue()
+          })
+        } else {
+          console.log('获取楼宇列表失败')
+        }
+      })
+    },
     loadData(arg) {
       if (!this.url.list) {
         this.$message.error('请设置url.list属性!')

@@ -14,22 +14,24 @@
   >
     <a-card :bordered="false">
       <a-spin :spinning="confirmLoading">
-        <detail-list v-if="info" :col="2">
-          <detail-list-item term="项目ID">{{info.projectId}}</detail-list-item>
+        <detail-list v-if="info" :col="1">
+          <!-- <detail-list-item term="项目ID">{{info.projectId}}</detail-list-item> -->
           <detail-list-item term="项目名称">{{info.projectName}}</detail-list-item>
+        </detail-list>
+        <detail-list v-if="info" :col="2">
           <detail-list-item term="跟踪日期">{{info.trackDate}}</detail-list-item>
           <detail-list-item term="跟踪人">{{dictText.trackerText}}</detail-list-item>
         </detail-list>
         <detail-list>
           <detail-list-item term="跟踪方式">{{dictText.trackMethodText}}</detail-list-item>
         </detail-list>
-        <detail-list>
+        <detail-list :col="1">
           <detail-list-item term="过程纪要">{{info.content}}</detail-list-item>
         </detail-list>
-        <detail-list>
+        <detail-list :col="1">
           <detail-list-item term="意向房源">{{info.resourceGroupId}}</detail-list-item>
         </detail-list>
-        <detail-list>
+        <detail-list :col="1">
           <detail-list-item term="备注">{{info.remark}}</detail-list-item>
         </detail-list>
       </a-spin>

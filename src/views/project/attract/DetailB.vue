@@ -21,7 +21,7 @@
               <detail-list-item term="年税金">{{ info.annualTaxes }}万元</detail-list-item>
               <!-- 这个租赁项目才有 -->
               <!-- v-if="info.projectType == 2" -->
-              <detail-list-item term="重要程度">{{ info.importance }}</detail-list-item>
+              <detail-list-item term="重要程度">{{ filterDictText(dict.importance,info.importance) }}</detail-list-item>
               <detail-list-item
                 term="是否外资"
               >{{ info.mgrProjectInvestLease?(info.mgrProjectInvestLease.isForeignCapital=="1"?"是":"否"):null }}</detail-list-item>
@@ -70,9 +70,13 @@
           </detail-list>
         </a-tab-pane>
         <a-tab-pane tab="附件" key="5">
-          <detail-list :col="2">
-            <detail-list-item term="附件"></detail-list-item>
-          </detail-list>
+          <yq-image
+            v-for="(item,i) in info.addDocFiles"
+            class="block-image"
+            size="40"
+            fit="contain"
+            :src="getOneImage(info.addDocFiles[i])"
+          ></yq-image>
         </a-tab-pane>
         <a-tab-pane tab="公司注册信息" key="6">
           <detail-list :col="2">
@@ -200,6 +204,8 @@ import DetailShowTwo from './modules/DetailShowTwoM'
 import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
 import qs from 'querystring'
 import Dom7 from 'dom7'
+import { getFileListData, getOneImage, promiseForm, uploadFile } from '@utils/util'
+import YqImage from '@comp/extend/YqImage'
 
 export default {
   name: 'Detail',
@@ -208,7 +214,8 @@ export default {
     ABadge,
     DetailList,
     DetailListItem,
-    DetailShowTwo
+    DetailShowTwo,
+    YqImage
   },
   data() {
     return {
@@ -334,7 +341,11 @@ export default {
   },
 
   async created() {
-    //一开始发动初始化一下看看，不对的话再换
+    initDictOptions('importance').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.importance = res.result
+      }
+    })
 
     if (typeof this.$route.params.id !== 'string') {
       this.$router.back()
@@ -345,8 +356,8 @@ export default {
     getAction('/park.project/mgrProjectInfo/queryProjectById', { projectId: this.$route.params.id }).then(res => {
       if (res.code === 200) {
         this.info = res.result
+        this.info.addDocFiles = this.info.mgrProjectInvestLease.addDocFiles.split(',')
         console.log('object')
-        console.log(this.info.mgrProjectInvest)
         console.log(this.info)
         this.confirmLoading = false
       } else {
@@ -382,6 +393,8 @@ export default {
   },
 
   methods: {
+    filterDictText,
+    getOneImage,
     initDictConfigC() {
       initDictOptions('technology_source').then(res => {
         if (res.code === 0 && res.success) {

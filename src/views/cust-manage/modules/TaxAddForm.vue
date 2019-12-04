@@ -10,7 +10,7 @@
     <a-spin :spinning="confirmLoading">
       <a-form :form="form">
         <a-row>
-          <a-col v-if="this.record.year" span="24">
+          <a-col v-if="!this.record.month" span="24">
             <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="年度">
               <a-select
                 placeholder="请选择年份"
@@ -24,7 +24,7 @@
               </a-select>
             </a-form-item>
           </a-col>
-          <a-col v-if="this.record.month" span="24">
+          <a-col v-if="!this.record.year" span="24">
             <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="月份">
               <a-select placeholder="请选择月份" v-decorator="['month', {initialValue: ''}]">
                 <a-select-option value="1">1月</a-select-option>
@@ -92,6 +92,7 @@ import { httpAction } from '@/api/manage'
 import pick from 'lodash.pick'
 import moment from 'moment'
 import qs from 'querystring'
+import { mapGetters } from 'vuex'
 export default {
   name: '',
   data() {
@@ -129,7 +130,8 @@ export default {
   computed: {
     title() {
       return (this.editBool ? '编辑' : '新增') + '纳税情况'
-    }
+    },
+    ...mapGetters(['industrialParkId'])
   },
   methods: {
     add() {
@@ -205,6 +207,7 @@ export default {
             method = 'put'
           }
           let formData = Object.assign(this.model, values)
+          formData.parkId = this.industrialParkId
           //时间格式化
           formData = qs.stringify(formData)
           console.log(formData)
