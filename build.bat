@@ -1,7 +1,7 @@
 rem ---Dependent manger install begin---
 echo Install dependents...
-if _%USE_DEPENDENT_MANAGER_INSTALL%==_true start /wait "" npm i -g npm ^&^& exit
-if _%USE_DEPENDENT_MANAGER_INSTALL%==_true start /wait "" npm i ^&^& exit
+if _%USE_DEPENDENT_MANAGER_INSTALL%==_true call npm i -g npm
+if _%USE_DEPENDENT_MANAGER_INSTALL%==_true call npm i
 rem ---Dependent manger install end---
 
 rem ---Build begin---
