@@ -14,8 +14,8 @@ echo "Make target app folder $SERVER_REAL_ROOT"
 mkdir -p $SERVER_REAL_ROOT
 echo "Move files to $SERVER_REAL_BUILD_ROOT"
 mv app $SERVER_REAL_BUILD_ROOT
-echo "Change backend api"
-sed -i "s/window._CONFIG\['domianURL'\] = '\/jeecg-boot'/window._CONFIG\['domianURL'\] = '$SERVER_API'/g" index.html
+echo "Change backend api: $SERVER_API"
+sed -i "s#window._CONFIG\['domianURL'\] = '/jeecg-boot'#window._CONFIG['domianURL'] = '$SERVER_API'#g" index.html
 echo "Make version file to $SERVER_REAL_BUILD_ROOT/.version"
 echo $BUILD_TAG > $SERVER_REAL_BUILD_ROOT/.version
 echo "chown -R $SERVER_USER:$SERVER_GROUP $SERVER_REAL_BUILD_ROOT"
