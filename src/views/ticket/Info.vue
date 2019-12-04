@@ -73,12 +73,18 @@
             :bordered="false"
             :loading="loading">
             <p class="detail-heading detail-row">主题：{{ data.title }}</p>
-            <!-- TODO -->
             <template v-if="isCurrentTypeInProject">
               <p class="detail-row">企业名称：{{ data.custName }}</p>
               <p class="detail-row">经办人：{{ data.contactName }}</p>
               <p class="detail-row">联系方式：{{ data.mobile }}</p>
               <p class="detail-row">项目名称：{{ data.title }}</p>
+            </template>
+            <template v-if="isCurrentTypeInProjectPeriod">
+              <p class="detail-row">企业名称：{{ data.custName }}</p>
+              <p class="detail-row">经办人：{{ data.contactName }}</p>
+              <p class="detail-row">联系方式：{{ data.mobile }}</p>
+              <p class="detail-row">项目名称：{{ data.title }}</p>
+              <p class="detail-row">期限：{{ data.begDate }} - {{ data.endDate }}</p>
             </template>
             <div class="detail-row">问题描述：
               <br>
