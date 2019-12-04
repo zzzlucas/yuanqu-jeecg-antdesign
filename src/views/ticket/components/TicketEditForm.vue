@@ -202,7 +202,7 @@
           if (!resp.success) {
             throw new Error(resp.message)
           }
-          this.$message.success('添加成功')
+          this.$message.success((this.isEdit ? '编辑' : '添加') + '成功')
           this.closeDrawer()
           this.$emit('submit')
         } catch (e) {
