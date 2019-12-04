@@ -7,6 +7,7 @@ if %USE_DEPENDENCY_MANAGER_INSTALL%==true call npm i
 rem ---Dependency manager install end---
 
 rem ---Build begin---
+echo Building files...
 call npm run build
 rem ---Build end---
 
