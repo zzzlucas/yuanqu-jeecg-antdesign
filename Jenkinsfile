@@ -25,7 +25,7 @@ pipeline {
         //ENV_PROD_SERVER_API = "/jeecg-boot"
     }
     parameters {
-      booleanParam defaultValue: true, description: 'Use npm to install dependent?', name: 'USE_DEPENDENT_MANAGER_INSTALL'
+      booleanParam defaultValue: true, description: 'Use npm to install dependency?', name: 'USE_DEPENDENCY_MANAGER_INSTALL'
     }
     stages {
         stage('Build') {

@@ -1,9 +1,9 @@
 @echo off
 rem ---Dependency manager install begin---
 echo Install dependencies...
-if not defined USE_DEPENDENT_MANAGER_INSTALL set USE_DEPENDENT_MANAGER_INSTALL=true
-if %USE_DEPENDENT_MANAGER_INSTALL%==true call npm i -g npm
-if %USE_DEPENDENT_MANAGER_INSTALL%==true call npm i
+if not defined USE_DEPENDENCY_MANAGER_INSTALL set USE_DEPENDENCY_MANAGER_INSTALL=true
+if %USE_DEPENDENCY_MANAGER_INSTALL%==true call npm i -g npm
+if %USE_DEPENDENCY_MANAGER_INSTALL%==true call npm i
 rem ---Dependency manager install end---
 
 rem ---Build begin---
