@@ -11,24 +11,14 @@
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="所属园区">
-        <a-select placeholder="请选择园区" v-decorator="['parkId', {rules: rules.parkId, initialValue: parkId}]">
-          <a-select-option value="1193719771573518336">园区1</a-select-option>
-          <a-select-option value="1193773294512242688">园区2</a-select-option>
-          <a-select-option value="1193775260059566080">园区3</a-select-option>
-        </a-select>
-      </a-form-item>
-      <a-form-item
-        :labelCol="labelCol"
-        :wrapperCol="wrapperCol"
         label="区块名称">
-        <a-input placeholder="请输入区块名称" v-decorator="['projectName', {}]"/>
+        <a-input placeholder="请输入区块名称" v-decorator="['projectName', {rules: rules.projectName}]"/>
       </a-form-item>
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
         label="区块简称">
-        <a-input placeholder="请输入区块简称" v-decorator="['projectAbbr', {}]"/>
+        <a-input placeholder="请输入区块简称" v-decorator="['projectAbbr', {rules: rules.projectAbbr}]"/>
       </a-form-item>
       <a-form-item
         :labelCol="labelCol"
@@ -176,10 +166,12 @@
           form.addDocFiles = JSON.stringify(getFileListData(this.fileList))
 
           if (!this.model.buildingProjectId) {
+            form.parkId = this.parkId
             httpUrl = this.url.add
             method = 'post'
           } else {
             form.buildingProjectId = this.model.buildingProjectId
+            form.parkId = this.model.parkId
             httpUrl = this.url.edit
             method = 'put'
           }
