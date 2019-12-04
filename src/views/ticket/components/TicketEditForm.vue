@@ -55,7 +55,7 @@
           </a-col>
           <a-col :xl="12">
             <a-form-item label="经办人">
-              <a-input v-decorator="['principalUser', {rules: rules.principalUser}]"></a-input> <!-- TODO: name? -->
+              <a-input v-decorator="['contactName', {rules: rules.contactName}]"></a-input>
             </a-form-item>
             <a-col :xl="24">
               <a-form-item label="附件" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
@@ -72,7 +72,7 @@
           </a-col>
           <a-col :xl="12">
             <a-form-item label="经办人">
-              <a-input v-decorator="['principalUser', {rules: rules.principalUser}]"></a-input> <!-- TODO: name? -->
+              <a-input v-decorator="['contactName', {rules: rules.contactName}]"></a-input>
             </a-form-item>
           </a-col>
           <a-col :xl="12">
@@ -152,6 +152,9 @@
           ],
           principalUser: [
             { required: true, message: '请选择负责人名称' }
+          ],
+          contactName: [
+            { required: true, message: '请选择经办人名称' }
           ],
           method: [
             { required: true, message: '请选择服务方式' }

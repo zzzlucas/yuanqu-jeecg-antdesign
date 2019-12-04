@@ -13,9 +13,13 @@ const url = {
     changeStatus: '/workorder/mgrWorkorderInfo/changeStatus',
   },
   operate: {
-    list: '/park.workorder/mgrOrderOperate/list',
+    listProcess: '/park.workorder/mgrOrderOperate/list1',
+    listFeedback: '/park.workorder/mgrOrderOperate/list2',
+    viewProcess: '/park.workorder/mgrOrderOperate/list1',
+    viewFeedback: '/park.workorder/mgrOrderOperate/list2',
     view: '/park.workorder/mgrOrderOperate/queryById',
-    add: '/park.workorder/mgrOrderOperate/add',
+    addProcess: '/park.workorder/mgrOrderOperate/add',
+    addFeedback: '/park.workorder/mgrOrderOperate/addRemark',
     edit: '/park.workorder/mgrOrderOperate/edit',
   },
 }
@@ -28,10 +32,14 @@ const editInfo = params => putAction(url.info.edit, qs.stringify(params))
 const viewInfo = params => getAction(url.info.view, params)
 /** 工单基本信息-工单状态管理 */
 const changeStatusInfo = params => putAction(url.info.changeStatus, qs.stringify(params))
-/** 工单操作记录-分页列表查询s */
-const listOperate = params => getAction(url.operate.list, params)
-/** 工单操作记录-添加 */
-const addOperate = params => postAction(url.operate.add, params)
+/** 工单处理记录-查询 */
+const listOperateProcess = params => getAction(url.operate.listProcess, params)
+/** 工单处理记录-查询 */
+const listOperateFeedback = params => getAction(url.operate.listFeedback, params)
+/** 工单处理记录-添加 */
+const addOperateProcess = params => postAction(url.operate.addProcess, qs.stringify(params))
+/** 工单反馈记录-添加 */
+const addOperateFeedback = params => postAction(url.operate.addFeedback, qs.stringify(params))
 
 export {
   url,
@@ -39,6 +47,8 @@ export {
   editInfo,
   viewInfo,
   changeStatusInfo,
-  listOperate,
-  addOperate,
+  listOperateProcess,
+  listOperateFeedback,
+  addOperateProcess,
+  addOperateFeedback,
 }

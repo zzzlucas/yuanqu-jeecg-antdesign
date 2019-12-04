@@ -40,8 +40,8 @@
           <!-- Action -->
           <div class="ticket-action-container">
             <a-button-group>
-              <a-button @click="handleChangeStatus('1')" v-if="data.status == null || data.status === '2' || data.status === '3'">{{ data.status == null ? '受理' : '重新受理' }}</a-button>
-              <a-button @click="handleChangeStatus('2')" v-if="data.status == null || data.status === '1'">退回</a-button>
+              <a-button @click="handleChangeStatus('1')" v-if="data.status === '0'|| data.status === '2' || data.status === '3'">{{ data.status === '0' ? '受理' : '重新受理' }}</a-button>
+              <a-button @click="handleChangeStatus('2')" v-if="data.status === '0' || data.status === '1'">退回</a-button>
               <a-button @click="handleChangeStatus('3')" v-if="data.status === '1'">完成</a-button>
             </a-button-group>
             <a-dropdown>
@@ -94,9 +94,9 @@
             title="工单处理记录"
             :bordered="false"
             :loading="recordLoading">
-            <a-button type="primary" slot="extra" icon="plus" shape="circle" @click="handleAddOperate" />
+            <a-button type="primary" slot="extra" icon="plus" shape="circle" @click="handleAddOperate('process')" />
             <a-timeline>
-              <a-timeline-item v-for="record in records" :key="record.recordId">
+              <a-timeline-item v-for="record in records.process" :key="record.recordId">
                 <p class="timeline-heading">{{ record.createTime }} 【{{ record.createUserName }}】 {{ record.operateName_dictText }}工单</p>
                 <p class="timeline-content" v-if="record.remark">{{ record.remark }}</p>
               </a-timeline-item>
@@ -108,15 +108,11 @@
             title="工单反馈记录"
             :bordered="false"
             :loading="recordLoading">
-            <a-button type="primary" slot="extra" icon="plus" shape="circle" @click="handleAddOperate" />
+            <a-button type="primary" slot="extra" icon="plus" shape="circle" @click="handleAddOperate('feedback')" />
             <a-timeline>
-              <a-timeline-item>
-                <p class="timeline-heading">2019-10-28 13:24:20 【演示用户】工单进展</p>
-                <p class="timeline-content">反馈记录要求前端也可以看到</p>
-              </a-timeline-item>
-              <a-timeline-item>
-                <p class="timeline-heading">2019-10-28 13:24:20 【演示用户】工单进展</p>
-                <p class="timeline-content">反馈记录要求前端也可以看到</p>
+              <a-timeline-item v-for="record in records.feedback" :key="record.recordId">
+                <p class="timeline-heading">{{ record.createTime }} 【{{ record.createUserName }}】 {{ record.operateName_dictText }}工单</p>
+                <p class="timeline-content" v-if="record.remark">{{ record.remark }}</p>
               </a-timeline-item>
             </a-timeline>
           </a-card>
@@ -140,7 +136,7 @@
   import { filterDictText } from '@/components/dict/JDictSelectUtil'
   import ViewMixin from '@/mixins/View'
   import Mixin from './mixin'
-  import { url, viewInfo, changeStatusInfo, listOperate } from './api'
+  import { url, viewInfo, changeStatusInfo, listOperateProcess, listOperateFeedback } from './api'
 
   export default {
     mixins: [
@@ -161,7 +157,10 @@
         dictesCreateFields: ['order_type', 'order_status'],
         // Data
         recordLoading: true,
-        records: [],
+        records: {
+          process: [],
+          feedback: [],
+        },
       }
     },
     computed: {
@@ -200,19 +199,31 @@
       async loadRecords() {
         this.recordLoading = true
         try {
-          const resp = await listOperate({ orderId: this.getRouteParams().orderId, column: 'createTime', order: 'desc' })
-          if (!resp.success) {
-            throw new Error(resp.message)
+          const promises = [
+            listOperateProcess({ orderId: this.getRouteParams().orderId }),
+            listOperateFeedback({ orderId: this.getRouteParams().orderId }),
+          ]
+          const respCollection = await Promise.all(promises)
+          for (const [i, resp] of respCollection.entries()) {
+            if (!resp.success) {
+              throw new Error(resp.message)
+            }
+            const records = resp.result
+            if (i === 0) {
+              this.records.process = records
+            } else {
+              this.records.feedback = records
+            }
           }
-          this.records = resp.result.records
         } catch (e) {
           this.$message.error(e.message)
         }
         this.recordLoading = false
       },
       // Action
-      handleAddOperate() {
+      handleAddOperate(type) {
         this.$refs.operateModalForm.add();
+        this.$refs.operateModalForm.type = type
         this.$refs.operateModalForm.disableSubmit = false;
       },
       // Change status
