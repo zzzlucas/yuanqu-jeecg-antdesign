@@ -64,7 +64,7 @@
             </a-col>
             <a-col :xl="24">
               <a-form-item label="附件" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
-
+                <j-upload v-decorator="['addDocFiles']" />
               </a-form-item>
             </a-col>
           </a-col>
@@ -97,7 +97,7 @@
           </a-col>
           <a-col :xl="24">
             <a-form-item label="附件" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
-
+              <j-upload v-decorator="['addDocFiles']" />
             </a-form-item>
           </a-col>
         </template>
@@ -134,6 +134,7 @@
 
 <script>
   import JDate from '@/components/jeecg/JDate'
+  import JUpload from '@/components/jeecg/JUpload'
   import JEditor from '@/components/jeecg/JEditor'
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
   import { filterObj, promiseForm } from '@utils/util'
@@ -147,8 +148,9 @@
       Mixin,
     ],
     components: {
-      JEditor,
       JDate,
+      JUpload,
+      JEditor,
     },
     data() {
       return {

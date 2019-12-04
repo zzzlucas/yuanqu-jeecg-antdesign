@@ -91,8 +91,8 @@
               <br>
               <div v-html="data.content"></div>
             </div>
-            <!-- TODO -->
             <div class="detail-row">文件：</div>
+            <j-upload ref="uploader" :value="data.addDocFiles" />
           </a-card>
         </a-tab-pane>
         <a-tab-pane tab="处理记录" key="records">
@@ -137,6 +137,7 @@
 </template>
 
 <script>
+  import JUpload from '@/components/jeecg/JUpload'
   import TicketEditForm from '@views/ticket/components/TicketEditForm'
   import TicketOperateEditForm from '@views/ticket/components/TicketOperateEditForm'
   import { filterDictText } from '@/components/dict/JDictSelectUtil'
@@ -150,6 +151,7 @@
       Mixin,
     ],
     components: {
+      JUpload,
       TicketEditForm,
       TicketOperateEditForm,
     },
@@ -192,7 +194,9 @@
       },
       // Request data
       async loadData() {
-        this.loadDetail()
+        this.loadDetail().then(() => {
+          this.$refs.uploader.initFileList(this.data.addDocFiles)
+        })
         this.loadRecords()
       },
       async loadDetail() {
@@ -349,6 +353,9 @@
         }
         .detail-heading {
           font-size: 18px;
+        }
+        .ant-upload {
+          display: none;
         }
       }
     }
