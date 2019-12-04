@@ -1,7 +1,7 @@
 export const orderTypeProjectPeriod = [
   '1', // 物业报修 TODO: wrong?
   '7', // 公共设施
-  '9', // 建筑垃圾处置 TODO: may wrong too, this option dose not have any logic on design for whatever the reason is
+  '9', // 建筑垃圾处置 TODO: may wrong too, this option does not have any logic on design for whatever the reason is
   '10', // 临时占用道路
   '12', // 建筑物及设施改造
 ]
