@@ -246,6 +246,9 @@
         return resp.result
       },
       async init() {
+        this.types.project = []
+        this.types.building = []
+        this.types.floor = []
         this.getProjects(this.industrialParkId)
         if (this.isEdit) {
           const projectId = this.record.projectId
