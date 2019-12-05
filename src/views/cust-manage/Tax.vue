@@ -62,7 +62,7 @@ import Dom7 from 'dom7'
 import { mapGetters } from 'vuex'
 
 export default {
-  name: 'IndustrialParksList',
+  name: '',
   components: { TaxAddForm },
   mixins: [JeecgListMixin],
   data() {
