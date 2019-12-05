@@ -46,10 +46,10 @@
           <a-form-item label="所属楼宇">
             <a-select style="width: 100%;" v-decorator="['buildingId', {rules: rules.buildingId}]" @change="fetchFloors">
               <a-select-option
-                :value="item.buildingProjectId"
+                :value="item.buildingId"
                 v-for="item in types.building"
-                :key="item.buildingProjectId">
-                {{ item.projectName }}
+                :key="item.buildingId">
+                {{ item.buildingName }}
               </a-select-option>
             </a-select>
           </a-form-item>
@@ -58,10 +58,10 @@
           <a-form-item label="所属楼层">
             <a-select style="width: 100%;" v-decorator="['floorId', {rules: rules.floorId}]">
               <a-select-option
-                :value="item.buildingProjectId"
+                :value="item.floorId"
                 v-for="item in types.floor"
-                :key="item.buildingProjectId">
-                {{ item.projectName }}
+                :key="item.floorId">
+                {{ item.floorName }}
               </a-select-option>
             </a-select>
           </a-form-item>
@@ -235,11 +235,11 @@
       },
       async fetchBuildings() {
         await this.$nextTick()
-        await this.getBuildings(this.form.projectId)
+        await this.getBuildings(this.form.getFieldValue('projectId'))
       },
       async fetchFloors() {
         await this.$nextTick()
-        await this.getFloors(this.form.buildingId)
+        await this.getFloors(this.form.getFieldValue('buildingId'))
       },
     },
     watch: {

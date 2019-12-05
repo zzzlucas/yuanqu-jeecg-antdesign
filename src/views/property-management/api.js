@@ -6,7 +6,7 @@ const url = {
     list: '/park.architecture/baseArchitectureProject/queryByParkId',
   },
   architectureBuilding: {
-    list: '/park.architecture/baseArchitectureBuilding/queryByProjectId',
+    list: '/park.architecture/baseArchitectureBuilding/queryBuildingList',
   },
   architectureFloor: {
     list: '/park.architecture/baseArchitectureFloor/queryByBuildingId',

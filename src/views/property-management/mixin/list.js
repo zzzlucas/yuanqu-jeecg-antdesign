@@ -13,7 +13,6 @@ export default {
   },
   methods: {
     async getProjects(parkId) {
-      await this.$nextTick()
       try {
         const resp = await listProject({ parkId })
         if (!resp.success) {
@@ -25,9 +24,8 @@ export default {
       }
     },
     async getBuildings(projectId) {
-      await this.$nextTick()
       try {
-        const resp = await listBuilding({ projectId })
+        const resp = await listBuilding({ buildingProjectId: projectId })
         if (!resp.success) {
           throw new Error(resp.message)
         }
@@ -37,7 +35,6 @@ export default {
       }
     },
     async getFloors(buildingId) {
-      await this.$nextTick()
       try {
         const resp = await listFloor({ buildingId })
         if (!resp.success) {
