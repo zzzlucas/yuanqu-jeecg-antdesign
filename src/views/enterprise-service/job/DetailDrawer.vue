@@ -15,7 +15,7 @@
           <!-- {{info.contactName}} -->
           <a-divider />
           <!-- <detail-list-item term="行业">{{filterDictText(dict.industryGategory, info.jobType)}}</detail-list-item> -->
-          <detail-list-item term="行业">{{filterDictText(DDindustryGategory, info.jobType)}}</detail-list-item>
+          <detail-list-item term="行业">{{filterDictText(dict.industryGategory, info.jobType)}}</detail-list-item>
           <!-- <button @click="cc">111</button> -->
           <detail-list-item term="招聘人数">{{info.jobNum}}人</detail-list-item>
           <a-divider />
