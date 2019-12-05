@@ -423,3 +423,13 @@ export const meetingRoomEditForm = [
   'remarks',
   'summary',
 ]
+
+export const meetingEventEditForm = [
+  'roomName', // Dummy
+  'begDate',
+  'endDate',
+  'requestPerson',
+  'telephone',
+  'r3', // TODO: change me
+  'remark',
+]

@@ -130,11 +130,16 @@
     <meeting-room-edit-form
       ref="modalForm"
       @submit="handleEditSubmit" />
+    <!-- Book form -->
+    <meeting-event-edit-form
+      ref="modalFormBook"
+      @submit="handleEditSubmit" />
   </div>
 </template>
 
 <script>
   import MeetingRoomEditForm from '@views/property-management/components/MeetingRoomEditForm'
+  import MeetingEventEditForm from '@views/property-management/components/MeetingEventEditForm'
   import JDate from '@/components/jeecg/JDate'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import MixinList from '@/mixins/List'
@@ -151,6 +156,7 @@
     components: {
       JDate,
       MeetingRoomEditForm,
+      MeetingEventEditForm,
     },
     data() {
       return {
@@ -200,7 +206,9 @@
       },
       // Action
       handleBook(record) {
-
+        this.$refs.modalFormBook.add({ roomName: record.roomName });
+        this.$refs.modalFormBook.title = "新增";
+        this.$refs.modalFormBook.disableSubmit = false;
       },
       // Add/Edit
       async handleEditSubmit() {
