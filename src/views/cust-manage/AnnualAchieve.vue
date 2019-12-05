@@ -3,33 +3,67 @@
     <!-- 操作按钮区域 -->
     <div class="table-operator annual">
       <a-form :form="form" :layout="formLayout">
-        <a-form-item label="区分" :label-col="formItem.label" :wrapper-col="formItem.value">
-          <!-- <a-form-item label="区分"  label-col="6" wrapper-col="10"> -->
-          <a-select style="width: 120px" @change="handleChange" v-model="queryParam.type">
-            <a-select-option value>不限</a-select-option>
-            <a-select-option value="YS">预算</a-select-option>
-            <a-select-option value="SJ">实际</a-select-option>
-          </a-select>
-
-          <a-button
-            style="margin-left:15px"
-            @click="goAnnualAchieveAddForm()"
-            type="primary"
-            icon="plus"
-          >新增完成情况</a-button>
-          <a-dropdown v-if="selectedRowKeys.length > 0">
-            <a-menu slot="overlay">
-              <a-menu-item key="1" @click="batchDel">
-                <a-icon type="delete" />删除
-              </a-menu-item>
-            </a-menu>
-            <a-button style="margin-left: 8px">
-              批量操作
-              <a-icon type="down" />
-            </a-button>
-          </a-dropdown>
-        </a-form-item>
+        <a-row :gutter="24">
+          <a-col :span="3">
+            <a-form-item label="区分" :label-col="formItem.label" :wrapper-col="formItem.value">
+              <a-select style="width: 150px" @change="handleChange" v-model="queryParam.type">
+                <a-select-option value>不限</a-select-option>
+                <a-select-option value="YS">预算</a-select-option>
+                <a-select-option value="SJ">实际</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+          <a-col>
+            <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons local">
+              <a-button
+                style="margin-left:15px"
+                @click="goAnnualAchieveAddForm()"
+                type="primary"
+                icon="plus"
+              >新增完成情况</a-button>
+              <a-button
+                style="margin-left: 8px"
+                type="danger"
+                icon="delete"
+                @click="batchDel"
+                v-if="selectedRowKeys.length > 0"
+              >批量删除</a-button>
+            </span>
+          </a-col>
+        </a-row>
       </a-form>
+
+      <!-- <a-form layout="inline">
+        <a-row :gutter="24">
+          <a-col :span="6">
+            <a-form-item label="审核阶段">
+              <a-select v-model="queryParam.code" placeholder>
+                <a-select-option value="N4">部门审核</a-select-option>
+                <a-select-option value="N1">分管领导审核</a-select-option>
+                <a-select-option value="N2">主要领导审核</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+          <a-col>
+            <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
+              <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
+              <a-button
+                style="margin-left: 8px"
+                type="danger"
+                icon="delete"
+                @click="batchDel"
+                v-if="selectedRowKeys.length > 0"
+              >批量删除</a-button>
+            </span>
+          </a-col>
+
+          <a-col :span="4" style="float: right">
+            <span style="float: right;overflow: hidden;" class="table-page-search-submitButtons">
+              <a-button type="primary" @click="AuditorAddForm">添加审核人</a-button>
+            </span>
+          </a-col>
+        </a-row>
+      </a-form>-->
     </div>
 
     <!-- table区域-begin -->
@@ -44,7 +78,7 @@
         ref="table"
         size="middle"
         bordered
-        rowKey="parkId"
+        rowKey="id"
         :columns="columns"
         :dataSource="dataSource"
         :pagination="false"
@@ -83,6 +117,7 @@ import AnnualAchieveAddForm from './modules/AnnualAchieveAddForm'
 import { postAction, putAction, getAction } from '@/api/manage'
 import qs from 'querystring'
 import Dom7 from 'dom7'
+import { mapGetters } from 'vuex'
 
 export default {
   name: '',
@@ -171,16 +206,16 @@ export default {
       url: {
         listN: '/park.indicators/baseIndicatorsMsg/list',
         listM: '/park.indicators/baseIndicatorsMsg/listFinish',
-        delete: '/park.park/basePark/delete',
-        deleteBatch: '/park.park/basePark/deleteBatch'
+        delete: '/park.indicators/baseIndicatorsMsg/delete',
+        deleteBatch: '/park.indicators/baseIndicatorsMsg/deleteBatch'
       },
-      deleteKey: 'parkId',
+      deleteKey: 'id',
       rightShow: false
     }
   },
 
   created() {},
-  computed: {},
+  computed: { ...mapGetters(['industrialParkId']) },
   methods: {
     handleChange(e) {
       // console.log('eeeeeeeeeeeeeeeeeee')
@@ -210,7 +245,7 @@ export default {
         })
       }
       if (e == '') {
-        let params = { parkId: 555 }
+        let params = { parkId: this.industrialParkId }
         getAction(this.url.listM, params).then(res => {
           if (res.success) {
             console.log('不限筛选成功')
@@ -229,11 +264,13 @@ export default {
     loadData() {
       // if (this.typee == 'YS' || this.typee == 'SJ') console.log('hahahaahahh')
       // let params = { type: this.typee }
-      let params = { parkId: 555 }
+      this.loading = true
+      let params = { parkId: this.industrialParkId }
       //当type为不限时，走listM的api / type筛选时，走最简单的listN
       getAction(this.url.listM, params).then(res => {
         if (res.success) {
           this.dataSource = res.result
+          this.loading = false
           for (const item of res.result) {
             item.year = item.year + '年'
           }
@@ -278,6 +315,12 @@ export default {
 .annual {
   .ant-form-item-label {
     width: auto;
+  }
+  .ant-form-item {
+    margin-bottom: 0px;
+  }
+  .local{
+    margin-top: 4px;
   }
 }
 </style>

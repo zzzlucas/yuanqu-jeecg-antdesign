@@ -264,6 +264,10 @@ export default {
                 that.record = res.result
                 that.record.projectName = resSSS.result.projectName
                 that.model = Object.assign({}, that.record)
+                //用record里的resourceGroupNames 变成可以被 tag 遍历的数组 FINALLYROOM
+                if (that.record.resourceGroupNames) {
+                  that.FINALLYROOM = that.record.resourceGroupNames.split(',')
+                }
                 initDictOptions('project_status').then(resInit => {
                   if (resInit.success) {
                     that.dict.statusExt = resInit.result
@@ -300,6 +304,9 @@ export default {
                 that.record = res.result
                 that.record.projectName = resSSS.result.projectName
                 that.model = Object.assign({}, that.record)
+                if (that.record.resourceGroupNames) {
+                  that.FINALLYROOM = that.record.resourceGroupNames.split(',')
+                }
                 initDictOptions('project_status').then(resInit => {
                   if (resInit.success) {
                     that.dict.statusExt = resInit.result
@@ -427,10 +434,11 @@ export default {
           formData.trackDate = formData.trackDate ? formData.trackDate.format('YYYY-MM-DD') : null
           formData.parkId = this.industrialParkId
           //传房间名字过去
-          formData.resourceGroupName = this.FINALLYROOM.toString()
+          formData.resourceGroupNames = this.FINALLYROOM.toString()
           //传房间id过去
-          formData.resourceGroupId = this.FINALLYROOMGROUPID.toString()
-          console.log(formData.resourceGroupId);
+          formData.roomIds = this.FINALLYROOMGROUPID.toString()
+
+          console.log(formData.resourceGroupId)
           formData = qs.stringify(formData)
           console.log(formData)
           httpAction(httpurl, formData, method)

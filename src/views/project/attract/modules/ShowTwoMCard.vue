@@ -29,7 +29,7 @@
           <detail-list-item term="过程纪要">{{info.content}}</detail-list-item>
         </detail-list>
         <detail-list :col="1">
-          <detail-list-item term="意向房源">{{info.resourceGroupName}}</detail-list-item>
+          <detail-list-item term="意向房源">{{info.resourceGroupNames}}</detail-list-item>
         </detail-list>
         <detail-list :col="1">
           <detail-list-item term="备注">{{info.remark}}</detail-list-item>
@@ -88,7 +88,13 @@ export default {
       }
     }
   },
-  created() {},
+  created() {
+    initDictOptions('project_status').then(res => {
+      if (res.success) {
+        this.dict.projectStatusDictOptions = res.result
+      }
+    })
+  },
   methods: {
     handleOk() {},
     detail(record) {
@@ -107,6 +113,9 @@ export default {
             // console.log(proId)
             getAction('/park.project/mgrProjectInfo/queryProjectById', { projectId: proId }).then(resAAA => {
               this.info = res.result
+              if (this.info.content > 0 && this.info.content < 10) {
+                this.info.content = '转为' + filterDictText(this.dict.projectStatusDictOptions, this.info.content)
+              }
               this.info.projectName = resAAA.result.projectName
               this.initDictConfig()
               // console.log(this.info.projectName)
@@ -130,7 +139,7 @@ export default {
       this.dictText.trackMethodText = ''
     },
     initDictConfig() {
-      console.log('hello')
+      //因为每次都在这里面比对，所以现需要info...
       initDictOptions('tracker').then(res => {
         if (res.code === 0 && res.success) {
           this.dict.tracker = res.result

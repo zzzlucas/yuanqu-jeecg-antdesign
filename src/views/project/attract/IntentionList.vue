@@ -483,7 +483,8 @@ export default {
       let params = { projectId: row.projectId }
       getAction('/park.project/mgrProjectTrace/getById', params).then(res => {
         if (res.success) {
-          row = res.result[res.result.length - 1]
+          row = res.result[0]
+          // row = res.result[res.result.length - 1]
           if (row) {
             this.$refs.ShowCard.detail(row)
           } else {

@@ -508,6 +508,22 @@
               </a-form-item>
             </a-col>
           </a-row>
+          <!-- 后台需要这个选项，前台写死 -->
+          <a-row v-if="!this.model.projectId" class="form-row" :gutter="16">
+            <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
+              <a-form-item label="工作流程" required>
+                <a-select
+                  v-decorator="['workFlowUseObject',{initialValue: dict.workFlow[0].workFlowUseObject},{rules: [{ required: true, message: '请选择工作流程', whitespace: true}]}]"
+                >
+                  <a-select-option
+                    v-for="(item, key) in dict.workFlow"
+                    :value="item.workFlowUseObject"
+                    :key="item.workFlowId"
+                  >{{ item.workFlowName }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+          </a-row>
         </a-card>
       </a-form>
     </div>
@@ -555,7 +571,6 @@ export default {
       model: {},
       // setUpYear: '',
       dateFormat: 'YYYY-MM-DD',
-      // record: { id: 1191619700384071680 }
       testData: '',
       industrySectorValue: '',
       companyRegisterType: '',
@@ -592,6 +607,11 @@ export default {
     initDictOptions('mgr-attr-addpl-companyRegisterType').then(res => {
       if (res.code === 0 && res.success) {
         this.dict.companyRegisterTypeExt = res.result
+      }
+    })
+    getAction('/park.workflow/baseWorkFlowSet/list', { parkId: this.industrialParkId }).then(res => {
+      if (res.success) {
+        this.dict.workFlow = res.result
       }
     })
   },
@@ -681,11 +701,11 @@ export default {
           const { projectTechnologyFlow } = this.editor
           formData.projectTechnologyFlow = projectTechnologyFlow
 
-          formData.projectName = 'zhengjietest'
-          formData.parkId = '555'
+          // formData.projectName = 'zhengjietest'
+          // formData.parkId = '555'
           // 等后期填入数据，parkid要换掉
-          // formData.parkId = this.industrialParkId
-          formData.workFlowUseObject = 'test'
+          formData.parkId = this.industrialParkId
+          // formData.workFlowUseObject = 'test'
 
           formData = qs.stringify(formData)
           httpAction(httpurl, formData, method)

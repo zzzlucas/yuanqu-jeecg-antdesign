@@ -19,7 +19,6 @@
         <a style="font-weight: 600">{{ selectedRowKeys.length }}</a>项
         <a style="margin-left: 24px" @click="onClearSelected">清空</a>
       </div>
-
       <a-table
         ref="table"
         size="middle"
@@ -50,14 +49,14 @@
 
     <!-- 表单区域 -->
     <!-- <parks-add-form ref="form" v-model="rightShow" @submit="onSubmit" @edit="onEdit"></parks-add-form> -->
-    <tax-add-form ref="TaxAddForm" @reload="loadData()"></tax-add-form>
+    <tax-add-form ref="TaxAddForm" @reload="loadData"></tax-add-form>
   </a-card>
 </template>
 
 <script>
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import TaxAddForm from './modules/TaxAddForm'
-import { postAction, putAction, getAction } from '@/api/manage'
+import { postAction, putAction, getAction, deleteAction } from '@/api/manage'
 import qs from 'querystring'
 import Dom7 from 'dom7'
 import { mapGetters } from 'vuex'
@@ -68,7 +67,7 @@ export default {
   mixins: [JeecgListMixin],
   data() {
     return {
-      description: '园区信息管理页面',
+      description: '',
       // 表头
       columns: [
         // {
@@ -141,9 +140,9 @@ export default {
         }
       ],
       url: {
-        list: '/park.indicators/baseIndicatorsTaxes/listFinish?parkId=' + this.industrialParkId,
+        list: '/park.indicators/baseIndicatorsTaxes/listFinish',
         delete: '/park.indicators/baseIndicatorsTaxes/delete',
-        deleteBatch: '/park.park/basePark/deleteBatch'
+        deleteBatch: '/park.indicators/baseIndicatorsTaxes/deleteBatch'
       },
       deleteKey: 'id',
       rightShow: false
@@ -156,10 +155,25 @@ export default {
     ...mapGetters(['industrialParkId'])
   },
   methods: {
+    //本地删除
+    handleDelete: function(data) {
+      var that = this
+      deleteAction(that.url.delete, { id: data[this.deleteKey ? this.deleteKey : 'id']}).then(
+        res => {
+          if (res.success) {
+            that.$message.success(res.message)
+            that.loadData()
+          } else {
+            that.$message.warning(res.message)
+          }
+        }
+      )
+    },
     loadData() {
+      console.log('loadData');
       //分页参数
       this.loading = true
-      getAction('/park.indicators/baseIndicatorsTaxes/listFinish?parkId=' + this.industrialParkId).then(res => {
+      getAction('/park.indicators/baseIndicatorsTaxes/listFinish', { parkId: this.industrialParkId }).then(res => {
         if (res.success) {
           for (const item of res.result) {
             item.year = item.year + '年'
