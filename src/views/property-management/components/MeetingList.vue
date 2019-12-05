@@ -36,6 +36,7 @@
             <a-form-item label="人数限制">
               <j-dict-select-tag
                 v-model="queryParam.capacity"
+                @input="handleChangeCapacity"
                 dictCode="meeting_room_capacity" />
             </a-form-item>
           </a-col>
@@ -103,11 +104,7 @@
       <div slot="equipment" slot-scope="text, record">
         <div>标准配置</div>
         <div>
-          &nbsp;
-          <span v-for="(item, i) in getRoomDevice(record.roomId)">
-            {{ item }}
-            <template v-if="i !== 0">/</template>
-          </span>
+          {{ record.roomDevices }}
         </div>
       </div>
       <!-- ChargingArea -->
@@ -192,11 +189,14 @@
     },
     methods: {
       // Filter
+      handleChangeCapacity(value) {
+        const values = value.split('-')
+        this.queryParam.minCapacity = values[0]
+        this.queryParam.maxCapacity = values[1]
+      },
+      // Getter
       getRoomPreview(files) {
         return files.split(',')[0]
-      },
-      getRoomDevice(devices) {
-        return []
       },
       // Action
       handleBook(record) {
@@ -207,10 +207,12 @@
         this.loadData(1)
       },
       async fetchProjects() {
+        this.types.project = []
         await this.getProjects(this.queryParam.parkId)
         this.types.project.unshift({ buildingProjectId: '', projectName: '全部', })
       },
       async fetchBuildings() {
+        this.types.building = []
         if (this.queryParam.projectId) {
           await this.getBuildings(this.queryParam.projectId)
         }
