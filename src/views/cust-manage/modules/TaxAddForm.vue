@@ -218,7 +218,8 @@ export default {
             .then(res => {
               if (res.success) {
                 that.$message.success(res.message)
-                that.$emit('loaddata')
+                that.$emit('reload')
+                console.log('reload');
               } else {
                 that.$message.warning(res.message)
               }

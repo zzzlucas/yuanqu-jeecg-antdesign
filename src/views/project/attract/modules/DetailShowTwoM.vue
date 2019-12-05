@@ -5,14 +5,14 @@
         <a-row>
           <a-col :span="4">
             <a-form-item label="跟踪日期" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-date-picker placeholder="开始" v-model="ff.beginDate"  />
+              <a-date-picker placeholder="开始" v-model="ff.beginDate" />
               <!-- dateFormat  放这个干吗？ -->
               <!-- <a-date-picker v-decorator="['beginDate']" /> -->
             </a-form-item>
           </a-col>
           <a-col :span="4">
             <a-form-item label :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-date-picker placeholder="结束" v-model="ff.endDate"  />
+              <a-date-picker placeholder="结束" v-model="ff.endDate" />
               <!-- <a-date-picker v-decorator="['endDate']" /> -->
             </a-form-item>
           </a-col>
@@ -20,7 +20,7 @@
           <a-col :span="5">
             <a-form-item label="跟踪人" :labelCol="labelCol" :wrapperCol="wrapperCol">
               <a-select v-model="ff.keyword">
-              <!-- <a-select v-decorator="['keyword']"> -->
+                <!-- <a-select v-decorator="['keyword']"> -->
                 <a-select-option
                   v-for="(item, key) in dict.trackerDictOptions"
                   :value="item.value"
@@ -32,8 +32,8 @@
 
           <a-col :span="5">
             <a-form-item label="跟踪方式" :labelCol="labelCol" :wrapperCol="wrapperCol">
-               <a-select v-model="ff.trackMethod">
-              <!-- <a-select v-decorator="['trackMethod']"> -->
+              <a-select v-model="ff.trackMethod">
+                <!-- <a-select v-decorator="['trackMethod']"> -->
                 <a-select-option
                   v-for="(item, key) in dict.trackMethodDictOptions"
                   :value="item.value"
@@ -71,11 +71,13 @@
         >
           <!-- :customRow="customRow" -->
           <span slot="action" slot-scope="text, record">
-            <a @click="ShowZero(record, ...arguments)">编辑</a>
-            <a-divider type="vertical" />
+            <a v-if="record.content.length>1" @click="ShowZero(record, ...arguments)">编辑</a>
+            <a-divider v-if="record.content.length>1" type="vertical" />
             <a @click="showCard(record, ...arguments)">查看</a>
             <a-divider type="vertical" />
-            <a @click="deleteeee(record)">删除</a>
+            <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
+              <a>删除</a>
+            </a-popconfirm>
           </span>
         </a-table>
       </a-form>
@@ -107,7 +109,7 @@ export default {
   data() {
     return {
       //
-        ff: {},
+      ff: {},
       confirmLoading: false,
       form: this.$form.createForm(this),
       title: '跟踪记录',
@@ -165,7 +167,16 @@ export default {
         {
           title: '跟踪纪要',
           align: 'center',
-          dataIndex: 'content'
+          dataIndex: 'content',
+          customRender: text => {
+            // return typeof text
+            if (text > 0 && text < 10) {
+              //纯数字情况下代表只是状态转换
+              return '转为' + filterDictText(this.dict.projectStatusDictOptions, text)
+            } else {
+              return text
+            }
+          }
         },
         {
           title: '跟踪方式',
@@ -182,8 +193,10 @@ export default {
           scopedSlots: { customRender: 'action' }
         }
       ],
+      deleteKey: 'recordId',
       url: {
-        list: '/park.project/mgrProjectTrace/list'
+        list: '/park.project/mgrProjectTrace/list',
+        delete: '/park.project/mgrProjectTrace/delete'
       }
     }
   },
@@ -290,6 +303,11 @@ export default {
       initDictOptions('track_method').then(res => {
         if (res.success) {
           this.dict.trackMethodDictOptions = res.result
+        }
+      })
+      initDictOptions('project_status').then(res => {
+        if (res.success) {
+          this.dict.projectStatusDictOptions = res.result
         }
       })
     },

@@ -14,36 +14,17 @@
               </a-select>
             </a-form-item>
           </a-col>
-          <!-- <a-col :span="6">
-            <a-form-item label="发布人">
-              <a-input placeholder="请输入发布人" v-model="queryParam.sender"></a-input>
-            </a-form-item>
-          </a-col>-->
-
           <a-col>
             <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
-              <!-- <a-button
-                type="primary"
-                @click="searchReset"
-                icon="reload"
+              <a-button
                 style="margin-left: 8px"
-              >重置</a-button>-->
+                type="danger"
+                icon="delete"
+                @click="batchDel"
+                v-if="selectedRowKeys.length > 0"
+              >批量删除</a-button>
             </span>
-          </a-col>
-
-          <a-col>
-            <a-dropdown v-if="selectedRowKeys.length > 0">
-              <a-menu slot="overlay">
-                <a-menu-item key="1" @click="batchDel">
-                  <a-icon type="delete" />删除
-                </a-menu-item>
-              </a-menu>
-              <a-button style="margin-left: 8px">
-                批量操作
-                <a-icon type="down" />
-              </a-button>
-            </a-dropdown>
           </a-col>
 
           <!-- 右侧新建项目 -->
@@ -78,8 +59,13 @@
         :pagination="ipagination"
         :loading="loading"
         :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
-        @change="handleTableChange"
-      ></a-table>
+      >
+        <span slot="action" slot-scope="text, record" @click.stop>
+          <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
+            <a>删除</a>
+          </a-popconfirm>
+        </span>
+      </a-table>
       <!-- :customRow="customRow" -->
     </div>
 
@@ -88,7 +74,7 @@
 </template>
 <script>
 import { filterObj } from '@/utils/util'
-import { getAction, putAction } from '@/api/manage'
+import { getAction, putAction, deleteAction } from '@/api/manage'
 import AuditorAddForm from './modules/AuditorAddFormM'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 export default {
@@ -123,12 +109,23 @@ export default {
           customRender: function(text) {
             return text
           }
+        },
+        {
+          title: '操作',
+          dataIndex: 'action',
+          align: 'center',
+          scopedSlots: { customRender: 'action' },
+          width: 150
         }
       ],
+      deleteKey: 'id',
       url: {
-        list: '/park.workflow/baseWorkFlowProject/list'
+        list: '/park.workflow/baseWorkFlowProject/list',
+        delete: '/park.workflow/baseWorkFlowProject/delete',
+        deleteBatch: '/park.workflow/baseWorkFlowProject/deleteBatch'
       },
-      loading: false
+      loading: false,
+      code: ''
     }
   },
   created() {},
@@ -136,12 +133,59 @@ export default {
     AuditorAddForm() {
       this.$refs.AuditorAddForm.add()
     },
+    handleDelete: function(data) {
+      var that = this
+      deleteAction(that.url.delete, { userId: data[this.deleteKey ? this.deleteKey : 'id'], code: this.code }).then(
+        res => {
+          if (res.success) {
+            that.$message.success(res.message)
+            that.loadData()
+          } else {
+            that.$message.warning(res.message)
+          }
+        }
+      )
+    },
+    batchDel: function() {
+      if (this.selectionRows.length <= 0) {
+        this.$message.warning('请选择一条记录！')
+      } else {
+        if (!this.deleteKey) {
+          if (!this.selectionRows[0].hasOwnProperty('id')) {
+            this.$message.error('请设置deleteKey，删除的主键!')
+            return
+          }
+        }
+        var ids = ''
+        for (var a = 0; a < this.selectionRows.length; a++) {
+          ids += this.selectionRows[a][this.deleteKey ? this.deleteKey : 'id'] + ','
+        }
+        var that = this
+        this.$confirm({
+          title: '确认删除',
+          content: '是否删除选中数据?',
+          onOk: function() {
+            deleteAction(that.url.deleteBatch, { code: that.code, ids: ids }).then(res => {
+              if (res.success) {
+                that.$message.success(res.message)
+                that.loadData()
+                that.selectedRowKeys = []
+                that.selectionRows = []
+              } else {
+                that.$message.warning(res.message)
+              }
+            })
+          }
+        })
+      }
+    },
     loadData(arg) {
       const that = this
       if (arg === 1) {
         that.ipagination.current = 1
       }
       var params = that.getQueryParams() //查询条件
+      this.code = params.code
       console.log(params)
       that.loading = true
       getAction(that.url.list, params).then(res => {
