@@ -103,8 +103,15 @@
             <a-button type="primary" slot="extra" icon="plus" shape="circle" @click="handleAddOperate('process')" />
             <a-timeline>
               <a-timeline-item v-for="record in records.process" :key="record.recordId">
-                <p class="timeline-heading">{{ record.createTime }} 【{{ record.createUserName }}】 将工单状态设置为{{ getProcessStatus(record.operateName) }}</p>
-                <p class="timeline-content" v-if="isNaN(record.operateName)">{{ record.operateName }}</p>
+                <p class="timeline-heading">{{ record.createTime }} 【{{ record.createUserName }}】
+                  <template v-if="record.operateName == null">
+                    添加了信息
+                  </template>
+                  <template v-else>
+                    将工单状态设置为{{ getProcessStatus(record.operateName) }}
+                  </template>
+                </p>
+                <p class="timeline-content" v-if="record.remark != null">{{ record.remark }}</p>
               </a-timeline-item>
             </a-timeline>
           </a-card>
@@ -117,7 +124,7 @@
             <a-button type="primary" slot="extra" icon="plus" shape="circle" @click="handleAddOperate('feedback')" />
             <a-timeline>
               <a-timeline-item v-for="record in records.feedback" :key="record.recordId">
-                <p class="timeline-heading">{{ record.createTime }} 【{{ record.createUserName }}】 工单</p>
+                <p class="timeline-heading">{{ record.createTime }} 【{{ record.createUserName }}】添加了信息</p>
                 <p class="timeline-content" v-if="record.remark">{{ record.remark }}</p>
               </a-timeline-item>
             </a-timeline>
@@ -187,10 +194,7 @@
       // Filter
       filterDictText,
       getProcessStatus(operateName) {
-        if (!isNaN(operateName)) {
-          return filterDictText(this.types.order_status, operateName)
-        }
-        return '更新了信息'
+        return filterDictText(this.types.order_status, operateName)
       },
       // Request data
       async loadData() {

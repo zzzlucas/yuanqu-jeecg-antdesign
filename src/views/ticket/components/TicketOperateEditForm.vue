@@ -75,8 +75,6 @@
           data.orderId = this.$route.params.id
           let resp
           if (this.type === 'process') {
-            data.operateDescription = data.remark
-            delete data.remark
             resp = await addOperateProcess(data)
           } else {
             resp = await addOperateFeedback(data)
