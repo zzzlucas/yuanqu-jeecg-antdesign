@@ -6,7 +6,6 @@
         <a-form-item label="区分" :label-col="formItem.label" :wrapper-col="formItem.value">
           <!-- <a-form-item label="区分"  label-col="6" wrapper-col="10"> -->
           <a-select style="width: 120px" @change="handleChange" v-model="queryParam.type">
-            <!-- v-decorator="['type',{initialValue: ''}]" -->
             <a-select-option value>不限</a-select-option>
             <a-select-option value="YS">预算</a-select-option>
             <a-select-option value="SJ">实际</a-select-option>
@@ -45,7 +44,7 @@
         ref="table"
         size="middle"
         bordered
-        rowKey="id"
+        rowKey="parkId"
         :columns="columns"
         :dataSource="dataSource"
         :pagination="false"
@@ -86,7 +85,7 @@ import qs from 'querystring'
 import Dom7 from 'dom7'
 
 export default {
-  name: 'IndustrialParksList',
+  name: '',
   components: { AnnualAchieveAddForm },
   mixins: [JeecgListMixin],
   data() {

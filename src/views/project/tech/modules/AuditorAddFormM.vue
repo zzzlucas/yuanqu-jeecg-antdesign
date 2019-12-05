@@ -84,33 +84,6 @@ export default {
     add() {
       this.visible = true
     },
-    // edit(record) {
-    //   this.form.resetFields()
-    //   this.model = Object.assign({}, record)
-    //   this.visible = true
-    //   this.$nextTick(() => {
-    //     this.form.setFieldsValue(
-    //       pick(
-    //         this.model,
-    //         'parkId',
-    //         'year',
-    //         'month',
-    //         'type',
-    //         'corporateIncomeTax',
-    //         'individualIncomeTax',
-    //         'cityTax',
-    //         'addedValueTax',
-    //         'otherTax',
-    //         'remark',
-    //         'sortOrder',
-    //         'version',
-    //         'createUserName',
-    //         'updateUserName'
-    //       )
-    //     )
-    //     //时间格式化
-    //   })
-    // },
     handleOk() {
       const that = this
       // 触发表单验证

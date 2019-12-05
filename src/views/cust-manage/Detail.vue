@@ -13,9 +13,9 @@
               <detail-list-item term="单位电话">{{ info.telephone }}</detail-list-item>
               <detail-list-item term="招商人员">{{ info.merchantManager }}</detail-list-item>
               <detail-list-item term="服务人员">{{ info.servicer }}</detail-list-item>
-              <detail-list-item term="所属项目">{{ info.caseId }}</detail-list-item>
+              <detail-list-item term="所属项目">{{ info.CASEIDNAME }}</detail-list-item>
               <detail-list-item term="入驻日期">{{ info.settledDate }}</detail-list-item>
-              <detail-list-item term="所属楼宇">{{ info.buidling }}</detail-list-item>
+              <detail-list-item term="所属楼宇">{{ info.BUIDLINGNAME }}</detail-list-item>
             </detail-list>
           </div>
           <detail-list :col="1">
@@ -108,9 +108,20 @@
           </div>
         </a-tab-pane>
         <a-tab-pane tab="附件" key="3">
-          <detail-list :col="1">
-            <detail-list-item term="附件">ASDASD</detail-list-item>
-          </detail-list>
+          <yq-image
+            v-for="(item,i) in info.businessLicense"
+            class="block-image"
+            size="40"
+            fit="contain"
+            :src="getOneImage(info.businessLicense[i])"
+          ></yq-image>
+          <yq-image
+            v-for="(item,i) in info.addDocFiles"
+            class="block-image"
+            size="40"
+            fit="contain"
+            :src="getOneImage(info.addDocFiles[i])"
+          ></yq-image>
         </a-tab-pane>
 
         <a-tab-pane tab="分类信息" key="4">
@@ -203,6 +214,8 @@ import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import ShowZero from './modules/ShowZeroD'
 import ShowAddCFormDrawer from './modules/ShowAddCFormDrawer'
 import ShowCCard from './modules/ShowCCard'
+import { getFileListData, getOneImage, promiseForm, uploadFile } from '@utils/util'
+import YqImage from '@comp/extend/YqImage'
 
 import qs from 'qs'
 import Dom7 from 'dom7'
@@ -215,7 +228,8 @@ export default {
     DetailListItem,
     ShowAddCFormDrawer,
     ShowZero,
-    ShowCCard
+    ShowCCard,
+    YqImage
   },
   data() {
     return {
@@ -330,6 +344,7 @@ export default {
   },
   mounted() {},
   methods: {
+    getOneImage,
     customRow(row) {
       return {
         on: {
@@ -353,6 +368,12 @@ export default {
         if (res.code === 200) {
           this.loading = false
           this.info = res.result
+          if (this.info.addDocFiles) {
+            this.info.addDocFiles = this.info.addDocFiles.split(',')
+          }
+          if (this.info.businessLicense) {
+            this.info.businessLicense = this.info.businessLicense.split(',')
+          }
           this.BS = this.info.customerLabel
 
           //写入该句防止不存在情况下的includes方法报错，但是应当寻找更健壮写法   惜败
@@ -371,7 +392,7 @@ export default {
               if (res.success) {
                 for (const item of res.result) {
                   if (this.info.caseId == item.buildingProjectId) {
-                    this.info.caseId = item.projectName
+                    this.info.CASEIDNAME = item.projectName
                   }
                 }
               }
@@ -387,7 +408,7 @@ export default {
               console.log(res)
               for (const item of res.result) {
                 if (this.info.buidling == item.buildingId) {
-                  this.info.buidling = item.buildingName
+                  this.info.BUIDLINGNAME = item.buildingName
                 }
               }
             }
@@ -422,7 +443,7 @@ export default {
     },
     editZero() {
       //在这里要把当前页面的custId传过去，在新页面自己获取
-      // let
+      //上面的我放了个屁   12.03
       this.$refs.ShowZero.detail(this.info)
     },
     //tab页6：联系人表格数据获取 与 绑定
@@ -585,7 +606,14 @@ export default {
 }
 </script>
 
+
 <style lang="scss" scoped>
+.block-image {
+  max-height:400px;
+  // height: 200px;
+  margin:10px auto;
+  padding:20px 0;
+}
 .zj-tag {
   .ant-tag {
     font-size: 13px;

@@ -195,8 +195,8 @@
                       <a-select style="width:100%" mode="multiple" v-model="CUSTOMERNAMEARRAY">
                         <a-select-option
                           v-for="item in info.CustList"
-                          :value="item.custId"
-                        >{{item.customerName}}</a-select-option>
+                          :value="item.id"
+                        >{{item.realname}}</a-select-option>
                       </a-select>
                     </a-form-item>
 
@@ -267,10 +267,7 @@
               </a-card>
               <a-card class="daily-article" :bordered="false" title="附件">
                 <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label>
-                  <j-upload
-                    :text="UPA.text"
-                    v-decorator="['businessLicense']"
-                  />
+                  <j-upload :text="UPA.text" v-decorator="['businessLicense']" />
                 </a-form-item>
                 <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label>
                   <j-upload :text="UPB.text" v-decorator="['addDocFiles']" />
@@ -395,7 +392,7 @@
                   label="注册资本"
                 >
                   <a-input v-decorator="[ 'registeredCapital']">
-                    <!-- <a-select
+                    <a-select
                       slot="addonAfter"
                       style="width: 100px;"
                       v-decorator="['registeredCapitalUnit', {initialValue:dict.registeredCapitalUnitExt[0].value}]"
@@ -405,7 +402,7 @@
                         :value="item.value"
                         :key="key"
                       >{{ item.text }}</a-select-option>
-                    </a-select>-->
+                    </a-select>
                   </a-input>
                 </a-form-item>
               </a-col>
@@ -557,7 +554,7 @@ export default {
       checkedList: [],
       //jupload组件
       UPA: {
-        text: '营业执照',
+        text: '营业执照'
         // fileType: 'image'
       },
       UPB: {
@@ -631,7 +628,7 @@ export default {
         console.log('获取园区列表失败')
       }
     })
-    getAction('/park.customer/baseCustomer/listAll').then(res => {
+    getAction('/sys/user/list').then(res => {
       if (res.success) {
         // console.log(res)
         this.info.CustList = res.result.records
@@ -740,80 +737,86 @@ export default {
       this.visible = true
     },
     //新页面 详情 打开的，咋传，考虑一哈
-    detail(record) {
+    detail() {
       this.editBool = true
-      // this.record = record
-      // console.log(record)
-      this.form.resetFields()
-      if (record.baseCustomerType) {
-        record.unitNature = record.baseCustomerType.unitNature
-        record.industryCategory = record.baseCustomerType.industryCategory
-        record.organizational = record.baseCustomerType.organizational
-        record.technicalField = record.baseCustomerType.technicalField
-        record.enterpriseRating = record.baseCustomerType.enterpriseRating
-        record.registrationType = record.baseCustomerType.registrationType
-      }
-      if (record.baseCustomerBusiness) {
-        record.registDate = record.baseCustomerBusiness.registDate
-        record.registeredCapital = record.baseCustomerBusiness.registeredCapital
-        record.registeredCapitalUnit = record.baseCustomerBusiness.registeredCapitalUnit
-        record.bussinessStatus = record.baseCustomerBusiness.bussinessStatus
-        record.taxStatus = record.baseCustomerBusiness.taxStatus
-        record.creditCode = record.baseCustomerBusiness.creditCode
-        record.registerAddress = record.baseCustomerBusiness.registerAddress
-        record.registerAddressZipCode = record.baseCustomerBusiness.registerAddressZipCode
-        record.businessAddress = record.baseCustomerBusiness.businessAddress
-        record.businessAddressZipCode = record.baseCustomerBusiness.businessAddressZipCode
-        record.businessScope = record.baseCustomerBusiness.businessScope
-        record.businessScopePermit = record.baseCustomerBusiness.businessScopePermit
-        record.rCToRMB = record.baseCustomerBusiness.rCToRMB
-      }
-      //浏览器编辑请求里多余的东西来自record，把record里的对象遍历出来删掉
-      delete record.baseCustomerBusiness
-      delete record.baseCustomerType
-      delete record.longLat
-      // let Rrecord = {}
-      // for (const item in record) {
-      //   if (item != baseCustomerType && item != baseCustomerBusiness) {
-      //     Rrecord.push(item)
-      //   }
-      // }
-      this.model = Object.assign({}, record)
-      this.visible = true
-
-      this.BS = this.model.customerLabel
-      this.BS = JSON.parse(this.BS)
-
-      //这里本来是不是可以用promise作回调处理，只是我还不会用
-      this.getBlockList(this.model.parkId)
-      this.getBuildingList(this.model.caseId)
-
-      //此处要跟根据单个id去查出 ids ，那个ids才是能填入表单的玩意
-      //此处要获取对应name，且能够有效再次编辑提交，不应使用现成字段name，此处容易被误导
-      //其实直接返回labeldic更好用，后端画蛇添足了
-      //区别不大，上面的问题其实上周五已解决，现在的问题应该是在获得数据之前，选择项初始化未完成，所以是本质上是时序问题吗
-      //不是，应当是关键字段没对应上，后端把问题复杂化了
-      //尝试在复杂化的背景下还原正确字段
-      //字段也没错，就是不该用recordId
-      getAction('/park.middletables/pubLabelGroup/queryById', { id: this.model.relCustListId }).then(res => {
-        if (res.success) {
-          console.log(res.result)
-          for (const item of res.result) {
-            this.CUSTOMERNAMEARRAY.push(item.labelNo)
+      let record = {}
+      getAction('/park.customer/baseCustomer/queryById', { id: this.$route.params.id }).then(res => {
+        if (res.code === 200) {
+          record = res.result
+          this.form.resetFields()
+          if (record.baseCustomerType) {
+            record.unitNature = record.baseCustomerType.unitNature
+            record.industryCategory = record.baseCustomerType.industryCategory
+            record.organizational = record.baseCustomerType.organizational
+            record.technicalField = record.baseCustomerType.technicalField
+            record.enterpriseRating = record.baseCustomerType.enterpriseRating
+            record.registrationType = record.baseCustomerType.registrationType
           }
-          console.log(this.CUSTOMERNAMEARRAY)
+          if (record.baseCustomerBusiness) {
+            record.registDate = record.baseCustomerBusiness.registDate
+            record.registeredCapital = record.baseCustomerBusiness.registeredCapital
+            record.registeredCapitalUnit = record.baseCustomerBusiness.registeredCapitalUnit
+            record.bussinessStatus = record.baseCustomerBusiness.bussinessStatus
+            record.taxStatus = record.baseCustomerBusiness.taxStatus
+            record.creditCode = record.baseCustomerBusiness.creditCode
+            record.registerAddress = record.baseCustomerBusiness.registerAddress
+            record.registerAddressZipCode = record.baseCustomerBusiness.registerAddressZipCode
+            record.businessAddress = record.baseCustomerBusiness.businessAddress
+            record.businessAddressZipCode = record.baseCustomerBusiness.businessAddressZipCode
+            record.businessScope = record.baseCustomerBusiness.businessScope
+            record.businessScopePermit = record.baseCustomerBusiness.businessScopePermit
+            record.rCToRMB = record.baseCustomerBusiness.rCToRMB
+          }
+          //浏览器编辑请求里多余的东西来自record，把record里的对象遍历出来删掉
+          delete record.baseCustomerBusiness
+          delete record.baseCustomerType
+          delete record.longLat
+          // let Rrecord = {}
+          // for (const item in record) {
+          //   if (item != baseCustomerType && item != baseCustomerBusiness) {
+          //     Rrecord.push(item)
+          //   }
+          // }
+          this.model = Object.assign({}, record)
+
+          this.BS = this.model.customerLabel
+          this.BS = JSON.parse(this.BS)
+
+          //这里本来是不是可以用promise作回调处理，只是我还不会用
+          //目的是 根据获取到的id，让三级联动不需要从上到下联动
+          this.getBlockList(this.model.parkId)
+          this.getBuildingList(this.model.caseId)
+
+          //此处要跟根据单个id去查出 ids ，那个ids才是能填入表单的玩意
+          //此处要获取对应name，且能够有效再次编辑提交，不应使用现成字段name，此处容易被误导
+          //其实直接返回labeldic更好用，后端画蛇添足了
+          //区别不大，上面的问题其实上周五已解决，现在的问题应该是在获得数据之前，选择项初始化未完成，所以是本质上是时序问题吗
+          //不是，应当是关键字段没对应上，后端把问题复杂化了
+          //尝试在复杂化的背景下还原正确字段
+          //字段也没错，就是不该用recordId
+          getAction('/park.middletables/pubLabelGroup/queryById', { id: this.model.relCustListId }).then(res => {
+            if (res.success) {
+              console.log(res.result)
+              for (const item of res.result) {
+                this.CUSTOMERNAMEARRAY.push(item.labelNo)
+              }
+              console.log(this.CUSTOMERNAMEARRAY)
+              this.$nextTick(() => {
+                this.form.setFieldsValue()
+              })
+            }
+          })
+          this.visible = true
           this.$nextTick(() => {
-            this.form.setFieldsValue()
+            this.form.setFieldsValue(pick(this.model, AddbaseCustomerForm))
+            this.form.setFieldsValue({ merchantDate: this.model.merchantDate ? moment(this.model.merchantDate) : null })
+            this.form.setFieldsValue({ settledDate: this.model.settledDate ? moment(this.model.settledDate) : null })
+            this.form.setFieldsValue({ registDate: this.model.registDate ? moment(this.model.registDate) : null })
           })
         }
       })
-
-      this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.model, AddbaseCustomerForm))
-        this.form.setFieldsValue({ merchantDate: this.model.merchantDate ? moment(this.model.merchantDate) : null })
-        this.form.setFieldsValue({ settledDate: this.model.settledDate ? moment(this.model.settledDate) : null })
-        this.form.setFieldsValue({ registDate: this.model.registDate ? moment(this.model.registDate) : null })
-      })
+      // this.record = record
+      // console.log(record)
     },
     // handleImportExcel() {},
     // importExcelUrl() {},

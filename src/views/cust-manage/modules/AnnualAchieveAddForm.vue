@@ -186,7 +186,7 @@ export default {
           let httpurl = ''
           let method = ''
           //真的有区分吗
-          if (!this.model.year) {
+          if (!this.editBool) {
             console.log('post')
             httpurl += this.url.add
             method = 'post'

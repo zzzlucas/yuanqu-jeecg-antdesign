@@ -5,6 +5,7 @@
     placement="right"
     :closable="false"
     @close="close"
+    destroyOnClose
     :visible="visible"
   >
     <a-spin :spinning="confirmLoading">
@@ -13,8 +14,8 @@
           <a-col v-if="!this.record.month" span="24">
             <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="年度">
               <a-select
-                placeholder="请选择年份"
-                v-decorator="['year', validatorRules.year,{initialValue: ''}]"
+                placeholder
+                v-decorator="['year', validatorRules.year]"
               >
                 <a-select-option value="2018">2018年</a-select-option>
                 <a-select-option value="2019">2019年</a-select-option>
@@ -26,7 +27,7 @@
           </a-col>
           <a-col v-if="!this.record.year" span="24">
             <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="月份">
-              <a-select placeholder="请选择月份" v-decorator="['month', {initialValue: ''}]">
+              <a-select placeholder v-decorator="['month']">
                 <a-select-option value="1">1月</a-select-option>
                 <a-select-option value="2">2月</a-select-option>
                 <a-select-option value="3">3月</a-select-option>
@@ -72,12 +73,12 @@
           </a-col>
         </a-row>
 
-        <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="园区ID">
+        <!-- <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="园区ID">
           <a-input placeholder="请输入园区ID" v-decorator="['parkId', validatorRules.parkId ]" />
-        </a-form-item>
+        </a-form-item> -->
         <!-- 物业地址 -->
         <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="备注">
-          <a-textarea :rows="4" placeholder="请输入备注" v-decorator="['remark', {}]" />
+          <a-textarea :rows="6" placeholder v-decorator="['remark', {}]" />
         </a-form-item>
         <!-- 附件 -->
       </a-form>
@@ -137,6 +138,8 @@ export default {
     add() {
       this.editBool = false
       this.visible = true
+      this.record.month = null
+      this.record.year = null
     },
     edit(record) {
       console.log('record')
@@ -197,7 +200,7 @@ export default {
           //根据model中是否已有某id来判断  亦或  外部传值editbool
           //传值parkId是否合适,不合适，头部比在
           //只要是model中edit带进来的任何必要值都可以达到效果
-          if (!this.model.year) {
+          if (!this.editBool) {
             console.log('post')
             httpurl += this.url.add
             method = 'post'

@@ -10,7 +10,7 @@
             v-decorator="['projectName',  {rules: [{required: true, message: '请输入项目名称'}]}]"
           />
         </a-form-item>
-        <a-form-item label="跟踪人" required>
+        <a-form-item label="跟踪人">
           <!-- 数据字典 -->
           <a-select v-decorator="['tracker',  {rules: [{required: true, message: '请输入选择项目跟踪人'}]}]">
             <a-select-option
@@ -21,10 +21,11 @@
           </a-select>
         </a-form-item>
       </a-form>
-
-      <a-button type="primary" @click="handleOk">确定</a-button>
-      <a-button @click="handleCancel">取消</a-button>
     </a-card>
+    <div class="drawer-bottom-btn-group">
+      <a-button style="margin-right: 8px" type="primary" @click="handleOk">确定</a-button>
+      <a-button @click="handleCancel">取消</a-button>
+    </div>
   </a-drawer>
 </template>
 
@@ -184,33 +185,33 @@ export default {
 }
 </style>
 <style scoped lang="less">
-.ant-btn {
-  margin-left: 30px;
-  margin-bottom: 30px;
-  float: right;
-}
-.daily-article {
-  .article-button {
-    font-size: 1.2rem !important;
-  }
-  .ant-card-body {
-    padding: 18px !important;
-  }
-  .ant-card-head {
-    padding: 0 1rem;
-  }
-  .ant-card-meta {
-    margin-bottom: 1rem;
-  }
-  .article-content {
-    p {
-      word-wrap: break-word;
-      word-break: break-all;
-      text-overflow: initial;
-      white-space: normal;
-      font-size: 0.9rem !important;
-      margin-bottom: 0.8rem;
-    }
-  }
-}
+// .ant-btn {
+//   margin-left: 30px;
+//   margin-bottom: 30px;
+//   float: right;
+// }
+// .daily-article {
+//   .article-button {
+//     font-size: 1.2rem !important;
+//   }
+//   .ant-card-body {
+//     padding: 18px !important;
+//   }
+//   .ant-card-head {
+//     padding: 0 1rem;
+//   }
+//   .ant-card-meta {
+//     margin-bottom: 1rem;
+//   }
+//   .article-content {
+//     p {
+//       word-wrap: break-word;
+//       word-break: break-all;
+//       text-overflow: initial;
+//       white-space: normal;
+//       font-size: 0.9rem !important;
+//       margin-bottom: 0.8rem;
+//     }
+//   }
+// }
 </style>
