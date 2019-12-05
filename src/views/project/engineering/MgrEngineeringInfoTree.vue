@@ -10,13 +10,18 @@
         </a-tree>
       </a-card>
     </a-col>
-    <a-col span="20"></a-col>
+    <a-col span="20">
+      <tree-table-charts></tree-table-charts>
+    </a-col>
   </a-row>
 </template>
 
 <script>
+  import TreeTableCharts from './view/TreeTableCharts'
+
   export default {
     name: 'MgrEngineeringInfoTree',
+    components: { TreeTableCharts },
     data() {
       return {
         expandedKeys: ['main'],
