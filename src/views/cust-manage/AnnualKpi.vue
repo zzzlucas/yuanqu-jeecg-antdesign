@@ -159,6 +159,9 @@ export default {
       getAction(this.url.list, param).then(res => {
         if (res.success) {
           this.dataSource = res.result
+          for (const item of res.result) {
+            item.year = item.year + '年'
+          }
           this.ipagination.total = res.result.total
         }
         if (res.code === 510) {

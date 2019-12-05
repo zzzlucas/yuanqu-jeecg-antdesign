@@ -31,16 +31,17 @@
               >
                 <a-date-picker
                   style="width:100%"
-                  v-decorator="[ 'trackDate', {rules: [{required: true, message: '请输入跟踪日期'}]}]"
+                  v-decorator="[ 'trackDate', {rules: [{required: true, message: '请选择跟踪日期'}]}]"
                 />
               </a-form-item>
               <a-form-item
                 :labelCol="labelCol.default"
                 :wrapperCol="wrapperCol.default"
                 label="跟踪方式"
-                required
               >
-                <a-select v-decorator="['trackMethod']">
+                <a-select
+                  v-decorator="['trackMethod', {rules: [{required: true, message: '请选择跟踪方式'}]}]"
+                >
                   <a-select-option
                     v-for="(item, key) in dict.trackMethodExt"
                     :value="item.value"
@@ -412,6 +413,7 @@ export default {
     close() {
       this.$emit('close')
       this.visible = false
+      this.FINALLYROOM = []
     },
     handleOk() {
       const that = this

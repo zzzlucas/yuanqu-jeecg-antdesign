@@ -14,7 +14,10 @@
             </a-form-item>
           </a-col>
           <a-col>
-            <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons local">
+            <span
+              style="float: left;overflow: hidden;"
+              class="table-page-search-submitButtons local"
+            >
               <a-button
                 style="margin-left:15px"
                 @click="goAnnualAchieveAddForm()"
@@ -32,38 +35,6 @@
           </a-col>
         </a-row>
       </a-form>
-
-      <!-- <a-form layout="inline">
-        <a-row :gutter="24">
-          <a-col :span="6">
-            <a-form-item label="审核阶段">
-              <a-select v-model="queryParam.code" placeholder>
-                <a-select-option value="N4">部门审核</a-select-option>
-                <a-select-option value="N1">分管领导审核</a-select-option>
-                <a-select-option value="N2">主要领导审核</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-          <a-col>
-            <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
-              <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
-              <a-button
-                style="margin-left: 8px"
-                type="danger"
-                icon="delete"
-                @click="batchDel"
-                v-if="selectedRowKeys.length > 0"
-              >批量删除</a-button>
-            </span>
-          </a-col>
-
-          <a-col :span="4" style="float: right">
-            <span style="float: right;overflow: hidden;" class="table-page-search-submitButtons">
-              <a-button type="primary" @click="AuditorAddForm">添加审核人</a-button>
-            </span>
-          </a-col>
-        </a-row>
-      </a-form>-->
     </div>
 
     <!-- table区域-begin -->
@@ -126,24 +97,19 @@ export default {
   data() {
     return {
       description: '',
-      // 表头
-      // type:'',
       form: this.$form.createForm(this),
       formLayout: 'horizontal',
-      queryform: {
-        type: ''
-      },
       queryParam: {
         type: ''
       },
-      typee: null,
       formItem: {
         label: { span: 1 },
         value: { span: 5 }
       },
+      yearOrMonth: '年度',
       columns: [
         {
-          title: '年度',
+          title: () => this.yearOrMonth,
           align: 'center',
           dataIndex: 'year',
           width: 100
@@ -189,7 +155,6 @@ export default {
           align: 'center',
           dataIndex: 'generalBudgetIncome'
         },
-        //限制一下
         {
           title: '备注',
           align: 'center',
@@ -210,7 +175,8 @@ export default {
         deleteBatch: '/park.indicators/baseIndicatorsMsg/deleteBatch'
       },
       deleteKey: 'id',
-      rightShow: false
+      rightShow: false,
+      EE: ''
     }
   },
 
@@ -218,35 +184,44 @@ export default {
   computed: { ...mapGetters(['industrialParkId']) },
   methods: {
     handleChange(e) {
-      // console.log('eeeeeeeeeeeeeeeeeee')
-      // console.log(e)
-      // console.log(typeof e)
-      // this.typee = e
-      if (e == 'YS') {
-        getAction(this.url.listN, { type: 'YS' }).then(res => {
+      //因为后端给的api不是同一个查询口子
+      if (e) {
+        //保存这个EE状态，删除完后刷新依旧会走这个
+        this.EE = e
+      }
+      this.loading = true
+      // console.log(this.EE);
+      if (this.EE == 'YS') {
+        this.yearOrMonth = '年度'
+        getAction(this.url.listN, { type: 'YS', parkId: this.industrialParkId }).then(res => {
           if (res.success) {
             console.log('预算筛选成功')
             this.dataSource = res.result
+            for (const item of res.result) {
+              item.year = item.year + '年'
+            }
           } else {
             this.$message.warning(res.message)
           }
           this.loading = false
         })
-      }
-      if (e == 'SJ') {
-        getAction(this.url.listN, { type: 'SJ' }).then(res => {
+      } else if (this.EE == 'SJ') {
+        this.yearOrMonth = '月度'
+        getAction(this.url.listN, { type: 'SJ', parkId: this.industrialParkId }).then(res => {
           if (res.success) {
             console.log('实际筛选成功')
             this.dataSource = res.result
+            for (const item of res.result) {
+              item.year = item.month + '月'
+            }
           } else {
             this.$message.warning(res.message)
           }
           this.loading = false
         })
-      }
-      if (e == '') {
-        let params = { parkId: this.industrialParkId }
-        getAction(this.url.listM, params).then(res => {
+      } else {
+        this.yearOrMonth = '年度'
+        getAction(this.url.listM, { parkId: this.industrialParkId }).then(res => {
           if (res.success) {
             console.log('不限筛选成功')
             this.dataSource = res.result
@@ -259,27 +234,10 @@ export default {
           this.loading = false
         })
       }
-      // this.loadData()
     },
+    //初加载时候就走handleChange的默认路线
     loadData() {
-      // if (this.typee == 'YS' || this.typee == 'SJ') console.log('hahahaahahh')
-      // let params = { type: this.typee }
-      this.loading = true
-      let params = { parkId: this.industrialParkId }
-      //当type为不限时，走listM的api / type筛选时，走最简单的listN
-      getAction(this.url.listM, params).then(res => {
-        if (res.success) {
-          this.dataSource = res.result
-          this.loading = false
-          for (const item of res.result) {
-            item.year = item.year + '年'
-          }
-        }
-        if (res.code === 510) {
-          this.$message.warning(res.message)
-        }
-        this.loading = false
-      })
+      this.handleChange()
     },
 
     goAnnualAchieveAddForm() {
@@ -301,12 +259,6 @@ export default {
         }
       }
     }
-    // handleEdit(row, e) {
-    //   row.__key = Dom7(e.currentTarget)
-    //     .parents('.ant-table-row')
-    //     .data('row-key')
-    //   this.$refs.form.edit(row)
-    // }
   }
 }
 </script>
@@ -319,7 +271,7 @@ export default {
   .ant-form-item {
     margin-bottom: 0px;
   }
-  .local{
+  .local {
     margin-top: 4px;
   }
 }

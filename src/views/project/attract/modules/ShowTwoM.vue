@@ -80,8 +80,9 @@
         >
           <!-- :customRow="customRow" -->
           <span slot="action" slot-scope="text, record">
-            <a v-if="record.content.length>1" @click="twoShowOne(record, ...arguments)">编辑</a>
-            <a-divider v-if="record.content.length>1" type="vertical" />
+            <!-- 这个判断不够健壮，后端徐鸿飞应当把转换状态的跟踪方式设为0的字典，不然后续增加跟踪方式会使逻辑破坏 -->
+            <a v-if="record.trackMethod!='5'" @click="twoShowOne(record, ...arguments)">编辑</a>
+            <a-divider v-if="record.trackMethod!='5'" type="vertical" />
             <a @click="showCard(record, ...arguments)">查看</a>
             <a-divider type="vertical" />
             <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
@@ -177,7 +178,7 @@ export default {
           dataIndex: 'content',
           customRender: text => {
             // return typeof text
-            if (text>0&&text<10) {
+            if (text > 0 && text < 10) {
               //纯数字情况下代表只是状态转换
               return '转为' + filterDictText(this.dict.projectStatusDictOptions, text)
             } else {

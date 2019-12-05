@@ -1,6 +1,6 @@
 <template>
   <a-drawer
-    wrapClassName="mgr-project-trace-drawer"
+    wrapClassName="cust-manage-showzero-d"
     width="80%"
     :visible="visible"
     @close="handleCancel"
@@ -70,7 +70,7 @@
                     :wrapperCol="wrapperCol.default"
                     label="招商人员"
                   >
-                    <a-select v-decorator="['merchantManager']" placeholder="请选择">
+                    <a-select v-decorator="['merchantManager']" placeholder>
                       <a-select-option
                         v-for="(item, key) in dict.merchantManagerExt"
                         :value="item.value"
@@ -86,7 +86,7 @@
                     :wrapperCol="wrapperCol.default"
                     label="服务人员"
                   >
-                    <a-select v-decorator="['servicer']" placeholder="请选择">
+                    <a-select v-decorator="['servicer']" placeholder>
                       <a-select-option
                         v-for="(item, key) in dict.servicerExt"
                         :value="item.value"
@@ -101,7 +101,7 @@
                     :wrapperCol="wrapperCol.default"
                     label="引进日期"
                   >
-                    <a-date-picker style="width:100%" v-decorator="[ 'merchantDate']" />
+                    <a-date-picker placeholder style="width:100%" v-decorator="[ 'merchantDate']" />
                   </a-form-item>
                 </a-col>
                 <!-- 五行 -->
@@ -111,7 +111,7 @@
                     :wrapperCol="wrapperCol.default"
                     label="入驻日期"
                   >
-                    <a-date-picker style="width:100%" v-decorator="[ 'settledDate']" />
+                    <a-date-picker placeholder style="width:100%" v-decorator="[ 'settledDate']" />
                   </a-form-item>
                 </a-col>
                 <a-col span="12">
@@ -205,7 +205,7 @@
                       :wrapperCol="wrapperCol.long"
                       label="企业简介"
                     >
-                      <a-textarea :rows="4" placeholder="请输入企业简介" v-decorator="['content', {}]"></a-textarea>
+                      <a-textarea :rows="4" placeholder v-decorator="['content', {}]"></a-textarea>
                     </a-form-item>
                   </a-col>
                 </a-row>
@@ -283,7 +283,7 @@
                   :wrapperCol="wrapperCol.default"
                   label="公司性质"
                 >
-                  <a-select v-decorator="['unitNature']" placeholder="请选择">
+                  <a-select v-decorator="['unitNature']" placeholder>
                     <a-select-option
                       v-for="(item, key) in dict.unitNatureExt"
                       :value="item.value"
@@ -301,7 +301,7 @@
                   <!-- 9999999999999999999999 -->
                   <a-select
                     v-decorator="['industryCategory',{rules: [{ required: true, message: '请选择行业类型', whitespace:true}]}]"
-                    placeholder="请选择"
+                    placeholder
                   >
                     <a-select-option
                       v-for="(item, key) in dict.industryCategoryExt"
@@ -317,7 +317,7 @@
                   :wrapperCol="wrapperCol.default"
                   label="公司类型"
                 >
-                  <a-select v-decorator="['organizational']" placeholder="请选择">
+                  <a-select v-decorator="['organizational']" placeholder>
                     <a-select-option
                       v-for="(item, key) in dict.organizationalExt"
                       :value="item.value"
@@ -332,7 +332,7 @@
                   :wrapperCol="wrapperCol.default"
                   label="技术领域"
                 >
-                  <a-select v-decorator="['technicalField']" placeholder="请选择">
+                  <a-select v-decorator="['technicalField']" placeholder>
                     <a-select-option
                       v-for="(item, key) in dict.technicalFieldExt"
                       :value="item.value"
@@ -347,7 +347,7 @@
                   :wrapperCol="wrapperCol.default"
                   label="企业评级"
                 >
-                  <a-select v-decorator="['enterpriseRating']" placeholder="请选择">
+                  <a-select v-decorator="['enterpriseRating']" placeholder>
                     <a-select-option
                       v-for="(item, key) in dict.enterpriseRatingExt"
                       :value="item.value"
@@ -362,7 +362,7 @@
                   :wrapperCol="wrapperCol.default"
                   label="注册类型"
                 >
-                  <a-select v-decorator="['registrationType']" placeholder="请选择">
+                  <a-select v-decorator="['registrationType']" placeholder>
                     <a-select-option
                       v-for="(item, key) in dict.registrationTypeExt"
                       :value="item.value"
@@ -382,7 +382,7 @@
                   :wrapperCol="wrapperCol.default"
                   label="注册日期"
                 >
-                  <a-date-picker style="width:100%" v-decorator="[ 'registDate']" />
+                  <a-date-picker placeholder style="width:100%" v-decorator="[ 'registDate']" />
                 </a-form-item>
               </a-col>
               <a-col span="8">
@@ -899,12 +899,12 @@ export default {
   margin-bottom: 10px;
   margin-right: 10px;
 }
-.mgr-project-trace-drawer {
+.cust-manage-showzero-d {
   /** Button按钮间距 */
   .ant-btn {
     margin-left: 30px;
     margin-bottom: 0px;
-    float: right;
+    // float: right;
   }
 
   .project-drawer-form {
