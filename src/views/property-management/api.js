@@ -6,7 +6,7 @@ const url = {
     list: '/park.architecture/baseArchitectureProject/queryByParkId',
   },
   architectureBuilding: {
-    list: '/park.architecture/baseArchitectureBuilding/queryByProjectId',
+    list: '/park.architecture/baseArchitectureBuilding/queryBuildingList',
   },
   architectureFloor: {
     list: '/park.architecture/baseArchitectureFloor/queryByBuildingId',
@@ -56,6 +56,8 @@ const listEvent = params => getAction(url.event.list, params)
 const addEvent = params => postAction(url.event.add, qs.stringify(params))
 /** 会议室预定-编辑 */
 const editEvent = params => putAction(url.event.edit, qs.stringify(params))
+/** 会议室设备-列表 */
+const listRoomEquipment = deviceGroupId => getAction('/park.middletables/pubLabelGroup/queryById', { id: deviceGroupId } )
 
 export {
   url,
@@ -69,5 +71,6 @@ export {
   editMeetingRoom,
   listEvent,
   addEvent,
-  editEvent
+  editEvent,
+  listRoomEquipment,
 }

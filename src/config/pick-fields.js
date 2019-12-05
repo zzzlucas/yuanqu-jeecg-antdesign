@@ -405,3 +405,21 @@ export const advertisingEditForm = [
   'remarks',
   'summary',
 ]
+
+export const meetingRoomEditForm = [
+  'roomName',
+  'chargingArea',
+  'maxCapacity',
+  'projectId',
+  'buildingId',
+  'floorId',
+  'address',
+  'contactPerson',
+  'contactTel',
+  'price',
+  'price2',
+  'begTime',
+  'endTime',
+  'remarks',
+  'summary',
+]

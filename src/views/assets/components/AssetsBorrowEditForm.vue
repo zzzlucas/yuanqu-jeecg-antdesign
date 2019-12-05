@@ -43,7 +43,7 @@
             <j-upload v-decorator="['addDocFiles']" />
           </a-form-item>
         </a-col>
-        
+
       </a-row>
       <a-row class="action-row" type="flex" justify="end">
         <a-col :xl="2">
@@ -127,7 +127,7 @@
           if (!resp.success) {
             throw new Error(resp.message)
           }
-          this.$message.success('添加成功')
+          this.$message.success('操作成功')
           this.closeDrawer()
           this.$emit('submit')
         } catch (e) {

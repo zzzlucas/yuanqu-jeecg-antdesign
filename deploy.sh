@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -e
-echo '---Deploy begin---'
 echo 'Check is correct set vars'
 checkVars=('BUILD_TAG' 'SERVER_ROOT' 'SERVER_REAL_ROOT' 'SERVER_USER' 'SERVER_GROUP' 'SERVER_TMP_ROOT' 'SERVER_API')
 for item in "${checkVars[@]}"
@@ -12,6 +11,7 @@ do
   fi
 done
 export SERVER_REAL_BUILD_ROOT="$SERVER_REAL_ROOT/$BUILD_TAG"
+echo '---Deploy begin---'
 echo 'Remove temp app'
 rm -rf app
 echo 'Make app folder'
