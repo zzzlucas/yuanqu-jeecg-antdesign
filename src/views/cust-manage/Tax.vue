@@ -3,17 +3,13 @@
     <!-- 操作按钮区域 -->
     <div class="table-operator">
       <a-button @click="goTaxAddForm()" type="primary" icon="plus">新增纳税情况</a-button>
-      <a-dropdown v-if="selectedRowKeys.length > 0">
-        <a-menu slot="overlay">
-          <a-menu-item key="1" @click="batchDel">
-            <a-icon type="delete" />删除
-          </a-menu-item>
-        </a-menu>
-        <a-button style="margin-left: 8px">
-          批量操作
-          <a-icon type="down" />
-        </a-button>
-      </a-dropdown>
+      <a-button
+        style="margin-left: 8px"
+        type="danger"
+        icon="delete"
+        @click="batchDel"
+        v-if="selectedRowKeys.length > 0"
+      >批量删除</a-button>
     </div>
 
     <!-- table区域-begin -->
@@ -54,7 +50,7 @@
 
     <!-- 表单区域 -->
     <!-- <parks-add-form ref="form" v-model="rightShow" @submit="onSubmit" @edit="onEdit"></parks-add-form> -->
-    <tax-add-form ref="TaxAddForm" @loaddata="loadData"></tax-add-form>
+    <tax-add-form ref="TaxAddForm" @reload="loadData()"></tax-add-form>
   </a-card>
 </template>
 
@@ -64,6 +60,7 @@ import TaxAddForm from './modules/TaxAddForm'
 import { postAction, putAction, getAction } from '@/api/manage'
 import qs from 'querystring'
 import Dom7 from 'dom7'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'IndustrialParksList',
@@ -144,11 +141,11 @@ export default {
         }
       ],
       url: {
-        list: '/park.indicators/baseIndicatorsTaxes/listFinish?parkId=555',
-        delete: '/park.park/basePark/delete',
+        list: '/park.indicators/baseIndicatorsTaxes/listFinish?parkId=' + this.industrialParkId,
+        delete: '/park.indicators/baseIndicatorsTaxes/delete',
         deleteBatch: '/park.park/basePark/deleteBatch'
       },
-      deleteKey: 'parkId',
+      deleteKey: 'id',
       rightShow: false
     }
   },
@@ -156,19 +153,19 @@ export default {
     this.loadData()
   },
   computed: {
-    // importExcelUrl: function() {
-    //   return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`
-    // }
+    ...mapGetters(['industrialParkId'])
   },
   methods: {
     loadData() {
       //分页参数
-      getAction(this.url.list).then(res => {
+      this.loading = true
+      getAction('/park.indicators/baseIndicatorsTaxes/listFinish?parkId=' + this.industrialParkId).then(res => {
         if (res.success) {
           for (const item of res.result) {
             item.year = item.year + '年'
           }
           this.dataSource = res.result
+          this.loading = false
         }
         if (res.code === 510) {
           this.$message.warning(res.message)

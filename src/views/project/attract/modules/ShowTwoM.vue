@@ -1,6 +1,5 @@
 <template>
   <!-- 跟踪记录表单  下拉1-->
-
   <a-modal
     :title="title"
     :width="1300"
@@ -81,11 +80,13 @@
         >
           <!-- :customRow="customRow" -->
           <span slot="action" slot-scope="text, record">
-            <a @click="twoShowOne(record, ...arguments)">编辑</a>
-            <a-divider type="vertical" />
+            <a v-if="record.content.length>1" @click="twoShowOne(record, ...arguments)">编辑</a>
+            <a-divider v-if="record.content.length>1" type="vertical" />
             <a @click="showCard(record, ...arguments)">查看</a>
             <a-divider type="vertical" />
-            <a @click="deleteeee(record)">删除</a>
+            <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
+              <a>删除</a>
+            </a-popconfirm>
           </span>
         </a-table>
       </a-form>
@@ -173,7 +174,16 @@ export default {
         {
           title: '跟踪纪要',
           align: 'center',
-          dataIndex: 'content'
+          dataIndex: 'content',
+          customRender: text => {
+            // return typeof text
+            if (text>0&&text<10) {
+              //纯数字情况下代表只是状态转换
+              return '转为' + filterDictText(this.dict.projectStatusDictOptions, text)
+            } else {
+              return text
+            }
+          }
         },
         {
           title: '跟踪方式',
@@ -190,8 +200,10 @@ export default {
           scopedSlots: { customRender: 'action' }
         }
       ],
+      deleteKey: 'recordId',
       url: {
-        list: '/park.project/mgrProjectTrace/list'
+        list: '/park.project/mgrProjectTrace/list',
+        delete: '/park.project/mgrProjectTrace/delete'
       }
     }
   },
@@ -229,7 +241,7 @@ export default {
       if (this.ff.endDate) {
         this.ff.endDate = this.ff.endDate ? this.ff.endDate.format('YYYY-MM-DD') : null
       }
-      this.queryform = Object.assign({},this.ff)
+      this.queryform = Object.assign({}, this.ff)
       var param = Object.assign(this.queryform)
       param.projectId = this.record.projectId
       param.pageNo = this.ipagination.current
@@ -289,6 +301,11 @@ export default {
       initDictOptions('track_method').then(res => {
         if (res.success) {
           this.dict.trackMethodDictOptions = res.result
+        }
+      })
+      initDictOptions('project_status').then(res => {
+        if (res.success) {
+          this.dict.projectStatusDictOptions = res.result
         }
       })
     },

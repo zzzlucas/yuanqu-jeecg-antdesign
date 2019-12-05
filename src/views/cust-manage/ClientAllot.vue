@@ -10,34 +10,47 @@
             </a-form-item>
           </a-col>-->
           <a-col :md="6" :sm="8">
+            <a-form-item label="厂房">
+              <a-select v-model="queryParam.caseId" @change="getBuildingList" placeholder="请选择厂房">
+                <a-select-option
+                  v-for="item in info.BlockList"
+                  :value="item.buildingProjectId"
+                >{{item.projectName}}</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+          <a-col :md="6" :sm="8">
             <a-form-item label="楼宇">
-              <a-input placeholder v-model="queryParam.buidling"></a-input>
+              <a-select v-model="queryParam.bulidingId" placeholder="请选择楼宇">
+                <a-select-option
+                  v-for="item in info.BuildingList"
+                  :value="item.buildingId"
+                >{{item.buildingName}}</a-select-option>
+              </a-select>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
             <a-form-item label="行业类型">
-              <a-select v-model="queryParam.industryCategory" placeholder="请选择">
-                <!-- <a-select v-decorator="['industryCategory']" placeholder="请选择"> -->
+              <a-select v-model="queryParam.industryCategory" placeholder="请选择行业类型">
                 <a-select-option
                   v-for="(item, key) in dict.industryCategoryExt"
                   :value="item.value"
                   :key="key"
                 >{{ item.text }}</a-select-option>
               </a-select>
-              <!-- <a-input placeholder v-model="queryParam.industryCategory"></a-input> -->
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
             <a-form-item label="关键字">
-              <a-input placeholder="请输入客户名称" v-model="queryParam.keyword"></a-input>
+              <a-input placeholder="请输入企业名称" v-model="queryParam.keyword"></a-input>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
             <a-form-item label="状态">
-              <a-radio-group v-model="queryParam.status">
-                <a-radio value="1">在园</a-radio>
-                <a-radio value="0">离园</a-radio>
-                <!-- <a-radio :style="radioStyle" :value="2">离园</a-radio> -->
+              <a-radio-group defaultValue v-model="queryParam.status">
+                <!-- @change="searchQuery" 有五个查询子项目，干脆一起查吧 -->
+                <a-radio-button value="1">在园</a-radio-button>
+                <a-radio-button value="0">离园</a-radio-button>
               </a-radio-group>
             </a-form-item>
           </a-col>
@@ -66,7 +79,7 @@
         ref="table"
         size="middle"
         bordered
-        rowKey="id"
+        rowKey="custId"
         :columns="columns"
         :dataSource="dataSource"
         :pagination="ipagination"
@@ -98,7 +111,7 @@ import { mixinList } from '@/utils/mixin'
 export default {
   name: 'IndustrialParksList',
   components: { ShowAllot },
-  mixins: [JeecgListMixin,mixinList],
+  mixins: [JeecgListMixin, mixinList],
   data() {
     return {
       description: '企业管理-客户信息列表页',
@@ -174,6 +187,7 @@ export default {
         // exportXlsUrl: 'park.base/basePark/exportXls',
         // importExcelUrl: 'park.base/basePark/importExcel'
       },
+      info: {},
       temprow: '',
       rightShow: false,
       cusId: ''
@@ -192,6 +206,20 @@ export default {
     })
   },
   methods: {
+    getBuildingList(e) {
+      // console.log('e')
+      // console.log(e)
+      getAction('/park.architecture/baseArchitectureBuilding/queryBuildingList', { buildingProjectId: e }).then(res => {
+        if (res.success) {
+          this.info.BuildingList = res.result
+          this.$nextTick(() => {
+            this.form.setFieldsValue()
+          })
+        } else {
+          console.log('获取楼宇列表失败')
+        }
+      })
+    },
     customRow(row) {
       return {
         on: {

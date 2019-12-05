@@ -6,6 +6,7 @@
     :visible="visible"
     @close="close"
     destroyOnClose
+    :zIndex="1001"
   >
     <div>
       <a-card class="daily-article" :bordered="false">
@@ -56,7 +57,7 @@
                 required
               >
                 <!-- v-model写着就没有默认 -->
-                <a-select v-decorator="['tracker']">
+                <a-select v-decorator="['tracker']" :disabled="this.editBool">
                   <a-select-option
                     v-for="(item, key) in dict.trackerExt"
                     :value="item.value"
@@ -97,7 +98,9 @@
                     style="left:0px"
                     @click="ShowRoom"
                   />
-
+                  <div class="finally-room">
+                    <a-tag :key v-for="item in FINALLYROOM">{{ item }}</a-tag>
+                  </div>
                   <!-- <a-input placeholder="请输入意向房源组ID" v-decorator="['resourceGroupId', {}]" /> -->
                 </a-form-item>
                 <a-form-item :labelCol="labelCol.long" :wrapperCol="wrapperCol.long" label="备注">
@@ -128,7 +131,7 @@
       <a-button style="margin-right: 8px" type="primary" @click="handleOk">确定</a-button>
       <a-button @click="handleCancel">取消</a-button>
     </div>
-    <show-room ref="ShowRoom"></show-room>
+    <show-room ref="ShowRoom" @getResourceGroupId="getResourceGroupIdAA"></show-room>
   </a-drawer>
 </template>
 
@@ -198,7 +201,9 @@ export default {
         add: '/park.project/mgrProjectTrace/addMgrProjectTrace',
         edit: '/park.project/mgrProjectTrace/edit'
       },
-      statusText: ''
+      statusText: '',
+      FINALLYROOM: [],
+      FINALLYROOMGROUPID: []
     }
   },
   computed: {
@@ -220,6 +225,12 @@ export default {
     })
   },
   methods: {
+    getResourceGroupIdAA(a, b) {
+      //获取显示的数组
+      this.FINALLYROOM = a
+      //获取要提交的数组
+      this.FINALLYROOMGROUPID = b
+    },
     ShowRoom() {
       this.$refs.ShowRoom.detail()
     },
@@ -415,6 +426,11 @@ export default {
           //时间格式化
           formData.trackDate = formData.trackDate ? formData.trackDate.format('YYYY-MM-DD') : null
           formData.parkId = this.industrialParkId
+          //传房间名字过去
+          formData.resourceGroupName = this.FINALLYROOM.toString()
+          //传房间id过去
+          formData.resourceGroupId = this.FINALLYROOMGROUPID.toString()
+          console.log(formData.resourceGroupId);
           formData = qs.stringify(formData)
           console.log(formData)
           httpAction(httpurl, formData, method)
@@ -448,7 +464,7 @@ export default {
   .flag .ant-btn {
     margin-left: 5px;
     margin-bottom: 10px;
-    float: left;
+    // float: left;
   }
 
   .project-drawer-form {

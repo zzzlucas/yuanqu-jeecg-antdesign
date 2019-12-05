@@ -57,7 +57,7 @@ import { postAction, putAction, getAction } from '@/api/manage'
 import qs from 'querystring'
 import Dom7 from 'dom7'
 import { mixinList } from '@/utils/mixin'
-
+import { mapGetters } from 'vuex'
 export default {
   name: 'IndustrialParksList',
   components: { AnnualKpiAddForm },
@@ -140,24 +140,21 @@ export default {
         delete: '/park.indicators/baseIndicatorsMsg/delete',
         deleteBatch: '/park.indicators/baseIndicatorsMsg/deleteBatch'
       },
-      deleteKey: 'parkId',
+      deleteKey: 'id',
       rightShow: false
     }
   },
   created() {
     this.loadData()
   },
-  computed: {
-    importExcelUrl: function() {
-      return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`
-    }
-  },
+  computed: { ...mapGetters(['industrialParkId']) },
   methods: {
     loadData() {
       this.loading = true
       let param = {}
       // param.pageNo = this.ipagination.current
       // param.pageSize = this.ipagination.pageSize
+      param.parkId = this.industrialParkId
       param.type = 'YS'
       getAction(this.url.list, param).then(res => {
         if (res.success) {

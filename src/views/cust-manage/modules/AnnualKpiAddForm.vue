@@ -139,7 +139,7 @@ export default {
           that.confirmLoading = true
           let httpurl = ''
           let method = ''
-          if (!this.model.year) {
+          if (!this.editBool) {
             httpurl += this.url.add
             method = 'post'
           } else {

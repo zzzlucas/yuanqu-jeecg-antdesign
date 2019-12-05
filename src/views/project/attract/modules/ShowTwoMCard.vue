@@ -29,7 +29,7 @@
           <detail-list-item term="过程纪要">{{info.content}}</detail-list-item>
         </detail-list>
         <detail-list :col="1">
-          <detail-list-item term="意向房源">{{info.resourceGroupId}}</detail-list-item>
+          <detail-list-item term="意向房源">{{info.resourceGroupName}}</detail-list-item>
         </detail-list>
         <detail-list :col="1">
           <detail-list-item term="备注">{{info.remark}}</detail-list-item>
