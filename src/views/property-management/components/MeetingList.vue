@@ -206,7 +206,7 @@
       },
       // Action
       handleBook(record) {
-        this.$refs.modalFormBook.add({ roomName: record.roomName });
+        this.$refs.modalFormBook.add({ roomName: record.roomName, roomId: record.roomId });
         this.$refs.modalFormBook.title = "新增";
         this.$refs.modalFormBook.disableSubmit = false;
       },

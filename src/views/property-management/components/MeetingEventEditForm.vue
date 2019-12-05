@@ -110,10 +110,10 @@
         const data = await promiseForm(this.form)
         try {
           filterObj(data)
-          data.parkId = this.industrialParkId
+          data.roomId = this.record.roomId
           let resp
           if (this.isEdit) {
-            data.eventId = this.record.eventId
+            // data.eventId = this.record.eventId
             resp = await editEvent(data)
           } else {
             resp = await addEvent(data)
