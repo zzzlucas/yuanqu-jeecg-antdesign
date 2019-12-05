@@ -5,7 +5,7 @@
         <a-row :gutter="24">
           <a-col :xl="8">
             <a-form-item label="关键字">
-              <a-input placeholder="资源名称、订单号、预订人、手机号" v-model="queryParam.keyword"></a-input>
+              <a-input placeholder="会议室名称" v-model="queryParam.keyword"></a-input>
             </a-form-item>
           </a-col>
           <a-col :xl="5">
@@ -25,7 +25,7 @@
               <a-select style="width: 100%;" v-model="queryParam.buildingId">
                 <a-select-option
                   :value="item.buildingId"
-                  v-for="item in types.floor"
+                  v-for="item in types.building"
                   :key="item.buildingId">
                   {{ item.buildingName }}
                 </a-select-option>
@@ -35,8 +35,8 @@
           <a-col :xl="5">
             <a-form-item label="人数限制">
               <j-dict-select-tag
-                v-model="queryParam.orderType"
-                :dict="types.order_type" />
+                v-model="queryParam.capacity"
+                dictCode="meeting_room_capacity" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -68,14 +68,58 @@
       ref="table"
       size="middle"
       bordered
-      rowKey="orderId"
+      rowKey="roomId"
+      :showHeader="false"
       :columns="columns"
       :dataSource="dataSource"
       :pagination="ipagination"
       :loading="loading"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}">
       <!-- Column slot -->
+      <!-- Room & name -->
+      <div slot="nameAndPos" slot-scope="text, record">
+        <div class="room-section">
+          <div class="room-preview room-block">
+            <img :src="getRoomPreview(record.addDocFiles)" alt="" v-if="record.addDocFiles">
+            <a-icon type="picture" v-else />
+          </div>
+          <div class="room-name-address room-block">
+            <div class="room-name">{{ record.roomName }}</div>
+            <div class="room-address">详细位置：{{ record.address }}</div>
+          </div>
+        </div>
+      </div>
+      <!-- MaxCapacity -->
+      <div slot="maxCapacity" slot-scope="text, record">
+        <div>容纳人数</div>
+        <div>{{ record.maxCapacity }}人</div>
+      </div>
+      <!-- Address -->
+      <div slot="address" slot-scope="text, record">
+        <div>联系方式</div>
+        <div>{{ record.contactPerson }}/{{ record.contactTel }}</div>
+      </div>
+      <!-- Equipment -->
+      <div slot="equipment" slot-scope="text, record">
+        <div>标准配置</div>
+        <div>
+          &nbsp;
+          <span v-for="(item, i) in getRoomDevice(record.roomId)">
+            {{ item }}
+            <template v-if="i !== 0">/</template>
+          </span>
+        </div>
+      </div>
+      <!-- ChargingArea -->
+      <div slot="chargingArea" slot-scope="text, record">
+        <div>占地面积</div>
+        <div>
+          <div>{{ record.chargingArea }}m<sup>2</sup></div>
+        </div>
+      </div>
+      <!-- Action -->
       <span slot="action" slot-scope="text, record" @click.stop>
+        <a @click.stop="handleBook(record, ...arguments)">预定</a>
         <a-divider type="vertical" />
         <a @click.stop="handleEdit(record, ...arguments)">编辑</a>
         <a-divider type="vertical" />
@@ -115,44 +159,27 @@
       return {
         // Url
         url: url.meetingRoom,
-        // Filter query
-        queryParam: {
-          orderType: '',
-          keyword: '',
-          status: '',
-        },
         // Table
         columns: [
           {
-            title: '#',
-            dataIndex: '',
-            key: 'rowIndex',
-            width: 60,
-            align: 'center',
-            customRender: (t, r, index) => Number(index) + 1
+            title: '名称、位置',
+            scopedSlots: { customRender: 'nameAndPos' },
           },
           {
-            title: '订单编号',
-            align: 'center',
-            dataIndex: 'orderId'
+            title: '容纳人数',
+            scopedSlots: { customRender: 'maxCapacity' },
           },
           {
-            title: '资源名称',
-            align: 'center',
-            dataIndex: 'title'
+            title: '联系方式',
+            scopedSlots: { customRender: 'address' },
           },
           {
-            title: '预定时间',
-            align: 'center',
-            dataIndex: 'custName'
+            title: '标准配置',
+            scopedSlots: { customRender: 'equipment' },
           },
           {
-            title: '状态',
-            align: 'center',
-            dataIndex: 'status',
-            /*customRender: t => {
-              return filterDictText(this.types.order_status, t)
-            }*/
+            title: '占地面积',
+            scopedSlots: { customRender: 'chargingArea' },
           },
           {
             title: '操作',
@@ -164,6 +191,17 @@
       }
     },
     methods: {
+      // Filter
+      getRoomPreview(files) {
+        return files.split(',')[0]
+      },
+      getRoomDevice(devices) {
+        return []
+      },
+      // Action
+      handleBook(record) {
+
+      },
       // Add/Edit
       async handleEditSubmit() {
         this.loadData(1)
@@ -191,6 +229,38 @@
   .meeting-list {
     .ant-table-row {
       cursor: pointer;
+      color: rgba(0, 0, 0, 0.447);
+      .room-section {
+        display: flex;
+        align-items: center;
+      }
+      .room-preview {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        background: #f2f2f2;
+        img {
+          display: block;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        .anticon-picture {
+          font-size: 20px;
+        }
+      }
+      .room-name-address {
+        margin-left: 5%;
+      }
+      .room-name {
+        font-weight: bold;
+        color: #333;
+      }
+      .room-address {
+
+      }
     }
   }
 </style>

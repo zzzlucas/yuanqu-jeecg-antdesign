@@ -22,7 +22,10 @@
         </a-col>
         <a-col :xl="12">
           <a-form-item label="占地面积">
-            <a-input v-decorator="['chargingArea', {rules: rules.chargingArea}]"></a-input>
+            <a-input-number v-decorator="['chargingArea', {rules: rules.chargingArea}]" style="width: 90%;"></a-input-number>
+            <span class="ant-form-text" style="margin-left: 3%; width: 7%; padding-right: 0;">
+              m<sup>2</sup>
+            </span>
           </a-form-item>
         </a-col>
         <a-col :xl="12">
@@ -117,8 +120,8 @@
         <a-col :xl="24">
           <a-form-item label="提供设备" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
             <j-multi-select-tag
-              v-decorator="['deviceGroupId']"
-              dict-code="order_status">
+              v-decorator="['device']"
+              dict-code="meeting_room_device">
             </j-multi-select-tag>
           </a-form-item>
         </a-col>
@@ -160,8 +163,8 @@
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
   import Mixin from '../mixin/list'
   import { filterObj, promiseForm } from '@utils/util'
-  import { assetsRegisterEditForm } from '@/config/pick-fields'
-  import { addMeetingRoom, editMeetingRoom } from '../api'
+  import { meetingRoomEditForm } from '@/config/pick-fields'
+  import { addMeetingRoom, editMeetingRoom, listRoomEquipment } from '../api'
 
   export default {
     mixins: [
@@ -176,7 +179,7 @@
     data() {
       return {
         // Form
-        fields: assetsRegisterEditForm,
+        fields: meetingRoomEditForm,
         isCharge: false,
         // Rules
         rules: {
@@ -185,6 +188,7 @@
           ],
           chargingArea: [
             { required: true, message: '请填写占地面积' },
+            { type: 'number', min: 1, message: '占地面积至少大于1' },
           ],
           maxCapacity: [
             { required: true, message: '请填写容纳人数' },
@@ -219,6 +223,7 @@
           data.parkId = this.industrialParkId
           let resp
           if (this.isEdit) {
+            data.roomId = this.record.roomId
             resp = await editMeetingRoom(data)
           } else {
             resp = await addMeetingRoom(data)
@@ -226,7 +231,7 @@
           if (!resp.success) {
             throw new Error(resp.message)
           }
-          this.$message.success('添加成功')
+          this.$message.success('操作成功')
           this.closeDrawer()
           this.$emit('submit')
         } catch (e) {
@@ -234,12 +239,41 @@
         }
       },
       async fetchBuildings() {
+        this.types.building = []
         await this.$nextTick()
-        await this.getBuildings(this.form.getFieldValue('projectId'))
+        this.form.setFieldsValue({ buildingId: '' })
+        this.getBuildings(this.form.getFieldValue('projectId'))
       },
       async fetchFloors() {
+        this.types.floor = []
         await this.$nextTick()
-        await this.getFloors(this.form.getFieldValue('buildingId'))
+        this.form.setFieldsValue({ floorId: '' })
+        this.getFloors(this.form.getFieldValue('buildingId'))
+      },
+      async getDeviceList(deviceGroupId) {
+        const resp = await listRoomEquipment(deviceGroupId)
+        if (!resp.success) {
+          throw new Error(resp.message)
+        }
+        return resp.result
+      },
+      async init() {
+        this.getProjects(this.industrialParkId)
+        if (this.isEdit) {
+          const projectId = this.record.projectId
+          if (projectId) {
+            this.getBuildings(projectId)
+          }
+          const buildingId = this.record.buildingId
+          if (buildingId) {
+            this.getFloors(buildingId)
+          }
+          const deviceGroupId = this.record.deviceGroupId
+          if (deviceGroupId) {
+            const res = await this.getDeviceList(deviceGroupId)
+            this.form.setFieldsValue({ device: res.map(item => item.labelNo).join(',') })
+          }
+        }
       },
     },
     watch: {
@@ -247,7 +281,7 @@
         if (!val) {
           return
         }
-        this.getProjects(this.industrialParkId)
+        this.init()
       }
     }
   }
