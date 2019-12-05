@@ -85,34 +85,15 @@
           </a-form-item>
         </a-col>
         <a-col :xl="24">
-          <a-form-item label="是否收费" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
-            <a-switch v-model="isCharge"></a-switch>
-          </a-form-item>
-        </a-col>
-        <a-col :xl="24" v-if="isCharge">
-          <a-row>
-            <a-col :xl="12">
-              <a-form-item label="标准单价">
-                <j-date :trigger-change="true" v-decorator="['price']" style="width: 100%;" />
-              </a-form-item>
-            </a-col>
-            <a-col :xl="12" >
-              <a-form-item class="form-item-label-align" label="—" :colon="false">
-                <j-date :trigger-change="true" v-decorator="['price2']" style="width: 100%;" />
-              </a-form-item>
-            </a-col>
-          </a-row>
-        </a-col>
-        <a-col :xl="24">
           <a-row>
             <a-col :xl="12">
               <a-form-item label="开放时间">
-                <j-date :trigger-change="true" v-decorator="['begTime']" style="width: 100%;" />
+                <j-time timeFormat="HH:mm" v-decorator="['begTime']" style="width: 100%;"></j-time>
               </a-form-item>
             </a-col>
             <a-col :xl="12" >
               <a-form-item class="form-item-label-align" label="—" :colon="false">
-                <j-date :trigger-change="true" v-decorator="['endTime']" style="width: 100%;" />
+                <j-time timeFormat="HH:mm" v-decorator="['endTime']" style="width: 100%;"></j-time>
               </a-form-item>
             </a-col>
           </a-row>
@@ -158,6 +139,7 @@
 
 <script>
   import JDate from '@/components/jeecg/JDate'
+  import JTime from '@/components/jeecg/JTime'
   import JUpload from '@/components/jeecg/JUpload'
   import JMultiSelectTag from '@comp/dict/JMultiSelectTag'
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
@@ -173,6 +155,7 @@
     ],
     components: {
       JDate,
+      JTime,
       JUpload,
       JMultiSelectTag,
     },
@@ -180,7 +163,6 @@
       return {
         // Form
         fields: meetingRoomEditForm,
-        isCharge: false,
         // Rules
         rules: {
           roomName: [
@@ -221,6 +203,12 @@
         try {
           filterObj(data)
           data.parkId = this.industrialParkId
+          if (data.begTime) {
+            data.begTime += ':00'
+          }
+          if (data.endTime) {
+            data.endTime += ':00'
+          }
           let resp
           if (this.isEdit) {
             data.roomId = this.record.roomId
