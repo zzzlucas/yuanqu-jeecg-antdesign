@@ -17,7 +17,9 @@
       <a-row>
         <a-col :xl="24">
           <a-form-item label="会议室名称" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
-            <a-input :disabled="!!record.roomId" v-decorator="['roomName']"></a-input>
+            <a-select v-decorator="['roomId', {rules: rules.roomId}]">
+              <a-select-option :value="item.roomId" v-for="item in roomList" :key="item.roomId">{{ item.roomName }}</a-select-option>
+            </a-select>
           </a-form-item>
         </a-col>
         <a-col :xl="12">
@@ -75,6 +77,7 @@
 <script>
   import JDate from '@/components/jeecg/JDate'
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
+  import { meetingRoom as BookMeetingRoomMixin } from '../mixin/book'
   import { filterObj, promiseForm } from '@utils/util'
   import { meetingEventEditForm } from '@/config/pick-fields'
   import { addEvent, editEvent } from '../api'
@@ -82,16 +85,24 @@
   export default {
     mixins: [
       FormEditDrawerMixin('meeting-event-edit'),
+      BookMeetingRoomMixin,
     ],
     components: {
       JDate,
     },
     data() {
       return {
+        // Query
+        queryParam: {
+          // Dummy for book mixin
+        },
         // Form
         fields: meetingEventEditForm,
         // Rules
         rules: {
+          roomId: [
+            { required: true, message: '请选择会议室名称' },
+          ],
           begDate: [
             { required: true, message: '请填写预约时间' },
           ],
@@ -110,7 +121,7 @@
         const data = await promiseForm(this.form)
         try {
           filterObj(data)
-          data.roomId = this.record.roomId
+          data.parkId = this.industrialParkId
           let resp
           if (this.isEdit) {
             // data.eventId = this.record.eventId
@@ -129,10 +140,10 @@
         }
       },
       async init() {
+        this.getRoomList()
         if (!this.isEdit) {
           await this.$nextTick()
           this.form.setFieldsValue({
-            roomName: this.record.roomName,
             roomId: this.record.roomId,
             begDate: this.record.begDate,
             endDate: this.record.endDate,

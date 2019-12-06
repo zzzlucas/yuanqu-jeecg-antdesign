@@ -56,6 +56,8 @@ const listFloor = params => getAction(url.architectureFloor.list, params)
 const addPlace = params => postAction(url.advertisingPlace.add, qs.stringify(params))
 /** 广告位建档-编辑 */
 const editPlace = params => putAction(url.advertisingPlace.edit, qs.stringify(params))
+/** 广告位建档-分页列表查询 */
+const listPlace = params => getAction(url.advertisingPlace.list, params)
 /** 广告位预定-添加 */
 const addAdEvent = params => postAction(url.advertisingEvent.add, qs.stringify(params))
 /** 广告位预定-编辑 */
@@ -88,6 +90,7 @@ export {
   listFloor,
   addPlace,
   editPlace,
+  listPlace,
   addAdEvent,
   editAdEvent,
   listMeetingRoom,

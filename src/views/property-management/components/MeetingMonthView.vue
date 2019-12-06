@@ -64,8 +64,7 @@
         const begDate = date.format('YYYY-MM-DD HH:mm:ss')
         const endDate = date.add(1, 'd').format('YYYY-MM-DD HH:mm:ss')
         const roomId = this.roomId
-        const roomName = this.roomName
-        this.$refs.modalForm.add({ begDate, endDate, roomId, roomName })
+        this.$refs.modalForm.add({ begDate, endDate, roomId })
         this.$refs.modalForm.title = "添加"
         this.$refs.modalForm.disableSubmit = false
       },

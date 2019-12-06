@@ -2,14 +2,16 @@ import 'jquery'
 import moment from 'moment'
 import 'fullcalendar/dist/locale/zh-cn'
 import { FullCalendar } from 'vue-full-calendar'
-import MixinList from '@/mixins/List'
 import 'fullcalendar/dist/fullcalendar.min.css';
-import { listMeetingRoom, listEvent } from '../api'
 import { filterObj } from '@utils/util'
+import MixinList from '@/mixins/List'
+import { meetingRoom as BookMeetingRoomMixin } from './book'
+import { listEvent } from '../api'
 
 export default {
   mixins: [
     MixinList,
+    BookMeetingRoomMixin,
   ],
   components: {
     FullCalendar,
@@ -23,7 +25,6 @@ export default {
       },
       // Data
       roomId: '',
-      roomList: [],
       meeting: [],
       // Events
       events: [
@@ -43,23 +44,6 @@ export default {
     }
   },
   methods: {
-    async getRoomList() {
-      try {
-        const params = {
-          parkId: this.queryParam.parkId,
-          projectId: this.queryParam.projectId,
-          buildingId: this.queryParam.buildingId,
-        }
-        filterObj(params)
-        const resp = await listMeetingRoom(params)
-        if (!resp.success) {
-          throw new Error(resp.message)
-        }
-        this.roomList = resp.result.records
-      } catch (e) {
-        this.$message.error('获取会议室列表失败')
-      }
-    },
     async getList() {
       try {
         const params = this.queryParam
