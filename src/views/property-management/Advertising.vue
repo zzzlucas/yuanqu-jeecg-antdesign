@@ -11,16 +11,26 @@
           </a-col>
           <a-col :xl="6">
             <a-form-item label="厂房">
-              <j-dict-select-tag
-                v-model="queryParam.orderType"
-                :dict="types.order_type" />
+              <a-select style="width: 100%;" v-model="queryParam.projectId" @change="fetchBuildings">
+                <a-select-option
+                  :value="item.buildingProjectId"
+                  v-for="item in types.project"
+                  :key="item.buildingProjectId">
+                  {{ item.projectName }}
+                </a-select-option>
+              </a-select>
             </a-form-item>
           </a-col>
           <a-col :xl="6">
             <a-form-item label="楼宇">
-              <j-dict-select-tag
-                v-model="queryParam.orderType"
-                :dict="types.order_type" />
+              <a-select style="width: 100%;" v-model="queryParam.buildingId">
+                <a-select-option
+                  :value="item.buildingId"
+                  v-for="item in types.building"
+                  :key="item.buildingId">
+                  {{ item.buildingName }}
+                </a-select-option>
+              </a-select>
             </a-form-item>
           </a-col>
           <a-col :xl="4">
@@ -53,14 +63,40 @@
       size="middle"
       bordered
       rowKey="orderId"
+      :showHeader="false"
       :columns="columns"
       :dataSource="dataSource"
       :pagination="ipagination"
       :loading="loading"
-      :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}">
-      <!-- Column slot -->
+      :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
+      :customRow="handleCustomRow">
+      <!-- Room & name -->
+      <div slot="nameAndPos" slot-scope="text, record">
+        <div class="ad-section">
+          <div class="ad-preview ad-block">
+            <img :src="getPreview(record.addDocFiles)" alt="" v-if="record.addDocFiles">
+            <a-icon type="picture" v-else />
+          </div>
+          <div class="ad-name-address ad-block">
+            <div class="ad-name">{{ record.advertName }}</div>
+            <div class="ad-address">详细位置：{{ record.address }}</div>
+          </div>
+        </div>
+      </div>
+      <!-- Address -->
+      <div slot="address" slot-scope="text, record">
+        <div>联系方式</div>
+        <div>{{ record.contactPerson }}/{{ record.contactTel }}</div>
+      </div>
+      <!-- ChargingArea -->
+      <div slot="chargingArea" slot-scope="text, record">
+        <div>占地面积</div>
+        <div>
+          <div>{{ record.chargingArea }}m<sup>2</sup></div>
+        </div>
+      </div>
+      <!-- Action -->
       <span slot="action" slot-scope="text, record" @click.stop>
-        <a-divider type="vertical" />
         <a @click.stop="handleEdit(record, ...arguments)">编辑</a>
         <a-divider type="vertical" />
         <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
@@ -80,7 +116,7 @@
   import AdvertisingEditForm from './components/AdvertisingEditForm'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import MixinList from '@/mixins/List'
-  import { filterDictText } from '@/components/dict/JDictSelectUtil'
+  import Mixin from './mixin/list'
   import { url } from './api'
   import '@assets/less/common.less'
 
@@ -91,53 +127,27 @@
     mixins: [
       JeecgListMixin,
       MixinList,
+      Mixin,
     ],
     data() {
       return {
         // Mixin options
-        deleteKey: 'orderId',
+        deleteKey: 'advertId',
         // Url
         url: url.advertisingPlace,
-        // Types
-        dictesCreateFields: [],
-        // Filter query
-        queryParam: {
-          orderType: '',
-          keyword: '',
-          status: '',
-        },
         // Table
         columns: [
           {
-            title: '#',
-            dataIndex: '',
-            key: 'rowIndex',
-            width: 60,
-            align: 'center',
-            customRender: (t, r, index) => Number(index) + 1
+            title: '名称、位置',
+            scopedSlots: { customRender: 'nameAndPos' },
           },
           {
-            title: '工单编号',
-            align: 'center',
-            dataIndex: 'orderId'
+            title: '联系方式',
+            scopedSlots: { customRender: 'address' },
           },
           {
-            title: '工单主题',
-            align: 'center',
-            dataIndex: 'title'
-          },
-          {
-            title: '提单客户',
-            align: 'center',
-            dataIndex: 'custName'
-          },
-          {
-            title: '状态',
-            align: 'center',
-            dataIndex: 'status',
-            customRender: t => {
-              return filterDictText(this.types.order_status, t)
-            }
+            title: '占地面积',
+            scopedSlots: { customRender: 'chargingArea' },
           },
           {
             title: '操作',
@@ -148,14 +158,42 @@
         ],
       }
     },
-    computed: {
-
-    },
     methods: {
+      // Getter
+      getPreview(files) {
+        return files.split(',')[0]
+      },
       // Add/Edit
       async handleEditSubmit() {
         this.loadData(1)
       },
+      // Fetch
+      async fetchProjects() {
+        this.types.project = []
+        await this.getProjects(this.queryParam.parkId)
+        this.types.project.unshift({ buildingProjectId: '', projectName: '全部', })
+      },
+      async fetchBuildings() {
+        this.types.building = []
+        if (this.queryParam.projectId) {
+          await this.getBuildings(this.queryParam.projectId)
+        }
+        this.types.building.unshift({ buildingId: '', buildingName: '全部'  })
+      },
+      // View
+      handleCustomRow(row) {
+        return {
+          on: {
+            click: () => {
+              this.$router.push({ name: 'property-management-advertising-info-@id', params: { id: row.roomId } })
+            }
+          }
+        }
+      }
+    },
+    created() {
+      this.fetchProjects()
+      this.fetchBuildings()
     },
   }
 </script>
@@ -164,6 +202,35 @@
   .advertising-list {
     .ant-table-row {
       cursor: pointer;
+      color: rgba(0, 0, 0, 0.447);
+      .ad-section {
+        display: flex;
+        align-items: center;
+      }
+      .ad-preview {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        background: #f2f2f2;
+        img {
+          display: block;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        .anticon-picture {
+          font-size: 20px;
+        }
+      }
+      .ad-name-address {
+        margin-left: 5%;
+      }
+      .ad-name {
+        font-weight: bold;
+        color: #333;
+      }
     }
   }
 </style>

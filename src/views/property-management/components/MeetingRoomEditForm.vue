@@ -184,9 +184,6 @@
           floorId: [
             { required: true, message: '请选择所属楼层' },
           ],
-          address: [
-            { required: true, message: '请填写地理位置' },
-          ],
           contactPerson: [
             { required: true, message: '请填写联系人' },
           ],

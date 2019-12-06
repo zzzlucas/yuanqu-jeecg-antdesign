@@ -21,21 +21,39 @@
           </a-form-item>
         </a-col>
         <a-col :xl="12">
-          <!-- TODO -->
-          <a-form-item label="所属建筑项目">
-            <a-input v-decorator="['projectId', {rules: rules.projectId}]"></a-input>
+          <a-form-item label="所属厂房">
+            <a-select style="width: 100%;" v-decorator="['projectId', {rules: rules.projectId}]" @change="fetchBuildings">
+              <a-select-option
+                :value="item.buildingProjectId"
+                v-for="item in types.project"
+                :key="item.buildingProjectId">
+                {{ item.projectName }}
+              </a-select-option>
+            </a-select>
           </a-form-item>
         </a-col>
         <a-col :xl="12">
-          <!-- TODO -->
           <a-form-item label="所属楼宇">
-            <a-input v-decorator="['buildingId']"></a-input>
+            <a-select style="width: 100%;" v-decorator="['buildingId', {rules: rules.buildingId}]" @change="fetchFloors">
+              <a-select-option
+                :value="item.buildingId"
+                v-for="item in types.building"
+                :key="item.buildingId">
+                {{ item.buildingName }}
+              </a-select-option>
+            </a-select>
           </a-form-item>
         </a-col>
         <a-col :xl="12">
-          <!-- TODO -->
           <a-form-item label="所属楼层">
-            <a-input v-decorator="['floorId', {rules: rules.floorId}]"></a-input>
+            <a-select style="width: 100%;" v-decorator="['floorId', {rules: rules.floorId}]">
+              <a-select-option
+                :value="item.floorId"
+                v-for="item in types.floor"
+                :key="item.floorId">
+                {{ item.floorName }}
+              </a-select-option>
+            </a-select>
           </a-form-item>
         </a-col>
         <a-col :xl="12">
@@ -103,6 +121,7 @@
   import JDate from '@/components/jeecg/JDate'
   import JEditor from '@/components/jeecg/JEditor'
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
+  import Mixin from '../mixin/list'
   import { filterObj, promiseForm } from '@utils/util'
   import { advertisingEditForm } from '@/config/pick-fields'
   import { addPlace, editPlace } from '../api'
@@ -110,6 +129,7 @@
   export default {
     mixins: [
       FormEditDrawerMixin('advertising-edit'),
+      Mixin,
     ],
     components: {
       JEditor,
@@ -167,12 +187,41 @@
           this.$message.error(e.message)
         }
       },
+      async fetchBuildings() {
+        this.types.building = []
+        await this.$nextTick()
+        this.form.setFieldsValue({ buildingId: '' })
+        this.getBuildings(this.form.getFieldValue('projectId'))
+      },
+      async fetchFloors() {
+        this.types.floor = []
+        await this.$nextTick()
+        this.form.setFieldsValue({ floorId: '' })
+        this.getFloors(this.form.getFieldValue('buildingId'))
+      },
+      async init() {
+        this.types.project = []
+        this.types.building = []
+        this.types.floor = []
+        this.getProjects(this.industrialParkId)
+        if (this.isEdit) {
+          const projectId = this.record.projectId
+          if (projectId) {
+            this.getBuildings(projectId)
+          }
+          const buildingId = this.record.buildingId
+          if (buildingId) {
+            this.getFloors(buildingId)
+          }
+        }
+      },
     },
     watch: {
       show(val) {
         if (!val) {
           return
         }
+        this.init()
       },
       isCharge(val) {
         if (val === false) {

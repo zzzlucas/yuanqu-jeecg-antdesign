@@ -161,6 +161,8 @@
     },
     data() {
       return {
+        // Mixin options
+        deleteKey: 'roomId',
         // Url
         url: url.meetingRoom,
         // Table
@@ -215,6 +217,7 @@
       async handleEditSubmit() {
         this.loadData(1)
       },
+      // Fetch
       async fetchProjects() {
         this.types.project = []
         await this.getProjects(this.queryParam.parkId)
@@ -278,9 +281,6 @@
       .room-name {
         font-weight: bold;
         color: #333;
-      }
-      .room-address {
-
       }
     }
   }

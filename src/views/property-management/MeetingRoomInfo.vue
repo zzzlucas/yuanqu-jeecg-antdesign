@@ -1,5 +1,8 @@
 <template>
   <page-layout :title="data.roomName">
+    <template slot="action">
+      <a-button type="primary" @click="handleEdit">编辑</a-button>
+    </template>
     <a-card
       style="margin-top: 24px"
       :bordered="false"
