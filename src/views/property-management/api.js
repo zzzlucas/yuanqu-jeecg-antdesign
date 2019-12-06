@@ -18,6 +18,13 @@ const url = {
     delete: '/park.service/baseAdvertsInfo/delete',
     deleteBatch: '/park.service/baseAdvertsInfo/deleteBatch',
   },
+  advertisingEvent: {
+    list: '/park.service/mgrAdvertsRequest/list',
+    add: '/park.service/mgrAdvertsRequest/add',
+    edit: '/park.service/mgrAdvertsRequest/edit',
+    delete: '/park.service/mgrAdvertsRequest/delete',
+    deleteBatch: '/park.service/mgrAdvertsRequest/deleteBatch',
+  },
   meetingRoom: {
     list: '/park.service/baseMeetingroomInfo/list',
     view: '/park.service/baseMeetingroomInfo/queryById',
@@ -45,6 +52,10 @@ const listFloor = params => getAction(url.architectureFloor.list, params)
 const addPlace = params => postAction(url.advertisingPlace.add, qs.stringify(params))
 /** 广告位建档-编辑 */
 const editPlace = params => putAction(url.advertisingPlace.edit, qs.stringify(params))
+/** 广告位预定-添加 */
+const addAdEvent = params => postAction(url.advertisingEvent.add, qs.stringify(params))
+/** 广告位预定-编辑 */
+const editAdEvent = params => putAction(url.advertisingEvent.edit, qs.stringify(params))
 /** 会议室建档-添加 */
 const addMeetingRoom = params => postAction(url.meetingRoom.add, qs.stringify(params))
 /** 会议室建档-编辑 */
@@ -69,6 +80,8 @@ export {
   listFloor,
   addPlace,
   editPlace,
+  addAdEvent,
+  editAdEvent,
   listMeetingRoom,
   addMeetingRoom,
   editMeetingRoom,
