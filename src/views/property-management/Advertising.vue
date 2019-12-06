@@ -88,13 +88,6 @@
         <div>联系方式</div>
         <div>{{ record.contactPerson }}/{{ record.contactTel }}</div>
       </div>
-      <!-- ChargingArea -->
-      <div slot="chargingArea" slot-scope="text, record">
-        <div>占地面积</div>
-        <div>
-          <div>{{ record.chargingArea }}m<sup>2</sup></div>
-        </div>
-      </div>
       <!-- Action -->
       <span slot="action" slot-scope="text, record" @click.stop>
         <a @click.stop="handleEdit(record, ...arguments)">编辑</a>
@@ -144,10 +137,6 @@
           {
             title: '联系方式',
             scopedSlots: { customRender: 'address' },
-          },
-          {
-            title: '占地面积',
-            scopedSlots: { customRender: 'chargingArea' },
           },
           {
             title: '操作',
