@@ -81,12 +81,6 @@
         url: url.meetingRoom,
         // Types
         dictesCreateFields: ['order_type', 'order_status'],
-        // Data
-        recordLoading: true,
-        records: {
-          process: [],
-          feedback: [],
-        },
         // Tab
         tabList: [
           {
