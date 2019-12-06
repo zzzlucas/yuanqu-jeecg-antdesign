@@ -17,7 +17,7 @@
       <a-row>
         <a-col :xl="24">
           <a-form-item label="会议室名称" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
-            <a-input disabled v-decorator="['roomName']"></a-input>
+            <a-input :disabled="!!record.roomId" v-decorator="['roomName']"></a-input>
           </a-form-item>
         </a-col>
         <a-col :xl="12">
@@ -131,7 +131,12 @@
       async init() {
         if (!this.isEdit) {
           await this.$nextTick()
-          this.form.setFieldsValue({ roomName: this.record.roomName })
+          this.form.setFieldsValue({
+            roomName: this.record.roomName,
+            roomId: this.record.roomId,
+            begDate: this.record.begDate,
+            endDate: this.record.endDate,
+          })
         }
       }
     },
@@ -151,6 +156,9 @@
     .form-item-label-align label {
       text-align: center;
       display: block;
+      &:before {
+        content: '';
+      }
     }
   }
 </style>

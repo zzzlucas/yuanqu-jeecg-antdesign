@@ -22,6 +22,7 @@ export default {
         buildingId: '',
       },
       // Data
+      roomId: '',
       roomList: [],
       meeting: [],
       // Events
