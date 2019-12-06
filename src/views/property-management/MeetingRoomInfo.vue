@@ -38,10 +38,10 @@
         <j-upload ref="uploader" />
       </template>
       <template v-if="activeTabKey === 'weekView'">
-
+        <meeting-week-view :room-id="data.roomId" v-if="data.roomId" />
       </template>
       <template v-if="activeTabKey === 'monthView'">
-
+        <meeting-month-view :room-id="data.roomId" v-if="data.roomId" />
       </template>
     </a-card>
     <!-- Add/Edit form -->
@@ -56,8 +56,10 @@
   import DetailList from '@/components/tools/DetailList'
   import JUpload from '@/components/jeecg/JUpload'
   import MeetingRoomEditForm from './components/MeetingRoomEditForm'
+  import MeetingWeekView from './components/MeetingWeekView'
+  import MeetingMonthView from './components/MeetingMonthView'
   import ViewMixin from '@/mixins/View'
-  import { url, viewMeetingRoom, listOperateProcess, listOperateFeedback } from './api'
+  import { url, viewMeetingRoom } from './api'
   const DetailListItem = DetailList.Item
 
   export default {
@@ -70,6 +72,8 @@
       DetailListItem,
       JUpload,
       MeetingRoomEditForm,
+      MeetingWeekView,
+      MeetingMonthView,
     },
     data() {
       return {
@@ -105,9 +109,6 @@
         activeTabKey: 'basic',
       }
     },
-    computed: {
-
-    },
     methods: {
       // Route
       getRouteParams() {
@@ -132,30 +133,6 @@
           this.$message.error(e.message)
         }
         this.loading = false
-      },
-      async loadRecords() {
-        this.recordLoading = true
-        try {
-          const promises = [
-            listOperateProcess({ orderId: this.getRouteParams().orderId }),
-            listOperateFeedback({ orderId: this.getRouteParams().orderId }),
-          ]
-          const respCollection = await Promise.all(promises)
-          for (const [i, resp] of respCollection.entries()) {
-            if (!resp.success) {
-              throw new Error(resp.message)
-            }
-            const records = resp.result
-            if (i === 0) {
-              this.records.process = records
-            } else {
-              this.records.feedback = records
-            }
-          }
-        } catch (e) {
-          this.$message.error(e.message)
-        }
-        this.recordLoading = false
       },
       // Edit submit
       async handleEditSubmit() {
