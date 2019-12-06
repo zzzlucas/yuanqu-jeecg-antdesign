@@ -93,7 +93,7 @@
         },
         tooltip: {
           formatter: function(params) {
-            return params.marker + params.name + ': ' + params.value[3] + ' 小时'
+            return params.marker + params.name + ': ' + params.value[3] + ' 小时<br>' + params.value[4] + params.value[5]
           }
         },
         grid: {

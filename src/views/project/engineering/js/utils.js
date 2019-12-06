@@ -50,7 +50,9 @@ export function chartData(list) {
         i,
         item.start,
         item.end,
-        (item.end - item.start) / 6
+        (item.end - item.start) / 6,
+        '开始时间：' + item.startTime + '<br>',
+        '结束时间：' + item.endTime + '<br>'
       ],
       itemStyle: {
         normal: {
