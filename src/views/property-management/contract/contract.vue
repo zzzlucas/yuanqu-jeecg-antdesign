@@ -67,12 +67,242 @@
 							</a-row>
 						</a-form>
 						<a-table :columns="asd" :dataSource="data" bordered style="margin-top: 30px;">
-							<span slot="asd" >
-                              <a href="javascript:;">编辑</a>
+							<span slot="asd">
+                              <a href="javascript:;" @click="showDrawer">编辑</a>
+
                               <a-divider type="vertical" />
-                              <a href="javascript:;">续租</a>
+                              <a href="javascript:;" @click="showDrawer1">续租</a>
+                              <a-drawer title="续租" :width="1500" @close="onClose1" :visible="visibles">
+                              	<div>
+                              		<h2>基本信息</h2>
+                              		<a-row>
+                                        <a-col :span="12">
+                                                                                                                                    客户名称：哈斯电子科技有限公司<br>
+                                                                                                                                   合同周期：2018-09-01 ~ 2020-08-31<br>
+                                                                                                                                   物业位置：智慧园区/智慧二路8号1幢/301<br>
+                                        </a-col>
+                                        <a-col :span="12">
+                                        	合同编号：HT20190004<br>
+                                        	支付方式：季度<br>
+                                        	保证金额：0.00<br>
+                                        </a-col>
+                                    </a-row>
+                              	</div>
+							<div style="padding: 5px;">
+								<a-col :span="12">
+									<a-tabs defaultActiveKey="1">
+										<a-tab-pane tab="基本信息">
+											<a-form layout="inline">
+												<a-row :gutter="24" style="margin-top: 10px;">
+													<a-col :xl="24">
+														<a-form-item label="客户名称：">
+															<a-input style="width: 600px;"></a-input>
+														</a-form-item>
+													</a-col>
+												</a-row>
+												<a-row :gutter="24" style="margin-top: 10px;">
+													<a-col :xl="12">
+														<a-form-item label="合同编号：">
+															<a-input></a-input>
+														</a-form-item>
+													</a-col>
+													<a-col :xl="12">
+														<a-form-item label="甲方：">
+															<a-input></a-input>
+														</a-form-item>
+													</a-col>
+												</a-row>
+												<a-row :gutter="24" style="margin-top: 10px;">
+													<a-col :xl="12">
+														<a-form-item label="开始日期：">
+															<a-input></a-input>
+														</a-form-item>
+													</a-col>
+													<a-col :xl="12">
+														<a-form-item label="结束日期：">
+															<a-input></a-input>
+														</a-form-item>
+													</a-col>
+												</a-row>
+												<a-row :gutter="24" style="margin-top: 10px;">
+													<a-col :xl="12">
+														<a-form-item label="保证金：">
+															<a-input></a-input>
+														</a-form-item>
+													</a-col>
+													<a-col :xl="12">
+														<a-form-item label="支付方式：">
+															<a-select defaultValue="一个月">
+																<a-select-option value="选择楼宇">季度</a-select-option>
+																<a-select-option value="lucy">半年</a-select-option>
+																<a-select-option value="选择楼宇">年度</a-select-option>
+															</a-select>
+														</a-form-item>
+													</a-col>
+												</a-row>
+												<a-row :gutter="24" style="margin-top: 10px;">
+													<a-col :xl="12">
+														<a-form-item label="经办人：">
+															<a-input></a-input>
+														</a-form-item>
+													</a-col>
+												</a-row>
+												<a-row :gutter="24" style="margin-top: 10px;">
+													<a-form-item label="备注：">
+														<a-textarea style="width: 600px;margin-left: 30px;" :rows="5" />
+													</a-form-item>
+												</a-row>
+											</a-form>
+										</a-tab-pane>
+									</a-tabs>
+
+								</a-col>
+								<a-col :span="11">
+									<a-tabs defaultActiveKey="1">
+										<a-tab-pane tab="合同附件">
+											<div>
+												<a-upload name="file" :multiple="true" style="text-align: center;">
+													<a style="margin-top: 40px;">你还没用附件，点击上传附件</a>
+												</a-upload>
+											</div>
+										</a-tab-pane>
+									</a-tabs>
+									<a-tabs defaultActiveKey="1" style="margin-top: 20px;">
+										<a-tab-pane tab="合同标签">
+											<a-button style="margin: 7px;">研发楼</a-button>
+											<a-button style="margin: 7px;">研发楼</a-button>
+											<a-button style="margin: 7px;">研发楼</a-button>
+											<a-button style="margin: 7px;">研发楼</a-button>
+											<a-button style="margin: 7px;">研发楼</a-button>
+											<a-button style="margin: 7px;">研发楼</a-button>
+											<a-button style="margin: 7px;">研发楼</a-button>
+											<a-button style="margin: 7px;">研发楼</a-button>
+											<a-button style="margin: 7px;">研发楼</a-button>
+											<a-button style="margin: 7px;">研发楼</a-button>
+											<a-button style="margin: 7px;">研发楼</a-button>
+											<a-button style="margin: 7px;">研发楼</a-button>
+										</a-tab-pane>
+									</a-tabs>
+								</a-col>
+							</div>
+							<div>
+								<a-col :span="24" style="margin-top: 30px;">
+									<a-table :columns="columns" :dataSource="data" bordered>
+										<template slot="name" slot-scope="text">
+											<a slot="action" slot-scope="text" href="javascript:;">Delete</a>
+											<a href="javascript:;">{{text}}</a>
+										</template>
+										<template slot="title" slot-scope="currentPageData">
+											租金
+										</template>
+									</a-table>
+								</a-col>
+								<a-col :span="24">
+									<a-table :columns="columns" :dataSource="data" bordered>
+										<template slot="name" slot-scope="text">
+											<a slot="action" slot-scope="text" href="javascript:;">Delete</a>
+											<a href="javascript:;">{{text}}</a>
+										</template>
+										<template slot="title" slot-scope="currentPageData">
+											物业费
+										</template>
+									</a-table>
+								</a-col>
+							</div>
+							<div :style="{
+          position: 'absolute',
+          left: 0,
+          bottom: 0,
+          width: '100%',
+          borderTop: '1px solid #e9e9e9',
+          padding: '10px 16px',
+          background: '#fff',
+          textAlign: 'right',
+        }">
+								<a-button :style="{marginRight: '8px'}" @click="onClose">
+									取消
+								</a-button>
+								<a-button @click="onClose" type="primary">提交</a-button>
+							</div>
+						</a-drawer>
                               <a-divider type="vertical" />
-                              <a href="javascript:;">退租</a>
+                              <a href="javascript:;" @click="showDrawer2">退租</a>
+                              <a-drawer title="退租" :width="1500" @close="onClosea" :visible="visiblea">
+
+							<div style="padding: 5px;">
+								<a-col :span="12">
+									<a-tabs defaultActiveKey="1">
+										<a-tab-pane tab="基本信息">
+											<a-form layout="inline">
+												<a-row :gutter="24" style="margin-top: 10px; margin-left: 10px;">
+													<a-col :xl="24">
+														<a-form-item label="退租类型：">
+															 <a-radio-group name="radioGroup" :defaultValue="1">
+                                                                <a-radio :value="1">部分退租</a-radio>
+                                                                <a-radio :value="2">整体退租</a-radio>
+                                                             </a-radio-group>
+														</a-form-item>
+													</a-col>
+												</a-row>
+												<a-row :gutter="24" style="margin-top: 10px;margin-left: 15px;">
+														<a-form-item label="退租日期：">
+															<a-input></a-input>
+														</a-form-item>
+												</a-row>
+												<a-row :gutter="24" style="margin-top: 10px;margin-left: 15px;">
+													<a-form-item label="退租位置：">
+														<a-input></a-input>
+													</a-form-item>
+												</a-row>
+												<a-row :gutter="24" style="margin-top: 10px;margin-left: 15px;">
+													<a-form-item label="退租原因：">
+														<a-textarea style="width: 600px;" :rows="5" />
+													</a-form-item>
+												</a-row>
+											</a-form>
+										</a-tab-pane>
+									</a-tabs>
+
+								</a-col>
+								<a-col :span="11">
+									<a-tabs defaultActiveKey="1">
+										<a-tab-pane tab="合同信息">
+											<div>
+											  <span style="margin-top: 15px;">合同编号：HT20190004</span><br>
+											  <span style="margin-top: 15px;top: 15px;">客户名称： 嘉善哈耐斯电子科技有限公司</span><br>
+											  <span style="margin-top: 15px;top: 15px;">合同租期： 2018-09-01~2020-08-31</span><br>
+											  <span style="margin-top: 15px;top: 15px;">支付方式： 押0付3</span><br>
+											</div>
+										</a-tab-pane>
+									</a-tabs>
+								</a-col>
+							</div>
+							<div>
+								<a-col :span="24">
+									<div :style="{width:'100%', textAlign: 'right'}">
+										<a-button type="primary" style="marginRight: 30px;">确认退租</a-button>
+									</div>
+
+								</a-col>
+
+							</div>
+
+							<div :style="{
+          position: 'absolute',
+          left: 0,
+          bottom: 0,
+          width: '100%',
+          borderTop: '1px solid #e9e9e9',
+          padding: '10px 16px',
+          background: '#fff',
+          textAlign: 'right',
+        }">
+								<a-button :style="{marginRight: '8px'}" @click="onClose">
+									取消
+								</a-button>
+								<a-button @click="onClose" type="primary">提交</a-button>
+							</div>
+						</a-drawer>
                             </span>
 						</a-table>
 						<a-drawer title="新建合同" :width="1500" @close="onClose" :visible="visible">
@@ -445,6 +675,8 @@
 		data() {
 			return {
 				visible: false,
+				visibles: false,
+				visiblea: false,
 				childrenDrawer: false,
 				data,
 				columns,
@@ -455,8 +687,20 @@
 			showDrawer() {
 				this.visible = true;
 			},
+			showDrawer1() {
+				this.visibles = true;
+			},
+			showDrawer2() {
+				this.visiblea = true;
+			},
 			onClose() {
 				this.visible = false;
+			},
+			onClose1() {
+				this.visibles = false;
+			},
+			onClosea() {
+				this.visiblea = false;
 			},
 			showChildrenDrawer() {
 				this.childrenDrawer = true;
@@ -467,6 +711,7 @@
 			RegisterContract() {
 
 			},
+
 			handleChange(info) {
 				if(info.file.status !== 'uploading') {
 					console.log(info.file, info.fileList);
