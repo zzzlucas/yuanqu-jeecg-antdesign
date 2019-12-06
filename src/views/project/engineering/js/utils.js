@@ -56,7 +56,7 @@ export function chartData(list) {
       ],
       itemStyle: {
         normal: {
-          color: '#71cc89'
+          color: '#74BCFF'
         }
       }
     })
