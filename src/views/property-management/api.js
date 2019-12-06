@@ -40,6 +40,10 @@ const url = {
     delete: '/park.service/mgrMeetingroomRequest/delete',
     deleteBatch: '/park.service/mgrMeetingroomRequest/deleteBatch',
   },
+  book: {
+    list: '/park.service/mgrAdvertsRequest/list',
+    review: '/park.service/mgrAdvertsRequest/review',
+  },
 }
 
 /** 厂房项目列表-通过园区id查询- */
@@ -72,6 +76,10 @@ const addEvent = params => postAction(url.event.add, qs.stringify(params))
 const editEvent = params => putAction(url.event.edit, qs.stringify(params))
 /** 会议室设备-列表 */
 const listRoomEquipment = deviceGroupId => getAction('/park.middletables/pubLabelGroup/queryById', { id: deviceGroupId } )
+/** 空间预订-分页查询 */
+const listBook = params => getAction(url.book.list, params)
+/** 空间预订-审核 */
+const reviewBook = params => putAction(url.book.review, qs.stringify(params))
 
 export {
   url,
@@ -90,4 +98,6 @@ export {
   addEvent,
   editEvent,
   listRoomEquipment,
+  listBook,
+  reviewBook,
 }
