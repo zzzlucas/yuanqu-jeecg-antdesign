@@ -136,7 +136,7 @@
     <ticket-edit-form
       ref="modalForm"
       @submit="handleEditSubmit" />
-    <!-- Add/Edit form -->
+    <!-- Operate Add form -->
     <ticket-operate-edit-form
       ref="operateModalForm"
       @submit="handleEditSubmit" />
@@ -164,8 +164,6 @@
     },
     data() {
       return {
-        // Mixin option
-        deleteKey: 'orderId',
         // Url
         url: url.info,
         // Types

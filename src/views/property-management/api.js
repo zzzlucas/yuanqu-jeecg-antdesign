@@ -20,6 +20,7 @@ const url = {
   },
   meetingRoom: {
     list: '/park.service/baseMeetingroomInfo/list',
+    view: '/park.service/baseMeetingroomInfo/queryById',
     add: '/park.service/baseMeetingroomInfo/add',
     edit: '/park.service/baseMeetingroomInfo/edit',
     delete: '/park.service/baseMeetingroomInfo/delete',
@@ -48,6 +49,8 @@ const editPlace = params => putAction(url.advertisingPlace.edit, qs.stringify(pa
 const addMeetingRoom = params => postAction(url.meetingRoom.add, qs.stringify(params))
 /** 会议室建档-编辑 */
 const editMeetingRoom = params => putAction(url.meetingRoom.edit, qs.stringify(params))
+/** 会议室建档-通过id查询 */
+const viewMeetingRoom = params => getAction(url.meetingRoom.view, params)
 /** 会议室建档-分页列表查询 */
 const listMeetingRoom = params => getAction(url.meetingRoom.list, params)
 /** 会议室预定-全部查询 */
@@ -69,6 +72,7 @@ export {
   listMeetingRoom,
   addMeetingRoom,
   editMeetingRoom,
+  viewMeetingRoom,
   listEvent,
   addEvent,
   editEvent,

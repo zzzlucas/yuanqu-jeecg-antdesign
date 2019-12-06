@@ -75,7 +75,8 @@
       :dataSource="dataSource"
       :pagination="ipagination"
       :loading="loading"
-      :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}">
+      :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
+      :customRow="handleCustomRow">
       <!-- Column slot -->
       <!-- Room & name -->
       <div slot="nameAndPos" slot-scope="text, record">
@@ -226,6 +227,16 @@
         }
         this.types.building.unshift({ buildingId: '', buildingName: '全部'  })
       },
+      // View
+      handleCustomRow(row) {
+        return {
+          on: {
+            click: () => {
+              this.$router.push({ name: 'property-management-meeting-room-info-@id', params: { id: row.roomId } })
+            }
+          }
+        }
+      }
     },
     created() {
       this.fetchProjects()
