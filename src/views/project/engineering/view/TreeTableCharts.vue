@@ -5,7 +5,7 @@
         <a-table class="chart-table" bordered :data-source="list" :columns="columns" :pagination="false"></a-table>
       </a-col>
       <a-col span="14">
-        <div class="chart-gantt"></div>
+        <div class="chart-gantt" v-resize="resize"></div>
       </a-col>
     </a-row>
   </a-card>
@@ -21,25 +21,30 @@
     name: 'TreeTableCharts',
     data() {
       return {
+        chart: null,
         columns: [
           { title: '名称', dataIndex: 'name' },
           { title: '开始时间', dataIndex: 'startTime' },
           { title: '结束时间', dataIndex: 'endTime' }
         ],
         list: [
-          { name: 'A计划', startTime: '2019-11-13 22:50', endTime: '2019-11-19 22:50' },
-          { name: 'B计划', startTime: '2019-11-25 22:50', endTime: '2019-12-03 22:50' },
-          { name: 'C计划', startTime: '2019-12-03 22:50', endTime: '2019-12-20 23:59' }
+          { name: 'A计划', startTime: '2019-12-01 08:50', endTime: '2019-12-03 22:50' },
+          { name: 'B计划', startTime: '2019-12-02 12:24', endTime: '2019-12-05 03:21' },
+          { name: 'C计划', startTime: '2019-12-04 20:17', endTime: '2019-12-06 23:59' },
+          { name: 'D计划', startTime: '2019-12-03 09:00', endTime: '2019-12-03 22:18' }
         ]
       }
     },
     mounted() {
       let list = this.list
-      let gantt = Echarts.init(Dom7('.tree-table-charts .chart-gantt')[0], null, {
-        width: 780,
+
+      // noinspection SpellCheckingInspection,JSCheckFunctionSignatures
+      let chart = Echarts.init(Dom7('.tree-table-charts .chart-gantt')[0], null, {
+        width: Dom7('.chart-gantt').width(),
         height: 54 + (list.length * 52) + 55
       })
 
+      // 开始时间和结束时间
       let { start, end } = startEndMinMax(this.list, (arr, item, i, moment) => {
         arr.push({
           index: i,
@@ -52,6 +57,7 @@
           unix: moment(item.endTime).unix()
         })
       })
+      // X轴坐标
       let axis = chartAxis(start, end, (date, i, moment) => {
         this.list = _.map(this.list, (item) => {
           let startTime = moment(item.startTime)
@@ -83,9 +89,10 @@
           return item
         })
       })
+      // 图表数据
       let data = chartData(_.reverse(_.cloneDeep(this.list)))
 
-      gantt.setOption({
+      chart.setOption({
         title: {
           text: '项目进度',
           left: 'center',
@@ -184,8 +191,14 @@
           }
         ]
       })
+      this.chart = chart
     },
     methods: {
+      resize(size) {
+        this.chart.resize({
+          width: size.width
+        })
+      }
     }
   }
 </script>

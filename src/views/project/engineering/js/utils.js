@@ -2,7 +2,7 @@ import _ from 'lodash'
 import moment from 'moment'
 
 export function chartAxis(start, end, callback) {
-  let len = Math.ceil(moment(end).add(2, 'h').diff(moment(start), 'm', true) / 10)
+  let len = Math.ceil(moment(end).add(3, 'h').diff(moment(start).subtract(2, 'h'), 'm', true) / 10)
 
   let arr = new Array(len)
   let date = moment(start)
