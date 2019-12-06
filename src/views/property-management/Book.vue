@@ -26,9 +26,10 @@
               <a-input placeholder="资源名称、订单号、预定人、手机号" v-model="queryParam.keyword"></a-input>
             </a-form-item>
           </a-col>
+          <!-- TODO -->
           <a-col :xl="4">
             <a-form-item label="状态">
-              <a-input placeholder="资源名称、订单号、预定人、手机号" v-model="queryParam.keyword"></a-input>
+              <a-input />
             </a-form-item>
           </a-col>
           <a-col :xl="4">
