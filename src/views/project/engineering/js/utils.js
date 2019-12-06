@@ -2,7 +2,7 @@ import _ from 'lodash'
 import moment from 'moment'
 
 export function chartAxis(start, end, callback) {
-  let len = Math.ceil(moment(end).add(2, 'h').diff(moment(start), 'hours', true))
+  let len = Math.ceil(moment(end).add(2, 'h').diff(moment(start), 'm', true) / 10)
 
   let arr = new Array(len)
   let date = moment(start)
@@ -11,7 +11,7 @@ export function chartAxis(start, end, callback) {
   date.milliseconds(0)
 
   arr = _.map(arr, (a, i) => {
-    let label = `${date.format('MM')}-${date.format('DD')} ${date.format('HH')}:00`
+    let label = `${date.format('MM')}-${date.format('DD')} ${date.format('HH')}:${date.format('mm')}`
 
     let data = {
       value: i,
@@ -20,7 +20,7 @@ export function chartAxis(start, end, callback) {
 
     callback(date, i, moment)
 
-    date.hours(date.hours() + 1)
+    date.minutes(date.minutes() + 10)
     return data
   })
 
@@ -50,7 +50,7 @@ export function chartData(list) {
         i,
         item.start,
         item.end,
-        item.end - item.start
+        (item.end - item.start) / 6
       ],
       itemStyle: {
         normal: {

@@ -2,11 +2,10 @@
   <a-card class="tree-table-charts">
     <a-row>
       <a-col span="10">
-        <a-table bordered :data-source="list" :columns="columns" :pagination="false"></a-table>
+        <a-table class="chart-table" bordered :data-source="list" :columns="columns" :pagination="false"></a-table>
       </a-col>
       <a-col span="14">
         <div class="chart-gantt"></div>
-        <a-button @click="see">康康</a-button>
       </a-col>
     </a-row>
   </a-card>
@@ -35,8 +34,10 @@
       }
     },
     mounted() {
+      let list = this.list
       let gantt = Echarts.init(Dom7('.tree-table-charts .chart-gantt')[0], null, {
-        height: 250
+        width: 780,
+        height: 54 + (list.length * 52) + 50
       })
 
       let { start, end } = startEndMinMax(this.list, (arr, item, i, moment) => {
@@ -54,32 +55,58 @@
       let axis = chartAxis(start, end, (date, i, moment) => {
         this.list = _.map(this.list, (item) => {
           let startTime = moment(item.startTime)
-          if (date.format('MM') === startTime.format('MM') && date.format('DD') === startTime.format('DD') && date.format('HH') === startTime.format('HH')) {
+          if (
+            date.format('MM') === startTime.format('MM') &&
+            date.format('DD') === startTime.format('DD') &&
+            date.format('HH') === startTime.format('HH')
+          ) {
             item.start = i
           }
 
           let endTime = moment(item.endTime)
-          if (date.format('MM') === endTime.format('MM') && date.format('DD') === endTime.format('DD') && date.format('HH') === endTime.format('HH')) {
-            item.end = i
+          if (
+            date.format('MM') === endTime.format('MM') &&
+            date.format('DD') === endTime.format('DD') &&
+            date.format('HH') === endTime.format('HH')
+          ) {
+            let diff = date.minutes() - endTime.minutes()
+            if (diff < 5) {
+              item.end = i
+            }
+
+            diff = endTime.minutes() - date.minutes()
+            if (diff < 5) {
+              item.end = i
+            }
           }
 
           return item
         })
       })
       let data = chartData(this.list)
-      console.log(data)
+
       gantt.setOption({
+        title: {
+          text: '项目进度',
+          left: 'center',
+          top: 18
+        },
         tooltip: {
           formatter: function(params) {
             return params.marker + params.name + ': ' + params.value[3] + ' 小时'
           }
+        },
+        grid: {
+          top: 54,
+          right: '3%',
+          height: this.list.length * 52
         },
         dataZoom: [
           {
             type: 'slider',
             filterMode: 'weakFilter',
             showDataShadow: false,
-            top: 225,
+            bottom: 10,
             height: 10,
             borderColor: 'transparent',
             backgroundColor: '#e2e2e2',
@@ -99,12 +126,17 @@
           }
         ],
         xAxis: {
+          type: 'category',
           min: 0,
           scale: true,
           axisLabel: {
             formatter: function(val, index) {
               return axis[index].label
             }
+          },
+          splitLine: {
+            show: true,
+            interval: 24 * 6
           },
           data: axis
         },
@@ -154,10 +186,6 @@
       })
     },
     methods: {
-      see() {
-        let chart = Echarts.getInstanceByDom(Dom7('.tree-table-charts .chart-gantt')[0])
-        console.log(chart)
-      }
     }
   }
 </script>
