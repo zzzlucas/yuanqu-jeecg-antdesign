@@ -37,7 +37,7 @@
       let list = this.list
       let gantt = Echarts.init(Dom7('.tree-table-charts .chart-gantt')[0], null, {
         width: 780,
-        height: 54 + (list.length * 52) + 50
+        height: 54 + (list.length * 52) + 55
       })
 
       let { start, end } = startEndMinMax(this.list, (arr, item, i, moment) => {
@@ -83,7 +83,7 @@
           return item
         })
       })
-      let data = chartData(this.list)
+      let data = chartData(_.reverse(_.cloneDeep(this.list)))
 
       gantt.setOption({
         title: {
@@ -142,7 +142,7 @@
         },
         calculable: true,
         yAxis: {
-          data: _.map(_.cloneDeep(this.list), item => _.get(item, 'name'))
+          data: _.reverse(_.map(_.cloneDeep(this.list), item => _.get(item, 'name')))
         },
         series: [
           {
