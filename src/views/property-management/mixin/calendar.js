@@ -6,7 +6,7 @@ import 'fullcalendar/dist/fullcalendar.min.css';
 import { filterObj } from '@utils/util'
 import MixinList from '@/mixins/List'
 import { meetingRoom as BookMeetingRoomMixin } from './book'
-import { listEvent } from '../api'
+import { listMeetingEvent } from '../api'
 
 export default {
   mixins: [
@@ -48,7 +48,7 @@ export default {
       try {
         const params = this.queryParam
         filterObj(params)
-        const resp = await listEvent(params)
+        const resp = await listMeetingEvent(params)
         if (!resp.success) {
           throw new Error(resp.message)
         }

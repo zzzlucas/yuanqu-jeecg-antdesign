@@ -33,7 +33,7 @@ const url = {
     delete: '/park.service/baseMeetingroomInfo/delete',
     deleteBatch: '/park.service/baseMeetingroomInfo/deleteBatch',
   },
-  event: {
+  meetingEvent: {
     list: '/park.service/mgrMeetingroomRequest/list',
     add: '/park.service/mgrMeetingroomRequest/add',
     edit: '/park.service/mgrMeetingroomRequest/edit',
@@ -53,11 +53,11 @@ const listBuilding = params => getAction(url.architectureBuilding.list, params)
 /** 楼层列表-通过楼宇id查询 */
 const listFloor = params => getAction(url.architectureFloor.list, params)
 /** 广告位建档-添加 */
-const addPlace = params => postAction(url.advertisingPlace.add, qs.stringify(params))
+const addAdPlace = params => postAction(url.advertisingPlace.add, qs.stringify(params))
 /** 广告位建档-编辑 */
-const editPlace = params => putAction(url.advertisingPlace.edit, qs.stringify(params))
+const editAdPlace = params => putAction(url.advertisingPlace.edit, qs.stringify(params))
 /** 广告位建档-分页列表查询 */
-const listPlace = params => getAction(url.advertisingPlace.list, params)
+const listAdPlace = params => getAction(url.advertisingPlace.list, params)
 /** 广告位预定-添加 */
 const addAdEvent = params => postAction(url.advertisingEvent.add, qs.stringify(params))
 /** 广告位预定-编辑 */
@@ -71,11 +71,11 @@ const viewMeetingRoom = params => getAction(url.meetingRoom.view, params)
 /** 会议室建档-分页列表查询 */
 const listMeetingRoom = params => getAction(url.meetingRoom.list, params)
 /** 会议室预定-全部查询 */
-const listEvent = params => getAction(url.event.list, params)
+const listMeetingEvent = params => getAction(url.meetingEvent.list, params)
 /** 会议室预定-添加 */
-const addEvent = params => postAction(url.event.add, qs.stringify(params))
+const addMeetingEvent = params => postAction(url.meetingEvent.add, qs.stringify(params))
 /** 会议室预定-编辑 */
-const editEvent = params => putAction(url.event.edit, qs.stringify(params))
+const editMeetingEvent = params => putAction(url.meetingEvent.edit, qs.stringify(params))
 /** 会议室设备-列表 */
 const listRoomEquipment = deviceGroupId => getAction('/park.middletables/pubLabelGroup/queryById', { id: deviceGroupId } )
 /** 空间预订-分页查询 */
@@ -88,18 +88,18 @@ export {
   listProject,
   listBuilding,
   listFloor,
-  addPlace,
-  editPlace,
-  listPlace,
+  addAdPlace,
+  editAdPlace,
+  listAdPlace,
   addAdEvent,
   editAdEvent,
   listMeetingRoom,
   addMeetingRoom,
   editMeetingRoom,
   viewMeetingRoom,
-  listEvent,
-  addEvent,
-  editEvent,
+  listMeetingEvent,
+  addMeetingEvent,
+  editMeetingEvent,
   listRoomEquipment,
   listBook,
   reviewBook,

@@ -124,7 +124,7 @@
   import Mixin from '../mixin/list'
   import { filterObj, promiseForm } from '@utils/util'
   import { advertisingEditForm } from '@/config/pick-fields'
-  import { addPlace, editPlace } from '../api'
+  import { addAdPlace, editAdPlace } from '../api'
 
   export default {
     mixins: [
@@ -173,9 +173,9 @@
           let resp
           if (this.isEdit) {
             data.advertId = this.record.advertId
-            resp = await editPlace(data)
+            resp = await editAdPlace(data)
           } else {
-            resp = await addPlace(data)
+            resp = await addAdPlace(data)
           }
           if (!resp.success) {
             throw new Error(resp.message)

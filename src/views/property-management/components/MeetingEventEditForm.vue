@@ -80,7 +80,7 @@
   import { meetingRoom as BookMeetingRoomMixin } from '../mixin/book'
   import { filterObj, promiseForm } from '@utils/util'
   import { meetingEventEditForm } from '@/config/pick-fields'
-  import { addEvent, editEvent } from '../api'
+  import { addMeetingEvent, editMeetingEvent } from '../api'
 
   export default {
     mixins: [
@@ -125,9 +125,9 @@
           let resp
           if (this.isEdit) {
             // data.eventId = this.record.eventId
-            resp = await editEvent(data)
+            resp = await editMeetingEvent(data)
           } else {
-            resp = await addEvent(data)
+            resp = await addMeetingEvent(data)
           }
           if (!resp.success) {
             throw new Error(resp.message)

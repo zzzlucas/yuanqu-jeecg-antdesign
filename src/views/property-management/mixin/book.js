@@ -1,5 +1,5 @@
 import { filterObj } from '@utils/util'
-import { listMeetingRoom, listPlace } from '../api'
+import { listMeetingRoom, listAdPlace } from '../api'
 
 export const meetingRoom = {
   data() {
@@ -43,7 +43,7 @@ export const advertisingPlace = {
           buildingId: this.queryParam.buildingId,
         }
         filterObj(params)
-        const resp = await listPlace(params)
+        const resp = await listAdPlace(params)
         if (!resp.success) {
           throw new Error(resp.message)
         }
