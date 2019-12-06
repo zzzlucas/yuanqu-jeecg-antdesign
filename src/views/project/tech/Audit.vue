@@ -79,10 +79,12 @@ import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
 import Dom7 from 'dom7'
 import { filterObj } from '@/utils/util'
+import { mixinList } from '@/utils/mixin'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'UserAnnouncementList',
-  mixins: [JeecgListMixin], //居然很重要
+  mixins: [JeecgListMixin, mixinList],
   components: {
     AddTechProject,
     AuditForm,
@@ -139,20 +141,20 @@ export default {
             return filterDictText(this.industrySectorValueDictOptions, text)
           }
         },
-        {
-          title: '进度test',
-          align: 'center',
-          dataIndex: 'workFlowNextNodeIndex',
-          customRender: function(text) {
-            if (text == '0') {
-              return '部门审核'
-            } else if (text == '1') {
-              return '分管领导审核'
-            } else {
-              return '主要领导审核'
-            }
-          }
-        },
+        // {
+        //   title: '进度test',
+        //   align: 'center',
+        //   dataIndex: 'workFlowNextNodeIndex',
+        //   customRender: function(text) {
+        //     if (text == '0') {
+        //       return '部门审核'
+        //     } else if (text == '1') {
+        //       return '分管领导审核'
+        //     } else {
+        //       return '主要领导审核'
+        //     }
+        //   }
+        // },
         {
           title: '项目状态',
           align: 'center',
@@ -176,6 +178,9 @@ export default {
       },
       loading: false
     }
+  },
+  computed: {
+    ...mapGetters(['industrialParkId'])
   },
   created() {
     initDictOptions('industry_sector_value').then(res => {
@@ -260,7 +265,7 @@ export default {
       this.handleChange()
     },
     searchReset() {
-      this.queryParam = {}
+      this.queryParam = { parkId: this.industrialParkId }
       this.ff = {}
       this.loadData()
     },

@@ -6,12 +6,13 @@
     :closable="false"
     @close="close"
     :visible="visible"
+    destroyOnClose
   >
     <a-spin :spinning="confirmLoading">
       <a-form :form="form">
         <!-- <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="园区ID">
           <a-input placeholder="当前parkid：555" v-decorator="['parkId', validatorRules.parkId ]" />
-        </a-form-item> -->
+        </a-form-item>-->
         <!-- <a-row>
         <a-col span="12">-->
         <a-form-item
@@ -130,6 +131,8 @@ export default {
     add() {
       this.editBool = false
       this.visible = true
+      this.record.year = ''
+      this.record.month = ''
     },
     edit(record) {
       this.record = Object.assign({}, record)
@@ -137,7 +140,7 @@ export default {
       this.record.month = this.record.year
       let monthS = this.record.month.indexOf('月')
       this.record.month = this.record.month.slice(0, monthS)
-      if (this.record.month > 2000) {
+      if (this.record.month > 1000) {
         this.record.month = null
       }
       //处理后端给的年字段，当小于2000时直接为空，同时表单这一项v-if不显示

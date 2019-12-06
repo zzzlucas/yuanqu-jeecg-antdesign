@@ -6,6 +6,7 @@
     :closable="false"
     @close="close"
     :visible="visible"
+    destroyOnClose
   >
     <a-spin :spinning="confirmLoading">
       <a-form :form="form">

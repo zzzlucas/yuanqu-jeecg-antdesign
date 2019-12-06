@@ -31,16 +31,17 @@
               >
                 <a-date-picker
                   style="width:100%"
-                  v-decorator="[ 'trackDate', {rules: [{required: true, message: '请输入跟踪日期'}]}]"
+                  v-decorator="[ 'trackDate', {rules: [{required: true, message: '请选择跟踪日期'}]}]"
                 />
               </a-form-item>
               <a-form-item
                 :labelCol="labelCol.default"
                 :wrapperCol="wrapperCol.default"
                 label="跟踪方式"
-                required
               >
-                <a-select v-decorator="['trackMethod']">
+                <a-select
+                  v-decorator="['trackMethod', {rules: [{required: true, message: '请选择跟踪方式'}]}]"
+                >
                   <a-select-option
                     v-for="(item, key) in dict.trackMethodExt"
                     :value="item.value"
@@ -264,6 +265,10 @@ export default {
                 that.record = res.result
                 that.record.projectName = resSSS.result.projectName
                 that.model = Object.assign({}, that.record)
+                //用record里的resourceGroupNames 变成可以被 tag 遍历的数组 FINALLYROOM
+                if (that.record.resourceGroupNames) {
+                  that.FINALLYROOM = that.record.resourceGroupNames.split(',')
+                }
                 initDictOptions('project_status').then(resInit => {
                   if (resInit.success) {
                     that.dict.statusExt = resInit.result
@@ -300,6 +305,9 @@ export default {
                 that.record = res.result
                 that.record.projectName = resSSS.result.projectName
                 that.model = Object.assign({}, that.record)
+                if (that.record.resourceGroupNames) {
+                  that.FINALLYROOM = that.record.resourceGroupNames.split(',')
+                }
                 initDictOptions('project_status').then(resInit => {
                   if (resInit.success) {
                     that.dict.statusExt = resInit.result
@@ -405,6 +413,7 @@ export default {
     close() {
       this.$emit('close')
       this.visible = false
+      this.FINALLYROOM = []
     },
     handleOk() {
       const that = this
@@ -427,10 +436,11 @@ export default {
           formData.trackDate = formData.trackDate ? formData.trackDate.format('YYYY-MM-DD') : null
           formData.parkId = this.industrialParkId
           //传房间名字过去
-          formData.resourceGroupName = this.FINALLYROOM.toString()
+          formData.resourceGroupNames = this.FINALLYROOM.toString()
           //传房间id过去
-          formData.resourceGroupId = this.FINALLYROOMGROUPID.toString()
-          console.log(formData.resourceGroupId);
+          formData.roomIds = this.FINALLYROOMGROUPID.toString()
+
+          console.log(formData.resourceGroupId)
           formData = qs.stringify(formData)
           console.log(formData)
           httpAction(httpurl, formData, method)

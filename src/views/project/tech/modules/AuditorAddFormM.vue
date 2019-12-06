@@ -110,7 +110,7 @@ export default {
             })
             .finally(() => {
               that.confirmLoading = false
-              that.close()
+              that.handleCancel()
             })
         }
       })

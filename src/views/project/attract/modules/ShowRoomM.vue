@@ -1,4 +1,7 @@
+
 <template>
+  <!-- 该模块通过$emit传递两个数据：意向房源组ID，以及拼接成的意向房源组文本 -->
+  <!-- 可租不可租暂时未生效，后端给的api或许需要改 -->
   <a-modal
     :title="title"
     :width="1000"
@@ -14,7 +17,7 @@
       <a-form-item label>
         <!-- resourceGroupId -->
         <a-checkbox-group @change="changeFinallyRoom" v-model="FINALLYROOM">
-          <a-checkbox :value="item" v-for="item in FINALLYROOM">已选房间：{{item}}</a-checkbox>
+          <a-checkbox :value="item" v-for="(item,i) in FINALLYROOM">已选房间：{{item.name}}</a-checkbox>
         </a-checkbox-group>
       </a-form-item>
     </a-card>
@@ -24,9 +27,9 @@
           <a-col span="24">
             <!-- 这个选项是不是可以不要 -->
             <a-form-item label="房间状态">
-              <a-checkbox-group @change="searchQuery">
-                <a-checkbox value="1">已租</a-checkbox>
-                <a-checkbox value="2">可租</a-checkbox>
+              <a-checkbox-group v-model="query.isCould">
+                <a-checkbox value="1">可租</a-checkbox>
+                <!-- <a-checkbox value="2">已租</a-checkbox> -->
               </a-checkbox-group>
             </a-form-item>
           </a-col>
@@ -54,7 +57,6 @@
           </a-col>
           <!-- 楼层+房间显示方式 -->
           <!-- 虽然加了item.rooms!== undefined这个判断不在报错，但是哪里有item.rooms未定义出现了诶 -->
-          <!-- 楼层遍历作为一个div，没法直接传值 -->
           <a-col span="24">
             <div
               v-for="(item,i) in buildingInfo.floor"
@@ -62,11 +64,10 @@
               v-if="item.rooms!== undefined&&item.rooms.length > 0"
               class="property-position-add-form-m-b"
             >
-              <!-- :value="item.floorId" -->
-              <!-- v-model="query.FLOOR" -->
               <div>
                 <span class="floor-name">{{item.floorName}}</span>
                 <a-checkbox-group v-model="query.room" @change="handleGet">
+                  <!-- :disabled="item.target.checked" -->
                   <a-checkbox v-for="itemA in item.rooms" :value="itemA.roomId">{{itemA.roomName}}</a-checkbox>
                 </a-checkbox-group>
               </div>
@@ -122,9 +123,13 @@ export default {
       },
       //
       buildingInfo: {},
-      query: {},
+      query: {
+        isCould: '1'
+      },
       FINALLYROOM: [],
-      FINALLYROOMGROUPID: []
+      FINALLYROOMGROUPID: [],
+      Index: '',
+      FINALLYROOMAAA: []
       // FINALLYROOMMODEL: []
     }
   },
@@ -138,29 +143,34 @@ export default {
   watch: {},
   methods: {
     changeFinallyRoom(e) {
-      // console.log('changeFinallyRoom');
-      // console.log(e);
+      console.log('e2')
+      console.log(e)
       this.FINALLYROOM = e
-      //下方数组已经改写，但页面显示未跟随改变
-      console.log(this.FINALLYROOM)
-      // this.form.setFieldsValue()
 
-      //e比this.FINALLYROOM 少哪几项，就blur()哪几项
+      //query.room是roomid数组
+      //e是房源文本的数组
+      // this.query.room = e
+      let eee = []
+      for (const item of e) {
+        eee.push(item.index)
+      }
+      this.query.room = eee
     },
+
     //展示功能的实现思路：
-    //要获取到文本
-    //要获取到floor
-    //要展示
-    //要加减
+    //1要获取到文本
+    //2要获取到floor
+    //3要展示
+    //4要加减
     beforeHandleGet(e, i) {
       this.query.floor = e
       this.query.floorIndex = i
     },
     handleGet(e) {
-      console.log('e')
-      console.log(e)
+      // console.log('e1')
+      // console.log(e)
       // this.beforeHandleGet()
-      let param = ''
+      let paramName = ''
       let blockName = ''
       let buildingName = ''
       let floorName = ''
@@ -188,17 +198,38 @@ export default {
           roomName = item.roomName
         }
       }
-      // 另外需要一个id组吗  那样更有逻辑  但是：1、哪里需要真的用这个id  2.只带room的id组吗
-      // 再或者，先不需另一个id组，先包装一个id与name共存的对象，对象组成数组，在handleok中再把数组中id遍历成一个id组
-
-      param = blockName + '>' + buildingName + '>' + floorName + '>' + roomName
+      paramName = blockName + '>' + buildingName + '>' + floorName + '>' + roomName
       // param = this.query.block + '>' + this.query.building + '>' + this.query.floor + '>' + this.query.room[this.query.room.length-1]
       // param = this.query.room[this.query.room.length - 1]
-      console.log(param)
-
-      this.FINALLYROOM.push(param)
-      //groupId现有
+      console.log(paramName)
       this.FINALLYROOMGROUPID = e
+
+      //方法二：清空FINALLYROOM ， 循环添加
+      //但是清空数组再循环的话，e只有room的id组，没有区块、楼宇、楼层的前缀，依旧是不可能获取完整字段的，故不采取
+      //this.FINALLYROOM = []
+
+      //方法三：判断前后差异  拿上一次的状态，也就是当前上面的FINALLYROOM来比较
+      //FINALLYROOM的循环中，若index与e相等，可以保留  依旧是通过e来辨识：上次操作产生的FINALLYROOM中留存的部分，间接获取到可用文本段
+      // this.FINALLYROOM = []
+      //
+      this.FINALLYROOMAAA = []
+      for (const iteme of e) {
+        for (const item of this.FINALLYROOM) {
+          if (item.index == iteme) {
+            this.FINALLYROOMAAA.push(item)
+            // console.log('1')
+          }
+        }
+      }
+      console.log(this.FINALLYROOMAAA)
+      //虽然这里重新赋值了，但是这本就是之前具备的，所以可以覆盖
+      this.FINALLYROOM = this.FINALLYROOMAAA
+      //判断，如果比之前少，就不走原先的方法一了 => 即可变相达到分辨change真实动作的效果  12.05
+      if (this.FINALLYROOMAAA.length < e.length) {
+        //方法一：change的时候一定push了。。。   无法得知change所传递的  12.04
+        let ee = e[e.length - 1].toString()
+        this.FINALLYROOM.push({ name: paramName, index: ee })
+      }
     },
     detail() {
       this.visible = true
@@ -225,12 +256,10 @@ export default {
     },
     // 2/5 用block查building
     loadDataBuilding(record) {
-      // let params = { projectId: '1198870720399015936' }
-      // console.log('loadDataBuilding')
       // console.log(record)
       let params = {}
-      //数据类型为string的判断难搞啊
-      //然而数据类型Object的判断也不对？？？
+      //数据类型为string的判断不符合预期
+      //然而数据类型Object的判断也不符合预期？？？
       // if (typeof record == Object) {
       if (record.target) {
         params = { buildingProjectId: record.target.value }
@@ -246,7 +275,6 @@ export default {
           // console.log(this.buildingInfo.building)
           this.form.setFieldsValue()
           this.query.building = this.buildingInfo.building[0].buildingId
-          // console.log('2')
           this.loadDataFloor(this.query.building)
         } else {
           this.$message.warning(res.message)
@@ -260,7 +288,6 @@ export default {
       // console.log('loadDataFloor')
       // console.log(record)
       let params = {}
-      //数据类型出错
       if (record.target) {
         params = { buildingId: record.target.value }
       } else {
@@ -274,6 +301,9 @@ export default {
           //每个楼层里面遍历出自己的房间
           // for (const item of res.result) {
           for (const item of this.buildingInfo.floor) {
+            console.log(item.floorId)
+            // getAction('/park.architecture/baseArchitectureRoom/remainRoomList', { floorId: item.floorId }).then(
+            // getAction('/park.architecture/baseArchitectureRoom/rentedRoomList', { floorId: item.floorId }).then(
             getAction('/park.architecture/baseArchitectureRoom/queryByFloorId', { floorId: item.floorId }).then(
               resA => {
                 if (resA.success) {
@@ -297,8 +327,12 @@ export default {
     },
     handleOK() {
       console.log('handleOK')
-      //调用父组件方法，给他传值过去
-      this.$emit('getResourceGroupId', this.FINALLYROOM, this.FINALLYROOMGROUPID)
+      //此处向父组件传递 房源组文本字段（FINALLYROOM即resourceGroupNames） 及 房源组id （FINALLYROOMGROUPID即roomIds）
+      let FINALLYROOMGROUPNAMES = []
+      for (const item of this.FINALLYROOM) {
+        FINALLYROOMGROUPNAMES.push(item.name)
+      }
+      this.$emit('getResourceGroupId', FINALLYROOMGROUPNAMES, this.FINALLYROOMGROUPID)
       this.visible = false
     }
   }

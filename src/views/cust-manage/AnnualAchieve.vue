@@ -3,32 +3,37 @@
     <!-- 操作按钮区域 -->
     <div class="table-operator annual">
       <a-form :form="form" :layout="formLayout">
-        <a-form-item label="区分" :label-col="formItem.label" :wrapper-col="formItem.value">
-          <!-- <a-form-item label="区分"  label-col="6" wrapper-col="10"> -->
-          <a-select style="width: 120px" @change="handleChange" v-model="queryParam.type">
-            <a-select-option value>不限</a-select-option>
-            <a-select-option value="YS">预算</a-select-option>
-            <a-select-option value="SJ">实际</a-select-option>
-          </a-select>
-
-          <a-button
-            style="margin-left:15px"
-            @click="goAnnualAchieveAddForm()"
-            type="primary"
-            icon="plus"
-          >新增完成情况</a-button>
-          <a-dropdown v-if="selectedRowKeys.length > 0">
-            <a-menu slot="overlay">
-              <a-menu-item key="1" @click="batchDel">
-                <a-icon type="delete" />删除
-              </a-menu-item>
-            </a-menu>
-            <a-button style="margin-left: 8px">
-              批量操作
-              <a-icon type="down" />
-            </a-button>
-          </a-dropdown>
-        </a-form-item>
+        <a-row :gutter="24">
+          <a-col :span="3">
+            <a-form-item label="区分" :label-col="formItem.label" :wrapper-col="formItem.value">
+              <a-select style="width: 150px" @change="handleChange" v-model="queryParam.type">
+                <a-select-option value>不限</a-select-option>
+                <a-select-option value="YS">预算</a-select-option>
+                <a-select-option value="SJ">实际</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+          <a-col>
+            <span
+              style="float: left;overflow: hidden;"
+              class="table-page-search-submitButtons local"
+            >
+              <a-button
+                style="margin-left:15px"
+                @click="goAnnualAchieveAddForm()"
+                type="primary"
+                icon="plus"
+              >新增完成情况</a-button>
+              <a-button
+                style="margin-left: 8px"
+                type="danger"
+                icon="delete"
+                @click="batchDel"
+                v-if="selectedRowKeys.length > 0"
+              >批量删除</a-button>
+            </span>
+          </a-col>
+        </a-row>
       </a-form>
     </div>
 
@@ -44,7 +49,7 @@
         ref="table"
         size="middle"
         bordered
-        rowKey="parkId"
+        rowKey="id"
         :columns="columns"
         :dataSource="dataSource"
         :pagination="false"
@@ -83,6 +88,7 @@ import AnnualAchieveAddForm from './modules/AnnualAchieveAddForm'
 import { postAction, putAction, getAction } from '@/api/manage'
 import qs from 'querystring'
 import Dom7 from 'dom7'
+import { mapGetters } from 'vuex'
 
 export default {
   name: '',
@@ -91,24 +97,19 @@ export default {
   data() {
     return {
       description: '',
-      // 表头
-      // type:'',
       form: this.$form.createForm(this),
       formLayout: 'horizontal',
-      queryform: {
-        type: ''
-      },
       queryParam: {
         type: ''
       },
-      typee: null,
       formItem: {
         label: { span: 1 },
         value: { span: 5 }
       },
+      yearOrMonth: '年度',
       columns: [
         {
-          title: '年度',
+          title: () => this.yearOrMonth,
           align: 'center',
           dataIndex: 'year',
           width: 100
@@ -154,7 +155,6 @@ export default {
           align: 'center',
           dataIndex: 'generalBudgetIncome'
         },
-        //限制一下
         {
           title: '备注',
           align: 'center',
@@ -171,47 +171,57 @@ export default {
       url: {
         listN: '/park.indicators/baseIndicatorsMsg/list',
         listM: '/park.indicators/baseIndicatorsMsg/listFinish',
-        delete: '/park.park/basePark/delete',
-        deleteBatch: '/park.park/basePark/deleteBatch'
+        delete: '/park.indicators/baseIndicatorsMsg/delete',
+        deleteBatch: '/park.indicators/baseIndicatorsMsg/deleteBatch'
       },
-      deleteKey: 'parkId',
-      rightShow: false
+      deleteKey: 'id',
+      rightShow: false,
+      EE: ''
     }
   },
 
   created() {},
-  computed: {},
+  computed: { ...mapGetters(['industrialParkId']) },
   methods: {
     handleChange(e) {
-      // console.log('eeeeeeeeeeeeeeeeeee')
-      // console.log(e)
-      // console.log(typeof e)
-      // this.typee = e
-      if (e == 'YS') {
-        getAction(this.url.listN, { type: 'YS' }).then(res => {
+      //因为后端给的api不是同一个查询口子
+      if (e) {
+        //保存这个EE状态，删除完后刷新依旧会走这个
+        this.EE = e
+      }
+      this.loading = true
+      // console.log(this.EE);
+      if (this.EE == 'YS') {
+        this.yearOrMonth = '年度'
+        getAction(this.url.listN, { type: 'YS', parkId: this.industrialParkId }).then(res => {
           if (res.success) {
             console.log('预算筛选成功')
             this.dataSource = res.result
+            for (const item of res.result) {
+              item.year = item.year + '年'
+            }
           } else {
             this.$message.warning(res.message)
           }
           this.loading = false
         })
-      }
-      if (e == 'SJ') {
-        getAction(this.url.listN, { type: 'SJ' }).then(res => {
+      } else if (this.EE == 'SJ') {
+        this.yearOrMonth = '月度'
+        getAction(this.url.listN, { type: 'SJ', parkId: this.industrialParkId }).then(res => {
           if (res.success) {
             console.log('实际筛选成功')
             this.dataSource = res.result
+            for (const item of res.result) {
+              item.year = item.month + '月'
+            }
           } else {
             this.$message.warning(res.message)
           }
           this.loading = false
         })
-      }
-      if (e == '') {
-        let params = { parkId: 555 }
-        getAction(this.url.listM, params).then(res => {
+      } else {
+        this.yearOrMonth = '年度'
+        getAction(this.url.listM, { parkId: this.industrialParkId }).then(res => {
           if (res.success) {
             console.log('不限筛选成功')
             this.dataSource = res.result
@@ -224,25 +234,10 @@ export default {
           this.loading = false
         })
       }
-      // this.loadData()
     },
+    //初加载时候就走handleChange的默认路线
     loadData() {
-      // if (this.typee == 'YS' || this.typee == 'SJ') console.log('hahahaahahh')
-      // let params = { type: this.typee }
-      let params = { parkId: 555 }
-      //当type为不限时，走listM的api / type筛选时，走最简单的listN
-      getAction(this.url.listM, params).then(res => {
-        if (res.success) {
-          this.dataSource = res.result
-          for (const item of res.result) {
-            item.year = item.year + '年'
-          }
-        }
-        if (res.code === 510) {
-          this.$message.warning(res.message)
-        }
-        this.loading = false
-      })
+      this.handleChange()
     },
 
     goAnnualAchieveAddForm() {
@@ -264,12 +259,6 @@ export default {
         }
       }
     }
-    // handleEdit(row, e) {
-    //   row.__key = Dom7(e.currentTarget)
-    //     .parents('.ant-table-row')
-    //     .data('row-key')
-    //   this.$refs.form.edit(row)
-    // }
   }
 }
 </script>
@@ -278,6 +267,12 @@ export default {
 .annual {
   .ant-form-item-label {
     width: auto;
+  }
+  .ant-form-item {
+    margin-bottom: 0px;
+  }
+  .local {
+    margin-top: 4px;
   }
 }
 </style>
