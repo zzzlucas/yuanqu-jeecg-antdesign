@@ -94,7 +94,7 @@
         }
       },
       async fetchCategory() {
-        const resp = await treeListCategory({ parkId: this.industrialParkId })
+        const resp = await treeListCategory({ parkId: this.industrialParkId, need: 1 })
         this.category = resp.result
       },
       async submit(ev) {
