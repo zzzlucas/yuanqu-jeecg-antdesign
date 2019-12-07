@@ -221,13 +221,20 @@
           this.$message.error(e.message)
         }
       },
+      async init() {
+        if (!this.isEdit) {
+          this.orderType = this.record.orderType
+          await this.$nextTick()
+          this.form.setFieldsValue({ orderType: this.record.orderType })
+        }
+      },
     },
     watch: {
       show(val) {
         if (!val) {
           return
         }
-
+        this.init()
       },
     },
   }
