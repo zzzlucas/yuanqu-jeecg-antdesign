@@ -406,6 +406,19 @@ export const advertisingEditForm = [
   'summary',
 ]
 
+export const advertisingEventForm = [
+  'begDate',
+  'endDate',
+  'remark',
+  'addDocFiles',
+  'requestPerson',
+  'corp', // TODO
+  'telephone',
+  'zipCode', // TODO
+  'telephone',
+  'r3', // TODO
+]
+
 export const meetingRoomEditForm = [
   'roomName',
   'chargingArea',
@@ -425,7 +438,6 @@ export const meetingRoomEditForm = [
 ]
 
 export const meetingEventEditForm = [
-  'roomName', // Dummy
   'begDate',
   'endDate',
   'requestPerson',
