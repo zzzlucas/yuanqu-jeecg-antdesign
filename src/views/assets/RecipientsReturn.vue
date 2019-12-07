@@ -75,6 +75,8 @@
     ],
     data() {
       return {
+        // Mixin option
+        deleteKey: 'opertionId',
         // Url
         url: url.opertion,
         // Filter query

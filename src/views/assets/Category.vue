@@ -64,6 +64,8 @@
     },
     data() {
       return {
+        // Mixin option
+        deleteKey: 'categoryId',
         // Url
         url: url.category,
         // Table
@@ -93,7 +95,6 @@
             scopedSlots: { customRender: 'action' },
           },
         ],
-        deleteKey: 'categoryId',
       }
     },
     watch: {

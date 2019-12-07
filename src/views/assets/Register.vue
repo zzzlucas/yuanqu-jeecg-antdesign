@@ -47,8 +47,8 @@
         <a-table
           ref="table"
           size="middle"
-          bordered
           rowKey="assetId"
+          bordered
           :columns="columns"
           :dataSource="dataSource"
           :pagination="ipagination"
@@ -102,6 +102,8 @@
     ],
     data() {
       return {
+        // Mixin option
+        deleteKey: 'assetId',
         // Url
         url: url.info,
         // Dictes

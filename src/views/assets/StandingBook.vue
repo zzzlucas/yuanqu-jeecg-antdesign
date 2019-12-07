@@ -97,6 +97,8 @@
     ],
     data() {
       return {
+        // Mixin option
+        deleteKey: 'opertionId',
         // Url
         baseUrl: window._CONFIG['domianURL'],
         url: url.info,
