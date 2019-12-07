@@ -27,19 +27,12 @@
 </template>
 
 <script>
-  import MeetingEventEditForm from './MeetingEventEditForm'
-  import MeetingEventViewModal from './MeetingEventViewModal'
   import Mixin from '../mixin/calendar'
-  import { viewMeetingEvent, deleteMeetingEvent } from '../api'
 
   export default {
     mixins: [
       Mixin,
     ],
-    components: {
-      MeetingEventEditForm,
-      MeetingEventViewModal,
-    },
     data() {
       return {
         // View modal/aside
@@ -75,46 +68,6 @@
       // Event
       handleChangeRoom() {
         this.$refs.calendar.fireMethod('refetchEvents')
-      },
-      handleAddEvent(date) {
-        const begDate = date.format('YYYY-MM-DD HH:mm:ss')
-        const endDate = date.add(1, 'd').format('YYYY-MM-DD HH:mm:ss')
-        const roomId = this.queryParam.roomId
-        this.$refs.modalForm.add({ begDate, endDate, roomId })
-        this.$refs.modalForm.title = "添加"
-        this.$refs.modalForm.disableSubmit = false
-      },
-      handleEditEvent(record) {
-        this.$refs.modalForm.edit(record)
-        this.$refs.modalForm.title = "编辑"
-        this.$refs.modalForm.disableSubmit = false
-      },
-      async handleDeleteEvent(record) {
-        try {
-          const resp = await deleteMeetingEvent({ id: record.requestId })
-          if (!resp.success) {
-            throw new Error(resp.message)
-          }
-          this.$message.success('操作成功')
-          this.$refs.calendar.fireMethod('removeEvents', record.requestId)
-        } catch (e) {
-          this.$message.error(e.message)
-        }
-      },
-      async handleEditSubmit() {
-        this.$refs.calendar.fireMethod('refetchEvents')
-      },
-      async handleViewEvent(info) {
-        try {
-          const resp = await viewMeetingEvent({ id: info.id })
-          if (!resp.success) {
-            throw new Error(resp.message)
-          }
-          this.viewData = resp.result
-          this.view = true
-        } catch (e) {
-          this.$message.error(e.message)
-        }
       },
     },
     created() {

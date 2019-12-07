@@ -28,7 +28,7 @@
     data() {
       return {
         // Tab
-        tab: 'monthView',
+        tab: 'weekView',
       }
     }
   }
