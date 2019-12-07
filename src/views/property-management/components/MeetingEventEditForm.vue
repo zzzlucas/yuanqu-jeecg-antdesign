@@ -124,7 +124,7 @@
           data.parkId = this.industrialParkId
           let resp
           if (this.isEdit) {
-            // data.eventId = this.record.eventId
+            data.requestId = this.record.requestId
             resp = await editMeetingEvent(data)
           } else {
             resp = await addMeetingEvent(data)

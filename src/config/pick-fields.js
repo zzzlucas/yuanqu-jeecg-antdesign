@@ -438,6 +438,7 @@ export const meetingRoomEditForm = [
 ]
 
 export const meetingEventEditForm = [
+  'roomId',
   'begDate',
   'endDate',
   'requestPerson',

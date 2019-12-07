@@ -3,7 +3,7 @@
     <!-- Filter -->
     <a-row :gutter="24">
       <a-col :xl="5">
-        <a-select style="width: 100%;" v-model="roomId">
+        <a-select style="width: 100%;" v-model="queryParam.roomId" @change="handleChangeRoom">
           <a-select-option :value="item.name" v-for="item in rooms" :key="item.name">{{ item.label }}</a-select-option>
         </a-select>
       </a-col>
@@ -73,10 +73,13 @@
     },
     methods: {
       // Event
+      handleChangeRoom() {
+        this.$refs.calendar.fireMethod('refetchEvents')
+      },
       handleAddEvent(date) {
         const begDate = date.format('YYYY-MM-DD HH:mm:ss')
         const endDate = date.add(1, 'd').format('YYYY-MM-DD HH:mm:ss')
-        const roomId = this.roomId
+        const roomId = this.queryParam.roomId
         this.$refs.modalForm.add({ begDate, endDate, roomId })
         this.$refs.modalForm.title = "添加"
         this.$refs.modalForm.disableSubmit = false

@@ -21,8 +21,10 @@ export default {
       queryParam: {
         beginDate: '',
         endDate: '',
+        roomId: '',
       },
       // Data
+      /** @deprecated */
       roomId: '',
       /** @deprecated */
       meeting: [],
