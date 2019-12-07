@@ -57,16 +57,16 @@
             <a-form-item label="经办人">
               <a-input v-decorator="['contactName', {rules: rules.contactName}]"></a-input>
             </a-form-item>
-            <a-col :xl="12">
-              <a-form-item label="联系方式">
-                <a-input v-decorator="['mobile', {rules: rules.mobile}]"></a-input>
-              </a-form-item>
-            </a-col>
-            <a-col :xl="24">
-              <a-form-item label="附件" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
-                <j-upload v-decorator="['addDocFiles']" />
-              </a-form-item>
-            </a-col>
+          </a-col>
+          <a-col :xl="12">
+            <a-form-item label="联系方式">
+              <a-input v-decorator="['mobile', {rules: rules.mobile}]"></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :xl="24">
+            <a-form-item label="附件" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
+              <j-upload v-decorator="['addDocFiles']"/>
+            </a-form-item>
           </a-col>
         </template>
         <template v-if="isCurrentTypeInProjectPeriod">
