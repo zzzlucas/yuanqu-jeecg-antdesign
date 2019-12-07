@@ -31,7 +31,7 @@
             <span slot="action" slot-scope="text, record" @click.stop>
               <a @click.stop="handleEdit(record, ...arguments)">编辑</a>
               <a-divider type="vertical" />
-              <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
+              <a-popconfirm title="确定删除吗?" @confirm="() => handleDeleteOnPage(record)">
                 <a>删除</a>
               </a-popconfirm>
             </span>
@@ -86,7 +86,7 @@
           {
             title: '上级分类',
             align: 'center',
-            dataIndex: 'parentName.categoryName'
+            dataIndex: 'parentName'
           },
           {
             title: '操作',
@@ -96,6 +96,12 @@
           },
         ],
       }
+    },
+    methods: {
+      async handleDeleteOnPage(record) {
+        await this.handleDelete(record)
+        this.reloadCategory()
+      },
     },
     watch: {
       selectCategoryKey(val) {

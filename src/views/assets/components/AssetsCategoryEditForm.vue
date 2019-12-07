@@ -113,6 +113,7 @@
           if (!resp.success) {
             throw new Error(resp.message)
           }
+          this.category = []
           this.$message.success('操作成功')
           this.closeDrawer()
           this.$emit('submit')
