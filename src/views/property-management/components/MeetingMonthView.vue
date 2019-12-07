@@ -98,6 +98,9 @@
           this.$message.error(e.message)
         }
       },
+      async handleEditSubmit() {
+        this.$refs.calendar.fireMethod('refetchEvents')
+      },
       async handleViewEvent(info) {
         try {
           const resp = await viewMeetingEvent({ id: info.id })
@@ -109,10 +112,6 @@
         } catch (e) {
           this.$message.error(e.message)
         }
-      },
-      // Add/Edit
-      async handleEditSubmit() {
-        this.loadData()
       },
     },
     created() {
