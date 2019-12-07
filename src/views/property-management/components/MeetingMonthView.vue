@@ -20,7 +20,9 @@
     <!-- View modal -->
     <meeting-event-view-modal
       :data="viewData"
-      v-model="view" />
+      v-model="view"
+      @edit="handleEditEvent"
+      @delete="handleDeleteEvent" />
   </div>
 </template>
 
@@ -28,7 +30,7 @@
   import MeetingEventEditForm from './MeetingEventEditForm'
   import MeetingEventViewModal from './MeetingEventViewModal'
   import Mixin from '../mixin/calendar'
-  import { viewMeetingEvent } from '../api'
+  import { viewMeetingEvent, deleteMeetingEvent } from '../api'
 
   export default {
     mixins: [
@@ -79,11 +81,22 @@
         this.$refs.modalForm.title = "添加"
         this.$refs.modalForm.disableSubmit = false
       },
-      // TODO
       handleEditEvent(record) {
-        this.$refs.modalForm.edit({ })
+        this.$refs.modalForm.edit(record)
         this.$refs.modalForm.title = "编辑"
         this.$refs.modalForm.disableSubmit = false
+      },
+      async handleDeleteEvent(record) {
+        try {
+          const resp = await deleteMeetingEvent({ id: record.requestId })
+          if (!resp.success) {
+            throw new Error(resp.message)
+          }
+          this.$message.success('操作成功')
+          this.$refs.calendar.fireMethod('removeEvents', record.requestId)
+        } catch (e) {
+          this.$message.error(e.message)
+        }
       },
       async handleViewEvent(info) {
         try {

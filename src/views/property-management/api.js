@@ -1,4 +1,4 @@
-import { getAction, postAction, putAction } from '@/api/manage'
+import { getAction, postAction, putAction, deleteAction } from '@/api/manage'
 import qs from 'qs'
 
 const url = {
@@ -81,6 +81,8 @@ const listMeetingEvent = params => getAction(url.meetingEvent.list, params)
 const addMeetingEvent = params => postAction(url.meetingEvent.add, qs.stringify(params))
 /** 会议室预定-编辑 */
 const editMeetingEvent = params => putAction(url.meetingEvent.edit, qs.stringify(params))
+/** 会议室预定-编辑 */
+const deleteMeetingEvent = params => deleteAction(url.meetingEvent.delete, params)
 /** 会议室预定-通过id查询 */
 const viewMeetingEvent = params => getAction(url.meetingEvent.view, params)
 /** 会议室设备-列表 */
@@ -108,6 +110,7 @@ export {
   listMeetingEvent,
   addMeetingEvent,
   editMeetingEvent,
+  deleteMeetingEvent,
   viewMeetingEvent,
   listRoomEquipment,
   listBook,
