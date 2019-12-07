@@ -4,7 +4,12 @@ import { ACCESS_TOKEN, USER_NAME,USER_INFO,USER_AUTH,SYS_BUTTON_AUTH } from "@/s
 import { welcome } from "@/utils/util"
 import { queryPermissionsByUser } from '@/api/api'
 import { getAction } from '@/api/manage'
-import parkSetup from '@/park'
+
+function parkChange(dispatch){
+  dispatch('industrialPark/fetchParkList', null, {root: true})
+  dispatch('industrialPark/setParkIfEmpty', null, {root: true})
+  dispatch('industrialPark/setParkReady', null, {root: true})
+}
 
 const user = {
   state: {
@@ -63,11 +68,11 @@ const user = {
       })
     },
     // 登录
-    Login({ commit }, userInfo) {
+    Login({ dispatch, commit }, userInfo) {
       return new Promise((resolve, reject) => {
         login(userInfo)
           .then(response => {
-            if (response.code !='200'){
+            if (response.code !== 200){
               reject(response)
               return
             }
@@ -80,20 +85,20 @@ const user = {
             commit('SET_INFO', userInfo)
             commit('SET_NAME', { username: userInfo.username,realname: userInfo.realname, welcome: welcome() })
             commit('SET_AVATAR', userInfo.avatar)
+            parkChange(dispatch)
             resolve(response)
           })
-          .then(parkSetup)
           .catch(error => {
             reject(error)
           })
       })
     },
     //手机号登录
-    PhoneLogin({ commit }, userInfo) {
+    PhoneLogin({ dispatch, commit }, userInfo) {
       return new Promise((resolve, reject) => {
         phoneLogin(userInfo)
           .then(response => {
-            if (response.code != '200') {
+            if (response.code !== 200) {
               reject(response)
               return
             }
@@ -106,10 +111,9 @@ const user = {
             commit('SET_INFO', userInfo)
             commit('SET_NAME', { username: userInfo.username, realname: userInfo.realname, welcome: welcome() })
             commit('SET_AVATAR', userInfo.avatar)
+            parkChange(dispatch)
             resolve(response)
-          })
-          .then(parkSetup)
-          .catch(error => {
+          }).catch(error => {
             reject(error)
           })
       })

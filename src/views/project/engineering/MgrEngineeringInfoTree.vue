@@ -3,7 +3,7 @@
     <a-col span="4">
       <a-card>
         <a-tree :expandedKeys.sync="expandedKeys" :selectedKeys.sync="selectedKeys">
-          <a-tree-node title="XX园区" :selectable="false" key="main">
+          <a-tree-node :title="parkName" :selectable="false" key="main">
             <a-tree-node title="A项目" key="1"></a-tree-node>
             <a-tree-node title="B项目" key="2"></a-tree-node>
           </a-tree-node>
@@ -18,6 +18,7 @@
 
 <script>
   import TreeTableCharts from './view/TreeTableCharts'
+  import {mapState} from 'vuex'
 
   export default {
     name: 'MgrEngineeringInfoTree',
@@ -27,7 +28,10 @@
         expandedKeys: ['main'],
         selectedKeys: ['1']
       }
-    }
+    },
+    computed: mapState('industrialPark', {
+      parkName: state => state.name
+    })
   }
 </script>
 

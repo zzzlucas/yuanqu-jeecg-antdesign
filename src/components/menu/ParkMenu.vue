@@ -7,7 +7,7 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapActions } from 'vuex'
 
   export default {
     computed: {
@@ -16,13 +16,16 @@
       ]),
     },
     methods: {
+      ...mapActions('industrialPark', [
+        'setPark'
+      ]),
       handleParkChange(parkId) {
         const map = {}
         this.industrialPark.list.forEach((item, index) => {
           map[item.parkId] = index
         })
         const { parkName } = this.industrialPark.list[map[parkId]]
-        this.$store.dispatch('setPark', { parkId, parkName })
+        this.setPark({ parkId, parkName })
       },
     },
   }
