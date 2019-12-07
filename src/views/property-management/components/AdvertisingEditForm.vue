@@ -83,7 +83,7 @@
         </a-col>
         <a-col :xl="12" v-if="isCharge">
           <a-form-item label="收费单位">
-            <a-input v-decorator="['unit']"></a-input>
+            <j-dict-select-tag dict-code="advert_price_unit" :trigger-change="true" v-decorator="['unit']" />
           </a-form-item>
         </a-col>
         <a-col :xl="24">
@@ -213,6 +213,9 @@
           if (buildingId) {
             this.getFloors(buildingId)
           }
+          this.isCharge = !!this.record.price
+        } else {
+          this.isCharge = false
         }
       },
     },

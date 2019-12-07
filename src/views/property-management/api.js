@@ -13,6 +13,7 @@ const url = {
   },
   advertisingPlace: {
     list: '/park.service/baseAdvertsInfo/list',
+    view: '/park.service/baseAdvertsInfo/queryById',
     add: '/park.service/baseAdvertsInfo/add',
     edit: '/park.service/baseAdvertsInfo/edit',
     delete: '/park.service/baseAdvertsInfo/delete',
@@ -56,6 +57,8 @@ const listFloor = params => getAction(url.architectureFloor.list, params)
 const addAdPlace = params => postAction(url.advertisingPlace.add, qs.stringify(params))
 /** 广告位建档-编辑 */
 const editAdPlace = params => putAction(url.advertisingPlace.edit, qs.stringify(params))
+/** 会议室建档-通过id查询 */
+const viewAdPlace = params => getAction(url.advertisingPlace.view, params)
 /** 广告位建档-分页列表查询 */
 const listAdPlace = params => getAction(url.advertisingPlace.list, params)
 /** 广告位预定-添加 */
@@ -90,6 +93,7 @@ export {
   listFloor,
   addAdPlace,
   editAdPlace,
+  viewAdPlace,
   listAdPlace,
   addAdEvent,
   editAdEvent,

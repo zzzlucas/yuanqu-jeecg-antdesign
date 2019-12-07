@@ -1,5 +1,5 @@
 <template>
-  <page-layout :title="data.roomName">
+  <page-layout :title="data.advertName">
     <template slot="action">
       <a-button type="primary" @click="handleEdit">编辑</a-button>
     </template>
@@ -12,40 +12,38 @@
     >
       <template v-if="activeTabKey === 'basic'">
         <detail-list>
-          <detail-list-item term="会议室名称">{{ data.roomName }}</detail-list-item>
-          <detail-list-item term="占地面积">{{ data.chargingArea }}m<sup>2</sup></detail-list-item>
-          <detail-list-item term="容纳人数">{{ data.maxCapacity }}人</detail-list-item>
+          <detail-list-item term="广告位名称">{{ data.advertName }}</detail-list-item>
           <!-- TODO -->
           <detail-list-item term="所属建筑项目">{{ data.projectId }}</detail-list-item>
           <!-- TODO -->
           <detail-list-item term="详细地址">{{ data.projectId }} {{ data.address }}</detail-list-item>
-          <detail-list-item term="提供设备">{{ data.roomDevices }} &nbsp;</detail-list-item>
+        </detail-list>
+        <detail-list v-if="data.price">
+          <detail-list-item term="收费单价">{{ data.price }}</detail-list-item>
+          <detail-list-item term="收费单位">{{ data.unit }}</detail-list-item>
+        </detail-list>
+        <detail-list>
           <detail-list-item term="联系人">{{ data.contactPerson }}</detail-list-item>
           <detail-list-item term="联系电话">{{ data.contactTel }}</detail-list-item>
         </detail-list>
+        <!-- TODO -->
         <detail-list>
-          <detail-list-item term="开放时间起">{{ data.begTime }}</detail-list-item>
-          <detail-list-item term="开放时间止">{{ data.endTime }}</detail-list-item>
+          <detail-list-item term="开放时间起">{{ data.begDate }}</detail-list-item>
+          <detail-list-item term="开放时间止">{{ data.endDate }}</detail-list-item>
         </detail-list>
         <detail-list>
           <detail-list-item term="预定须知">{{ data.remarks }}</detail-list-item>
         </detail-list>
         <detail-list>
-          <detail-list-item term="会议室详情">{{ data.summary }}</detail-list-item>
+          <detail-list-item term="广告位详情">{{ data.summary }}</detail-list-item>
         </detail-list>
       </template>
       <template v-if="activeTabKey === 'image'">
         <j-upload ref="uploader" />
       </template>
-      <template v-if="activeTabKey === 'weekView'">
-        <meeting-week-view :room-id="data.roomId" v-if="data.roomId" />
-      </template>
-      <template v-if="activeTabKey === 'monthView'">
-        <meeting-month-view :room-id="data.roomId" v-if="data.roomId" />
-      </template>
     </a-card>
     <!-- Add/Edit form -->
-    <meeting-room-edit-form
+    <advertising-edit-form
       ref="modalForm"
       @submit="handleEditSubmit" />
   </page-layout>
@@ -55,11 +53,9 @@
   import PageLayout from '@/components/page/PageLayout'
   import DetailList from '@/components/tools/DetailList'
   import JUpload from '@/components/jeecg/JUpload'
-  import MeetingRoomEditForm from './components/MeetingRoomEditForm'
-  import MeetingWeekView from './components/MeetingWeekView'
-  import MeetingMonthView from './components/MeetingMonthView'
+  import AdvertisingEditForm from './components/AdvertisingEditForm'
   import ViewMixin from '@/mixins/View'
-  import { url, viewMeetingRoom } from './api'
+  import { url, viewAdPlace } from './api'
   const DetailListItem = DetailList.Item
 
   export default {
@@ -71,9 +67,7 @@
       DetailList,
       DetailListItem,
       JUpload,
-      MeetingRoomEditForm,
-      MeetingWeekView,
-      MeetingMonthView,
+      AdvertisingEditForm,
     },
     data() {
       return {
@@ -89,14 +83,6 @@
             key: 'image',
             tab: '图片'
           },
-          {
-            key: 'weekView',
-            tab: '周视图'
-          },
-          {
-            key: 'monthView',
-            tab: '月视图'
-          },
         ],
         activeTabKey: 'basic',
       }
@@ -108,14 +94,14 @@
       },
       // Request data
       async loadData() {
-        this.loadDetail().then(() => {
+        this.loadDetail()/*.then(() => {
           this.$refs.uploader.initFileList(this.data.addDocFiles)
-        })
+        })*/
       },
       async loadDetail() {
         this.loading = true
         try {
-          const resp = await viewMeetingRoom(this.getRouteParams())
+          const resp = await viewAdPlace(this.getRouteParams())
           if (!resp.success) {
             throw new Error(resp.message)
           }
