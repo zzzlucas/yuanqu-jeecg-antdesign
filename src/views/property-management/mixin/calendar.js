@@ -2,6 +2,7 @@ import 'jquery'
 import 'fullcalendar/dist/locale/zh-cn'
 import { FullCalendar } from 'vue-full-calendar'
 import 'fullcalendar/dist/fullcalendar.min.css';
+import moment from 'moment'
 import MeetingEventEditForm from '../components/MeetingEventEditForm'
 import MeetingEventViewModal from '../components/MeetingEventViewModal'
 import { filterObj } from '@utils/util'
@@ -27,16 +28,12 @@ export default {
         endDate: '',
         roomId: '',
       },
-      // Data
-      /** @deprecated */
-      roomId: '',
-      /** @deprecated */
-      meeting: [],
       // Format
       dateFormat: 'YYYY-MM-DD HH:mm:ss',
     }
   },
   methods: {
+    // List
     async fetchList() {
       try {
         const params = this.queryParam
@@ -70,9 +67,10 @@ export default {
     loadData() {
       this.getRoomList()
     },
+    // Event
     handleAddEvent(date) {
-      const begDate = date.format('YYYY-MM-DD HH:mm:ss')
-      const endDate = date.add(1, 'd').format('YYYY-MM-DD HH:mm:ss')
+      const begDate = date.format(this.dateFormat)
+      const endDate = date.add(1, 'd').format(this.dateFormat)
       const roomId = this.queryParam.roomId
       this.$refs.modalForm.add({ begDate, endDate, roomId })
       this.$refs.modalForm.title = "添加"

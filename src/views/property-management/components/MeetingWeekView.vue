@@ -4,7 +4,8 @@
     <full-calendar
       ref="calendar"
       :events="getList"
-      :config="config" />
+      :config="config"
+      v-if="config.resources.length" />
     <!-- Add/Edit form -->
     <meeting-event-edit-form
       ref="modalForm"
@@ -42,15 +43,33 @@
             right: 'today prev,next'
           },
           defaultView: 'timelineWeek',
+          slotLabelInterval: { days: 1 },
+          slotLabelFormat: ['ddd MM-DD'],
           resourceLabelText: "会议室",
           editable: false,
           dayClick: this.handleAddEvent,
           eventClick: this.handleViewEvent,
+          // Room list
+          resources: [],
         }
       }
     },
     methods: {
-
-    }
+      buildResources() {
+        this.config.resources = this.roomList.map(item => {
+          return {
+            id: item.roomId,
+            title: item.roomName,
+          }
+        })
+      },
+      async init() {
+        await this.getRoomList()
+        this.buildResources()
+      },
+    },
+    created() {
+      this.init()
+    },
   }
 </script>
