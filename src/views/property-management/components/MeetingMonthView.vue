@@ -11,18 +11,24 @@
     <!-- Fc -->
     <full-calendar
       ref="calendar"
-      :events="events"
+      :events="getList"
       :config="config" />
     <!-- Add/Edit form -->
     <meeting-event-edit-form
       ref="modalForm"
       @submit="handleEditSubmit" />
+    <!-- View modal -->
+    <meeting-event-view-modal
+      :data="viewData"
+      v-model="view" />
   </div>
 </template>
 
 <script>
   import MeetingEventEditForm from './MeetingEventEditForm'
+  import MeetingEventViewModal from './MeetingEventViewModal'
   import Mixin from '../mixin/calendar'
+  import { viewMeetingEvent } from '../api'
 
   export default {
     mixins: [
@@ -30,11 +36,16 @@
     ],
     components: {
       MeetingEventEditForm,
+      MeetingEventViewModal,
     },
     data() {
       return {
+        // View modal/aside
+        viewData: {},
+        view: false,
         // Fc
         config: {
+          schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
           locale: 'zh-cn',
           header: {
             left: '',
@@ -42,9 +53,9 @@
             right:  'today prev,next'
           },
           defaultView: 'month',
-          dayClick: (moment, jsEvent, view) => {
-            this.handleAddEvent(moment)
-          }
+          editable: false,
+          dayClick: this.handleAddEvent,
+          eventClick: this.handleViewEvent,
         }
       }
     },
@@ -68,10 +79,31 @@
         this.$refs.modalForm.title = "添加"
         this.$refs.modalForm.disableSubmit = false
       },
+      // TODO
+      handleEditEvent(record) {
+        this.$refs.modalForm.edit({ })
+        this.$refs.modalForm.title = "编辑"
+        this.$refs.modalForm.disableSubmit = false
+      },
+      async handleViewEvent(info) {
+        try {
+          const resp = await viewMeetingEvent({ id: info.id })
+          if (!resp.success) {
+            throw new Error(resp.message)
+          }
+          this.viewData = resp.result
+          this.view = true
+        } catch (e) {
+          this.$message.error(e.message)
+        }
+      },
       // Add/Edit
       async handleEditSubmit() {
         this.loadData()
       },
+    },
+    created() {
+      this.loadData()
     },
   }
 </script>

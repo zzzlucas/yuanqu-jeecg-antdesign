@@ -52,7 +52,7 @@
 </template>
 
 <script>
-  import { view } from '@views/assets/mixins'
+  import { view } from '../mixins'
 
   export default {
     mixins: [

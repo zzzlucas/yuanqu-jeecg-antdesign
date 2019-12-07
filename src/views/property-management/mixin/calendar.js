@@ -1,5 +1,4 @@
 import 'jquery'
-import moment from 'moment'
 import 'fullcalendar/dist/locale/zh-cn'
 import { FullCalendar } from 'vue-full-calendar'
 import 'fullcalendar/dist/fullcalendar.min.css';
@@ -20,31 +19,19 @@ export default {
     return {
       // Query
       queryParam: {
-        projectId: '',
-        buildingId: '',
+        beginDate: '',
+        endDate: '',
       },
       // Data
       roomId: '',
+      /** @deprecated */
       meeting: [],
-      // Events
-      events: [
-        {
-          title: "test",
-          resourceId: "a",
-          start: moment(),
-          end: moment().add(1, "d")
-        },
-        {
-          title: "test2",
-          resourceId: "a2",
-          start: moment().add(2, "d"),
-          end: moment().add(3, "d")
-        }
-      ],
+      // Format
+      dateFormat: 'YYYY-MM-DD HH:mm:ss',
     }
   },
   methods: {
-    async getList() {
+    async fetchList() {
       try {
         const params = this.queryParam
         filterObj(params)
@@ -52,17 +39,30 @@ export default {
         if (!resp.success) {
           throw new Error(resp.message)
         }
-        this.meeting = resp.result
+        return resp.result
       } catch (e) {
         this.$message.error('获取会议预定列表失败')
       }
     },
+    buildEvents(list) {
+      return list.map(item => {
+        return {
+          id: item.requestId,
+          title: item.meetingroomName,
+          resourceId: item.roomId,
+          start: item.begDate,
+          end: item.endDate,
+        }
+      })
+    },
+    async getList(start, end, timezone, callback) {
+      this.queryParam.begDate = start.format(this.dateFormat)
+      this.queryParam.endDate = end.format(this.dateFormat)
+      const list = await this.fetchList()
+      callback(this.buildEvents(list))
+    },
     loadData() {
-      this.getList()
       this.getRoomList()
     },
-  },
-  created() {
-    this.loadData()
   },
 }

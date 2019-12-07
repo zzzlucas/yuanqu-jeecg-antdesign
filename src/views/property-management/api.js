@@ -35,6 +35,8 @@ const url = {
     deleteBatch: '/park.service/baseMeetingroomInfo/deleteBatch',
   },
   meetingEvent: {
+    // list: '/park.service/mgrMeetingroomRequest/listUser',
+    view: '/park.service/mgrMeetingroomRequest/queryById',
     list: '/park.service/mgrMeetingroomRequest/list',
     add: '/park.service/mgrMeetingroomRequest/add',
     edit: '/park.service/mgrMeetingroomRequest/edit',
@@ -79,6 +81,8 @@ const listMeetingEvent = params => getAction(url.meetingEvent.list, params)
 const addMeetingEvent = params => postAction(url.meetingEvent.add, qs.stringify(params))
 /** 会议室预定-编辑 */
 const editMeetingEvent = params => putAction(url.meetingEvent.edit, qs.stringify(params))
+/** 会议室预定-通过id查询 */
+const viewMeetingEvent = params => getAction(url.meetingEvent.view, params)
 /** 会议室设备-列表 */
 const listRoomEquipment = deviceGroupId => getAction('/park.middletables/pubLabelGroup/queryById', { id: deviceGroupId } )
 /** 空间预订-分页查询 */
@@ -104,6 +108,7 @@ export {
   listMeetingEvent,
   addMeetingEvent,
   editMeetingEvent,
+  viewMeetingEvent,
   listRoomEquipment,
   listBook,
   reviewBook,
