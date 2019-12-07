@@ -1,5 +1,5 @@
 <template>
-  <a-card class="assets-list" :bordered="false">
+  <a-card class="assets-category-list assets-list" :bordered="false">
     <a-layout>
       <a-layout-sider theme="light">
         <assets-category @select="selectCategory" v-if="showCategory" />
@@ -113,5 +113,9 @@
 </script>
 
 <style lang="less">
-
+  .assets-category-list {
+    .ant-table-row {
+      cursor: unset;
+    }
+  }
 </style>
