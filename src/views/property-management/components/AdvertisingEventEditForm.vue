@@ -17,7 +17,9 @@
       <a-row>
         <a-col :xl="24">
           <a-form-item label="广告位名称" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
-            <a-input :disabled="!!record.advertId" v-decorator="['advertId']"></a-input>
+            <a-select v-decorator="['advertId', {rules: rules.advertId}]">
+              <a-select-option :value="item.advertId" v-for="item in advertisingPlaceList" :key="item.advertId">{{ item.advertName }}</a-select-option>
+            </a-select>
           </a-form-item>
         </a-col>
         <a-col :xl="12">
@@ -110,22 +112,26 @@
 
 <script>
   import JDate from '@/components/jeecg/JDate'
+  import JUpload from '@/components/jeecg/JUpload'
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
+  import { advertisingPlace as BookAdvertisingMixin } from '../mixin/book'
   import { filterObj, promiseForm } from '@utils/util'
-  import { meetingEventEditForm } from '@/config/pick-fields'
-  import { addMeetingEvent, editMeetingEvent } from '../api'
+  import { advertisingEventForm } from '@/config/pick-fields'
+  import { addAdEvent, editAdEvent } from '../api'
 
   export default {
     mixins: [
       FormEditDrawerMixin('advertising-event-edit'),
+      BookAdvertisingMixin,
     ],
     components: {
       JDate,
+      JUpload,
     },
     data() {
       return {
         // Form
-        fields: meetingEventEditForm,
+        fields: advertisingEventForm,
         // Rules
         rules: {
           begDate: [
@@ -158,13 +164,13 @@
         const data = await promiseForm(this.form)
         try {
           filterObj(data)
-          data.roomId = this.record.roomId
+          data.parkId = this.industrialParkId
           let resp
           if (this.isEdit) {
             // data.eventId = this.record.eventId
-            resp = await editMeetingEvent(data)
+            resp = await editAdEvent(data)
           } else {
-            resp = await addMeetingEvent(data)
+            resp = await addAdEvent(data)
           }
           if (!resp.success) {
             throw new Error(resp.message)
@@ -177,11 +183,11 @@
         }
       },
       async init() {
+        this.getAdvertisingPlaceList()
         if (!this.isEdit) {
           await this.$nextTick()
           this.form.setFieldsValue({
-            roomName: this.record.roomName,
-            roomId: this.record.roomId,
+            advertId: this.record.advertId,
             begDate: this.record.begDate,
             endDate: this.record.endDate,
           })
