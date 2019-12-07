@@ -33,7 +33,8 @@
           :dataSource="dataSource"
           :pagination="ipagination"
           :loading="loading"
-          :customRow="handleCustomRow">
+          :customRow="handleCustomRow"
+          @change="handleTableChange">
             <!-- Column slot -->
             <span slot="action" slot-scope="text, record" @click.stop>
               <a @click.stop="handleEdit(record, ...arguments)">归还</a>

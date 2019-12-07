@@ -47,7 +47,8 @@
           :pagination="ipagination"
           :loading="loading"
           :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
-          :customRow="handleCustomRow">
+          :customRow="handleCustomRow"
+          @change="handleTableChange">
             <!-- Column slot -->
             <span slot="action" slot-scope="text, record" @click.stop>
               <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">

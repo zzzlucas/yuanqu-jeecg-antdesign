@@ -69,7 +69,8 @@
       :pagination="ipagination"
       :loading="loading"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
-      :customRow="handleCustomRow">
+      :customRow="handleCustomRow"
+      @change="handleTableChange">
       <!-- Room & name -->
       <div slot="nameAndPos" slot-scope="text, record">
         <div class="ad-section">
@@ -174,7 +175,7 @@
         return {
           on: {
             click: () => {
-              this.$router.push({ name: 'property-management-advertising-info-@id', params: { id: row.roomId } })
+              this.$router.push({ name: 'property-management-advertising-info-@id', params: { id: row.advertId } })
             }
           }
         }

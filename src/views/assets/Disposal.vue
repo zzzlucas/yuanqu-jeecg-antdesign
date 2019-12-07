@@ -49,7 +49,8 @@
           :pagination="ipagination"
           :loading="loading"
           :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
-          :customRow="handleCustomRow">
+          :customRow="handleCustomRow"
+          @change="handleTableChange">
         </a-table>
         <!-- table区域-end -->
       </a-layout-content>

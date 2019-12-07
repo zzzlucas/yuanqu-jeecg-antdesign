@@ -76,7 +76,8 @@
       :pagination="ipagination"
       :loading="loading"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
-      :customRow="handleCustomRow">
+      :customRow="handleCustomRow"
+      @change="handleTableChange">
       <!-- Column slot -->
       <!-- Room & name -->
       <div slot="nameAndPos" slot-scope="text, record">

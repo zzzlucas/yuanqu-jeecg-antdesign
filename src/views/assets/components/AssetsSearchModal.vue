@@ -20,6 +20,7 @@
     </div>
     <!-- Table -->
     <a-table
+      style="margin-top: 20px"
       ref="table"
       size="middle"
       bordered
@@ -29,7 +30,7 @@
       :pagination="ipagination"
       :loading="loading"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
-      style="margin-top: 20px">
+      @change="handleTableChange">
     </a-table>
     <!-- Footer -->
     <template slot="footer">
