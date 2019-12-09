@@ -55,13 +55,18 @@
           </a-col>
           <a-col :xl="12">
             <a-form-item label="经办人">
-              <a-input v-decorator="['principalUser', {rules: rules.principalUser}]"></a-input> <!-- TODO: name? -->
+              <a-input v-decorator="['contactName', {rules: rules.contactName}]"></a-input>
             </a-form-item>
-            <a-col :xl="24">
-              <a-form-item label="附件" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
-
-              </a-form-item>
-            </a-col>
+          </a-col>
+          <a-col :xl="12">
+            <a-form-item label="联系方式">
+              <a-input v-decorator="['mobile', {rules: rules.mobile}]"></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :xl="24">
+            <a-form-item label="附件" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
+              <j-upload v-decorator="['addDocFiles']"/>
+            </a-form-item>
           </a-col>
         </template>
         <template v-if="isCurrentTypeInProjectPeriod">
@@ -72,7 +77,12 @@
           </a-col>
           <a-col :xl="12">
             <a-form-item label="经办人">
-              <a-input v-decorator="['principalUser', {rules: rules.principalUser}]"></a-input> <!-- TODO: name? -->
+              <a-input v-decorator="['contactName', {rules: rules.contactName}]"></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :xl="12">
+            <a-form-item label="联系方式">
+              <a-input v-decorator="['mobile', {rules: rules.mobile}]"></a-input>
             </a-form-item>
           </a-col>
           <a-col :xl="12">
@@ -87,7 +97,7 @@
           </a-col>
           <a-col :xl="24">
             <a-form-item label="附件" :label-col="gridOptions.formItemFullRow.label" :wrapper-col="gridOptions.formItemFullRow.value">
-
+              <j-upload v-decorator="['addDocFiles']" />
             </a-form-item>
           </a-col>
         </template>
@@ -124,6 +134,7 @@
 
 <script>
   import JDate from '@/components/jeecg/JDate'
+  import JUpload from '@/components/jeecg/JUpload'
   import JEditor from '@/components/jeecg/JEditor'
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
   import { filterObj, promiseForm } from '@utils/util'
@@ -137,8 +148,9 @@
       Mixin,
     ],
     components: {
-      JEditor,
       JDate,
+      JUpload,
+      JEditor,
     },
     data() {
       return {
@@ -159,11 +171,14 @@
           custName: [
             { required: true, message: '请输入客户名称' }
           ],
-          parkId: [
-            { required: true, message: '请输入所属园区' }
-          ],
           title: [
             { required: true, message: '请输入主题' }
+          ],
+          contactName: [
+            { required: true, message: '请选择经办人名称' }
+          ],
+          mobile: [
+            { required: true, message: '请填写联系方式' }
           ],
           content: [
             { required: true, message: '请输入内容' }
@@ -199,11 +214,18 @@
           if (!resp.success) {
             throw new Error(resp.message)
           }
-          this.$message.success('添加成功')
+          this.$message.success('操作成功')
           this.closeDrawer()
           this.$emit('submit')
         } catch (e) {
           this.$message.error(e.message)
+        }
+      },
+      async init() {
+        if (!this.isEdit) {
+          this.orderType = this.record.orderType
+          await this.$nextTick()
+          this.form.setFieldsValue({ orderType: this.record.orderType })
         }
       },
     },
@@ -212,7 +234,7 @@
         if (!val) {
           return
         }
-
+        this.init()
       },
     },
   }

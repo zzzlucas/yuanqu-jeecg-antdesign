@@ -120,9 +120,9 @@ function generateChildRouters(data) {
       path: item.path,
       name: item.name,
       redirect: item.redirect,
-      component: resolve => require(['@/' + component + '.vue'], resolve),
       hidden: item.hidden,
-      //component:()=> import(`@/views/${item.component}.vue`),
+      component: resolve => require([`@/${component}.vue`], resolve), // Pack every views into the chunk (bad)
+      // component:()=> import(`@/${component}.vue`), // Pack by every view files (still bad)
       meta: {
         title: item.meta.title,
         icon: item.meta.icon,

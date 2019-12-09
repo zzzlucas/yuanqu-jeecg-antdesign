@@ -155,8 +155,6 @@
         data.useType = '4' // Disposal
         const assets = data.assets
         delete data.assets
-        console.log(data)
-        return
         // Batch request
         let i = 0
         for (let [assetId, qty] of Object.entries(assets)) {

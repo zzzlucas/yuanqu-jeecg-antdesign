@@ -49,7 +49,8 @@
           :pagination="ipagination"
           :loading="loading"
           :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
-          :customRow="handleCustomRow">
+          :customRow="handleCustomRow"
+          @change="handleTableChange">
         </a-table>
         <!-- table区域-end -->
       </a-layout-content>
@@ -87,6 +88,8 @@
     ],
     data() {
       return {
+        // Mixin option
+        deleteKey: 'opertionId',
         // Url
         url: url.opertion,
         // Filter query
@@ -143,7 +146,7 @@
           { name: '处置原因', value: 'detailType', },
           { name: '备注', value: 'remark', type: 'remark', },
           { value: { ...AssetsViewAssetsTableMixin }, type: 'table', },
-          { name: '附件', type: 'files', value: '' },
+          { name: '附件', type: 'files', value: 'addDocFiles' },
         ],
       }
     },

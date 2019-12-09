@@ -124,7 +124,7 @@
           add: '/park.architecture/baseArchitectureRoom/add',
           edit: '/park.architecture/baseArchitectureRoom/edit',
           block: '/park.architecture/baseArchitectureProject/queryByParkId',
-          tower: '/park.architecture/baseArchitectureBuilding/queryByProjectId',
+          tower: '/park.architecture/baseArchitectureBuilding/queryBuildingList',
           floor: '/park.architecture/baseArchitectureFloor/queryByBuildingId'
         },
         treeExpandedKeys: [],
@@ -166,7 +166,7 @@
         this.title = '编辑房间'
         this.form.resetFields()
 
-        const towerList = await getAction(this.url.tower, { projectId: record.buildingProjectId })
+        const towerList = await getAction(this.url.tower, { buildingProjectId: record.buildingProjectId })
         if (towerList.success && towerList.code === 200) {
           if (towerList.result) {
             let path = getTreeNodeOfKey(this.tree, record.buildingProjectId, 'value')
@@ -321,7 +321,7 @@
           }
 
           if(node.dataRef.lvl === 1){
-            getAction(this.url.tower, { projectId: node.dataRef.key }).then(res => {
+            getAction(this.url.tower, { buildingProjectId: node.dataRef.key }).then(res => {
               if (res.success && res.code === 200) {
                 if (res.result) {
                   node.dataRef.children = _.map(res.result, obj => {

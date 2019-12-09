@@ -94,7 +94,7 @@
         }
       },
       async fetchCategory() {
-        const resp = await treeListCategory({ parkId: this.industrialParkId })
+        const resp = await treeListCategory({ parkId: this.industrialParkId, need: 1 })
         this.category = resp.result
       },
       async submit(ev) {
@@ -113,7 +113,8 @@
           if (!resp.success) {
             throw new Error(resp.message)
           }
-          this.$message.success('添加成功')
+          this.category = []
+          this.$message.success('操作成功')
           this.closeDrawer()
           this.$emit('submit')
         } catch (e) {

@@ -1,4 +1,5 @@
 const path = require('path')
+const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 
 function resolve(dir) {
   return path.join(__dirname, dir)
@@ -30,7 +31,7 @@ module.exports = {
   },
   chainWebpack: (config) => {
     config.resolve.alias
-      .set('@$', resolve('src'))
+      .set('@', resolve('src'))
       .set('@api', resolve('src/api'))
       .set('@assets', resolve('src/assets'))
       .set('@comp', resolve('src/components'))
@@ -38,6 +39,9 @@ module.exports = {
       .set('@layout', resolve('src/layout'))
       .set('@static', resolve('src/static'))
       .set('@utils', resolve('src/utils'))
+    config
+      .plugin('MomentLocales')
+      .use(MomentLocalesPlugin, [{ localesToKeep: ['zh-cn']}])
   },
 
   css: {
@@ -62,7 +66,7 @@ module.exports = {
     proxy: {
       '/jeecg-boot': {
         target: 'http://192.168.89.31:8080',
-        //target: 'http://127.0.0.1:8080',
+        // target: 'http://127.0.0.1:8080',
         ws: false,
         changeOrigin: true
       }

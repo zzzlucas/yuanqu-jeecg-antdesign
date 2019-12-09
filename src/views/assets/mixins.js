@@ -1,3 +1,4 @@
+import ViewAsideMixin from '@/mixins/ViewAside'
 import AssetsCategory from './components/AssetsCategory'
 
 export const list = {
@@ -48,38 +49,9 @@ export const list = {
 }
 
 export const view = {
-  props: {
-    data: {
-      type: Object,
-      default: () => {
-        return {}
-      }
-    },
-    show: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  model: {
-    prop: 'show',
-    event: 'change'
-  },
-  data() {
-    return {
-      title: '',
-      modal: false,
-    }
-  },
-  methods: {
-    close() {
-      this.$emit('change', false)
-    }
-  },
-  watch: {
-    show(val) {
-      this.modal = val
-    }
-  }
+  mixins: [
+    ViewAsideMixin,
+  ],
 }
 
 export const viewAssetsTable = {

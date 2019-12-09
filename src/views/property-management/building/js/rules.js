@@ -1,6 +1,9 @@
 export const block = {
-  parkId: [
-    {required: true, message: '园区不能为空'}
+  projectName: [
+    {required: true, message: '园区名称不能为空'}
+  ],
+  projectAbbr: [
+    {required: true, message: '园区简称不能为空'}
   ]
 }
 

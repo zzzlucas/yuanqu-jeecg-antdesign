@@ -18,7 +18,6 @@
                 <a-form-item label="类别">
                   <j-dict-select-tag
                     v-model="queryParam.categoryType"
-                    :triggerChange="true"
                     :dict="types.category_type" />
                 </a-form-item>
               </a-col>
@@ -48,14 +47,15 @@
         <a-table
           ref="table"
           size="middle"
-          bordered
           rowKey="assetId"
+          bordered
           :columns="columns"
           :dataSource="dataSource"
           :pagination="ipagination"
           :loading="loading"
           :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
-          :customRow="handleCustomRow">
+          :customRow="handleCustomRow"
+          @change="handleTableChange">
             <!-- Column slot -->
             <span slot="action" slot-scope="text, record" @click.stop>
               <a @click.stop="handleEdit(record, ...arguments)">编辑</a>
@@ -102,6 +102,8 @@
     ],
     data() {
       return {
+        // Mixin option
+        deleteKey: 'assetId',
         // Url
         url: url.info,
         // Dictes
@@ -183,7 +185,7 @@
           { name: '采购日期', value: 'purchaseDate', },
           { name: '使用人', value: 'usePerson', },
           { name: '备注', value: 'remark', type: 'remark', },
-          { name: '附件', type: 'files', value: '' },
+          { name: '附件', type: 'files', value: 'addDocFiles' },
         ],
       }
     },

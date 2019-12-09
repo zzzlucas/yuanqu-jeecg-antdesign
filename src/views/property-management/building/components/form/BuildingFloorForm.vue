@@ -34,6 +34,12 @@
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
+        label="计费面积">
+        <a-input placeholder="请输入计费面积" v-decorator="['chargingArea', {}]" addonAfter="㎡"/>
+      </a-form-item>
+      <a-form-item
+        :labelCol="labelCol"
+        :wrapperCol="wrapperCol"
         label="层高">
         <a-input placeholder="请输入层高" v-decorator="['height', {}]" addonAfter="米"/>
       </a-form-item>
@@ -117,7 +123,7 @@
           add: '/park.architecture/baseArchitectureFloor/add',
           edit: '/park.architecture/baseArchitectureFloor/edit',
           block: '/park.architecture/baseArchitectureProject/queryByParkId',
-          tower: '/park.architecture/baseArchitectureBuilding/queryByProjectId'
+          tower: '/park.architecture/baseArchitectureBuilding/queryBuildingList'
         },
         treeExpandedKeys: [],
         fileList: [],
@@ -156,7 +162,7 @@
         this.title = '编辑楼层'
         this.form.resetFields()
 
-        const res = await getAction(this.url.tower, { projectId: record.buildingProjectId })
+        const res = await getAction(this.url.tower, { buildingProjectId: record.buildingProjectId })
         if (res.success && res.code === 200) {
           if (res.result) {
             let path = getTreeNodeOfKey(this.tree, record.buildingProjectId, 'value')
@@ -286,7 +292,7 @@
             return true
           }
 
-          getAction(this.url.tower, { projectId: node.dataRef.key }).then(res => {
+          getAction(this.url.tower, { buildingProjectId: node.dataRef.key }).then(res => {
             if (res.success && res.code === 200) {
               if (res.result) {
                 node.dataRef.children = _.map(res.result, obj => {

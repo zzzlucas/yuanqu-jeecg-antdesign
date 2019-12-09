@@ -45,7 +45,7 @@
   import JDate from '@/components/jeecg/JDate'
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
   import { filterObj, promiseForm } from '@utils/util'
-  import { addOperate } from '../api'
+  import { addOperateProcess, addOperateFeedback } from '../api'
 
   export default {
     mixins: [
@@ -56,6 +56,8 @@
     },
     data() {
       return {
+        // Form
+        type: '',
         // Rules
         rules: {
           remark: [
@@ -70,14 +72,17 @@
         const data = await promiseForm(this.form)
         try {
           filterObj(data)
-          data.parkId = this.industrialParkId
           data.orderId = this.$route.params.id
-          // data.operateName = thi
-          const resp = await addOperate(data)
+          let resp
+          if (this.type === 'process') {
+            resp = await addOperateProcess(data)
+          } else {
+            resp = await addOperateFeedback(data)
+          }
           if (!resp.success) {
             throw new Error(resp.message)
           }
-          this.$message.success('添加成功')
+          this.$message.success('操作成功')
           this.closeDrawer()
           this.$emit('submit')
         } catch (e) {

@@ -15,28 +15,32 @@
                 </a-form-item>
               </a-col>
               <a-col :xl="6">
-                <a-form-item label="类别">
-                  <a-select v-model="queryParam.type">
-                    <a-select-option
-                      :value="item.name"
-                      v-for="item in filter.type"
-                      :key="item.name">{{ item.label }}</a-select-option>
-                  </a-select>
+                <a-form-item label="使用状态">
+                  <j-dict-select-tag
+                    v-model="queryParam.useStatus"
+                    dict-code="asset_use_status" />
                 </a-form-item>
               </a-col>
-              <a-col :xl="6">
+              <a-col :xl="5">
                 <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
                   <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
                   <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
                 </span>
               </a-col>
-              <a-col :xl="4">
-                <span style="float: right">
-                  <a-form-item >
-                    <a-button type="primary" @click="handleAdd">批量登记入库</a-button>
-                    <a-button @click="handleExportXls" style="margin-left: 8px;">Excel导出</a-button>
-                  </a-form-item>
-                </span>
+              <a-col :xl="5">
+                <div style="float: right">
+                  <a-upload
+                    name="file"
+                    :showUploadList="false"
+                    :multiple="false"
+                    :headers="tokenHeader"
+                    :data="{ parkId: queryParam.parkId }"
+                    :action="baseUrl + url.importExcelUrl"
+                    @change="handleImportExcel">
+                    <a-button type="primary">批量登记入库</a-button>
+                  </a-upload>
+                  <a-button @click="handleExportXls('资产台账')" style="margin-left: 8px;">Excel导出</a-button>
+                </div>
               </a-col>
             </a-row>
           </a-form>
@@ -59,28 +63,33 @@
           :dataSource="dataSource"
           :pagination="ipagination"
           :loading="loading"
-          :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}">
+          :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
+          :customRow="handleCustomRow"
+          @change="handleTableChange">
         </a-table>
         <!-- table区域-end -->
       </a-layout-content>
     </a-layout>
-    <!-- Add/Edit form -->
-    <assets-standing-book-edit-form
-      ref="modalForm"
-      @submit="handleEditSubmit" />
+    <!-- View -->
+    <assets-view-aside
+      :columns="viewColumns"
+      :data="viewData"
+      v-model="view" />
   </a-card>
 </template>
 
 <script>
+  import AssetsViewAside from '@views/assets/components/AssetsViewAside'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import MixinList from '@/mixins/List'
   import { list as AssetsListMixin } from './mixins'
   import { url } from './api'
   import './style/list.less'
-  import AssetsStandingBookEditForm from '@views/assets/components/AssetsStandingBookEditForm'
 
   export default {
-    components: { AssetsStandingBookEditForm },
+    components: {
+      AssetsViewAside,
+    },
     mixins: [
       JeecgListMixin,
       MixinList,
@@ -88,23 +97,16 @@
     ],
     data() {
       return {
+        // Mixin option
+        deleteKey: 'opertionId',
         // Url
+        baseUrl: window._CONFIG['domianURL'],
         url: url.info,
-        // Filter options
-        filter: {
-          type: [
-            { name: 'all', label: '全部' },
-            { name: '1', label: '闲置' },
-            { name: '2', label: '已领用' },
-            { name: '3', label: '已借用' },
-            { name: '4', label: '已处置' },
-          ],
-        },
         // Filter query
         queryParam: {
           categoryId: '',
           keyword: '',
-          type: 'all',
+          useStatus: '',
         },
         // Table
         columns: [
@@ -119,12 +121,12 @@
           {
             title: '资产名称',
             align: 'center',
-            dataIndex: 'assetsName'
+            dataIndex: 'fixedAssetName'
           },
           {
             title: '资产编号',
             align: 'center',
-            dataIndex: 'assetsNumber'
+            dataIndex: 'assetNumber'
           },
           {
             title: '所属分类',
@@ -149,8 +151,21 @@
           {
             title: '使用状态',
             align: 'center',
-            dataIndex: 'useStatus'
+            dataIndex: 'useStatus_dictText'
           },
+        ],
+        // View
+        viewColumns: [
+          { name: '所属分类', value: 'categoryId', },
+          { name: '资产编号', value: 'assetNumber', },
+          { name: '资产名称', value: 'fixedAssetName', },
+          { name: '规格型号', value: 'assetModel', },
+          { name: '单价', value: 'stockPrice', },
+          { name: '总价', value: 'stockAmount', },
+          { name: '采购日期', value: 'purchaseDate', },
+          { name: '使用人', value: 'usePerson', },
+          { name: '备注', value: 'remark', type: 'remark', },
+          { name: '附件', type: 'files', value: 'addDocFiles' },
         ],
       }
     },

@@ -1,5 +1,5 @@
 <template>
-  <a-card class="assets-list" :bordered="false">
+  <a-card class="assets-category-list assets-list" :bordered="false">
     <a-layout>
       <a-layout-sider theme="light">
         <assets-category @select="selectCategory" v-if="showCategory" />
@@ -26,11 +26,12 @@
           :columns="columns"
           :dataSource="dataSource"
           :pagination="ipagination"
-          :loading="loading">
+          :loading="loading"
+          @change="handleTableChange">
             <span slot="action" slot-scope="text, record" @click.stop>
               <a @click.stop="handleEdit(record, ...arguments)">编辑</a>
               <a-divider type="vertical" />
-              <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
+              <a-popconfirm title="确定删除吗?" @confirm="() => handleDeleteOnPage(record)">
                 <a>删除</a>
               </a-popconfirm>
             </span>
@@ -63,6 +64,8 @@
     },
     data() {
       return {
+        // Mixin option
+        deleteKey: 'categoryId',
         // Url
         url: url.category,
         // Table
@@ -83,7 +86,7 @@
           {
             title: '上级分类',
             align: 'center',
-            dataIndex: 'parentName.categoryName'
+            dataIndex: 'parentName'
           },
           {
             title: '操作',
@@ -92,18 +95,27 @@
             scopedSlots: { customRender: 'action' },
           },
         ],
-        deleteKey: 'categoryId',
       }
+    },
+    methods: {
+      async handleDeleteOnPage(record) {
+        await this.handleDelete(record)
+        this.reloadCategory()
+      },
     },
     watch: {
       selectCategoryKey(val) {
-/*        this.queryParam.parentId = val
-        this.loadData(1)*/
+        this.queryParam.categoryId = val
+        this.loadData(1)
       },
     }
   }
 </script>
 
 <style lang="less">
-
+  .assets-category-list {
+    .ant-table-row {
+      cursor: unset;
+    }
+  }
 </style>

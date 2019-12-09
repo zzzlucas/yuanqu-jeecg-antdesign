@@ -47,7 +47,8 @@
           :pagination="ipagination"
           :loading="loading"
           :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
-          :customRow="handleCustomRow">
+          :customRow="handleCustomRow"
+          @change="handleTableChange">
             <!-- Column slot -->
             <span slot="action" slot-scope="text, record" @click.stop>
               <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
@@ -91,6 +92,8 @@
     ],
     data() {
       return {
+        // Mixin option
+        deleteKey: 'opertionId',
         // Url
         url: url.opertion,
         // Filter query
@@ -147,7 +150,7 @@
           { name: '借用人', value: 'usePerson', },
           { name: '备注', value: 'remark', type: 'remark', },
           { value: { ...AssetsViewAssetsTableMixin, }, type: 'table', },
-          { name: '附件', type: 'files', value: '' },
+          { name: '附件', type: 'files', value: 'addDocFiles' },
         ],
       }
     },

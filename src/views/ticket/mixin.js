@@ -1,4 +1,4 @@
-import { orderTypesWithSpecialFields } from '@views/ticket/types'
+import { orderTypesWithSpecialFields } from './types'
 
 export default {
   data() {

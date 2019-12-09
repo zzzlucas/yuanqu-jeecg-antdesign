@@ -7,7 +7,7 @@
       <!-- Nav (unclickable) -->
       <a-breadcrumb>
         <a-breadcrumb-item>工单管理</a-breadcrumb-item>
-        <a-breadcrumb-item>{{ filterDictText(this.types.order_type, data.orderType) }}</a-breadcrumb-item>
+        <a-breadcrumb-item>{{ filterDictText(types.order_type, data.orderType) }}</a-breadcrumb-item>
         <a-breadcrumb-item>工单详情</a-breadcrumb-item>
       </a-breadcrumb>
       <!-- Layout Header -->
@@ -26,7 +26,7 @@
             <div class="ticket-header-content-box-right">
               <h1>主题：{{ data.title }}</h1>
               <a-row>
-                <a-col :xl="12">工单类别：{{ filterDictText(this.types.order_type, data.orderType) }}</a-col>
+                <a-col :xl="12">工单类别：{{ filterDictText(types.order_type, data.orderType) }}</a-col>
                 <a-col :xl="12">工单编号：{{ data.orderId }}</a-col>
                 <a-col :xl="12">负责人：{{ data.principalUser }}</a-col>
                 <a-col :xl="12">提单时间：{{ data.createTime }}</a-col>
@@ -40,8 +40,8 @@
           <!-- Action -->
           <div class="ticket-action-container">
             <a-button-group>
-              <a-button @click="handleChangeStatus('1')" v-if="data.status == null || data.status === '2' || data.status === '3'">{{ data.status == null ? '受理' : '重新受理' }}</a-button>
-              <a-button @click="handleChangeStatus('2')" v-if="data.status == null || data.status === '1'">退回</a-button>
+              <a-button @click="handleChangeStatus('1')" v-if="data.status === '0'|| data.status === '2' || data.status === '3'">{{ data.status === '0' ? '受理' : '重新受理' }}</a-button>
+              <a-button @click="handleChangeStatus('2')" v-if="data.status === '0' || data.status === '1'">退回</a-button>
               <a-button @click="handleChangeStatus('3')" v-if="data.status === '1'">完成</a-button>
             </a-button-group>
             <a-dropdown>
@@ -73,20 +73,26 @@
             :bordered="false"
             :loading="loading">
             <p class="detail-heading detail-row">主题：{{ data.title }}</p>
-            <!-- TODO -->
             <template v-if="isCurrentTypeInProject">
               <p class="detail-row">企业名称：{{ data.custName }}</p>
               <p class="detail-row">经办人：{{ data.contactName }}</p>
               <p class="detail-row">联系方式：{{ data.mobile }}</p>
               <p class="detail-row">项目名称：{{ data.title }}</p>
             </template>
+            <template v-if="isCurrentTypeInProjectPeriod">
+              <p class="detail-row">企业名称：{{ data.custName }}</p>
+              <p class="detail-row">经办人：{{ data.contactName }}</p>
+              <p class="detail-row">联系方式：{{ data.mobile }}</p>
+              <p class="detail-row">项目名称：{{ data.title }}</p>
+              <p class="detail-row">期限：{{ data.begDate }} - {{ data.endDate }}</p>
+            </template>
             <div class="detail-row">问题描述：
               <br>
               <br>
               <div v-html="data.content"></div>
             </div>
-            <!-- TODO -->
             <div class="detail-row">文件：</div>
+            <j-upload ref="uploader" />
           </a-card>
         </a-tab-pane>
         <a-tab-pane tab="处理记录" key="records">
@@ -94,11 +100,18 @@
             title="工单处理记录"
             :bordered="false"
             :loading="recordLoading">
-            <a-button type="primary" slot="extra" icon="plus" shape="circle" @click="handleAddOperate" />
+            <a-button type="primary" slot="extra" icon="plus" shape="circle" @click="handleAddOperate('process')" />
             <a-timeline>
-              <a-timeline-item v-for="record in records" :key="record.recordId">
-                <p class="timeline-heading">{{ record.createTime }} 【{{ record.createUserName }}】 {{ record.operateName_dictText }}工单</p>
-                <p class="timeline-content" v-if="record.remark">{{ record.remark }}</p>
+              <a-timeline-item v-for="record in records.process" :key="record.recordId">
+                <p class="timeline-heading">{{ record.createTime }} 【{{ record.createUserName }}】
+                  <template v-if="record.operateName == null">
+                    添加了信息
+                  </template>
+                  <template v-else>
+                    将工单状态设置为{{ getProcessStatus(record.operateName) }}
+                  </template>
+                </p>
+                <p class="timeline-content" v-if="record.remark != null">{{ record.remark }}</p>
               </a-timeline-item>
             </a-timeline>
           </a-card>
@@ -108,15 +121,11 @@
             title="工单反馈记录"
             :bordered="false"
             :loading="recordLoading">
-            <a-button type="primary" slot="extra" icon="plus" shape="circle" @click="handleAddOperate" />
+            <a-button type="primary" slot="extra" icon="plus" shape="circle" @click="handleAddOperate('feedback')" />
             <a-timeline>
-              <a-timeline-item>
-                <p class="timeline-heading">2019-10-28 13:24:20 【演示用户】工单进展</p>
-                <p class="timeline-content">反馈记录要求前端也可以看到</p>
-              </a-timeline-item>
-              <a-timeline-item>
-                <p class="timeline-heading">2019-10-28 13:24:20 【演示用户】工单进展</p>
-                <p class="timeline-content">反馈记录要求前端也可以看到</p>
+              <a-timeline-item v-for="record in records.feedback" :key="record.recordId">
+                <p class="timeline-heading">{{ record.createTime }} 【{{ record.createUserName }}】添加了信息</p>
+                <p class="timeline-content" v-if="record.remark">{{ record.remark }}</p>
               </a-timeline-item>
             </a-timeline>
           </a-card>
@@ -127,7 +136,7 @@
     <ticket-edit-form
       ref="modalForm"
       @submit="handleEditSubmit" />
-    <!-- Add/Edit form -->
+    <!-- Operate Add form -->
     <ticket-operate-edit-form
       ref="operateModalForm"
       @submit="handleEditSubmit" />
@@ -135,12 +144,13 @@
 </template>
 
 <script>
+  import JUpload from '@/components/jeecg/JUpload'
   import TicketEditForm from '@views/ticket/components/TicketEditForm'
   import TicketOperateEditForm from '@views/ticket/components/TicketOperateEditForm'
   import { filterDictText } from '@/components/dict/JDictSelectUtil'
   import ViewMixin from '@/mixins/View'
   import Mixin from './mixin'
-  import { url, viewInfo, changeStatusInfo, listOperate } from './api'
+  import { url, viewInfo, changeStatusInfo, listOperateProcess, listOperateFeedback } from './api'
 
   export default {
     mixins: [
@@ -148,20 +158,22 @@
       Mixin,
     ],
     components: {
+      JUpload,
       TicketEditForm,
       TicketOperateEditForm,
     },
     data() {
       return {
-        // Mixin option
-        deleteKey: 'orderId',
         // Url
         url: url.info,
         // Types
         dictesCreateFields: ['order_type', 'order_status'],
         // Data
         recordLoading: true,
-        records: [],
+        records: {
+          process: [],
+          feedback: [],
+        },
       }
     },
     computed: {
@@ -179,9 +191,14 @@
       },
       // Filter
       filterDictText,
+      getProcessStatus(operateName) {
+        return filterDictText(this.types.order_status, operateName)
+      },
       // Request data
       async loadData() {
-        this.loadDetail()
+        this.loadDetail().then(() => {
+          this.$refs.uploader.initFileList(this.data.addDocFiles)
+        })
         this.loadRecords()
       },
       async loadDetail() {
@@ -200,19 +217,31 @@
       async loadRecords() {
         this.recordLoading = true
         try {
-          const resp = await listOperate({ orderId: this.getRouteParams().orderId, column: 'createTime', order: 'desc' })
-          if (!resp.success) {
-            throw new Error(resp.message)
+          const promises = [
+            listOperateProcess({ orderId: this.getRouteParams().orderId }),
+            listOperateFeedback({ orderId: this.getRouteParams().orderId }),
+          ]
+          const respCollection = await Promise.all(promises)
+          for (const [i, resp] of respCollection.entries()) {
+            if (!resp.success) {
+              throw new Error(resp.message)
+            }
+            const records = resp.result
+            if (i === 0) {
+              this.records.process = records
+            } else {
+              this.records.feedback = records
+            }
           }
-          this.records = resp.result.records
         } catch (e) {
           this.$message.error(e.message)
         }
         this.recordLoading = false
       },
       // Action
-      handleAddOperate() {
+      handleAddOperate(type) {
         this.$refs.operateModalForm.add();
+        this.$refs.operateModalForm.type = type
         this.$refs.operateModalForm.disableSubmit = false;
       },
       // Change status
@@ -326,6 +355,9 @@
         }
         .detail-heading {
           font-size: 18px;
+        }
+        .ant-upload {
+          display: none;
         }
       }
     }

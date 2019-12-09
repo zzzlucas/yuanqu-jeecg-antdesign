@@ -193,7 +193,7 @@ export const JeecgListMixin = {
         }
       }
       var that = this;
-      deleteAction(that.url.delete, {id: data[this.deleteKey ? this.deleteKey : 'id']}).then((res) => {
+      return deleteAction(that.url.delete, {id: data[this.deleteKey ? this.deleteKey : 'id']}).then((res) => {
         if (res.success) {
           that.$message.success(res.message);
           that.loadData();

@@ -48,17 +48,17 @@
         </a-col>
         <a-col :xl="12">
           <a-form-item label="数量">
-            <a-input v-decorator="['qty']"></a-input>
+            <a-input v-decorator="['qty', {rules: rules.qty}]"></a-input>
           </a-form-item>
         </a-col>
         <a-col :xl="12">
           <a-form-item label="单价">
-            <a-input v-decorator="['stockPrice']"></a-input>
+            <a-input v-decorator="['stockPrice', {rules: rules.stockPrice}]"></a-input>
           </a-form-item>
         </a-col>
         <a-col :xl="12">
           <a-form-item label="总价">
-            <a-input v-decorator="['stockAmount']"></a-input>
+            <a-input v-decorator="['stockAmount', {rules: rules.stockAmount}]"></a-input>
           </a-form-item>
         </a-col>
         <a-col :xl="12">
@@ -148,6 +148,15 @@
           categoryType: [
             { required: true, message: '请选择所属分类' },
           ],
+          qty: [
+            { required: true, message: '请填写数量' },
+          ],
+          stockPrice: [
+            { required: true, message: '请填写单价' },
+          ],
+          stockAmount: [
+            { required: true, message: '请填写总价' },
+          ],
           assetNumber: [
             { required: true, message: '请输入资产编号' },
           ],
@@ -198,7 +207,7 @@
           if (!resp.success) {
             throw new Error(resp.message)
           }
-          this.$message.success('添加成功')
+          this.$message.success('操作成功')
           this.closeDrawer()
           this.$emit('submit')
         } catch (e) {

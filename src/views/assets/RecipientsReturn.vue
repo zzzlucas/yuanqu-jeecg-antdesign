@@ -33,7 +33,8 @@
           :dataSource="dataSource"
           :pagination="ipagination"
           :loading="loading"
-          :customRow="handleCustomRow">
+          :customRow="handleCustomRow"
+          @change="handleTableChange">
             <!-- Column slot -->
             <span slot="action" slot-scope="text, record" @click.stop>
               <a @click.stop="handleEdit(record, ...arguments)">归还</a>
@@ -74,6 +75,8 @@
     ],
     data() {
       return {
+        // Mixin option
+        deleteKey: 'opertionId',
         // Url
         url: url.opertion,
         // Filter query
@@ -145,7 +148,7 @@
           { name: '采购日期', value: 'purchaseDate', },
           { name: '使用人', value: 'usePerson', },
           { name: '备注', value: 'remark', type: 'remark', },
-          { name: '附件', type: 'files', value: '' },
+          { name: '附件', type: 'files', value: 'addDocFiles' },
         ],
       }
     },

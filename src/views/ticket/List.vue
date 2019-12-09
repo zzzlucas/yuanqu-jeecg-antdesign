@@ -6,7 +6,7 @@
         <a-row :gutter="24">
           <a-col :xl="8">
             <a-form-item label="关键字">
-              <a-input placeholder="!!!TODO!!!" v-model="queryParam.keyword"></a-input>
+              <a-input placeholder="工单主题" v-model="queryParam.keyword"></a-input>
             </a-form-item>
           </a-col>
           <a-col :xl="6">
@@ -58,23 +58,24 @@
       :pagination="ipagination"
       :loading="loading"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
-      :customRow="handleCustomRow">
+      :customRow="handleCustomRow"
+      @change="handleTableChange">
       <!-- Column slot -->
       <span slot="action" slot-scope="text, record" @click.stop>
         <a-dropdown>
           <a class="ant-dropdown-link">状态管理<a-icon type="down" /></a>
           <a-menu slot="overlay">
-            <a-menu-item>
+            <a-menu-item v-if="record.status === '0'|| record.status === '2' || record.status === '3'">
               <a-popconfirm title="确定受理吗?" @confirm="handleChangeStatus(record.orderId, '1')">
-                <a>受理</a>
+                <a>{{ record.status === '0' ? '受理' : '重新受理' }}</a>
               </a-popconfirm>
             </a-menu-item>
-            <a-menu-item>
+            <a-menu-item v-if="record.status === '0' || record.status === '1'">
               <a-popconfirm title="确定退回吗?" @confirm="handleChangeStatus(record.orderId, '2')">
                 <a>退回</a>
               </a-popconfirm>
             </a-menu-item>
-            <a-menu-item>
+            <a-menu-item v-if="record.status === '1'">
               <a-popconfirm title="确定转为已完成吗?" @confirm="handleChangeStatus(record.orderId, '3')">
                 <a>已完成</a>
               </a-popconfirm>
@@ -240,6 +241,11 @@
         }
       },
       // Add/Edit
+      handleAdd() {
+        this.$refs.modalForm.add({ orderType: this.queryParam.orderType })
+        this.$refs.modalForm.title = "新增"
+        this.$refs.modalForm.disableSubmit = false
+      },
       async handleEditSubmit() {
         this.loadData(1)
       },

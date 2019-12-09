@@ -21,21 +21,39 @@
           </a-form-item>
         </a-col>
         <a-col :xl="12">
-          <!-- TODO -->
-          <a-form-item label="所属建筑项目">
-            <a-input v-decorator="['projectId', {rules: rules.projectId}]"></a-input>
+          <a-form-item label="所属厂房">
+            <a-select style="width: 100%;" v-decorator="['projectId', {rules: rules.projectId}]" @change="fetchBuildings">
+              <a-select-option
+                :value="item.buildingProjectId"
+                v-for="item in types.project"
+                :key="item.buildingProjectId">
+                {{ item.projectName }}
+              </a-select-option>
+            </a-select>
           </a-form-item>
         </a-col>
         <a-col :xl="12">
-          <!-- TODO -->
           <a-form-item label="所属楼宇">
-            <a-input v-decorator="['buildingId']"></a-input>
+            <a-select style="width: 100%;" v-decorator="['buildingId', {rules: rules.buildingId}]" @change="fetchFloors">
+              <a-select-option
+                :value="item.buildingId"
+                v-for="item in types.building"
+                :key="item.buildingId">
+                {{ item.buildingName }}
+              </a-select-option>
+            </a-select>
           </a-form-item>
         </a-col>
         <a-col :xl="12">
-          <!-- TODO -->
           <a-form-item label="所属楼层">
-            <a-input v-decorator="['floorId', {rules: rules.floorId}]"></a-input>
+            <a-select style="width: 100%;" v-decorator="['floorId', {rules: rules.floorId}]">
+              <a-select-option
+                :value="item.floorId"
+                v-for="item in types.floor"
+                :key="item.floorId">
+                {{ item.floorName }}
+              </a-select-option>
+            </a-select>
           </a-form-item>
         </a-col>
         <a-col :xl="12">
@@ -65,7 +83,7 @@
         </a-col>
         <a-col :xl="12" v-if="isCharge">
           <a-form-item label="收费单位">
-            <a-input v-decorator="['unit']"></a-input>
+            <j-dict-select-tag dict-code="advert_price_unit" :trigger-change="true" v-decorator="['unit']" />
           </a-form-item>
         </a-col>
         <a-col :xl="24">
@@ -103,13 +121,15 @@
   import JDate from '@/components/jeecg/JDate'
   import JEditor from '@/components/jeecg/JEditor'
   import FormEditDrawerMixin from '@/components/form/FormEditDrawerMixin'
+  import Mixin from '../mixin/list'
   import { filterObj, promiseForm } from '@utils/util'
   import { advertisingEditForm } from '@/config/pick-fields'
-  import { addPlace, editPlace } from '../api'
+  import { addAdPlace, editAdPlace } from '../api'
 
   export default {
     mixins: [
       FormEditDrawerMixin('advertising-edit'),
+      Mixin,
     ],
     components: {
       JEditor,
@@ -153,18 +173,49 @@
           let resp
           if (this.isEdit) {
             data.advertId = this.record.advertId
-            resp = await editPlace(data)
+            resp = await editAdPlace(data)
           } else {
-            resp = await addPlace(data)
+            resp = await addAdPlace(data)
           }
           if (!resp.success) {
             throw new Error(resp.message)
           }
-          this.$message.success('添加成功')
+          this.$message.success('操作成功')
           this.closeDrawer()
           this.$emit('submit')
         } catch (e) {
           this.$message.error(e.message)
+        }
+      },
+      async fetchBuildings() {
+        this.types.building = []
+        await this.$nextTick()
+        this.form.setFieldsValue({ buildingId: '' })
+        this.getBuildings(this.form.getFieldValue('projectId'))
+      },
+      async fetchFloors() {
+        this.types.floor = []
+        await this.$nextTick()
+        this.form.setFieldsValue({ floorId: '' })
+        this.getFloors(this.form.getFieldValue('buildingId'))
+      },
+      async init() {
+        this.types.project = []
+        this.types.building = []
+        this.types.floor = []
+        this.getProjects(this.industrialParkId)
+        if (this.isEdit) {
+          const projectId = this.record.projectId
+          if (projectId) {
+            this.getBuildings(projectId)
+          }
+          const buildingId = this.record.buildingId
+          if (buildingId) {
+            this.getFloors(buildingId)
+          }
+          this.isCharge = !!this.record.price
+        } else {
+          this.isCharge = false
         }
       },
     },
@@ -173,6 +224,7 @@
         if (!val) {
           return
         }
+        this.init()
       },
       isCharge(val) {
         if (val === false) {

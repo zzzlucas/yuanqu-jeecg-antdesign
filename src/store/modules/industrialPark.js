@@ -7,6 +7,7 @@ import {
 } from "@/store/mutation-types"
 
 const park = {
+  namespaced: 'industrialPark',
   state: {
     ready: false,
     id: '',

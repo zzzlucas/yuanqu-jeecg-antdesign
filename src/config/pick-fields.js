@@ -344,7 +344,7 @@ export const AddTechProjectForm = [
   'afterChangeBuildArea'
 ]
 export const PickBuildingTowerForm = ['buildingProjectId', 'buildingName', 'estimateArea', 'groundFloor', 'undergroundFloor', 'isVirtual', 'remark']
-export const PickBuildingFloorForm = ['buildingId', 'floorName', 'allarea', 'height', 'bearing', 'isVirtual', 'remark']
+export const PickBuildingFloorForm = ['buildingId', 'floorName', 'allarea', 'chargingArea', 'height', 'bearing', 'isVirtual', 'remark']
 export const PickBuildingRoomForm = ['floorId', 'roomName', 'actualArea', 'isRented', 'isSelfUse', 'isVirtual', 'remark']
 
 export const assetsCategoryEditForm = [
@@ -367,12 +367,14 @@ export const assetsRegisterEditForm = [
   'usePerson',
   'location',
   'remark',
+  'addDocFiles',
 ]
 
 export const assetsRecipientsReturnEditForm = [
   'assetNumber',
   'fixedAssetName',
   'usePerson',
+  'addDocFiles',
 ]
 
 export const ticketEditForm = [
@@ -382,7 +384,9 @@ export const ticketEditForm = [
   'isCharge',
   'custName',
   'title',
-  'principalUser',
+  'contactName',
+  'mobile',
+  'addDocFiles',
   'begDate',
   'endDate',
   'content',
@@ -400,4 +404,45 @@ export const advertisingEditForm = [
   'unit',
   'remarks',
   'summary',
+]
+
+export const advertisingEventForm = [
+  'begDate',
+  'endDate',
+  'remark',
+  'addDocFiles',
+  'requestPerson',
+  'corp', // TODO
+  'telephone',
+  'zipCode', // TODO
+  'telephone',
+  'r3', // TODO
+]
+
+export const meetingRoomEditForm = [
+  'roomName',
+  'chargingArea',
+  'maxCapacity',
+  'projectId',
+  'buildingId',
+  'floorId',
+  'address',
+  'contactPerson',
+  'contactTel',
+  'price',
+  'price2',
+  'begTime',
+  'endTime',
+  'remarks',
+  'summary',
+]
+
+export const meetingEventEditForm = [
+  'roomId',
+  'begDate',
+  'endDate',
+  'requestPerson',
+  'telephone',
+  'r3', // TODO: change me
+  'remark',
 ]
