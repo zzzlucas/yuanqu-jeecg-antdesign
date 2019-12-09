@@ -35,11 +35,14 @@
           <detail-list-item term="福利待遇">{{companyBenefitBBQ}}</detail-list-item>
           <a-divider />
           <detail-list-item term="公司地址  ">{{info.address}}</detail-list-item>
-          <detail-list-item term="岗位描述">{{info.description}}</detail-list-item>
           <a-divider />
         </detail-list>
         <detail-list :col="1">
-          <detail-list-item term="岗位要求">{{info.summary}}</detail-list-item>
+          <detail-list-item style="word-break: break-all;" term="岗位描述">{{info.description}}</detail-list-item>
+        </detail-list>
+         <a-divider />
+        <detail-list :col="1">
+          <detail-list-item style="word-break: break-all;" term="岗位要求">{{info.summary}}</detail-list-item>
         </detail-list>
       </a-spin>
     </a-card>

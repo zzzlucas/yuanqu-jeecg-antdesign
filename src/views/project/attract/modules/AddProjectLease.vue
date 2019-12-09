@@ -318,7 +318,6 @@
               </a-form-item>
             </a-col>
           </a-row>
-
           <a-row class="form-row" :gutter="16">
             <a-col :xl="{span: 21, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="备注">

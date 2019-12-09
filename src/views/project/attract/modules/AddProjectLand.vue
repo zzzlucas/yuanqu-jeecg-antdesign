@@ -161,13 +161,13 @@
                 <a-input
                   addonAfter="万元"
                   placeholder
-                  v-decorator="[    'annualProductionValue'   ]"
+                  v-decorator="['annualProductionValue']"
                 />
               </a-form-item>
             </a-col>
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="年税金">
-                <a-input addonAfter="万元" placeholder v-decorator="[  'annualTaxes'  ]" />
+                <a-input addonAfter="万元" placeholder v-decorator="['annualTaxes']" />
               </a-form-item>
             </a-col>
           </a-row>
