@@ -1,5 +1,5 @@
 <template>
-  <a-card :bordered="false">
+  <a-card :bordered="false" class="info-list">
     <!-- 查询区域 -->
     <div class="table-page-search-wrapper">
       <a-form layout="inline" @keyup.enter.native="searchQuery">
@@ -75,7 +75,7 @@
         ref="table"
         size="middle"
         bordered
-        rowKey="id"
+        rowKey="newId"
         :columns="columns"
         :dataSource="dataSource"
         :pagination="ipagination"
@@ -84,6 +84,14 @@
         :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
         :customRow="customRow"
       >
+        <span slot="titile" slot-scope="text, record" @click.stop>
+          <span>{{record.titile}}</span>
+          <a-icon v-if="record.sortOrder>0" type="fire" />
+          <a-icon v-if="record.sortOrder>1" type="fire" />
+          <a-icon v-if="record.sortOrder>2" type="fire" />
+          <a-icon v-if="record.sortOrder>3" type="fire" />
+          <a-icon v-if="record.sortOrder>4" type="fire" />
+        </span>
         <span slot="action" slot-scope="text, record" @click.stop>
           <a-popconfirm
             v-if="record.isPublic == 0"
@@ -148,10 +156,12 @@ export default {
         //     return parseInt(index) + 1
         //   }
         // },
+        //
         {
           title: '标题',
           align: 'center',
-          dataIndex: 'titile'
+          dataIndex: 'titile',
+          scopedSlots: { customRender: 'titile' }
         },
         {
           title: '发布时间',
@@ -294,6 +304,14 @@ export default {
   }
 }
 </script>
-<style lang="less">
+<style lang="less" >
 @import '../../../assets/less/common.less';
+.info-list {
+  .anticon-fire {
+    color: #dc143c;
+  }
+  .ant-table-row {
+    cursor: pointer;
+  }
+}
 </style>

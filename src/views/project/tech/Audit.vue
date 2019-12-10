@@ -1,5 +1,5 @@
 <template>
-  <a-card :bordered="false">
+  <a-card :bordered="false" class="audit-list">
     <div class="table-page-search-wrapper">
       <a-form layout="inline">
         <a-row :gutter="24">
@@ -141,20 +141,20 @@ export default {
             return filterDictText(this.industrySectorValueDictOptions, text)
           }
         },
-        // {
-        //   title: '进度test',
-        //   align: 'center',
-        //   dataIndex: 'workFlowNextNodeIndex',
-        //   customRender: function(text) {
-        //     if (text == '0') {
-        //       return '部门审核'
-        //     } else if (text == '1') {
-        //       return '分管领导审核'
-        //     } else {
-        //       return '主要领导审核'
-        //     }
-        //   }
-        // },
+        {
+          title: '进度test',
+          align: 'center',
+          dataIndex: 'workFlowNextNodeIndex',
+          customRender: function(text) {
+            if (text == '0') {
+              return '部门审核'
+            } else if (text == '1') {
+              return '分管领导审核'
+            } else {
+              return '主要领导审核'
+            }
+          }
+        },
         {
           title: '项目状态',
           align: 'center',
@@ -329,7 +329,12 @@ export default {
   }
 }
 </script>
-<style scoped>
+<style lang="less">
+.audit-list {
+  .ant-table-row {
+    cursor: pointer;
+  }
+}
 .ant-card-body .table-operator {
   margin-bottom: 18px;
 }

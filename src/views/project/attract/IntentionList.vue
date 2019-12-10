@@ -1,6 +1,6 @@
 <template>
   <!-- 项目登记 -->
-  <a-card :bordered="false">
+  <a-card :bordered="false" class="attract-list">
     <!-- 查询区域 -->
     <div class="table-page-search-wrapper">
       <a-form layout="inline">
@@ -142,7 +142,7 @@ import Dom7 from 'dom7'
 
 export default {
   name: '',
-  mixins: [JeecgListMixin,mixinList],
+  mixins: [JeecgListMixin, mixinList],
   components: {
     ShowOne,
     ShowTwo,
@@ -230,12 +230,12 @@ export default {
           scopedSlots: { customRender: 'action' }
         }
       ],
-      deleteKey:'projectId',
+      deleteKey: 'projectId',
       url: {
         list: '/park.project/mgrProjectInfo/list?status=1',
         // add: '/park.project/mgrProjectTrace/addMgrProjectTrace',
         // edit: '/park.project/mgrProjectTrace/edit',
-        delete:'/park.project/mgrProjectInfo/delete',
+        delete: '/park.project/mgrProjectInfo/delete'
         // editCementSend: 'sys/sysAnnouncementSend/editByAnntIdAndUserId',
         // readAllMsg: 'sys/sysAnnouncementSend/readAll'
       },
@@ -500,7 +500,12 @@ export default {
   }
 }
 </script>
-<style scoped>
+<style lang="less">
+.attract-list {
+  .ant-table-row {
+    cursor: pointer;
+  }
+}
 .ant-card-body .table-operator {
   margin-bottom: 18px;
 }

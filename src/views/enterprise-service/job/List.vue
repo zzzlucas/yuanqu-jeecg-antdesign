@@ -1,5 +1,5 @@
 <template>
-  <a-card :bordered="false">
+  <a-card :bordered="false" class="job-list">
     <!-- 查询区域 -->
     <div class="table-page-search-wrapper">
       <a-form layout="inline" @keyup.enter.native="searchQuery">
@@ -151,19 +151,28 @@ export default {
           title: '薪资',
           align: 'center',
           dataIndex: 'monthlySalary',
-          width: 180
+          width: 180,
+          customRender: text => {
+            return filterDictText(this.dict.monthlySalary, text)
+          }
         },
         {
           title: '学历',
           align: 'center',
           dataIndex: 'educationType',
-          width: 180
+          width: 180,
+          customRender: text => {
+            return filterDictText(this.dict.educationType, text)
+          }
         },
         {
           title: '经验',
           align: 'center',
           dataIndex: 'expType',
-          width: 180
+          width: 180,
+          customRender: text => {
+            return filterDictText(this.dict.expType, text)
+          }
         },
         {
           title: '审核状态',
@@ -224,6 +233,22 @@ export default {
   },
   computed: {},
   created() {
+    initDictOptions('education_type').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.educationType = res.result
+      }
+    })
+    initDictOptions('exp_type').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.expType = res.result
+      }
+    })
+    initDictOptions('monthly_salary').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.monthlySalary = res.result
+      }
+    })
+    //
     initDictOptions('industry_gategory').then(res => {
       if (res.code === 0 && res.success) {
         this.dict.industryGategory = res.result
@@ -337,4 +362,12 @@ export default {
 </script>
 <style lang="less">
 @import '../../../assets/less/common.less';
+.job-list {
+  .anticon-fire {
+    color: #dc143c;
+  }
+  .ant-table-row {
+    cursor: pointer;
+  }
+}
 </style>

@@ -19,7 +19,6 @@
                   placeholder
                   v-decorator="['fillUnit',{rules: [{ required: true, message: '请输入项目单位', whitespace:true}]}]"
                 />
-                <!-- getFieldDecorator="[]"   initialValue:'test' -->
               </a-form-item>
             </a-col>
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
@@ -54,7 +53,6 @@
           <a-row class="form-row" :gutter="16">
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="企业登记注册类型" required>
-                <!-- {initialValue: '1'}, -->
                 <a-select
                   v-decorator="['companyRegisterType',{rules: [{ required: true, message: '请输入企业登记注册类型', whitespace: true}]}]"
                 >
@@ -273,8 +271,6 @@
             <!-- 按要求，应该使用数据字典 -->
             <a-col :xl="{span: 10, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
               <a-form-item label="所属行业" required>
-                <!-- <JDictSelectTag v-decorator="['industrySectorValue', {initialValue: '1'}]" dictCode="INDUSTRY_SECTOR_VALUE"></JDictSelectTag> -->
-                <!-- {initialValue: dict.industrySectorValueExt[0].value} -->
                 <a-select v-decorator="['industrySectorValue']">
                   <a-select-option
                     v-for="(item, key) in dict.industrySectorValueExt"
@@ -575,8 +571,7 @@ export default {
       industrySectorValue: '',
       companyRegisterType: '',
       dict: {
-        industrySectorValueExt: [{ value: '1' }],
-        companyRegisterTypeExt: [{ value: '1' }]
+        workFlow: [{ value: '1' }]
       },
       editor: {
         projectTechnologyFlow: ''

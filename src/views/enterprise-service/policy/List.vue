@@ -1,5 +1,5 @@
 <template>
-  <a-card :bordered="false">
+  <a-card :bordered="false" class="policy-list">
     <!-- 查询区域 -->
     <div class="table-page-search-wrapper">
       <a-form layout="inline" @keyup.enter.native="searchQuery">
@@ -376,4 +376,12 @@ export default {
 </script>
 <style lang="less">
 @import '../../../assets/less/common.less';
+.policy-list {
+  .anticon-fire {
+    color: #dc143c;
+  }
+  .ant-table-row {
+    cursor: pointer;
+  }
+}
 </style>

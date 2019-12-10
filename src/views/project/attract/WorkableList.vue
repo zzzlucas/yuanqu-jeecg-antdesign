@@ -1,6 +1,6 @@
 <template>
   <!-- 项目登记 -->
-  <a-card :bordered="false">
+  <a-card :bordered="false" class="attract-list">
     <!-- 查询区域 -->
     <div class="table-page-search-wrapper">
       <a-form layout="inline">
@@ -499,7 +499,12 @@ export default {
   }
 }
 </script>
-<style scoped>
+<style lang="less">
+.attract-list {
+  .ant-table-row {
+    cursor: pointer;
+  }
+}
 .ant-card-body .table-operator {
   margin-bottom: 18px;
 }

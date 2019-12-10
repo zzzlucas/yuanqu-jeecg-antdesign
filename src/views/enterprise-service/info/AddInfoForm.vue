@@ -5,16 +5,33 @@
         <a-form-item label="资讯名称">
           <a-input v-decorator="['titile',  {rules: [{required: true, message: '请输入资讯名称'}]}]" />
         </a-form-item>
-        <a-form-item label="资讯类别">
-          <a-radio-group v-decorator="['type',  {rules: [{required: true, message: '请选择资讯类别'}]}]">
-            <a-radio
-              v-if="item.value>=2"
-              v-for="(item, key) in dict.newsTypeExt"
-              :value="item.value"
-              :key="key"
-            >{{item.text}}</a-radio>
-          </a-radio-group>
-        </a-form-item>
+        <a-row>
+          <a-col span="12">
+            <a-form-item label="资讯类别">
+              <a-radio-group
+                v-decorator="['type',  {rules: [{required: true, message: '请选择资讯类别'}]}]"
+              >
+                <a-radio
+                  v-if="item.value>=2"
+                  v-for="(item, key) in dict.newsTypeExt"
+                  :value="item.value"
+                  :key="key"
+                >{{item.text}}</a-radio>
+              </a-radio-group>
+            </a-form-item>
+          </a-col>
+          <a-col span="12">
+            <a-form-item label="热门排序">
+              <a-select v-decorator="['sortOrder', {initialValue: dict.hotOrderExt[0].value}]">
+                <a-select-option
+                  v-for="(item, key) in dict.hotOrderExt"
+                  :value="item.value"
+                  :key="key"
+                >{{ item.text }}</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+        </a-row>
         <a-form-item label="发布时间">
           <a-date-picker
             showTime
@@ -51,7 +68,7 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: '',
-  //刘 上传文件（可能是单个文件   
+  //刘 上传文件（可能是单个文件
   //多个文件是否可以
   components: { JEditor, JUpload },
   data() {
@@ -84,7 +101,9 @@ export default {
       loading: false,
       editBool: false,
       //这是跟踪人，不是服务人员，是否走字典有待考究
-      dict: {},
+      dict: {
+        hotOrderExt: [{ value: '1111' }]
+      },
       url: {
         add: '/park.service/mgrNewsInfo/add',
         edit: '/park.service/mgrNewsInfo/edit'
@@ -101,6 +120,11 @@ export default {
     initDictOptions('news_type').then(res => {
       if (res.code === 0 && res.success) {
         this.dict.newsTypeExt = res.result
+      }
+    })
+    initDictOptions('hot_order').then(res => {
+      if (res.code === 0 && res.success) {
+        this.dict.hotOrderExt = res.result
       }
     })
   },
@@ -187,16 +211,19 @@ export default {
       })
     },
     detail(record) {
+      if (record.sortOrder) {
+        record.sortOrder = record.sortOrder.toString()
+      }
       this.editBool = true
       console.log(record)
       this.form.resetFields()
-      this.model = Object.assign({}, record)
       this.visible = true
+      this.model = Object.assign({}, record)
       this.$nextTick(() => {
         this.editor = {
           context: record.context
         }
-        this.form.setFieldsValue(pick(this.model, 'titile', 'type','addDocFiles'))
+        this.form.setFieldsValue(pick(this.model, 'titile', 'type', 'addDocFiles', 'sortOrder'))
         this.form.setFieldsValue({
           publishTime: this.model.publishTime ? moment(this.model.publishTime) : null
         })

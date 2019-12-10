@@ -38,7 +38,7 @@
     </div>
 
     <!-- table区域-begin -->
-    <div class="industrial-parks-list">
+    <div class="annual-achieve-list">
       <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;">
         <i class="anticon anticon-info-circle ant-alert-icon"></i> 已选择
         <a style="font-weight: 600">{{ selectedRowKeys.length }}</a>项
@@ -264,6 +264,7 @@ export default {
 </script>
 <style lang="less" scope>
 @import '../../assets/less/common.less';
+// .annual-achieve-list{}
 .annual {
   .ant-form-item-label {
     width: auto;
