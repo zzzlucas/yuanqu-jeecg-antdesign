@@ -24,7 +24,7 @@
     "fullcalendar-scheduler": "^1.10.0",
     "jquery": "^3.4.1",
     "js-cookie": "^2.2.1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "lodash.get": "^4.4.2",
     "lodash.pick": "^4.4.0",
     "md5": "^2.2.1",
