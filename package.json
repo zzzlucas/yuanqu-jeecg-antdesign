@@ -29,7 +29,7 @@
     "lodash.pick": "^4.4.0",
     "md5": "^2.2.1",
     "moment": "^2.24.0",
-    "node-sass": "^4.13.0",
+    "node-sass": "^4.13.1",
     "nprogress": "^0.2.0",
     "numeral": "^2.0.6",
     "qs": "^6.9.1",
