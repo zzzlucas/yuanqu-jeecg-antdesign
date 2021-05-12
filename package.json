@@ -16,7 +16,7 @@
     "apexcharts": "^3.10.1",
     "axios": "^0.18.0",
     "clipboard": "^2.0.4",
-    "codemirror": "^5.49.2",
+    "codemirror": "^5.58.2",
     "dayjs": "^1.8.17",
     "dom7": "^2.1.3",
     "echarts": "^4.5.0",
